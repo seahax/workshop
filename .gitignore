@@ -1,0 +1,16 @@
+.nx
+.vscode
+node_modules
+dist
+lib
+out
+coverage
+
+*.log
+*.tar
+*.gz
+*.tgz
+*.zip
+*.tfstate*
+
+.nx/cache
