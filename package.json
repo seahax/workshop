@@ -5,7 +5,7 @@
   "scripts": {
     "clean": "lerna run clean && nx reset",
     "build": "lerna run build",
-    "test": "eslint . && vitest run && lerna run test",
+    "test": "pnpm build && eslint . && vitest run && lerna run test",
     "bump": "lerna version",
     "release": "lerna publish from-package"
   },
