@@ -6,7 +6,7 @@
   "license": "Unlicense",
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
-    "build": "pnpm clean && tsc -b && vite build",
+    "build": "pnpm clean && vite build && tsc -b",
     "rename": "node rename.cjs"
   },
   "type": "module",
@@ -22,7 +22,6 @@
   ],
   "devDependencies": {
     "@seahax/vite-plugin-chmodx": "workspace:*",
-    "vite": "^5.3.5",
-    "vite-plugin-dts": "^3.9.1"
+    "vite": "^5.3.5"
   }
 }

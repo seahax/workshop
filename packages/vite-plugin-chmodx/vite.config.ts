@@ -2,7 +2,6 @@ import { readFile } from 'node:fs/promises';
 import { isBuiltin } from 'node:module';
 
 import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
 
 process.chdir(import.meta.dirname);
 
@@ -14,9 +13,6 @@ const prodDepNames = Object.keys({
 });
 
 export default defineConfig({
-  plugins: [
-    dts({ tsconfigPath: './tsconfig-build.json' }),
-  ],
   build: {
     target: ['es2022'],
     lib: {

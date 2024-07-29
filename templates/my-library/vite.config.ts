@@ -3,7 +3,6 @@ import { isBuiltin } from 'node:module';
 
 import chmodx from '@seahax/vite-plugin-chmodx';
 import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
 
 process.chdir(import.meta.dirname);
 
@@ -16,7 +15,6 @@ const prodDepNames = Object.keys({
 
 export default defineConfig({
   plugins: [
-    dts({ tsconfigPath: './tsconfig-build.json' }),
     chmodx(),
   ],
   build: {
