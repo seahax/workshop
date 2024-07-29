@@ -16,8 +16,8 @@ jobs:
       - run: corepack enable
       - uses: actions/setup-node@v4
         with: { node-version: lts/* }
+      - run: pnpm npm config --location=project set //registry.npmjs.org/:_authToken '${NPM_TOKEN}'
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm test
-      - run: npm config --location=project set //registry.npmjs.org/:_authToken '${NPM_TOKEN}'
       - run: pnpm release
