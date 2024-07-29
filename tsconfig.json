@@ -1,5 +1,5 @@
 {
-  "extends": "@seahax/tsconfig",
+  "extends": "./tsconfig-defaults.json",
   "compilerOptions": {
     "types": ["node"]
   },

@@ -16,7 +16,7 @@ const prodDepNames = Object.keys({
 
 export default defineConfig({
   plugins: [
-    dts(),
+    dts({ tsconfigPath: './tsconfig-build.json' }),
     chmodx(),
   ],
   build: {

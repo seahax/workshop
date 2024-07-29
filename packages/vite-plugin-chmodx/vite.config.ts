@@ -15,7 +15,7 @@ const prodDepNames = Object.keys({
 
 export default defineConfig({
   plugins: [
-    dts(),
+    dts({ tsconfigPath: './tsconfig-build.json' }),
   ],
   build: {
     target: ['es2022'],
