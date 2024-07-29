@@ -1,0 +1,28 @@
+{
+  "name": "@seahax/my-library",
+  "private": true,
+  "version": "0.1.0",
+  "description": "",
+  "license": "Unlicense",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "pnpm clean && tsc -b && vite build",
+    "rename": "node rename.cjs"
+  },
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@seahax/vite-plugin-chmodx": "workspace:*",
+    "vite": "^5.3.5",
+    "vite-plugin-dts": "^3.9.1"
+  }
+}

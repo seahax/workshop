@@ -1,0 +1,19 @@
+{
+  "extends": "@seahax/tsconfig",
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "node_modules/.tsc/test.tsbuildinfo",
+    "rootDir": "src",
+    // "lib": [
+    //   "ES2022",
+    //   "DOM",
+    //   "DOM.Iterable"
+    // ],
+    // "types": [
+    //   "node"
+    // ]
+  },
+  "include": [
+    "src/**/*.test.*"
+  ]
+}

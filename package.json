@@ -12,10 +12,11 @@
   "type": "module",
   "packageManager": "pnpm@9.6.0+sha256.dae0f7e822c56b20979bb5965e3b73b8bdabb6b8b8ef121da6d857508599ca35",
   "devDependencies": {
+    "@seahax/eslint": "workspace:*",
     "@seahax/tsconfig": "workspace:*",
     "@types/node": "^20.14.12",
     "@vitest/coverage-v8": "^2.0.4",
-    "eslint": "^9.8.0",
+    "eslint": "^8.57.0",
     "lerna": "^8.1.7",
     "nx": "^19.5.3",
     "typescript": "^5.5.4",

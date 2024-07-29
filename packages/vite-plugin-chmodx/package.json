@@ -1,0 +1,29 @@
+{
+  "name": "@seahax/vite-plugin-chmodx",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Set executable bits on chunks that contain shebangs.",
+  "license": "Unlicense",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "pnpm clean && tsc -b && vite build"
+  },
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "peerDependencies": {
+    "vite": "^5.3.5"
+  },
+  "devDependencies": {
+    "vite": "^5.3.5",
+    "vite-plugin-dts": "^3.9.1"
+  }
+}
