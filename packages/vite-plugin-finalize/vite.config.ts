@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { isBuiltin } from 'node:module';
 
 import chmodx from '@seahax/vite-plugin-chmodx';
-import finalize from '@seahax/vite-plugin-finalize';
+import { $ } from 'execa';
 import { defineConfig } from 'vite';
 
 process.chdir(import.meta.dirname);
@@ -17,7 +17,12 @@ const prodDepNames = Object.keys({
 export default defineConfig({
   plugins: [
     chmodx(),
-    finalize`tsc -b`,
+    {
+      name: 'finalize',
+      async writeBundle() {
+        await $`tsc -b`;
+      },
+    },
   ],
   build: {
     target: ['es2022'],
@@ -34,7 +39,7 @@ export default defineConfig({
       },
     },
   },
-  // resolve: {
-  //   conditions: ['node'],
-  // },
+  resolve: {
+    conditions: ['node'],
+  },
 });

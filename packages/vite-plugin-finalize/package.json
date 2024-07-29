@@ -1,13 +1,12 @@
 {
-  "name": "@seahax/my-library",
+  "name": "@seahax/vite-plugin-finalize",
   "private": true,
   "version": "0.1.0",
   "description": "",
   "license": "Unlicense",
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
-    "build": "pnpm clean && vite build",
-    "rename": "node rename.cjs"
+    "build": "pnpm clean && vite build"
   },
   "type": "module",
   "types": "dist/index.d.ts",
@@ -21,8 +20,12 @@
     "dist"
   ],
   "devDependencies": {
-    "@seahax/vite-plugin-chmodx": "workspace:*",
-    "@seahax/vite-plugin-finalize": "workspace:*",
+    "@seahax/vite-plugin-chmodx": "workspace:*"
+  },
+  "dependencies": {
+    "execa": "^9.3.0"
+  },
+  "peerDependencies": {
     "vite": "^5.3.5"
   }
 }

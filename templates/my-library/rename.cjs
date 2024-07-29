@@ -12,7 +12,7 @@ void (async () => {
   const packageJson = await readFile('package.json', 'utf8').then(JSON.parse);
   const readmeText = await readFile('README.md', 'utf8');
 
-  packageJson.name = newName;
+  packageJson.name = `@seahax/${newName}`;
   delete packageJson?.scripts?.rename;
 
   await writeFile('package.json', JSON.stringify(packageJson, null, 2) + '\n');

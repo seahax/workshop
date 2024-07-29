@@ -19,9 +19,6 @@
   "files": [
     "dist"
   ],
-  "peerDependencies": {
-    "vite": "^5.3.5"
-  },
   "devDependencies": {
     "vite": "^5.3.5"
   }
