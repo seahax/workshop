@@ -12,9 +12,9 @@
     //   "DOM",
     //   "DOM.Iterable"
     // ],
-    "types": [
-      "node"
-    ]
+    // "types": [
+    //   "node"
+    // ]
   },
   "include": [
     "src"

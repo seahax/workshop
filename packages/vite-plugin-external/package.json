@@ -1,12 +1,12 @@
 {
-  "name": "@seahax/vite-plugin-chmodx",
+  "name": "@seahax/vite-plugin-external",
   "private": true,
   "version": "0.1.0",
-  "description": "Set executable bits on chunks that contain shebangs.",
+  "description": "Externalize all production dependencies and node built-ins.",
   "license": "Unlicense",
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
-    "build": "pnpm clean && vite build"
+    "build": "pnpm clean && vite build && tsc -b"
   },
   "type": "module",
   "types": "dist/index.d.ts",
@@ -20,8 +20,7 @@
     "dist"
   ],
   "devDependencies": {
-    "@seahax/vite-plugin-external": "workspace:*",
-    "@seahax/vite-plugin-finalize": "workspace:*"
+    "@seahax/vite-plugin-chmodx": "workspace:*"
   },
   "peerDependencies": {
     "vite": "^5.3.5"

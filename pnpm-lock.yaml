@@ -84,11 +84,43 @@ importers:
         specifier: ^7.17.0
         version: 7.17.0(eslint@8.57.0)(typescript@5.5.4)
 
-  packages/vite-plugin-chmodx:
+  packages/evented:
     devDependencies:
+      '@seahax/vite-plugin-chmodx':
+        specifier: workspace:*
+        version: link:../vite-plugin-chmodx
+      '@seahax/vite-plugin-external':
+        specifier: workspace:*
+        version: link:../vite-plugin-external
+      '@seahax/vite-plugin-finalize':
+        specifier: workspace:*
+        version: link:../vite-plugin-finalize
       vite:
         specifier: ^5.3.5
         version: 5.3.5(@types/node@20.14.12)
+
+  packages/vite-plugin-chmodx:
+    dependencies:
+      vite:
+        specifier: ^5.3.5
+        version: 5.3.5(@types/node@20.14.12)
+    devDependencies:
+      '@seahax/vite-plugin-external':
+        specifier: workspace:*
+        version: link:../vite-plugin-external
+      '@seahax/vite-plugin-finalize':
+        specifier: workspace:*
+        version: link:../vite-plugin-finalize
+
+  packages/vite-plugin-external:
+    dependencies:
+      vite:
+        specifier: ^5.3.5
+        version: 5.3.5(@types/node@20.14.12)
+    devDependencies:
+      '@seahax/vite-plugin-chmodx':
+        specifier: workspace:*
+        version: link:../vite-plugin-chmodx
 
   packages/vite-plugin-finalize:
     dependencies:
@@ -99,15 +131,18 @@ importers:
         specifier: ^5.3.5
         version: 5.3.5(@types/node@20.14.12)
     devDependencies:
-      '@seahax/vite-plugin-chmodx':
+      '@seahax/vite-plugin-external':
         specifier: workspace:*
-        version: link:../vite-plugin-chmodx
+        version: link:../vite-plugin-external
 
   templates/my-library:
     devDependencies:
       '@seahax/vite-plugin-chmodx':
         specifier: workspace:*
         version: link:../../packages/vite-plugin-chmodx
+      '@seahax/vite-plugin-external':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-external
       '@seahax/vite-plugin-finalize':
         specifier: workspace:*
         version: link:../../packages/vite-plugin-finalize

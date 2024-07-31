@@ -1,14 +1,18 @@
-import external from '@seahax/vite-plugin-external';
-import finalize from '@seahax/vite-plugin-finalize';
+import { readFile } from 'node:fs/promises';
+import { isBuiltin } from 'node:module';
+
 import { defineConfig } from 'vite';
 
 process.chdir(import.meta.dirname);
 
+const packageJson = await readFile('./package.json', 'utf8').then(JSON.parse);
+const prodDepNames = Object.keys({
+  ...packageJson.dependencies,
+  ...packageJson.peerDependencies,
+  ...packageJson.optionalDependencies,
+});
+
 export default defineConfig({
-  plugins: [
-    external(),
-    finalize`tsc -b`,
-  ],
   build: {
     target: ['es2022'],
     lib: {
@@ -17,6 +21,7 @@ export default defineConfig({
     },
     sourcemap: true,
     rollupOptions: {
+      external: (id) => prodDepNames.includes(id) || isBuiltin(id) || id.startsWith('node:'),
       output: {
         preserveModules: true,
         entryFileNames: '[name].js',

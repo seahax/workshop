@@ -1,8 +1,8 @@
 {
-  "name": "@seahax/vite-plugin-chmodx",
+  "name": "@seahax/evented",
   "private": true,
   "version": "0.1.0",
-  "description": "Set executable bits on chunks that contain shebangs.",
+  "description": "Add typed events to classes.",
   "license": "Unlicense",
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
@@ -20,10 +20,9 @@
     "dist"
   ],
   "devDependencies": {
+    "@seahax/vite-plugin-chmodx": "workspace:*",
     "@seahax/vite-plugin-external": "workspace:*",
-    "@seahax/vite-plugin-finalize": "workspace:*"
-  },
-  "peerDependencies": {
+    "@seahax/vite-plugin-finalize": "workspace:*",
     "vite": "^5.3.5"
   }
 }

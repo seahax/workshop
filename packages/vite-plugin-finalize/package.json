@@ -20,7 +20,7 @@
     "dist"
   ],
   "devDependencies": {
-    "@seahax/vite-plugin-chmodx": "workspace:*"
+    "@seahax/vite-plugin-external": "workspace:*"
   },
   "dependencies": {
     "execa": "^9.3.0"

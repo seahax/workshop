@@ -2,24 +2,18 @@
   "extends": "../../tsconfig-defaults.json",
   "compilerOptions": {
     "composite": true,
-    "tsBuildInfoFile": "node_modules/.tsc/build.tsbuildinfo",
+    "tsBuildInfoFile": "node_modules/.tsc/test.tsbuildinfo",
     "rootDir": "src",
-    "outDir": "dist",
-    "noEmit": false,
-    "emitDeclarationOnly": true,
     // "lib": [
     //   "ES2022",
     //   "DOM",
     //   "DOM.Iterable"
     // ],
-    "types": [
-      "node"
-    ]
+    // "types": [
+    //   "node"
+    // ]
   },
   "include": [
-    "src"
-  ],
-  "exclude": [
-    "**/*.test.*"
+    "src/**/*.test.*"
   ]
 }

@@ -83,6 +83,7 @@ export default [
         '@typescript-eslint/no-unsafe-return': 'off',
         '@typescript-eslint/require-await': 'off',
         // Strict--
+        '@typescript-eslint/no-confusing-void-expression': 'off',
         '@typescript-eslint/no-dynamic-delete': 'off',
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/restrict-template-expressions': ['error', { allowAny: true, allowNumber: true, allowBoolean: true, allowNullish: true }],

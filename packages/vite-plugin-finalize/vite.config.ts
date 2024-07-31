@@ -1,22 +1,12 @@
-import { readFile } from 'node:fs/promises';
-import { isBuiltin } from 'node:module';
-
-import chmodx from '@seahax/vite-plugin-chmodx';
+import external from '@seahax/vite-plugin-external';
 import { $ } from 'execa';
 import { defineConfig } from 'vite';
 
 process.chdir(import.meta.dirname);
 
-const packageJson = await readFile('./package.json', 'utf8').then(JSON.parse);
-const prodDepNames = Object.keys({
-  ...packageJson.dependencies,
-  ...packageJson.peerDependencies,
-  ...packageJson.optionalDependencies,
-});
-
 export default defineConfig({
   plugins: [
-    chmodx(),
+    external(),
     {
       name: 'finalize',
       async writeBundle() {
@@ -32,7 +22,6 @@ export default defineConfig({
     },
     sourcemap: true,
     rollupOptions: {
-      external: (id) => prodDepNames.includes(id) || isBuiltin(id) || id.startsWith('node:'),
       output: {
         preserveModules: true,
         entryFileNames: '[name].js',
