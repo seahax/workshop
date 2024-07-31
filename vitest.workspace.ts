@@ -1,4 +1,4 @@
 export default [
-  'packages/*',
-  'templates/*',
+  'packages/*/vitest.config?(.*).ts',
+  'templates/*/vitest.config?(.*).ts',
 ];
