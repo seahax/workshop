@@ -2,6 +2,8 @@
 
 Add typed events to classes.
 
+Pub/sub is the pub food of algorithms. It's basic, but satisfying, and in some cases it can get weirdly fancy.
+
 ## Usage
 
 Extend the `Evented` type.
@@ -11,7 +13,6 @@ import { Evented } from '@seahax/evented';
 
 interface MyClassEvents {
   message: (value: string) => void;
-  error: (error: Error) => void;
 }
 
 class MyClass extends Evented<MyClassEvents> {
@@ -26,11 +27,8 @@ const instance = new MyClass();
 const off = instance.on('message', (value) => {
   ...
 });
-```
 
-Remove the listener by calling the function returned by the `on` method.
-
-```ts
+// Remove the listener by calling the returned function.
 off();
 ```
 
