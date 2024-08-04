@@ -1,0 +1,31 @@
+{
+  "name": "@seahax/restate",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Redux-like state management.",
+  "license": "Unlicense",
+  "scripts": {
+    "clean": "rm -rf dist node_modules/.tsc",
+    "build": "pnpm clean && vite build"
+  },
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@seahax/vite-plugin-chmodx": "workspace:*",
+    "@seahax/vite-plugin-external": "workspace:*",
+    "@seahax/vite-plugin-finalize": "workspace:*",
+    "vite": "^5.3.5"
+  },
+  "dependencies": {
+    "@seahax/evented": "workspace:^"
+  }
+}
