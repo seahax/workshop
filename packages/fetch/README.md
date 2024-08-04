@@ -17,8 +17,9 @@ export default createIntercept(async (request, next) => {
 
   // Replace the request to modify readonly properties.
   const newRequest = new Request(request, {
-    // If a new signal is provided, it is combined with the original signal,
-    // so that the request is aborted if either signal is aborted.
+    // If the request signal is replaced, the next() callback will create a
+    // new combined signal from the old and new signals, so that aborting
+    // either signal will still abort the request.
     signal: AbortSignal.timeout(5000),
   });
 

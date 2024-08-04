@@ -1,5 +1,6 @@
 import { type Intercept } from './intercept.js';
 import { Response } from './response.js';
+import { signalAny } from './signal.js';
 
 type Step = (request: Request) => Promise<Response>;
 
@@ -23,7 +24,15 @@ export function createFetch(
     .reverse()
     .reduce<Step>((next, intercept) => {
       return (request) => {
-        return intercept(request, (nextRequest = request) => {
+        return intercept(request, async (nextRequest = request) => {
+          if (request.signal !== nextRequest.signal) {
+            // If the signal has been replaced, then combine them so that
+            // canceling any of them will still cancel the request.
+            nextRequest = new Request(nextRequest, {
+              signal: signalAny([request.signal, nextRequest.signal]),
+            });
+          }
+
           return next(nextRequest);
         });
       };
