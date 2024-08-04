@@ -123,6 +123,8 @@ export default [
       rules: {
         // Recommended--
         'unicorn/no-null': 'off',
+        'unicorn/no-object-as-default-parameter': 'off',
+        'unicorn/no-useless-undefined': 'off',
         'unicorn/prevent-abbreviations': 'off',
       },
     },
