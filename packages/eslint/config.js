@@ -122,6 +122,7 @@ export default [
     {
       rules: {
         // Recommended--
+        'unicorn/no-array-reduce': 'off',
         'unicorn/no-null': 'off',
         'unicorn/no-object-as-default-parameter': 'off',
         'unicorn/no-useless-undefined': 'off',
