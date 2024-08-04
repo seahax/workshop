@@ -1,14 +1,22 @@
-type UnionToIntersection<TUnion> = (
-  TUnion extends unknown ? (distributedUnion: TUnion) => void : never
-) extends ((mergedIntersection: infer Intersection) => void)
-  ? Intersection & TUnion : never;
+import { type PickByType, type UnionToIntersection } from './types.js';
 
-type PickEvents<TEvents extends object> = {
-  [TName in keyof TEvents as TEvents[TName] extends (...args: any[]) => void ? TName : never
-  ]: Extract<TEvents[TName], (...args: any[]) => void>;
-};
+type Events<TEvents extends object> = (
+  PickByType<TEvents, (...args: any[]) => void>
+);
 
-interface ListenerOptions {
+type EventName<TEvents extends object> = (
+  keyof Events<TEvents>
+);
+
+type EventListener<TEvents extends object, TName extends EventName<TEvents>> = (
+  UnionToIntersection<Events<TEvents>[TName]>
+);
+
+type EventArgs<TEvents extends object, TName extends EventName<TEvents>> = (
+  Parameters<EventListener<TEvents, TName>>
+);
+
+interface EventListenerOptions {
   once?: boolean;
 }
 
@@ -20,10 +28,10 @@ export class Evented<const TEvents extends object> {
     this.emit = this.emit.bind(this);
   }
 
-  on<TName extends keyof PickEvents<TEvents>>(
+  on<TName extends EventName<TEvents>>(
     name: TName,
-    listener: UnionToIntersection<PickEvents<TEvents>[TName]>,
-    { once = false }: ListenerOptions = {},
+    listener: EventListener<TEvents, TName>,
+    { once = false }: EventListenerOptions = {},
   ): () => void {
     let listeners = this._listeners.get(name);
 
@@ -50,9 +58,9 @@ export class Evented<const TEvents extends object> {
     return off;
   }
 
-  emit<TName extends keyof PickEvents<TEvents>>(
+  emit<TName extends EventName<TEvents>>(
     name: TName,
-    ...args: Parameters<PickEvents<TEvents>[TName]>
+    ...args: EventArgs<TEvents, TName>
   ): boolean {
     const listeners = this._listeners.get(name);
 
