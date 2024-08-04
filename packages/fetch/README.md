@@ -50,7 +50,16 @@ export default createFetch([
 Wrap a some other (non-global) fetch function by passing the function as the second argument.
 
 ```ts
-export default createFetch([
-  // intercepts...
-], fetch);
+export default createFetch([...], fetch);
+```
+
+Fetch functions created by this library are API compatible with the global fetch function. The arguments are the same, and the returned response is an _extension_ of the vanilla `globalThis.Response` class.
+
+The returned response adds a `request` property that contains the request that was made, and an `assertOk()` method which throws a `ResponseError` if the response `status` is not `ok`.
+
+```ts
+import { type Response } from '@seahax/fetch';
+import { fetch } from './path/to/my/fetch.js';
+
+const { assertOk, request }: Response = await fetch('https://example.com');
 ```

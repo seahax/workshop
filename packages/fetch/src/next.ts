@@ -1,5 +1,5 @@
-import { type ResponseEx } from './response.js';
+import { type Response } from './response.js';
 
 export type Next = (
   request?: Request
-) => Promise<ResponseEx>;
+) => Promise<Response>;
