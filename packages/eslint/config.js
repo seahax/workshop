@@ -75,12 +75,14 @@ export default [
         '@typescript-eslint/switch-exhaustiveness-check': 'warn',
         // Recommended--
         '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-namespace': 'off',
         '@typescript-eslint/no-this-alias': 'off',
         '@typescript-eslint/no-unsafe-argument': 'off',
         '@typescript-eslint/no-unsafe-assignment': 'off',
         '@typescript-eslint/no-unsafe-call': 'off',
         '@typescript-eslint/no-unsafe-member-access': 'off',
         '@typescript-eslint/no-unsafe-return': 'off',
+        '@typescript-eslint/prefer-namespace-keyword': 'off',
         '@typescript-eslint/require-await': 'off',
         // Strict--
         '@typescript-eslint/no-confusing-void-expression': 'off',
@@ -126,6 +128,7 @@ export default [
         'unicorn/no-null': 'off',
         'unicorn/no-object-as-default-parameter': 'off',
         'unicorn/no-useless-undefined': 'off',
+        'unicorn/prefer-top-level-await': 'off',
         'unicorn/prevent-abbreviations': 'off',
       },
     },
