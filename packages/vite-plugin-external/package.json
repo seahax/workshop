@@ -19,9 +19,6 @@
   "files": [
     "dist"
   ],
-  "devDependencies": {
-    "@seahax/vite-plugin-chmodx": "workspace:*"
-  },
   "peerDependencies": {
     "vite": "^5.3.5"
   }
