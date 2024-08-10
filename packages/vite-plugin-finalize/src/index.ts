@@ -40,7 +40,3 @@ export default function finalize(...args: [callback: Callback] | [options: Optio
     },
   };
 }
-
-void finalize(async ($) => {
-  await $`tsc -b`;
-});

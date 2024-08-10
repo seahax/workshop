@@ -10,7 +10,7 @@ export default defineConfig({
     {
       name: 'finalize',
       async writeBundle() {
-        await $`tsc -b`;
+        await $`tsc -b --force`;
       },
     },
   ],

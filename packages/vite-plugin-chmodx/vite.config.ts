@@ -7,7 +7,7 @@ process.chdir(import.meta.dirname);
 export default defineConfig({
   plugins: [
     external(),
-    finalize`tsc -b`,
+    finalize`tsc -b --force`,
   ],
   build: {
     target: ['es2022'],

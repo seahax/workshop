@@ -13,7 +13,7 @@ export default defineConfig({
   plugins: [
     finalize(async ($, config, bundle) => {
       // Example: Run TypeScript to check types and/or generate declarations.
-      await $`tsc -b`;
+      await $`tsc -b --force`;
     }),
   ],
 });
@@ -22,7 +22,7 @@ export default defineConfig({
 The `finalize` plugin can also be used with a template string to run a command, just like the `execa` function.
 
 ```ts
-finalize`tsc -b`;
+finalize`tsc -b --force`;
 // With execa options.
-finalize({ cwd: './relative/to/vite/config/root' })`tsc -b`;
+finalize({ cwd: './relative/to/vite/config/root' })`tsc -b --force`;
 ```
