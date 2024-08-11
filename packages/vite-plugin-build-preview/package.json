@@ -1,0 +1,39 @@
+{
+  "name": "@seahax/vite-plugin-build-preview",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Start a preview server when Vite build watching.",
+  "license": "Unlicense",
+  "scripts": {
+    "clean": "rm -rf dist node_modules/.tsc",
+    "build": "pnpm clean && vite build",
+    "start": "pnpm run build && vite build --watch --config=dev/vite.config.ts"
+  },
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@seahax/vite-plugin-chmodx": "workspace:*",
+    "@seahax/vite-plugin-external": "workspace:*",
+    "@seahax/vite-plugin-finalize": "workspace:*"
+  },
+  "peerDependencies": {
+    "vite": "^5.3.5"
+  },
+  "dependencies": {
+    "@types/ansi-html": "^0.0.0",
+    "@types/ws": "^8.5.12",
+    "ansi-html": "^0.0.9",
+    "chalk": "^5.3.0",
+    "escape-goat": "^4.0.0",
+    "ws": "^8.18.0"
+  }
+}
