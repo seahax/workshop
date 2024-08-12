@@ -5,7 +5,10 @@ import { createLogger, type InlineConfig, mergeConfig, type PluginOption, previe
 import WebSocket from 'ws';
 import { WebSocketServer } from 'ws';
 
-import middleware from './middleware.js';
+import clientInject from './middleware/client-inject.js';
+import clientRoute from './middleware/client-route.js';
+import error from './middleware/error.js';
+import ping from './middleware/ping.js';
 
 export interface BuildPreviewConfig extends Pick<InlineConfig, 'plugins'> {
   reload?: boolean;
@@ -29,11 +32,6 @@ export default function plugin({ reload = true, ...previewConfig }: BuildPreview
     name: 'preview',
     apply: 'build',
 
-    async config(config) {
-      clearScreen = config.clearScreen ?? true;
-      config.clearScreen = undefined;
-    },
-
     async configResolved(config) {
       if (IS_WATCH_ARG_FOUND || config.build.watch) {
         enabled = true;
@@ -42,6 +40,21 @@ export default function plugin({ reload = true, ...previewConfig }: BuildPreview
         configFile = config.configFile;
         inlineConfig = config.inlineConfig;
       }
+
+      clearScreen = config.clearScreen ?? true;
+
+      Object.assign(config, {
+        clearScreen: undefined,
+        build: {
+          ...config.build,
+          // XXX: Removing output files while previewing can lead to errors
+          // when serving files that are temporarily missing. Possibly, a
+          // manual cleanup could be added to this plugin in the `closeBundle`
+          // hook, to remove files that were not generated in the last build,
+          // as long as the last build was successful.
+          emptyOutDir: false,
+        },
+      });
     },
 
     async buildStart() {
@@ -96,7 +109,12 @@ export default function plugin({ reload = true, ...previewConfig }: BuildPreview
               name: 'preview',
               apply: 'serve',
               configurePreviewServer({ middlewares }) {
-                middlewares.use(middleware({ base, reload, getError: () => buildError }));
+                middlewares.use(ping());
+                middlewares.use(clientRoute({ base }));
+                if (reload) {
+                  middlewares.use(clientInject({ base }));
+                }
+                middlewares.use(error({ getError: () => buildError }));
               },
             },
           ],

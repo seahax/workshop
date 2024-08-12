@@ -1,5 +1,3 @@
-console.log('[vite] connecting...');
-
 // XXX: The following line must stay exactly as-is so that the real base can be
 // injected at runtime.
 const base = '/';
@@ -7,6 +5,8 @@ const pingUrl = window.location.protocol + '//' + window.location.host + base;
 const socketUrl = (window.location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + window.location.host + base;
 
 function connect() {
+  console.log('[vite] connecting...');
+
   const socket = new WebSocket(socketUrl);
 
   socket.addEventListener('open', () => {
