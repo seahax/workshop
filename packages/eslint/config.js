@@ -73,6 +73,8 @@ export default [
         '@typescript-eslint/consistent-type-exports': ['warn', { fixMixedExportsWithInlineTypeSpecifier: true }],
         '@typescript-eslint/explicit-function-return-type': ['warn', { allowExpressions: true, allowConciseArrowFunctionExpressionsStartingWithVoid: true }],
         '@typescript-eslint/switch-exhaustiveness-check': 'warn',
+        // Stylistic--
+        '@typescript-eslint/prefer-nullish-coalescing': 'off',
         // Recommended--
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-namespace': 'off',
