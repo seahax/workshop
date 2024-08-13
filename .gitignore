@@ -1,16 +1,16 @@
 .nx
 .vscode
+.terraform
 node_modules
 dist
 lib
 out
 coverage
 
+.DS_Store
 *.log
 *.tar
 *.gz
 *.tgz
 *.zip
 *.tfstate*
-
-.nx/cache
