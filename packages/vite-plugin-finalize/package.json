@@ -1,6 +1,5 @@
 {
   "name": "@seahax/vite-plugin-finalize",
-  "private": true,
   "version": "0.1.0",
   "description": "",
   "license": "Unlicense",
