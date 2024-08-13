@@ -2,7 +2,7 @@
   "$schema": "node_modules/lerna/schemas/lerna-schema.json",
   "version": "independent",
   "npmClient": "pnpm",
-  "loglevel": "warn",
+  "loglevel": "error",
   "command": {
     "run": {
       "stream": true

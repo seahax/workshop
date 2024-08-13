@@ -20,6 +20,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@seahax/vite-plugin-chmodx": "workspace:*",
     "@seahax/vite-plugin-external": "workspace:*",
