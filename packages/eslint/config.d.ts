@@ -1,3 +1,3 @@
 import type { Linter } from 'eslint';
-const value: Linter.Config[];
+const value: Linter.FlatConfig[];
 export default value;
