@@ -1,5 +1,6 @@
 import { FlatCompat } from '@eslint/eslintrc';
 import eslint from '@eslint/js';
+import progress from '@seahax/eslint-progress';
 import stylistic from '@stylistic/eslint-plugin';
 import react from 'eslint-plugin-react';
 import regexp from 'eslint-plugin-regexp';
@@ -11,6 +12,7 @@ const compat = new FlatCompat({ baseDirectory: import.meta.dirname });
 
 export default [
   // Bases
+  progress(),
   eslint.configs.recommended,
   stylistic.configs.customize({ indent: 2, quoteProps: 'as-needed', arrowParens: true, semi: true }),
   react.configs.flat.recommended,

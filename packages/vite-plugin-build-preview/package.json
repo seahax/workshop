@@ -28,9 +28,6 @@
     "@seahax/vite-plugin-external": "workspace:*",
     "@seahax/vite-plugin-finalize": "workspace:*"
   },
-  "peerDependencies": {
-    "vite": "^5.3.5"
-  },
   "dependencies": {
     "@types/ansi-html": "^0.0.0",
     "@types/negotiator": "^0.6.3",
@@ -41,5 +38,8 @@
     "negotiator": "^0.6.3",
     "stream-replace-string": "^2.0.0",
     "ws": "^8.18.0"
+  },
+  "peerDependencies": {
+    "vite": "^5.3.5"
   }
 }

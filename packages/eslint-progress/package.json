@@ -1,8 +1,8 @@
 {
-  "name": "@seahax/fetch-intercept-throw",
+  "name": "@seahax/eslint-progress",
   "private": true,
   "version": "0.1.0",
-  "description": "Fetch intercept that throws on non-ok responses.",
+  "description": "List filenames as they are linted.",
   "license": "Unlicense",
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
@@ -28,6 +28,6 @@
     "@seahax/vite-plugin-finalize": "workspace:*"
   },
   "dependencies": {
-    "@seahax/fetch": "workspace:^"
+    "eslint": "^8.57.0"
   }
 }
