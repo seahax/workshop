@@ -26,7 +26,7 @@
     "@seahax/vite-plugin-chmodx": "workspace:*",
     "@seahax/vite-plugin-external": "workspace:*",
     "@seahax/vite-plugin-finalize": "workspace:*",
-    "vite": "^5.3.5"
+    "vite": "^5.4.0"
   },
   "dependencies": {
     "@seahax/evented": "workspace:^"
