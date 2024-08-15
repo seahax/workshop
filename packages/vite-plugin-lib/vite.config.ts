@@ -25,7 +25,7 @@ export default defineConfig({
       },
     },
   },
-  resolve: {
-    conditions: ['node'],
-  },
+  // resolve: {
+  //   conditions: ['node'],
+  // },
 });

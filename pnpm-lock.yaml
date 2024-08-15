@@ -99,39 +99,21 @@ importers:
         specifier: ^8.57.0
         version: 8.57.0
     devDependencies:
-      '@seahax/vite-plugin-chmodx':
+      '@seahax/vite-plugin-lib':
         specifier: workspace:*
-        version: link:../vite-plugin-chmodx
-      '@seahax/vite-plugin-external':
-        specifier: workspace:*
-        version: link:../vite-plugin-external
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
+        version: link:../vite-plugin-lib
 
   packages/evented:
     devDependencies:
-      '@seahax/vite-plugin-chmodx':
+      '@seahax/vite-plugin-lib':
         specifier: workspace:*
-        version: link:../vite-plugin-chmodx
-      '@seahax/vite-plugin-external':
-        specifier: workspace:*
-        version: link:../vite-plugin-external
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
+        version: link:../vite-plugin-lib
 
   packages/fetch:
     devDependencies:
-      '@seahax/vite-plugin-chmodx':
+      '@seahax/vite-plugin-lib':
         specifier: workspace:*
-        version: link:../vite-plugin-chmodx
-      '@seahax/vite-plugin-external':
-        specifier: workspace:*
-        version: link:../vite-plugin-external
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
+        version: link:../vite-plugin-lib
 
   packages/fetch-intercept-retry:
     dependencies:
@@ -139,15 +121,9 @@ importers:
         specifier: workspace:^
         version: link:../fetch
     devDependencies:
-      '@seahax/vite-plugin-chmodx':
+      '@seahax/vite-plugin-lib':
         specifier: workspace:*
-        version: link:../vite-plugin-chmodx
-      '@seahax/vite-plugin-external':
-        specifier: workspace:*
-        version: link:../vite-plugin-external
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
+        version: link:../vite-plugin-lib
 
   packages/fetch-intercept-set-headers:
     dependencies:
@@ -155,15 +131,9 @@ importers:
         specifier: workspace:^
         version: link:../fetch
     devDependencies:
-      '@seahax/vite-plugin-chmodx':
+      '@seahax/vite-plugin-lib':
         specifier: workspace:*
-        version: link:../vite-plugin-chmodx
-      '@seahax/vite-plugin-external':
-        specifier: workspace:*
-        version: link:../vite-plugin-external
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
+        version: link:../vite-plugin-lib
 
   packages/fetch-intercept-throw:
     dependencies:
@@ -171,15 +141,9 @@ importers:
         specifier: workspace:^
         version: link:../fetch
     devDependencies:
-      '@seahax/vite-plugin-chmodx':
+      '@seahax/vite-plugin-lib':
         specifier: workspace:*
-        version: link:../vite-plugin-chmodx
-      '@seahax/vite-plugin-external':
-        specifier: workspace:*
-        version: link:../vite-plugin-external
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
+        version: link:../vite-plugin-lib
 
   packages/fetch-intercept-timeout:
     dependencies:
@@ -187,15 +151,9 @@ importers:
         specifier: workspace:^
         version: link:../fetch
     devDependencies:
-      '@seahax/vite-plugin-chmodx':
+      '@seahax/vite-plugin-lib':
         specifier: workspace:*
-        version: link:../vite-plugin-chmodx
-      '@seahax/vite-plugin-external':
-        specifier: workspace:*
-        version: link:../vite-plugin-external
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
+        version: link:../vite-plugin-lib
 
   packages/restate:
     dependencies:
@@ -203,6 +161,57 @@ importers:
         specifier: workspace:^
         version: link:../evented
     devDependencies:
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+
+  packages/vite-plugin-chmodx:
+    dependencies:
+      vite:
+        specifier: ^5.3.5
+        version: 5.4.0(@types/node@22.3.0)
+    devDependencies:
+      '@seahax/vite-plugin-external':
+        specifier: workspace:*
+        version: link:../vite-plugin-external
+      '@seahax/vite-plugin-finalize':
+        specifier: workspace:*
+        version: link:../vite-plugin-finalize
+
+  packages/vite-plugin-data:
+    dependencies:
+      '@seahax/vite-plugin-external':
+        specifier: workspace:*
+        version: link:../vite-plugin-external
+      vite:
+        specifier: ^5.4.0
+        version: 5.4.0(@types/node@22.3.0)
+    devDependencies:
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+
+  packages/vite-plugin-external:
+    dependencies:
+      vite:
+        specifier: ^5.3.5
+        version: 5.4.0(@types/node@22.3.0)
+
+  packages/vite-plugin-finalize:
+    dependencies:
+      execa:
+        specifier: ^9.3.1
+        version: 9.3.1
+      vite:
+        specifier: ^5.3.5
+        version: 5.4.0(@types/node@22.3.0)
+    devDependencies:
+      '@seahax/vite-plugin-external':
+        specifier: workspace:*
+        version: link:../vite-plugin-external
+
+  packages/vite-plugin-lib:
+    dependencies:
       '@seahax/vite-plugin-chmodx':
         specifier: workspace:*
         version: link:../vite-plugin-chmodx
@@ -212,8 +221,11 @@ importers:
       '@seahax/vite-plugin-finalize':
         specifier: workspace:*
         version: link:../vite-plugin-finalize
+      vite:
+        specifier: ^5.4.0
+        version: 5.4.0(@types/node@22.3.0)
 
-  packages/vite-plugin-build-preview:
+  packages/vite-plugin-preview:
     dependencies:
       '@types/ansi-html':
         specifier: ^0.0.0
@@ -246,59 +258,15 @@ importers:
         specifier: ^8.18.0
         version: 8.18.0
     devDependencies:
-      '@seahax/vite-plugin-chmodx':
+      '@seahax/vite-plugin-lib':
         specifier: workspace:*
-        version: link:../vite-plugin-chmodx
-      '@seahax/vite-plugin-external':
-        specifier: workspace:*
-        version: link:../vite-plugin-external
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
-
-  packages/vite-plugin-chmodx:
-    dependencies:
-      vite:
-        specifier: ^5.3.5
-        version: 5.4.0(@types/node@22.3.0)
-    devDependencies:
-      '@seahax/vite-plugin-external':
-        specifier: workspace:*
-        version: link:../vite-plugin-external
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
-
-  packages/vite-plugin-external:
-    dependencies:
-      vite:
-        specifier: ^5.3.5
-        version: 5.4.0(@types/node@22.3.0)
-
-  packages/vite-plugin-finalize:
-    dependencies:
-      execa:
-        specifier: ^9.3.1
-        version: 9.3.1
-      vite:
-        specifier: ^5.3.5
-        version: 5.4.0(@types/node@22.3.0)
-    devDependencies:
-      '@seahax/vite-plugin-external':
-        specifier: workspace:*
-        version: link:../vite-plugin-external
+        version: link:../vite-plugin-lib
 
   templates/my-library:
     devDependencies:
-      '@seahax/vite-plugin-chmodx':
+      '@seahax/vite-plugin-lib':
         specifier: workspace:*
-        version: link:../../packages/vite-plugin-chmodx
-      '@seahax/vite-plugin-external':
-        specifier: workspace:*
-        version: link:../../packages/vite-plugin-external
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../../packages/vite-plugin-finalize
+        version: link:../../packages/vite-plugin-lib
 
 packages:
 
@@ -6429,13 +6397,13 @@ snapshots:
   jake@10.9.2:
     dependencies:
       async: 3.2.5
-      chalk: 4.1.0
+      chalk: 4.1.2
       filelist: 1.0.4
       minimatch: 3.1.2
 
   jest-diff@29.7.0:
     dependencies:
-      chalk: 4.1.0
+      chalk: 4.1.2
       diff-sequences: 29.6.3
       jest-get-type: 29.6.3
       pretty-format: 29.7.0

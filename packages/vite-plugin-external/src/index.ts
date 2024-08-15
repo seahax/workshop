@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import { type Plugin, type Rollup } from 'vite';
 
-interface ExternalOptions {
+export interface ExternalOptions {
   packageJsonPath?: string;
 }
 

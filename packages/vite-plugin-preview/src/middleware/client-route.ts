@@ -8,7 +8,7 @@ interface Config {
   readonly base: string;
 }
 
-export const CLIENT_SCRIPT_NAME = '/@seahax/vite-plugin-build-preview/client.js';
+export const CLIENT_SCRIPT_NAME = '/@seahax/vite-plugin-preview/client.js';
 
 export default function middleware({ base }: Config): Connect.NextHandleFunction {
   const clientRoute = path.posix.join(base, CLIENT_SCRIPT_NAME);

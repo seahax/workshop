@@ -23,8 +23,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "@seahax/vite-plugin-chmodx": "workspace:*",
-    "@seahax/vite-plugin-external": "workspace:*",
-    "@seahax/vite-plugin-finalize": "workspace:*"
+    "@seahax/vite-plugin-lib": "workspace:*"
   }
 }

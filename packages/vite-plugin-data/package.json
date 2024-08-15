@@ -1,8 +1,8 @@
 {
-  "name": "@seahax/fetch-intercept-timeout",
+  "name": "@seahax/vite-plugin-data",
   "private": true,
   "version": "0.1.0",
-  "description": "Fetch intercept that throws on non-ok responses.",
+  "description": "Compile time data modules.",
   "license": "Unlicense",
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
@@ -26,6 +26,9 @@
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "dependencies": {
-    "@seahax/fetch": "workspace:^"
+    "@seahax/vite-plugin-external": "workspace:*"
+  },
+  "peerDependencies": {
+    "vite": "^5.4.0"
   }
 }

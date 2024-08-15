@@ -1,5 +1,5 @@
 {
-  "name": "@seahax/vite-plugin-build-preview",
+  "name": "@seahax/vite-plugin-preview",
   "private": true,
   "version": "0.1.0",
   "description": "Start a preview server when Vite build watching.",
@@ -24,9 +24,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@seahax/vite-plugin-chmodx": "workspace:*",
-    "@seahax/vite-plugin-external": "workspace:*",
-    "@seahax/vite-plugin-finalize": "workspace:*"
+    "@seahax/vite-plugin-lib": "workspace:*"
   },
   "dependencies": {
     "@types/ansi-html": "^0.0.0",

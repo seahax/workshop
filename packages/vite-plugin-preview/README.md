@@ -1,4 +1,4 @@
-# @seahax/vite-plugin-build-preview
+# @seahax/vite-plugin-preview
 
 Start a preview server when Vite build watching.
 
