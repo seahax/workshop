@@ -1,1 +1,8 @@
-export { default } from '@seahax/eslint';
+import seahax from '@seahax/eslint';
+
+export default [
+  {
+    ignores: ['**/{node_modules,lib,dist,out,coverage}'],
+  },
+  ...seahax,
+];

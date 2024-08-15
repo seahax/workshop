@@ -113,8 +113,4 @@ export default [
       'import/no-extraneous-dependencies': ['off'],
     },
   },
-
-  {
-    ignores: ['**/{node_modules,lib,dist,out,coverage}'],
-  },
 ];
