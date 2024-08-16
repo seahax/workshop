@@ -5,14 +5,15 @@ import external from '@seahax/vite-plugin-external';
 import { build, createLogger, type InlineConfig, type LogLevel, mergeConfig, type Plugin, type Rollup } from 'vite';
 
 export interface DataOptions {
-  readonly match?: RegExp | ((id: string) => boolean);
-  readonly config?: InlineConfig | ((id: string) => InlineConfig | Promise<InlineConfig>);
+  readonly match?: RegExp | ((filename: string) => boolean);
+  readonly config?: InlineConfig | ((filename: string) => InlineConfig | Promise<InlineConfig>);
 }
 
 const DEFAULT_MATCH = /\.data\.[mc]?[tj]s$/iu;
 
 export default function plugin({ match = DEFAULT_MATCH, config = {} }: DataOptions = {}): Plugin {
   const isMatch = typeof match === 'function' ? match : (id: string) => match.test(id);
+  const filenameDependencies = new Map<string, Set<string>>();
 
   let root: string;
   let logLevel: LogLevel | undefined;
@@ -24,29 +25,43 @@ export default function plugin({ match = DEFAULT_MATCH, config = {} }: DataOptio
       logLevel = config.logLevel;
     },
     async load(id) {
-      id = id.replace(/\?.*$/u, '');
+      const filename = id.replace(/\?.*$/u, '');
 
-      if (!path.isAbsolute(id)) return null;
-      if (!isMatch(id)) return null;
+      if (!path.isAbsolute(filename)) return null;
+      if (!isMatch(filename)) return null;
 
-      const { dir, name } = path.parse(id);
+      const { dir, name } = path.parse(filename);
       const outDir = await fs.mkdtemp(path.join(dir, `.${name}-`));
 
       try {
-        const customConfig = typeof config === 'function' ? await config(id) : config;
+        const dependencies = new Set<string>();
+        const customConfig = typeof config === 'function' ? await config(filename) : config;
         const mergedConfig: InlineConfig = mergeConfig<InlineConfig, InlineConfig>(
           {
             configFile: false,
             root,
             customLogger: createLogger(logLevel === 'silent' ? 'silent' : 'error', { allowClearScreen: false }),
-            plugins: [external()],
+            plugins: [
+              {
+                name: 'data',
+                enforce: 'pre',
+                load(id) {
+                  if (path.isAbsolute(id)) {
+                    dependencies.add(id.replace(/\?.*$/u, ''));
+                  }
+
+                  return null;
+                },
+              },
+              external(),
+            ],
             build: {
               target: customConfig.build?.target
                 ? undefined
                 : ['esnext'],
               outDir,
               lib: {
-                entry: id,
+                entry: filename,
                 formats: customConfig.build?.lib && customConfig.build.lib.formats
                   ? undefined
                   : ['es'],
@@ -79,11 +94,30 @@ export default function plugin({ match = DEFAULT_MATCH, config = {} }: DataOptio
           return `${prefix}${suffix};\n`;
         }));
 
+        filenameDependencies.set(filename, dependencies);
+
         return { code: statements.join('') };
       }
       finally {
         await fs.rm(outDir, { recursive: true, force: true });
       }
+    },
+    handleHotUpdate(ctx) {
+      const invalidated = new Set(ctx.modules);
+
+      for (const [filename, dependencies] of filenameDependencies) {
+        if (dependencies.has(ctx.file)) {
+          const dataModules = ctx.server.moduleGraph.getModulesByFile(filename);
+
+          if (!dataModules) continue;
+
+          for (const dataModule of dataModules) {
+            invalidated.add(dataModule);
+          }
+        }
+      }
+
+      return [...invalidated];
     },
   };
 }
