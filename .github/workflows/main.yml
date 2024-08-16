@@ -18,5 +18,5 @@ jobs:
         with: { node-version: lts/*, registry-url: 'https://registry.npmjs.org' }
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      - run: pnpm test
+      - run: pnpm check
       - run: pnpm release --yes
