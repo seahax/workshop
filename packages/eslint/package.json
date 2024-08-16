@@ -1,6 +1,7 @@
 {
   "name": "@seahax/eslint",
-  "version": "0.1.1",
+  "private": false,
+  "version": "0.1.2",
   "license": "Unlicense",
   "type": "module",
   "types": "config.d.ts",

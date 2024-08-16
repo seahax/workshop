@@ -1,6 +1,6 @@
 {
   "name": "@seahax/eslint-progress",
-  "private": true,
+  "private": false,
   "version": "0.1.0",
   "description": "List filenames as they are linted.",
   "license": "Unlicense",
