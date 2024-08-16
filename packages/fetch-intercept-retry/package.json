@@ -4,6 +4,11 @@
   "version": "0.1.0",
   "description": "Fetch intercept that retries requests.",
   "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/fetch-intercept-retry"
+  },
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
     "build": "pnpm clean && vite build"

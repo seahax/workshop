@@ -1,9 +1,14 @@
 {
   "name": "@seahax/unreleased",
-  "private": true,
+  "private": false,
   "version": "0.1.0",
   "description": "Identify packages with unreleased changes.",
   "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/unreleased"
+  },
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
     "build": "pnpm clean && vite build"

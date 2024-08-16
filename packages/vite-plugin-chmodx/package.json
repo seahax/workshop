@@ -4,6 +4,11 @@
   "version": "0.1.0",
   "description": "Set executable bits on chunks that contain shebangs.",
   "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/vite-plugin-chmodx"
+  },
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
     "build": "pnpm clean && vite build"

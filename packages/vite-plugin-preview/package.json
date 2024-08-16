@@ -4,6 +4,11 @@
   "version": "0.1.0",
   "description": "Start a preview server when Vite build watching.",
   "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/vite-plugin-preview"
+  },
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
     "build": "pnpm clean && vite build",

@@ -4,6 +4,11 @@
   "version": "0.1.0",
   "description": "Add typed events to classes.",
   "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/evented"
+  },
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
     "build": "pnpm clean && vite build"

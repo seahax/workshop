@@ -1,9 +1,14 @@
 {
   "name": "@seahax/eslint-progress",
   "private": false,
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "List filenames as they are linted.",
   "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/eslint-progress"
+  },
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
     "build": "pnpm clean && vite build"

@@ -1,9 +1,14 @@
 {
   "name": "@seahax/vite-plugin-finalize",
   "private": false,
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/vite-plugin-finalize"
+  },
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
     "build": "pnpm clean && vite build"

@@ -4,6 +4,11 @@
   "version": "0.1.0",
   "description": "Fetch intercept that throws on non-ok responses.",
   "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/fetch-intercept-timeout"
+  },
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
     "build": "pnpm clean && vite build"

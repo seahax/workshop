@@ -13,6 +13,7 @@ void (async () => {
   const readmeText = await readFile('README.md', 'utf8');
 
   packageJson.name = `@seahax/${newName}`;
+  packageJson.repository.url = `packages/${newName}`;
   delete packageJson?.scripts?.rename;
 
   await writeFile('package.json', JSON.stringify(packageJson, null, 2) + '\n');
