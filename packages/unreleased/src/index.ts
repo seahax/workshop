@@ -31,11 +31,14 @@ Options:
     return;
   }
 
-  const packageJson = JSON.parse(await fs.readFile('package.json', 'utf8'));
+  const packageJson = await getPackageJson();
 
-  if (!packageJson || typeof packageJson !== 'object') return;
-  if (!packageJson.name || typeof packageJson.name !== 'string') return;
-  if (packageJson.private) return;
+  if (packageJson === undefined) {
+    throw new Error('package.json not found');
+  }
+
+  if (typeof packageJson?.name !== 'string') return;
+  if (packageJson?.private) return;
 
   const npmResult = await $({ all: true, reject: false })`npm view ${packageJson.name} --json gitHead`;
 
@@ -58,7 +61,7 @@ Options:
   }
 
   const gitHead = JSON.parse(npmResult.stdout);
-  const gitResult = await $({ all: true, reject: false })`git diff --name-only ${gitHead}`;
+  const gitResult = await $({ all: true, reject: false })`git diff --name-only ${gitHead} -- .`;
 
   if (gitResult.exitCode !== 0) {
     process.stderr.write(gitResult.all);
@@ -73,3 +76,22 @@ Options:
   console.error(String(error));
   process.exit(1);
 });
+
+async function getPackageJson(): Promise<any> {
+  try {
+    return JSON.parse(await fs.readFile('package.json', 'utf8'));
+  }
+  catch (error: any) {
+    if (error?.code !== 'ENOENT') {
+      throw error;
+    }
+  }
+
+  const cwd = process.cwd();
+
+  process.chdir('..');
+
+  if (process.cwd() === cwd) return;
+
+  return getPackageJson();
+}
