@@ -5,15 +5,19 @@
   "scripts": {
     "clean": "lerna run clean && nx reset",
     "build": "lerna run build",
-    "test": "pnpm build && eslint . && vitest run && lerna run test",
+    "lint": "lerna run lint && eslint .",
+    "test": "lerna run test && vitest run",
+    "check": "pnpm build && pnpm lint --max-warnings=0 && pnpm test",
     "bump": "lerna version",
     "release": "lerna publish from-package --no-private",
+    "unreleased": "lerna exec unreleased",
     "modernize": "npx npm-check-updates@latest -i --root --workspaces --peer --format group"
   },
   "type": "module",
   "packageManager": "pnpm@9.7.1+sha256.46f1bbc8f8020aa9869568c387198f1a813f21fb44c82f400e7d1dbde6c70b40",
   "devDependencies": {
     "@seahax/eslint": "workspace:*",
+    "@seahax/unreleased": "workspace:*",
     "@types/node": "^22.3.0",
     "@vitest/coverage-v8": "^2.0.5",
     "eslint": "^8.57.0",

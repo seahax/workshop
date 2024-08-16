@@ -11,6 +11,9 @@ importers:
       '@seahax/eslint':
         specifier: workspace:*
         version: link:packages/eslint
+      '@seahax/unreleased':
+        specifier: workspace:*
+        version: link:packages/unreleased
       '@types/node':
         specifier: ^22.3.0
         version: 22.3.0
@@ -160,6 +163,16 @@ importers:
       '@seahax/evented':
         specifier: workspace:^
         version: link:../evented
+    devDependencies:
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+
+  packages/unreleased:
+    dependencies:
+      execa:
+        specifier: ^9.3.1
+        version: 9.3.1
     devDependencies:
       '@seahax/vite-plugin-lib':
         specifier: workspace:*

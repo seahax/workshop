@@ -1,0 +1,25 @@
+{
+  "name": "@seahax/unreleased",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Identify packages with unreleased changes.",
+  "license": "Unlicense",
+  "scripts": {
+    "clean": "rm -rf dist node_modules/.tsc",
+    "build": "pnpm clean && vite build"
+  },
+  "type": "module",
+  "bin": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@seahax/vite-plugin-lib": "workspace:*"
+  },
+  "dependencies": {
+    "execa": "^9.3.1"
+  }
+}
