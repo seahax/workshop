@@ -37,7 +37,7 @@ Options:
   if (!packageJson.name || typeof packageJson.name !== 'string') return;
   if (packageJson.private) return;
 
-  const npmResult = await $({ all: true })`npm view ${packageJson.name} --json gitHead`;
+  const npmResult = await $({ all: true, reject: false })`npm view ${packageJson.name} --json gitHead`;
 
   if (npmResult.exitCode !== 0) {
     try {
@@ -58,7 +58,7 @@ Options:
   }
 
   const gitHead = JSON.parse(npmResult.stdout);
-  const gitResult = await $({ all: true })`git diff --name-only ${gitHead}`;
+  const gitResult = await $({ all: true, reject: false })`git diff --name-only ${gitHead}`;
 
   if (gitResult.exitCode !== 0) {
     process.stderr.write(gitResult.all);
