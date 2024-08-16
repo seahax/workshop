@@ -1,8 +1,8 @@
 {
   "name": "@seahax/vite-plugin-finalize",
   "private": false,
-  "version": "0.1.2",
-  "description": "",
+  "version": "0.1.3",
+  "description": "Run a task after the bundle is written.",
   "license": "Unlicense",
   "repository": {
     "type": "git",
