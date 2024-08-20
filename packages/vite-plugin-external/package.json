@@ -1,6 +1,6 @@
 {
   "name": "@seahax/vite-plugin-external",
-  "private": true,
+  "private": false,
   "version": "0.1.0",
   "description": "Externalize all production dependencies and node built-ins.",
   "license": "Unlicense",

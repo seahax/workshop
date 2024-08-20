@@ -1,6 +1,6 @@
 {
   "name": "@seahax/vite-plugin-lib",
-  "private": true,
+  "private": false,
   "version": "0.1.0",
   "description": "Just build a library.",
   "license": "Unlicense",

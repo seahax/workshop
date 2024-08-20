@@ -1,6 +1,6 @@
 {
   "name": "@seahax/vite-plugin-data",
-  "private": true,
+  "private": false,
   "version": "0.1.0",
   "description": "Compile time data modules.",
   "license": "Unlicense",
