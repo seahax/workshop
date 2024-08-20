@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs/promises';
 
+import chalk from 'chalk';
 import { $ } from 'execa';
 
 interface Options {
@@ -60,8 +61,8 @@ Options:
     return;
   }
 
-  const gitHead = JSON.parse(npmResult.stdout);
-  const gitResult = await $({ all: true, reject: false })`git diff --name-only ${gitHead} -- .`;
+  const gitHead: string = JSON.parse(npmResult.stdout);
+  const gitResult = await $({ all: true, reject: false })`git log ${'--pretty=format:  %h  %s'} ${gitHead}..HEAD -- .`;
 
   if (gitResult.exitCode !== 0) {
     process.stderr.write(gitResult.all);
@@ -70,7 +71,8 @@ Options:
   }
 
   if (gitResult.stdout.trim() !== '') {
-    console.log(packageJson.name);
+    console.log(`${chalk.bold(packageJson.name)} ${chalk.blue.dim(`(${gitHead.slice(0, 8)})`)}`);
+    console.log(gitResult.stdout.trimEnd().replaceAll(/^ {2}(\S+) {2}(.*)$/gmu, (_, hash, message) => `  ${chalk.blue(hash)}  ${message}`));
   }
 })().catch((error: unknown) => {
   console.error(String(error));
