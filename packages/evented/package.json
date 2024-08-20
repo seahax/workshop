@@ -1,6 +1,6 @@
 {
   "name": "@seahax/evented",
-  "private": true,
+  "private": false,
   "version": "0.1.0",
   "description": "Add typed events to classes.",
   "license": "Unlicense",
