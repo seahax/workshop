@@ -1,3 +1,10 @@
 import type { Linter } from 'eslint';
-const value: Linter.FlatConfig[];
+
+interface Options {
+  readonly ignores?: string[];
+  readonly tsconfigPath?: string;
+}
+
+const value: (options?: Options) => Linter.FlatConfig[];
+
 export default value;

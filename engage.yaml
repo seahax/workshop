@@ -1,0 +1,88 @@
+# Required. Used to store configuration and locks.
+id: seahax
+
+# Optional. If not present, a default "landing page" will be used at the
+# CloudFront distribution root.
+spa: packages/seahax-web/dist
+
+# Optional. Used when defining API endpoint handlers above.
+functions:
+  seahax-auth: packages/seahax-auth/dist
+  seahax-posts: packages/seahax-posts/dist
+  seahax-cron: packages/seahax-cron/dist
+  seahax-events: packages/seahax-events/dist
+
+# Optional. Define an HTTP API.
+api:
+  /api/auth:
+    methods: GET,POST,PUT,DELETE
+    handler: function.seahax-auth
+  /api/posts:
+    methods: GET,POST,PUT,DELETE
+    handler: function.seahax-posts
+
+cron:
+  every-5-minutes:
+    schedule: '*/5 * * * *'
+    handler: function.seahax-cron
+
+# Optional. SQS queues that can be used by functions.
+queues:
+  seahax-events:
+    fifo: true
+    retention: 14 days
+    delay: 15 minutes
+    max: 1024 bytes
+    longPoll: 20 seconds
+    visibilityTimeout: 30 seconds
+    deadLetter: queue.seahax-events-dead-letter
+    handler: function.seahax-events
+
+topics:
+  seahax-events:
+    - queue.seahax-events
+
+# Optional. S3 buckets that can be used by functions.
+buckets:
+  seahax-cdn:
+    versioning: true
+    glacier: false
+    handler:
+      create: function.seahax-events
+      change: function.seahax-events
+      delete: function.seahax-events
+    lifecycle:
+      /: expire after 31 days
+      /images: transition to glacier after 7 days
+
+# Optional. DynamoDB tables and Postgres databases that can be used by
+# functions. YAML or JSON schemas define DynamoDB tables. SQL schemas define
+# Aurora Postgres tables.
+stores:
+  seahax-users:
+    schema: engage.store-seahax-users.schema.yaml
+    handler:
+      create: function.seahax-events
+      change: function.seahax-events
+      delete: function.seahax-events
+  seahax-posts:
+    schema: engage.store-seahax-posts.schema.yaml
+    handler:
+      create: function.seahax-events
+      change: function.seahax-events
+      delete: function.seahax-events
+
+# Optional. By default, all functions have read/write permission on all buckets
+# and stores. This can be used to restrict function access to resources.
+access:
+  seahax-users:
+    - store.seahax-users
+  seahax-posts:
+    - store.seahax-posts
+    - bucket.seahax-posts
+
+# Optional. WAF is always enabled for CloudFront, but a custom rate limit can
+# be configured here.
+settings:
+  apiRateLimit: 100
+  apiRateLimitWindow: 5

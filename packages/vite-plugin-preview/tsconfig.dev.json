@@ -1,0 +1,27 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "node_modules/.tsc/build.tsbuildinfo",
+    // "rootDir": "src",
+    // "outDir": "dist",
+    // "noEmit": false,
+    // "emitDeclarationOnly": true,
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [
+      // "node",
+      "vite/client"
+    ]
+  },
+  "include": [
+    "dev/src",
+    "src/template/client.js"
+  ],
+  "exclude": [
+    "**/*.test.*"
+  ]
+}

@@ -1,8 +1,6 @@
 import seahax from '@seahax/eslint';
 
-export default [
-  {
-    ignores: ['**/{node_modules,lib,dist,out,coverage}'],
-  },
-  ...seahax,
-];
+export default seahax({
+  ignores: ['**/{node_modules,lib,dist,out,coverage}'],
+  tsconfigPath: './tsconfig.eslint.json',
+});

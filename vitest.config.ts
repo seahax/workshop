@@ -7,8 +7,8 @@ export default defineConfig({
     coverage: {
       reporter: ['text', 'html', 'lcovonly'],
       provider: 'v8',
-      all: true,
-      exclude: ['**/index.ts', '**/types/*'],
+      include: ['packages/*/src/**/*'],
+      exclude: ['**/index.ts', '**/types/**/*', '**/constants/**/*'],
     },
   },
 });

@@ -9,7 +9,7 @@ export default function progress(): eslint.Linter.FlatConfig {
         rules: {
           progress: {
             create(context) {
-              console.log(`lint: ${path.relative(context.cwd, context.filename)}`);
+              console.log(`eslint: ${path.relative(context.cwd, context.filename)}`);
               return {};
             },
           },

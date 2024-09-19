@@ -1,7 +1,0 @@
-{
-  "extends": "./tsconfig-build.json",
-  "compilerOptions": {
-    "tsBuildInfoFile": "node_modules/.tsc/test.tsbuildinfo"
-  },
-  "exclude": []
-}
