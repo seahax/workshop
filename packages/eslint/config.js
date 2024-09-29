@@ -10,6 +10,12 @@ import typescript from 'typescript-eslint';
 
 const compat = new FlatCompat({ baseDirectory: import.meta.dirname });
 
+const tsExt = ['ts', 'cts', 'mts', 'tsx', 'ctsx', 'mtsx'];
+const ext = ['js', 'mjs', 'cjs', 'jsx', 'mjsx', 'cjsx', ...tsExt];
+
+const tsExtGlob = `{${tsExt.join(',')}}`;
+const extGlob = `{${ext.join(',')}}`;
+
 export default function config({ ignores = [], tsconfigPath = './tsconfig.json' } = {}) {
   return [
     { ignores },
@@ -29,7 +35,7 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
       ...typescript.configs.recommendedTypeChecked,
       ...typescript.configs.stylisticTypeChecked,
       ...typescript.configs.strictTypeChecked,
-    ].map((config) => ({ ...config, files: [...config.files ?? [], '**/*.{ts,tsx}'] })),
+    ].map((config) => ({ ...config, files: [...config.files ?? [], `**/*.${tsExtGlob}`] })),
 
     // Settings
     {
@@ -49,7 +55,7 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
       settings: {
         'import/parsers': {
           espree: ['.js'],
-          '@typescript-eslint/parser': ['.ts', '.tsx'],
+          '@typescript-eslint/parser': tsExt.map((ext) => `.${ext}`),
         },
         'import/resolver': {
           node: true,
@@ -85,7 +91,7 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
     },
 
     { // Rules: TypeScript
-      files: ['**/*.{ts,tsx}'],
+      files: [`**/*.${tsExtGlob}`],
       rules: {
         '@typescript-eslint/ban-types': 'off',
         '@typescript-eslint/consistent-type-exports': ['warn', { fixMixedExportsWithInlineTypeSpecifier: true }],
@@ -111,7 +117,7 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
     },
 
     { // Rules: Tests, Configs
-      files: ['**/*.{test,spec,config}.*'],
+      files: [`**/*.{test,spec,config}.${extGlob}`],
       rules: {
         'max-lines': 'off',
         'import/no-extraneous-dependencies': ['off'],

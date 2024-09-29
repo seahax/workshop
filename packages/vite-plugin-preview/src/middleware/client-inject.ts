@@ -103,8 +103,8 @@ export default function middleware({ base }: Config): Connect.NextHandleFunction
 
     res.write = (
       ...args:
-        | [chunk: any, cb?: (error?: Error | null | undefined) => void]
-        | [chunk: any, encoding: BufferEncoding, cb?: (error?: Error | null | undefined) => void]
+        | [chunk: any, cb?: (error?: Error | null) => void]
+        | [chunk: any, encoding: BufferEncoding, cb?: (error?: Error | null) => void]
     ) => {
       start();
 

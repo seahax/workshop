@@ -14,17 +14,17 @@
     "modernize": "npx npm-check-updates@latest -i --root --workspaces --peer --format group"
   },
   "type": "module",
-  "packageManager": "pnpm@9.7.1+sha256.46f1bbc8f8020aa9869568c387198f1a813f21fb44c82f400e7d1dbde6c70b40",
+  "packageManager": "pnpm@9.11.0+sha256.1c0e33f70e5df9eede84a357bdfa0b1f9dba6e58194628d48a1055756f553754",
   "devDependencies": {
     "@seahax/eslint": "workspace:*",
     "@seahax/unreleased": "workspace:*",
-    "@types/node": "^22.3.0",
-    "@vitest/coverage-v8": "^2.0.5",
+    "@types/node": "^22.7.4",
+    "@vitest/coverage-v8": "^2.1.1",
     "eslint": "^8.57.0",
     "lerna": "^8.1.8",
-    "nx": "^19.5.7",
-    "typescript": "^5.5.4",
-    "vite": "^5.4.0",
-    "vitest": "^2.0.5"
+    "nx": "^19.8.2",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.8",
+    "vitest": "^2.1.1"
   }
 }
