@@ -8,6 +8,7 @@
       "stream": true
     },
     "version": {
+      "private": false,
       "conventionalCommits": true,
       "gitTagVersion": false,
       "push": false
