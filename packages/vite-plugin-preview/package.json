@@ -43,6 +43,6 @@
     "ws": "^8.18.0"
   },
   "peerDependencies": {
-    "vite": "^5.3.5"
+    "vite": "^5.4.8"
   }
 }
