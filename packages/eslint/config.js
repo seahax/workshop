@@ -81,6 +81,7 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
         'no-undef': 'off',
         'no-useless-rename': 'warn',
         'unicorn/no-array-reduce': 'off',
+        'unicorn/no-array-for-each': 'off',
         'unicorn/no-null': 'off',
         'unicorn/no-object-as-default-parameter': 'off',
         'unicorn/no-useless-undefined': 'off',
