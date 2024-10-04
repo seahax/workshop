@@ -1,0 +1,37 @@
+{
+  "name": "@seahax/main",
+  "private": true,
+  "version": "0.1.0",
+  "description": "",
+  "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "packages/main",
+    "directory": "packages/my-library"
+  },
+  "scripts": {
+    "clean": "rm -rf dist node_modules/.tsc",
+    "build": "pnpm clean && vite build"
+  },
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@seahax/vite-plugin-lib": "workspace:*"
+  },
+  "dependencies": {
+    "@types/source-map-support": "^0.5.10",
+    "source-map-support": "^0.5.21"
+  }
+}
