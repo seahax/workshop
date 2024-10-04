@@ -85,6 +85,7 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
         'unicorn/no-null': 'off',
         'unicorn/no-object-as-default-parameter': 'off',
         'unicorn/no-useless-undefined': 'off',
+        'unicorn/numeric-separators-style': 'off',
         'unicorn/prefer-top-level-await': 'off',
         'unicorn/prevent-abbreviations': 'off',
         'valid-typeof': 'off',
@@ -111,6 +112,7 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
         '@typescript-eslint/no-unsafe-return': 'off',
         '@typescript-eslint/prefer-namespace-keyword': 'off',
         '@typescript-eslint/prefer-nullish-coalescing': 'off',
+        '@typescript-eslint/prefer-regexp-exec': 'off',
         '@typescript-eslint/require-await': 'off',
         '@typescript-eslint/restrict-template-expressions': ['error', { allowAny: true, allowNumber: true, allowBoolean: true, allowNullish: true }],
         '@typescript-eslint/switch-exhaustiveness-check': 'warn',
@@ -118,7 +120,7 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
     },
 
     { // Rules: Tests, Configs
-      files: [`**/*.{test,spec,config}.${extGlob}`],
+      files: [`**/*.{test,spec,config,setup}.${extGlob}`],
       rules: {
         'max-lines': 'off',
         'import/no-extraneous-dependencies': ['off'],
