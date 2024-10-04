@@ -1,0 +1,33 @@
+{
+  "name": "@seahax/bump",
+  "private": true,
+  "version": "0.1.0",
+  "description": "",
+  "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "packages/bump",
+    "directory": "packages/my-library"
+  },
+  "scripts": {
+    "clean": "rm -rf dist node_modules/.tsc",
+    "build": "pnpm clean && vite build"
+  },
+  "type": "module",
+  "bin": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@seahax/vite-plugin-lib": "workspace:*"
+  },
+  "dependencies": {
+    "@seahax/main": "workspace:*",
+    "@types/semver": "^7.5.8",
+    "execa": "^9.4.0",
+    "semver": "^7.6.3"
+  }
+}

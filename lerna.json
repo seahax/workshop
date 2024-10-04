@@ -12,6 +12,9 @@
       "conventionalCommits": true,
       "gitTagVersion": false,
       "push": false
+    },
+    "publish": {
+      "private": false
     }
   }
 }

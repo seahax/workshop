@@ -3,7 +3,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     passWithNoTests: true,
-    restoreMocks: true,
+    setupFiles: ['vitest.setup.ts'],
     coverage: {
       reporter: ['text', 'html', 'lcovonly'],
       provider: 'v8',
