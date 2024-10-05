@@ -31,19 +31,19 @@ export function isLogLevel(requiredLevel: LogLevel): boolean {
       return false;
     }
     case 'error': {
-      return requiredLevel >= LogLevel.error;
+      return requiredLevel <= LogLevel.error;
     }
     case 'warn': {
-      return requiredLevel >= LogLevel.warn;
+      return requiredLevel <= LogLevel.warn;
     }
     case 'info': {
-      return requiredLevel >= LogLevel.info;
+      return requiredLevel <= LogLevel.info;
     }
     case 'debug': {
-      return requiredLevel >= LogLevel.debug;
+      return requiredLevel <= LogLevel.debug;
     }
     default: {
-      return true;
+      return requiredLevel <= LogLevel.info;
     }
   }
 }
@@ -58,6 +58,8 @@ export function registerErrorHandler<TError>(
 
 function defaultErrorHandler(error: any): void {
   if (error?.name === 'AbortError') return;
+
+  console.error();
   console.error(isLogLevel(LogLevel.debug) ? error : String(error));
 }
 
