@@ -59,7 +59,6 @@ export function registerErrorHandler<TError>(
 function defaultErrorHandler(error: any): void {
   if (error?.name === 'AbortError') return;
 
-  console.error();
   console.error(isLogLevel(LogLevel.debug) ? error : String(error));
 }
 
