@@ -8,7 +8,7 @@
     "lint": "lerna run lint && eslint .",
     "test": "lerna run test && vitest run",
     "check": "pnpm build && pnpm lint --max-warnings=0 && pnpm test",
-    "bump": "lerna version",
+    "bump": "lerna --no-private exec bump",
     "release": "lerna publish from-package",
     "unreleased": "lerna exec unreleased",
     "modernize": "npx npm-check-updates@latest -i --root --workspaces --dep dev,prod,peer,optional,packageManager --peer --format group"
