@@ -1,4 +1,4 @@
-export interface NpmView {
+export interface Metadata {
   version: string;
   gitHead?: string;
 }

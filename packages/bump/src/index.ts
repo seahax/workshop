@@ -4,69 +4,96 @@ import fs from 'node:fs/promises';
 import { main } from '@seahax/main';
 import semver from 'semver';
 
+import { getChangelog } from './changelog/get-changelog.js';
+import { NOTE_INITIAL_RELEASE, NOTE_VERSION_BUMP } from './constants/notes.js';
+import { execGitLog } from './git/exec-git-log.js';
+import { execGitStatus } from './git/exec-git-status.js';
+import { execNpmVersion } from './npm/exec-npm-version.js';
+import { execNpmView } from './npm/exec-npm-view.js';
+import { type Message } from './types/message.js';
+import { type Metadata } from './types/metadata.js';
 import { type Package } from './types/package.js';
-import { createChangelogEntry } from './utils/create-changelog-entry.js';
-import { exec } from './utils/exec.js';
-import { execGitLog } from './utils/exec-git-log.js';
-import { execGitStatus } from './utils/exec-git-status.js';
-import { execNpmView } from './utils/exec-npm-view.js';
 import { getBump } from './utils/get-bump.js';
-import { getChangelogText } from './utils/get-changelog-text.js';
-import { parseChangelog } from './utils/parse-changelog.js';
-import { parseMessages } from './utils/parse-messages.js';
+import { parseCommits } from './utils/parse-commits.js';
+import { readFile } from './utils/read-file.js';
 
 main(async () => {
+  if (process.argv.length > 2) {
+    throw new Error('Unexpected arguments.');
+  }
+
   const [diff, packageText] = await Promise.all([
     execGitStatus(),
-    fs.readFile('package.json', 'utf8'),
+    readFile('package.json'),
   ]);
+
+  if (packageText == null) throw new Error('Missing package.json file.');
+
   const packageJson: Package = JSON.parse(packageText);
+  const { name: packageName, version: packageVersion, private: packagePrivate = false } = packageJson;
 
+  if (!packageName) throw new Error('Missing package name.');
+  if (!packageVersion) throw new Error('Missing package version.');
+  if (packagePrivate) throw new Error('Private package.');
   if (diff.trim().length > 0) throw new Error('Working directory is dirty.');
-  if (!packageJson.name) throw new Error('Missing package name.');
-  if (!packageJson.version) throw new Error('Missing package version.');
-  if (packageJson.private) throw new Error('Private package.');
 
-  const viewInfo = await execNpmView(packageJson.name, packageJson.version);
+  const metadata = await execNpmView(packageName, packageVersion);
 
-  if (!viewInfo) {
-    console.log('No previous version found.');
+  if (metadata) {
+    await bump(packageVersion, metadata);
     return;
   }
 
-  const { version, gitHead } = viewInfo;
+  await init(packageVersion);
+});
+
+async function bump(packageVersion: string, metadata: Metadata): Promise<void> {
+  const { version = '', gitHead } = metadata;
 
   if (!gitHead) {
-    console.warn('WARNING: Unable to determine previous commit from NPM.');
+    throw new Error('Missing NPM registry "gitHead" metadata.');
+  }
+
+  const commits = gitHead ? await execGitLog(gitHead) : [];
+
+  if (commits.length === 0) {
+    console.log(`Version: ${packageVersion} (no changes)`);
     return;
   }
 
-  const logs = viewInfo.gitHead ? await execGitLog(gitHead) : [];
-
-  if (logs.length === 0) {
-    console.log('No new commits.');
-    return;
-  }
-
-  const messages = parseMessages(logs);
-
+  const messages = parseCommits(commits);
+  const note = messages.length === 0 ? NOTE_VERSION_BUMP : undefined;
   const bump = getBump(messages);
-  const bumpedVersion = semver.inc(version, bump)!;
-  const newVersion = semver.lt(bumpedVersion, packageJson.version) ? packageJson.version : bumpedVersion;
+  const bumpedVersion = semver.inc(version, bump);
+  const newVersion = bumpedVersion && semver.gte(bumpedVersion, packageVersion)
+    ? bumpedVersion
+    : packageVersion;
 
-  console.log(`Published Commit:  ${gitHead}`);
-  console.log(`Published Version: ${version}`);
-  console.log(`Package Version:   ${packageJson.version}`);
-  console.log(`Bumped Version:    ${newVersion}`);
-
-  const changelogText = await fs.readFile('CHANGELOG.md', 'utf8');
-  const [changelogHeader, changelogEntries] = parseChangelog(changelogText);
-  const newChangelogEntry = createChangelogEntry(newVersion, messages);
-  const newChangelogText = getChangelogText(changelogHeader, [...changelogEntries, newChangelogEntry]);
-
-  if (newVersion !== packageJson.version) {
-    await exec(`npm version ${newVersion} --no-git-tag-version`);
+  if (packageVersion === newVersion) {
+    console.log(`Version: ${packageVersion} (no bump)`);
   }
+  else {
+    console.log(`Version: ${newVersion}`);
+    await execNpmVersion(newVersion);
+  }
+
+  await updateChangelog(newVersion, messages, note);
+}
+
+async function init(packageVersion: string): Promise<void> {
+  console.log(`Version: ${packageVersion} (initial release)`);
+
+  await updateChangelog(packageVersion, [], NOTE_INITIAL_RELEASE);
+}
+
+async function updateChangelog(version: string, messages: Message[], note: string | undefined): Promise<void> {
+  if (semver.parse(version, { loose: true })?.prerelease.length) {
+    // No changelog for prerelease versions.
+    return;
+  }
+
+  const changelogText = await readFile('CHANGELOG.md') ?? '';
+  const newChangelogText = getChangelog(changelogText, version, messages, note);
 
   await fs.writeFile('CHANGELOG.md', newChangelogText);
-});
+}

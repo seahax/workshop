@@ -1,9 +1,9 @@
 import semver from 'semver';
 
-import { type NpmView } from '../types/npm-view.js';
-import { exec } from './exec.js';
+import { type Metadata } from '../types/metadata.js';
+import { exec } from '../utils/exec.js';
 
-export async function execNpmView(name: string, currentVersion: string): Promise<NpmView | null> {
+export async function execNpmView(name: string, currentVersion: string): Promise<Metadata | null> {
   const { exitCode, stdout, stderr } = await exec({ reject: false })`npm view ${`${name}@<=${currentVersion}`} name version gitHead --json`;
 
   if (exitCode && stderr.includes('E404')) {

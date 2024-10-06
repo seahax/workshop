@@ -1,13 +1,13 @@
 {
   "name": "@seahax/bump",
-  "private": true,
+  "private": false,
   "version": "0.1.0",
   "description": "",
   "license": "Unlicense",
   "repository": {
     "type": "git",
-    "url": "packages/bump",
-    "directory": "packages/my-library"
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/bump"
   },
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",

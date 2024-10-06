@@ -1,17 +1,26 @@
 import { messageType } from '../constants/message-type.js';
-import { type ChangelogEntry } from '../types/changelog-entry.js';
+import { type Change } from '../types/change.js';
 import { type Message } from '../types/message.js';
 
 type GroupedMessages = Partial<Record<keyof typeof messageType, Message[]>>;
 
-export function createChangelogEntry(version: string, messages: Message[]): ChangelogEntry {
+export function createChange(version: string, messages: Message[], note: string | undefined): Change {
   const groups = getGroupedMessages(messages);
-  const sections = Object.entries(messageType)
-    .flatMap(([type, { heading }]): string | [] => {
-      const messages = groups[type];
-      return messages?.length ? createSection(heading, messages) : [];
-    });
-  const content = `## ${version} - ${createDateString()}\n\n${sections.join('\n\n')}`;
+  const sections: string[] = [`## ${version} (${createDateString()})`];
+
+  if (note) {
+    sections.push(note);
+  }
+
+  Object.entries(messageType).forEach(([type, { heading }]) => {
+    const section = createSection(heading, groups[type]);
+
+    if (section) {
+      sections.push(section);
+    }
+  });
+
+  const content = sections.join('\n\n');
 
   return { version, content };
 }
@@ -26,7 +35,11 @@ function getGroupedMessages(messages: Message[]): Record<string, Message[]> {
   }), {});
 }
 
-function createSection(heading: string, messages: Message[]): string {
+function createSection(heading: string, messages: Message[] | undefined): string | undefined {
+  if (!messages?.length) {
+    return;
+  }
+
   const listItems = messages.map((message) => createListItem(message));
 
   return `### ${heading}\n\n${listItems.join('\n')}`;
@@ -39,7 +52,7 @@ function createListItem(message: Message): string {
     parts.push(`*(${message.scope})*`);
   }
 
-  if (message.breaking) {
+  if (message.isBreaking) {
     parts.push('**[breaking]**');
   }
 

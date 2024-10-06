@@ -1,20 +1,16 @@
 import { messageType } from '../constants/message-type.js';
-import { type GitLogEntry } from '../types/git-log-entry.js';
+import { type Commit } from '../types/commit.js';
 import { type Message } from '../types/message.js';
 
-export function parseMessages(logs: GitLogEntry[]): Message[] {
+export function parseCommits(commits: Commit[]): Message[] {
   const messages: Message[] = [];
 
-  for (const log of logs) {
-    const logMessages = parseBody(log.body);
-    const logCommit = log.commit.slice(0, 7);
+  for (const commit of commits) {
+    const commitMessages = parseBody(commit.log);
+    const commitHash = commit.hash.slice(0, 7);
 
-    if (logMessages.length === 0) {
-      throw new Error(`No valid conventional messages found in commit (${logCommit}).`);
-    }
-
-    logMessages.forEach((message) => {
-      messages.push({ ...message, description: `${message.description} (${logCommit})` });
+    commitMessages.forEach((message) => {
+      messages.push({ ...message, description: `${message.description} (${commitHash})` });
     });
   }
 
@@ -34,14 +30,14 @@ function parseBody(body: string): Message[] {
     messages.push({
       type: maybeType,
       scope: scope?.trim(),
-      breaking: Boolean(breaking),
+      isBreaking: Boolean(breaking),
       description: description.trim(),
     });
   }
 
   if (/^BREAKING CHANGE: \S/mu.test(body)) {
     messages.forEach((message) => {
-      message.breaking = true;
+      message.isBreaking = true;
     });
   }
 

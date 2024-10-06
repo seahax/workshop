@@ -1,4 +1,4 @@
-export interface ChangelogEntry {
+export interface Change {
   version: string;
   content: string;
 }
