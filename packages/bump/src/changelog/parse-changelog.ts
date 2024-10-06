@@ -4,7 +4,7 @@ import { type Change } from '../types/change.js';
 
 export function parseChangelog(text: string): [header: string | undefined, changes: Change[]] {
   const [header, ...sections] = text.split(/(?=^## \d+\.\d+\.\d+(?:[\s+-]|$))/mu);
-  const entries = sections.flatMap((section): Change | [] => {
+  const changes = sections.flatMap((section): Change | [] => {
     const content = section.trim();
     const version = content.match(/(?<=^## )\d+\.\d+\.\d\S*/mu)![0];
 
@@ -15,5 +15,5 @@ export function parseChangelog(text: string): [header: string | undefined, chang
     return { version, content };
   });
 
-  return [header?.trim() || undefined, entries];
+  return [header?.trim() || undefined, changes];
 }

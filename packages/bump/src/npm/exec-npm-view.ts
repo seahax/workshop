@@ -10,20 +10,20 @@ export async function execNpmView(name: string, currentVersion: string): Promise
     return null;
   }
 
-  const entries: {
+  const versions: {
     name: string;
     version: string;
     gitHead?: string;
   }[] = JSON.parse(stdout);
 
-  const closest = entries.sort((a, b) => semver.compare(b.version, a.version)).at(0);
+  const metadata = versions.sort((a, b) => semver.compare(b.version, a.version)).at(0);
 
-  if (!closest) {
+  if (!metadata) {
     return null;
   }
 
   return {
-    version: closest.version,
-    gitHead: closest.gitHead,
+    version: metadata.version,
+    gitHead: metadata.gitHead,
   };
 }

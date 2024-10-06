@@ -15,7 +15,7 @@ test('createChange', () => {
 
   expect(entry.version).toBe('1.2.3');
   expect(entry.content).toMatchInlineSnapshot(`
-    "## 1.2.3 (2024-10-03)
+    "## 1.2.3 (2024-10-04)
 
     note
 

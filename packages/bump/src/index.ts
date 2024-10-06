@@ -13,7 +13,7 @@ import { execNpmView } from './npm/exec-npm-view.js';
 import { type Message } from './types/message.js';
 import { type Metadata } from './types/metadata.js';
 import { type Package } from './types/package.js';
-import { getBump } from './utils/get-bump.js';
+import { getReleaseType } from './utils/get-release-type.js';
 import { parseCommits } from './utils/parse-commits.js';
 import { readFile } from './utils/read-file.js';
 
@@ -40,14 +40,21 @@ main(async () => {
   const metadata = await execNpmView(packageName, packageVersion);
 
   if (metadata) {
-    await bump(packageVersion, metadata);
+    const result = await bump(packageVersion, metadata);
+
+    if (result) {
+      const [version, releaseType] = result;
+      console.log(`${packageName} bumped to ${version} (${releaseType})`);
+    }
+
     return;
   }
 
   await init(packageVersion);
+  console.log(`${packageName} changelog initialized`);
 });
 
-async function bump(packageVersion: string, metadata: Metadata): Promise<void> {
+async function bump(packageVersion: string, metadata: Metadata): Promise<[version: string, releaseType: string] | undefined> {
   const { version = '', gitHead } = metadata;
 
   if (!gitHead) {
@@ -57,27 +64,20 @@ async function bump(packageVersion: string, metadata: Metadata): Promise<void> {
   const commits = gitHead ? await execGitLog(gitHead) : [];
 
   if (commits.length === 0) {
-    console.log(`Version: ${packageVersion} (no changes)`);
     return;
   }
 
   const messages = parseCommits(commits);
-  const note = messages.length === 0 ? NOTE_VERSION_BUMP : undefined;
-  const bump = getBump(messages);
-  const bumpedVersion = semver.inc(version, bump);
+  const releaseType = getReleaseType(messages);
+  const bumpedVersion = semver.inc(version, releaseType);
   const newVersion = bumpedVersion && semver.gte(bumpedVersion, packageVersion)
     ? bumpedVersion
     : packageVersion;
 
-  if (packageVersion === newVersion) {
-    console.log(`Version: ${packageVersion} (no bump)`);
-  }
-  else {
-    console.log(`Version: ${newVersion}`);
-    await execNpmVersion(newVersion);
-  }
+  await execNpmVersion(newVersion);
+  await updateChangelog(newVersion, messages, messages.length === 0 ? NOTE_VERSION_BUMP : undefined);
 
-  await updateChangelog(newVersion, messages, note);
+  return [newVersion, releaseType];
 }
 
 async function init(packageVersion: string): Promise<void> {
