@@ -6,8 +6,8 @@
   "license": "Unlicense",
   "repository": {
     "type": "git",
-    "url": "packages/main",
-    "directory": "packages/my-library"
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/main"
   },
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
