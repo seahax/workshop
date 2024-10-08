@@ -26,26 +26,34 @@ export function main(action: () => void | Promise<void>): void {
 }
 
 export function isLogLevel(requiredLevel: LogLevel): boolean {
+  return requiredLevel <= getLogLevel();
+}
+
+export function getLogLevel(): LogLevel {
   switch (process.env.LOG_LEVEL) {
     case 'silent': {
-      return false;
+      return LogLevel.silent;
     }
     case 'error': {
-      return requiredLevel <= LogLevel.error;
+      return LogLevel.error;
     }
     case 'warn': {
-      return requiredLevel <= LogLevel.warn;
+      return LogLevel.warn;
     }
     case 'info': {
-      return requiredLevel <= LogLevel.info;
+      return LogLevel.info;
     }
     case 'debug': {
-      return requiredLevel <= LogLevel.debug;
+      return LogLevel.debug;
     }
     default: {
-      return requiredLevel <= LogLevel.info;
+      return LogLevel.info;
     }
   }
+}
+
+export function setLogLevel(level: LogLevel): void {
+  process.env.LOG_LEVEL = LogLevel[level];
 }
 
 export function registerErrorHandler<TError>(
