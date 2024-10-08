@@ -11,16 +11,13 @@ import { execGitStatus } from './git/exec-git-status.js';
 import { execNpmVersion } from './npm/exec-npm-version.js';
 import { execNpmView } from './npm/exec-npm-view.js';
 import { type Message } from './types/message.js';
-import { type Metadata } from './types/metadata.js';
 import { type Package } from './types/package.js';
 import { getReleaseType } from './utils/get-release-type.js';
 import { parseCommits } from './utils/parse-commits.js';
 import { readFile } from './utils/read-file.js';
 
 main(async () => {
-  if (process.argv.length > 2) {
-    throw new Error('Unexpected arguments.');
-  }
+  if (process.argv.length > 2) throw new Error('Unexpected arguments.');
 
   const [diff, packageText] = await Promise.all([
     execGitStatus(),
@@ -40,60 +37,69 @@ main(async () => {
   const metadata = await execNpmView(packageName, packageVersion);
 
   if (metadata) {
-    const result = await bump(packageVersion, metadata);
+    const { version, gitHead } = metadata;
 
-    if (result) {
-      const [version, releaseType] = result;
-      console.log(`${packageName} bumped to ${version} (${releaseType})`);
-    }
+    if (!gitHead) throw new Error('Missing NPM registry "gitHead" metadata.');
+
+    const result = await bump(packageVersion, version, gitHead);
+
+    if (result) console.log(`Version bumped to ${result.version} (${result.releaseType}).`);
 
     return;
   }
 
-  await init(packageVersion);
-  console.log(`${packageName} changelog initialized`);
+  if (await init(packageVersion)) {
+    console.log(`Changelog initialized.`);
+  }
 });
 
-async function bump(packageVersion: string, metadata: Metadata): Promise<[version: string, releaseType: string] | undefined> {
-  const { version = '', gitHead } = metadata;
-
-  if (!gitHead) {
-    throw new Error('Missing NPM registry "gitHead" metadata.');
-  }
-
-  const commits = gitHead ? await execGitLog(gitHead) : [];
+async function bump(
+  packageVersion: string,
+  version: string,
+  gitHead: string,
+): Promise<{ version: string; releaseType: string } | undefined> {
+  const commits = await execGitLog(gitHead);
 
   if (commits.length === 0) {
+    console.info(`No new commits (${gitHead}).`);
     return;
   }
 
   const messages = parseCommits(commits);
+
+  if (messages.length === 0) {
+    console.info(`No new conventional commit messages (${gitHead}).`);
+    return;
+  }
+
   const releaseType = getReleaseType(messages);
   const bumpedVersion = semver.inc(version, releaseType);
   const newVersion = bumpedVersion && semver.gte(bumpedVersion, packageVersion)
     ? bumpedVersion
     : packageVersion;
+  const changelogText = await readFile('CHANGELOG.md');
 
   await execNpmVersion(newVersion);
-  await updateChangelog(newVersion, messages, messages.length === 0 ? NOTE_VERSION_BUMP : undefined);
+  await updateChangelog(changelogText, newVersion, messages, messages.length === 0 ? NOTE_VERSION_BUMP : undefined);
 
-  return [newVersion, releaseType];
+  return { version: newVersion, releaseType };
 }
 
-async function init(packageVersion: string): Promise<void> {
-  console.log(`Version: ${packageVersion} (initial release)`);
+async function init(packageVersion: string): Promise<boolean> {
+  const changelogText = await readFile('CHANGELOG.md');
 
-  await updateChangelog(packageVersion, [], NOTE_INITIAL_RELEASE);
+  if (!changelogText) return false;
+
+  return await updateChangelog(changelogText, packageVersion, [], NOTE_INITIAL_RELEASE);
 }
 
-async function updateChangelog(version: string, messages: Message[], note: string | undefined): Promise<void> {
-  if (semver.parse(version, { loose: true })?.prerelease.length) {
-    // No changelog for prerelease versions.
-    return;
-  }
+async function updateChangelog(currentText = '', version: string, messages: Message[], note: string | undefined): Promise<boolean> {
+  // No changelog for prerelease versions.
+  if (semver.parse(version, { loose: true })?.prerelease.length) return false;
 
-  const changelogText = await readFile('CHANGELOG.md') ?? '';
-  const newChangelogText = getChangelog(changelogText, version, messages, note);
+  const text = getChangelog(currentText, version, messages, note);
 
-  await fs.writeFile('CHANGELOG.md', newChangelogText);
+  await fs.writeFile('CHANGELOG.md', text);
+
+  return true;
 }
