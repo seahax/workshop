@@ -34,6 +34,11 @@ main(async () => {
   if (packagePrivate) throw new Error('Private package.');
   if (diff.trim().length > 0) throw new Error('Working directory is dirty.');
 
+  if (semver.parse(packageVersion, { loose: true }) == null) {
+    console.debug('Pre-release versions are not supported.');
+    return;
+  }
+
   const metadata = await execNpmView(packageName, packageVersion);
 
   if (metadata) {
@@ -43,13 +48,13 @@ main(async () => {
 
     const result = await bump(packageVersion, version, gitHead);
 
-    if (result) console.log(`Version bumped to ${result.version} (${result.releaseType}).`);
+    if (result) console.info(`Version bumped to ${result.version} (${result.releaseType}).`);
 
     return;
   }
 
   if (await init(packageVersion)) {
-    console.log(`Changelog initialized.`);
+    console.info(`Changelog initialized.`);
   }
 });
 
@@ -61,14 +66,14 @@ async function bump(
   const commits = await execGitLog(gitHead);
 
   if (commits.length === 0) {
-    console.info(`No new commits (${gitHead}).`);
+    console.debug(`No new commits.`);
     return;
   }
 
   const messages = parseCommits(commits);
 
   if (messages.length === 0) {
-    console.info(`No new conventional commit messages (${gitHead}).`);
+    console.debug(`No new conventional commit messages.`);
     return;
   }
 
@@ -90,16 +95,13 @@ async function init(packageVersion: string): Promise<boolean> {
 
   if (!changelogText) return false;
 
-  return await updateChangelog(changelogText, packageVersion, [], NOTE_INITIAL_RELEASE);
+  await updateChangelog(changelogText, packageVersion, [], NOTE_INITIAL_RELEASE);
+
+  return true;
 }
 
-async function updateChangelog(currentText = '', version: string, messages: Message[], note: string | undefined): Promise<boolean> {
-  // No changelog for prerelease versions.
-  if (semver.parse(version, { loose: true })?.prerelease.length) return false;
-
+async function updateChangelog(currentText = '', version: string, messages: Message[], note: string | undefined): Promise<void> {
   const text = getChangelog(currentText, version, messages, note);
 
   await fs.writeFile('CHANGELOG.md', text);
-
-  return true;
 }
