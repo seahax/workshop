@@ -1,28 +1,31 @@
-import fs from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
+import { rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-import external from '@seahax/vite-plugin-external';
-import { build, createLogger, type InlineConfig, type LogLevel, mergeConfig, type Plugin, type Rollup } from 'vite';
+import { loadConfigFromFile, type Plugin } from 'vite';
 
 export interface DataOptions {
   readonly match?: RegExp | ((filename: string) => boolean);
-  readonly config?: InlineConfig | ((filename: string) => InlineConfig | Promise<InlineConfig>);
+}
+
+interface Loaded {
+  readonly dependencies: string[];
+  readonly exports: Record<string, unknown>;
 }
 
 const DEFAULT_MATCH = /\.data\.[mc]?[tj]s$/iu;
 
-export default function plugin({ match = DEFAULT_MATCH, config = {} }: DataOptions = {}): Plugin {
+export default function plugin({ match = DEFAULT_MATCH }: DataOptions = {}): Plugin {
   const isMatch = typeof match === 'function' ? match : (id: string) => match.test(id);
-  const filenameDependencies = new Map<string, Set<string>>();
+  const filenameDependencies = new Map<string, string[]>();
 
   let root: string;
-  let logLevel: LogLevel | undefined;
 
   return {
     name: 'data',
     configResolved(config) {
       root = config.root;
-      logLevel = config.logLevel;
     },
     async load(id) {
       const filename = id.replace(/\?.*$/u, '');
@@ -30,83 +33,20 @@ export default function plugin({ match = DEFAULT_MATCH, config = {} }: DataOptio
       if (!path.isAbsolute(filename)) return null;
       if (!isMatch(filename)) return null;
 
-      const { dir, name } = path.parse(filename);
-      const outDir = await fs.mkdtemp(path.join(dir, `.${name}-`));
+      const { dependencies, exports } = await loadDateFromFile(root, filename);
+      const statementPromises = Object.entries(exports).map(async ([key, value]) => getExportStatement(key, value));
+      const statements = await Promise.all(statementPromises);
 
-      try {
-        const dependencies = new Set<string>();
-        const customConfig = typeof config === 'function' ? await config(filename) : config;
-        const mergedConfig: InlineConfig = mergeConfig<InlineConfig, InlineConfig>(
-          {
-            configFile: false,
-            root,
-            customLogger: createLogger(logLevel === 'silent' ? 'silent' : 'error', { allowClearScreen: false }),
-            plugins: [
-              {
-                name: 'data',
-                enforce: 'pre',
-                load(id) {
-                  if (path.isAbsolute(id)) {
-                    dependencies.add(id.replace(/\?.*$/u, ''));
-                  }
+      filenameDependencies.set(filename, dependencies);
+      dependencies.forEach((dependency) => this.addWatchFile(dependency));
 
-                  return null;
-                },
-              },
-              external(),
-            ],
-            build: {
-              target: customConfig.build?.target
-                ? undefined
-                : ['esnext'],
-              outDir,
-              lib: {
-                entry: filename,
-                formats: customConfig.build?.lib && customConfig.build.lib.formats
-                  ? undefined
-                  : ['es'],
-              },
-              rollupOptions: {
-                output: {
-                  entryFileNames: '[name].mjs',
-                  chunkFileNames: '[name].mjs',
-                  assetFileNames: '[name][extname]',
-                },
-              },
-            },
-            resolve: {
-              conditions: customConfig.resolve?.conditions
-                ? undefined
-                : ['node'],
-            },
-          },
-          customConfig,
-        );
-
-        const { output: [{ fileName }] } = [await build(mergedConfig)].flat()[0] as Rollup.RollupOutput;
-        const exports = await import(path.resolve(outDir, fileName));
-        const statements = await Promise.all(Object.entries(exports).map(async ([key, value]) => {
-          const isPromise = value instanceof Promise;
-          const jsonString = JSON.stringify(await value, jsonSafeReplacer, 2);
-          const suffix = isPromise ? `Promise.resolve(${jsonString})` : jsonString;
-          const prefix = key === 'default' ? 'export default ' : `export const ${key} = `;
-
-          return `${prefix}${suffix};\n`;
-        }));
-
-        filenameDependencies.set(filename, dependencies);
-
-        return { code: statements.join('') };
-      }
-      finally {
-        await fs.rm(outDir, { recursive: true, force: true });
-      }
+      return { code: statements.join('') };
     },
     handleHotUpdate(ctx) {
       const invalidated = new Set(ctx.modules);
 
       for (const [filename, dependencies] of filenameDependencies) {
-        if (dependencies.has(ctx.file)) {
+        if (dependencies.includes(ctx.file)) {
           const dataModules = ctx.server.moduleGraph.getModulesByFile(filename);
 
           if (!dataModules) continue;
@@ -120,6 +60,41 @@ export default function plugin({ match = DEFAULT_MATCH, config = {} }: DataOptio
       return [...invalidated];
     },
   };
+}
+
+async function loadDateFromFile(root: string, filename: string): Promise<Loaded> {
+  const filenameAbs = path.resolve(root, filename);
+  const filenameTmp = `${tmpdir()}/vite-date-loader-${randomUUID()}.js`;
+
+  await writeFile(filenameTmp, `export default () => import(${JSON.stringify(filenameAbs)});`, 'utf8');
+
+  try {
+    const loaded = await loadConfigFromFile({ command: 'build', mode: 'production' }, filenameTmp, root, 'silent');
+
+    if (!loaded) {
+      throw new Error(`Failed loading "${filename}."`);
+    }
+
+    // The last dependency should be the generated temporary loader.
+    loaded.dependencies.pop();
+
+    return {
+      dependencies: loaded.dependencies,
+      exports: loaded.config as Record<string, unknown>,
+    };
+  }
+  finally {
+    await rm(filenameTmp, { recursive: true, force: true });
+  }
+}
+
+async function getExportStatement(key: string, value: unknown): Promise<string> {
+  const isPromise = value instanceof Promise;
+  const jsonString = JSON.stringify(await value, jsonSafeReplacer, 2);
+  const suffix = isPromise ? `Promise.resolve(${jsonString})` : jsonString;
+  const prefix = key === 'default' ? 'export default ' : `export const ${key} = `;
+
+  return `${prefix}${suffix};\n`;
 }
 
 function jsonSafeReplacer<T>(_key: string, value: T): T {
