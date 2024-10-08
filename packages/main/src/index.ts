@@ -109,7 +109,7 @@ Object.assign(console, {
   warn: createLogFunction(LogLevel.warn, chalk.yellow, warn),
   info: createLogFunction(LogLevel.info, (message) => message, info),
   log: createLogFunction(LogLevel.info, (message) => message, log),
-  debug: createLogFunction(LogLevel.info, chalk.gray, debug),
+  debug: createLogFunction(LogLevel.debug, chalk.gray, debug),
 });
 
 process.on('uncaughtException', uncaught);
