@@ -1,7 +1,9 @@
 /* eslint-disable unicorn/no-process-exit */
+import { format } from 'node:util';
+
+import chalk from 'chalk';
 import sourceMapSupport from 'source-map-support';
 
-type LogArgs = [message?: any, ...optionalParams: any[]];
 type ErrorMatcher<TError> = ((error: unknown) => error is TError) | ((error: unknown) => boolean);
 
 interface ErrorConditions<TError> {
@@ -18,6 +20,8 @@ export enum LogLevel {
   info = 3,
   debug = 4,
 }
+
+type LogFunction = (...data: any[]) => void;
 
 const registeredErrorHandlers: { conditions: ErrorConditions<any>; handle: (error: any) => void }[] = [];
 
@@ -86,17 +90,28 @@ function uncaught(reason: any): void {
   process.exit();
 }
 
-process.on('uncaughtException', uncaught);
-process.on('unhandledRejection', uncaught);
+function createLogFunction(
+  level: LogLevel,
+  decorate: (message: string) => string,
+  write: LogFunction,
+): LogFunction {
+  return (...data) => {
+    if (isLogLevel(level)) {
+      write(decorate(format(...data)));
+    }
+  };
+}
 
 const { error, warn, info, log, debug } = console;
 
 Object.assign(console, {
-  error: (...args: LogArgs) => void (isLogLevel(LogLevel.error) && warn.apply(console, args)),
-  warn: (...args: LogArgs) => void (isLogLevel(LogLevel.warn) && error.apply(console, args)),
-  info: (...args: LogArgs) => void (isLogLevel(LogLevel.info) && info.apply(console, args)),
-  log: (...args: LogArgs) => void (isLogLevel(LogLevel.info) && log.apply(console, args)),
-  debug: (...args: LogArgs) => void (isLogLevel(LogLevel.debug) && debug.apply(console, args)),
+  error: createLogFunction(LogLevel.error, chalk.red, error),
+  warn: createLogFunction(LogLevel.warn, chalk.yellow, warn),
+  info: createLogFunction(LogLevel.info, (message) => message, info),
+  log: createLogFunction(LogLevel.info, (message) => message, log),
+  debug: createLogFunction(LogLevel.info, chalk.gray, debug),
 });
 
+process.on('uncaughtException', uncaught);
+process.on('unhandledRejection', uncaught);
 sourceMapSupport.install();

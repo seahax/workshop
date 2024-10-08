@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@types/source-map-support": "^0.5.10",
+    "chalk": "^5.3.0",
     "source-map-support": "^0.5.21"
   }
 }
