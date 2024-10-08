@@ -10,13 +10,10 @@ export async function execNpmView(name: string, currentVersion: string): Promise
     return null;
   }
 
-  const versions: {
-    name: string;
-    version: string;
-    gitHead?: string;
-  }[] = JSON.parse(stdout);
-
-  const metadata = versions.sort((a, b) => semver.compare(b.version, a.version)).at(0);
+  const parsed: Metadata[] | Metadata = JSON.parse(stdout);
+  const metadata = Array.isArray(parsed)
+    ? parsed.sort((a, b) => semver.compare(b.version, a.version)).at(0)
+    : parsed;
 
   if (!metadata) {
     return null;
