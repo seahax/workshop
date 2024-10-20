@@ -1,0 +1,38 @@
+{
+  "name": "@seahax/store-react",
+  "private": true,
+  "version": "0.1.0",
+  "description": "",
+  "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/store-react"
+  },
+  "scripts": {
+    "clean": "rm -rf dist node_modules/.tsc",
+    "build": "pnpm clean && vite build"
+  },
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@seahax/vite-plugin-lib": "workspace:*"
+  },
+  "peerDependencies": {
+    "@seahax/store": "workspace:^",
+    "@types/react": ">=18",
+    "react": ">=18"
+  }
+}
