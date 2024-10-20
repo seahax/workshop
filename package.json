@@ -14,7 +14,7 @@
     "modernize": "npx npm-check-updates@latest -i --root --workspaces --dep dev,prod,peer,optional,packageManager --peer --format group"
   },
   "type": "module",
-  "packageManager": "pnpm@9.12.1+sha256.91452fdfa46234ae447d46d5c4fc4e7e0a7058f90495c4b6f77f8beebbb154e3",
+  "packageManager": "pnpm@9.12.2+sha256.2ef6e547b0b07d841d605240dce4d635677831148cd30f6d564b8f4f928f73d2",
   "devDependencies": {
     "@seahax/bump": "workspace:*",
     "@seahax/eslint": "workspace:*",
