@@ -9,7 +9,7 @@ terraform {
   }
 
   backend "s3" {
-    key                 = "notes.tfstate"
+    key                 = "auth.tfstate"
     bucket              = "seahax-terraform"
     dynamodb_table      = "seahax-terraform"
     region              = "us-east-2"
