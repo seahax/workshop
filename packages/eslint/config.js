@@ -103,6 +103,7 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
         '@typescript-eslint/no-confusing-void-expression': 'off',
         '@typescript-eslint/no-dynamic-delete': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-invalid-void-type': ['warn', { allowAsThisParameter: true, allowInGenericTypeArguments: true }],
         '@typescript-eslint/no-namespace': 'off',
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/no-this-alias': 'off',
