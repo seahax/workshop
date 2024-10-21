@@ -21,7 +21,3 @@ module "dns" {
     { type = "A", name = "www.notes", alias = module.frontend.route53_alias }
   ]
 }
-
-output "cloudfront_id" {
-  value = module.frontend.id
-}
