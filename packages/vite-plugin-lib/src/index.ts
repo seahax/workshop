@@ -1,20 +1,24 @@
 import chmodx from '@seahax/vite-plugin-chmodx';
 import external, { type ExternalOptions } from '@seahax/vite-plugin-external';
 import finalize from '@seahax/vite-plugin-finalize';
-import { mergeConfig, type PluginOption } from 'vite';
+import { type LibraryFormats, mergeConfig, type PluginOption, type UserConfig } from 'vite';
 
 export interface LibOptions extends ExternalOptions {
   readonly tscCommand?: string | false;
   readonly tscArgs?: readonly string[];
+  readonly bundle?: boolean | { external?: boolean };
 }
 
 export default function plugin({
   packageJsonPath,
   tscCommand = 'tsc',
   tscArgs = ['-b', '--force'],
+  bundle = false,
 }: LibOptions = {}): PluginOption {
+  const useExternal = bundle === false || (typeof bundle === 'object' && bundle.external !== true);
+
   return [
-    external({ packageJsonPath }),
+    useExternal && external({ packageJsonPath }),
     chmodx(),
     finalize(async ($) => {
       if (tscCommand) await $(tscCommand, tscArgs);
@@ -22,7 +26,7 @@ export default function plugin({
     {
       name: 'lib',
       config(config) {
-        const formats = config.build?.lib && config.build.lib.formats
+        const formats: undefined | LibraryFormats | LibraryFormats[] = config.build?.lib && config.build.lib.formats
           ? undefined
           : ['es'];
 
@@ -36,18 +40,18 @@ export default function plugin({
           ? ['node']
           : undefined;
 
-        return mergeConfig({
-          target,
+        return mergeConfig<UserConfig, UserConfig>({
           build: {
+            target,
             lib: {
               entry: 'src/index.ts',
               formats,
+              fileName: '[name]',
             },
             sourcemap: true,
             rollupOptions: {
               output: {
-                preserveModules: true,
-                entryFileNames: '[name].js',
+                preserveModules: !bundle,
               },
             },
           },
