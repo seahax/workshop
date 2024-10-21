@@ -1,0 +1,42 @@
+{
+  "name": "@seahax/vite-plugin-zip",
+  "private": true,
+  "version": "0.1.0",
+  "description": "",
+  "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/vite-plugin-zip"
+  },
+  "scripts": {
+    "clean": "rm -rf dist node_modules/.tsc",
+    "build": "pnpm clean && vite build"
+  },
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@seahax/vite-plugin-lib": "workspace:*"
+  },
+  "peerDependencies": {
+    "vite": "^5.4.8"
+  },
+  "dependencies": {
+    "@types/archiver": "^6.0.2",
+    "archiver": "^7.0.1",
+    "fast-glob": "^3.3.2",
+    "minimatch": "^10.0.1"
+  }
+}
