@@ -6,14 +6,8 @@ process.chdir(import.meta.dirname);
 
 export default defineConfig({
   plugins: [
-    lib({ bundle: true }),
-    zip({
-      root: 'dist',
-      outFile: `${import.meta.dirname}/out/dist.zip`,
-      extraFiles: {
-        'package.json': '{ "type": "module" }\n',
-      },
-    }),
+    lib({ bundle: true, forceFormatExtensions: true }),
+    zip(),
   ],
   build: {
     target: ['node20'],

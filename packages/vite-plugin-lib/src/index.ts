@@ -1,12 +1,18 @@
 import chmodx from '@seahax/vite-plugin-chmodx';
 import external, { type ExternalOptions } from '@seahax/vite-plugin-external';
 import finalize from '@seahax/vite-plugin-finalize';
-import { type LibraryFormats, mergeConfig, type PluginOption, type UserConfig } from 'vite';
+import { type LibraryFormats, mergeConfig, type PluginOption, type Rollup, type UserConfig } from 'vite';
 
 export interface LibOptions extends ExternalOptions {
   readonly tscCommand?: string | false;
   readonly tscArgs?: readonly string[];
   readonly bundle?: boolean | { external?: boolean };
+  /**
+   * Force the extension matching the output format (eg. `.mjs`, `.cjs`)
+   * instead of using `.js` for the format matching the `type` field in the
+   * `package.json` file.
+   */
+  readonly forceFormatExtensions?: boolean;
 }
 
 export default function plugin({
@@ -14,6 +20,7 @@ export default function plugin({
   tscCommand = 'tsc',
   tscArgs = ['-b', '--force'],
   bundle = false,
+  forceFormatExtensions = false,
 }: LibOptions = {}): PluginOption {
   const useExternal = bundle === false || (typeof bundle === 'object' && bundle.external !== true);
 
@@ -46,7 +53,7 @@ export default function plugin({
             lib: {
               entry: 'src/index.ts',
               formats,
-              fileName: '[name]',
+              fileName: forceFormatExtensions ? getFileName : '[name]',
             },
             sourcemap: true,
             rollupOptions: {
@@ -62,4 +69,21 @@ export default function plugin({
       },
     },
   ];
+}
+
+function getFileName(format: Rollup.ModuleFormat, entryName: string): string {
+  switch (format) {
+    case 'es':
+    case 'esm':
+    case 'module': {
+      return `${entryName}.mjs`;
+    }
+    case 'cjs':
+    case 'commonjs': {
+      return `${entryName}.cjs`;
+    }
+    default: {
+      return `${entryName}.${format}.js`;
+    }
+  }
 }
