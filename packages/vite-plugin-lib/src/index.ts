@@ -1,18 +1,13 @@
 import chmodx from '@seahax/vite-plugin-chmodx';
 import external, { type ExternalOptions } from '@seahax/vite-plugin-external';
 import finalize from '@seahax/vite-plugin-finalize';
-import { type LibraryFormats, mergeConfig, type PluginOption, type Rollup, type UserConfig } from 'vite';
+import { type LibraryFormats, mergeConfig, type PluginOption, type UserConfig } from 'vite';
 
 export interface LibOptions extends ExternalOptions {
   readonly tscCommand?: string | false;
   readonly tscArgs?: readonly string[];
-  readonly bundle?: boolean | { external?: boolean };
-  /**
-   * Force the extension matching the output format (eg. `.mjs`, `.cjs`)
-   * instead of using `.js` for the format matching the `type` field in the
-   * `package.json` file.
-   */
-  readonly forceFormatExtensions?: boolean;
+  readonly bundle?: boolean;
+  readonly minify?: boolean;
 }
 
 export default function plugin({
@@ -20,12 +15,10 @@ export default function plugin({
   tscCommand = 'tsc',
   tscArgs = ['-b', '--force'],
   bundle = false,
-  forceFormatExtensions = false,
+  minify = false,
 }: LibOptions = {}): PluginOption {
-  const useExternal = bundle === false || (typeof bundle === 'object' && bundle.external !== true);
-
   return [
-    useExternal && external({ packageJsonPath }),
+    external({ packageJsonPath: packageJsonPath ?? !bundle }),
     chmodx(),
     finalize(async ($) => {
       if (tscCommand) await $(tscCommand, tscArgs);
@@ -43,9 +36,7 @@ export default function plugin({
               : [config.build.target])
           : ['es2022'];
 
-        const conditions = target.length > 0 && target.every((t) => /^node/iu.test(t))
-          ? ['node']
-          : undefined;
+        const isNodeTarget = target.length > 0 && target.every((t) => /^node/iu.test(t));
 
         return mergeConfig<UserConfig, UserConfig>({
           build: {
@@ -53,8 +44,9 @@ export default function plugin({
             lib: {
               entry: 'src/index.ts',
               formats,
-              fileName: forceFormatExtensions ? getFileName : '[name]',
+              fileName: '[name]',
             },
+            minify,
             sourcemap: true,
             rollupOptions: {
               output: {
@@ -63,27 +55,13 @@ export default function plugin({
             },
           },
           resolve: {
-            conditions,
+            // Node libs should use the node export condition.
+            conditions: isNodeTarget ? ['node'] : undefined,
+            // Node libs should ignore the package browser field.
+            mainFields: [...(isNodeTarget ? [] : ['browser']), 'module', 'jsnext:main', 'jsnext'],
           },
         }, config);
       },
     },
   ];
-}
-
-function getFileName(format: Rollup.ModuleFormat, entryName: string): string {
-  switch (format) {
-    case 'es':
-    case 'esm':
-    case 'module': {
-      return `${entryName}.mjs`;
-    }
-    case 'cjs':
-    case 'commonjs': {
-      return `${entryName}.cjs`;
-    }
-    default: {
-      return `${entryName}.${format}.js`;
-    }
-  }
 }

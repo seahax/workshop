@@ -5,15 +5,17 @@ import path from 'node:path';
 import { type Plugin, type Rollup } from 'vite';
 
 export interface ExternalOptions {
-  packageJsonPath?: string;
+  packageJsonPath?: string | boolean;
 }
 
 export default function external({ packageJsonPath = 'package.json' }: ExternalOptions = {}): Plugin {
+  if (packageJsonPath === true) packageJsonPath = 'package.json';
+
   return {
     name: 'external',
     async configResolved(config) {
       const external = getExternalCallback(config.build.rollupOptions.external);
-      const packageJson = await fs.readFile(path.resolve(config.root, packageJsonPath), 'utf8').then(JSON.parse);
+      const packageJson = packageJsonPath ? await fs.readFile(path.resolve(config.root, packageJsonPath), 'utf8').then(JSON.parse) : {};
       const prodDepNames = Object.keys({
         ...packageJson.dependencies,
         ...packageJson.peerDependencies,

@@ -26,10 +26,25 @@ export interface ZipOptions {
    * Output zip file path. Defaults to `bundle.zip`.
    */
   readonly outFile?: string;
+  /**
+   * Extra files to include in the zip. The key is the path inside the zip and
+   * the value is the file content.
+   */
   readonly extraFiles?: Record<string, string>;
+  /**
+   * Print added files to the console. Defaults to `false`.
+   */
+  readonly verbose?: boolean;
 }
 
-export default function plugin({ root, include = ['**'], exclude = [], outFile, extraFiles = {} }: ZipOptions = {}): Plugin {
+export default function plugin({
+  root,
+  include = ['**'],
+  exclude = [],
+  outFile,
+  extraFiles = {},
+  verbose = false,
+}: ZipOptions = {}): Plugin {
   let configRoot = process.cwd();
   let outDir = path.resolve(configRoot, 'dist');
 
@@ -49,20 +64,11 @@ export default function plugin({ root, include = ['**'], exclude = [], outFile, 
 
       await fs.mkdir(path.dirname(absOutFile), { recursive: true });
       await fs.open(absOutFile, 'w').then(async (outputHandle) => {
-        // const input = glob.stream([...include], {
-        //   cwd,
-        //   ignore: [...exclude, glob.escapePath(path.relative(cwd, absOutFile).replaceAll('\\', '/'))],
-        //   dot: true,
-        //   unique: true,
-        //   onlyFiles: false,
-        // });
         const output = outputHandle.createWriteStream();
         const zip = archiver('zip', { zlib: { level: 9 } });
 
         zip.pipe(output);
-        zip.on('entry', (entry) => {
-          logger.info(`  added: ${entry.name}`);
-        });
+        if (verbose) zip.on('entry', (entry) => logger.info(`  added: ${entry.name}`));
 
         const promise = new Promise<void>((resolve, reject) => {
           zip.on('close', () => resolve());
@@ -70,32 +76,16 @@ export default function plugin({ root, include = ['**'], exclude = [], outFile, 
         });
 
         for (const input of include) {
-          console.log(cwd, input);
           zip.glob(input, {
             cwd,
             ignore: [...exclude, path.relative(cwd, absOutFile).replaceAll('\\', '/')],
             dot: true,
-            nodir: false,
+            nodir: true,
           });
         }
 
-        // for await (const entry of input) {
-        //   const name = entry.toString('utf8');
-        //   const source = path.resolve(cwd, name);
-        //   const stat = await fs.stat(name);
-
-        //   if (stat.isDirectory()) {
-        //     logger.info(`  directory: ${name}`);
-        //     zip.directory(source, name);
-        //   }
-        //   else {
-        //     logger.info(`  file: ${name}`);
-        //     zip.file(source, { name: name });
-        //   }
-        // }
-
         for (const [name, source] of Object.entries(extraFiles)) {
-          logger.info(`  extra: ${name}`);
+          if (verbose) logger.info(`  extra: ${name}`);
           zip.append(source, { name });
         }
 
