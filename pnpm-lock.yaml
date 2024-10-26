@@ -206,7 +206,7 @@ importers:
         specifier: workspace:*
         version: link:../vite-plugin-zip
 
-  packages/lambda-authorizer-key-rotate:
+  packages/lambda-secret-password-rotate:
     dependencies:
       '@aws-sdk/client-secrets-manager':
         specifier: ^3.678.0
