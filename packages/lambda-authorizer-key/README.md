@@ -1,0 +1,1 @@
+# @seahax/lambda-authorizer-key
