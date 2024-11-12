@@ -19,22 +19,21 @@
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^8.57.0",
     "@seahax/eslint-progress": "workspace:*",
-    "@stylistic/eslint-plugin": "^2.8.0",
+    "@stylistic/eslint-plugin": "^2.10.1",
     "@types/eslint": "^8.56.11",
     "@types/eslint__eslintrc": "^2.1.2",
     "@types/eslint__js": "^8.42.3",
     "eslint-import-resolver-typescript": "^3.6.3",
-    "eslint-plugin-file-progress": "^1.5.0",
-    "eslint-plugin-import": "^2.30.0",
-    "eslint-plugin-react": "^7.37.0",
-    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-regexp": "^2.6.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
-    "eslint-plugin-unicorn": "^55.0.0",
-    "typescript-eslint": "^8.7.0"
+    "eslint-plugin-unicorn": "^56.0.0",
+    "typescript-eslint": "^8.14.0"
   },
   "peerDependencies": {
     "eslint": "^8.57.1",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.3"
   }
 }

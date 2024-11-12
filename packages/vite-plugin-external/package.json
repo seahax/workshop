@@ -28,6 +28,6 @@
     "access": "public"
   },
   "peerDependencies": {
-    "vite": "^5.4.8"
+    "vite": "^5.4.11"
   }
 }

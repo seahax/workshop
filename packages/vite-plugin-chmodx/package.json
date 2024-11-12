@@ -32,6 +32,6 @@
     "@seahax/vite-plugin-finalize": "workspace:*"
   },
   "peerDependencies": {
-    "vite": "^5.4.8"
+    "vite": "^5.4.11"
   }
 }
