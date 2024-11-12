@@ -14,17 +14,21 @@
     "modernize": "npx npm-check-updates@latest -i --root --workspaces --dep dev,prod,peer,optional,packageManager --peer --format group"
   },
   "type": "module",
-  "packageManager": "pnpm@9.12.2+sha256.2ef6e547b0b07d841d605240dce4d635677831148cd30f6d564b8f4f928f73d2",
+  "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee",
   "devDependencies": {
     "@seahax/bump": "workspace:*",
     "@seahax/eslint": "workspace:*",
     "@types/node": "^22.7.4",
     "@vitest/coverage-v8": "^2.1.1",
     "eslint": "^8.57.0",
+    "execa": "^9.4.0",
+    "glob": "^11.0.0",
+    "jsdom": "^25.0.1",
     "lerna": "^8.1.8",
     "nx": "^19.8.2",
     "typescript": "^5.6.2",
     "vite": "^5.4.8",
-    "vitest": "^2.1.1"
+    "vitest": "^2.1.1",
+    "yaml": "^2.6.0"
   }
 }

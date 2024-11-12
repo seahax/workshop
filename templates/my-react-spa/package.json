@@ -1,5 +1,5 @@
 {
-  "name": "@seahax/my-lambda",
+  "name": "@seahax/my-react-spa",
   "private": true,
   "version": "0.1.0",
   "description": "",
@@ -7,21 +7,15 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
-    "directory": "packages/my-lambda"
+    "directory": "packages/..."
   },
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
     "build": "pnpm clean && vite build",
-    "rename": "node rename.cjs"
+    "start": "vite dev",
+    "rename": "node rename.mjs"
   },
   "type": "module",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
-  },
   "files": [
     "dist"
   ],
@@ -29,10 +23,12 @@
     "access": "public"
   },
   "devDependencies": {
-    "@seahax/vite-plugin-lib": "workspace:*",
-    "@seahax/vite-plugin-zip": "workspace:*"
+    "@vitejs/plugin-react": "^4.3.3"
   },
   "dependencies": {
-    "@types/aws-lambda": "^8.10.145"
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   }
 }

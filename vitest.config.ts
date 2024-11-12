@@ -6,10 +6,11 @@ export default defineConfig({
     globalSetup: ['vitest.global-setup.ts'],
     setupFiles: ['vitest.setup.ts'],
     coverage: {
+      enabled: true,
       reporter: ['text', 'html', 'lcovonly'],
       provider: 'v8',
-      include: ['packages/*/src/**/*'],
-      exclude: ['**/index.ts', '**/types/**/*', '**/constants/**/*'],
+      include: ['packages/*/src/**/*', 'apps/*/*/src/**/*'],
+      exclude: ['**/index.ts?(x)', '**/types/**/*', '**/constants/**/*'],
     },
   },
 });

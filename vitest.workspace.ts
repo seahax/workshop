@@ -1,11 +1,14 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import fs from 'node:fs';
 
-export default [
-  ...fs.readdirSync('packages', { withFileTypes: true }),
-  ...fs.readdirSync('templates', { withFileTypes: true }),
-]
-  .filter((dirent) => dirent.isDirectory())
-  .map((dirent) => `${dirent.parentPath}/${dirent.name}`)
+import { globSync } from 'glob';
+import YAML from 'yaml';
+
+const { packages } = YAML.parse(fs.readFileSync(`${import.meta.dirname}/pnpm-workspace.yaml`, 'utf8'));
+
+export default globSync(packages, { nodir: false, withFileTypes: true })
+  .filter((path) => path.isDirectory())
+  .map((path) => `${path.parentPath}/${path.name}`)
   .filter((path) => {
     const files = fs.readdirSync(path, { withFileTypes: true, recursive: true })
       .filter((dirent) => dirent.isFile())
