@@ -2,8 +2,7 @@ import { type Server } from 'node:http';
 
 import chalk from 'chalk';
 import { createLogger, type InlineConfig, mergeConfig, type PluginOption, preview as startPreview, type PreviewServer } from 'vite';
-import WebSocket from 'ws';
-import { WebSocketServer } from 'ws';
+import { WebSocket, WebSocketServer } from 'ws';
 
 import clientInject from './middleware/client-inject.js';
 import clientRoute from './middleware/client-route.js';
@@ -148,7 +147,7 @@ export default function plugin({ reload = true, ...previewConfig }: BuildPreview
           ws.on('connection', (client) => {
             client.on('message', (event) => {
               try {
-                const message = JSON.parse(String(event));
+                const message = JSON.parse(String(event as unknown));
 
                 if (message.type === 'reconnect') {
                   client.send(WS_PAGE_RELOAD_MESSAGE);

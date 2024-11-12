@@ -2,7 +2,7 @@ import path from 'node:path';
 
 import type eslint from 'eslint';
 
-export default function progress(): eslint.Linter.FlatConfig {
+export default function progress(): eslint.Linter.Config {
   return {
     plugins: {
       progress: {

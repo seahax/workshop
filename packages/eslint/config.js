@@ -2,6 +2,7 @@ import { FlatCompat } from '@eslint/eslintrc';
 import eslint from '@eslint/js';
 import progress from '@seahax/eslint-progress';
 import stylistic from '@stylistic/eslint-plugin';
+import importPlugin from 'eslint-plugin-import';
 import react from 'eslint-plugin-react';
 import regexp from 'eslint-plugin-regexp';
 import importSort from 'eslint-plugin-simple-import-sort';
@@ -10,11 +11,9 @@ import typescript from 'typescript-eslint';
 
 const compat = new FlatCompat({ baseDirectory: import.meta.dirname });
 
-const tsExt = ['ts', 'cts', 'mts', 'tsx', 'ctsx', 'mtsx'];
-const ext = ['js', 'mjs', 'cjs', 'jsx', 'mjsx', 'cjsx', ...tsExt];
-
-const tsExtGlob = `{${tsExt.join(',')}}`;
-const extGlob = `{${ext.join(',')}}`;
+const jsExt = ['js', 'mjs', 'cjs', 'jsx'];
+const tsExt = ['ts', 'cts', 'mts', 'tsx'];
+const ext = [...jsExt, ...tsExt];
 
 export default function config({ ignores = [], tsconfigPath = './tsconfig.json' } = {}) {
   return [
@@ -28,14 +27,14 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
     react.configs.flat['jsx-runtime'],
     ...compat.config({ extends: ['plugin:react-hooks/recommended'] }),
     regexp.configs['flat/recommended'],
-    ...compat.plugins('import'),
+    { plugins: { import: importPlugin } },
     { plugins: { 'import-sort': importSort } },
     unicorn.configs['flat/recommended'],
     ...[
       ...typescript.configs.recommendedTypeChecked,
       ...typescript.configs.stylisticTypeChecked,
       ...typescript.configs.strictTypeChecked,
-    ].map((config) => ({ ...config, files: [...config.files ?? [], `**/*.${tsExtGlob}`] })),
+    ].map((config) => ({ ...config, files: [...config.files ?? [], `**/*.{${tsExt}}`] })),
 
     // Settings
     {
@@ -54,7 +53,7 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
       },
       settings: {
         'import/parsers': {
-          espree: ['.js'],
+          // espree: ['.js'],
           '@typescript-eslint/parser': tsExt.map((ext) => `.${ext}`),
         },
         'import/resolver': {
@@ -94,7 +93,7 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
     },
 
     { // Rules: TypeScript
-      files: [`**/*.${tsExtGlob}`],
+      files: [`**/*.{${tsExt}}`],
       rules: {
         '@typescript-eslint/ban-types': 'off',
         '@typescript-eslint/consistent-type-exports': ['warn', { fixMixedExportsWithInlineTypeSpecifier: true }],
@@ -117,12 +116,12 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
         '@typescript-eslint/prefer-regexp-exec': 'off',
         '@typescript-eslint/require-await': 'off',
         '@typescript-eslint/restrict-template-expressions': ['error', { allowAny: true, allowNumber: true, allowBoolean: true, allowNullish: true }],
-        '@typescript-eslint/switch-exhaustiveness-check': 'warn',
+        '@typescript-eslint/switch-exhaustiveness-check': ['warn', { considerDefaultExhaustiveForUnions: true, requireDefaultForNonUnion: true }],
       },
     },
 
     { // Rules: Tests, Configs
-      files: [`**/*.{test,spec,config,setup}.${extGlob}`],
+      files: [`**/*.{test,spec,config,setup}.{${ext}}`],
       rules: {
         'max-lines': 'off',
         'import/no-extraneous-dependencies': ['off'],

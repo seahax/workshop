@@ -17,10 +17,10 @@
   },
   "dependencies": {
     "@eslint/eslintrc": "^3.1.0",
-    "@eslint/js": "^8.57.0",
+    "@eslint/js": "^9.14.0",
     "@seahax/eslint-progress": "workspace:*",
     "@stylistic/eslint-plugin": "^2.10.1",
-    "@types/eslint": "^8.56.11",
+    "@types/eslint": "^9.6.1",
     "@types/eslint__eslintrc": "^2.1.2",
     "@types/eslint__js": "^8.42.3",
     "eslint-import-resolver-typescript": "^3.6.3",
@@ -33,7 +33,7 @@
     "typescript-eslint": "^8.14.0"
   },
   "peerDependencies": {
-    "eslint": "^8.57.1",
+    "eslint": "^9.14.0",
     "typescript": "^5.6.3"
   }
 }

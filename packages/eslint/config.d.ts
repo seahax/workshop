@@ -5,6 +5,6 @@ interface Options {
   readonly tsconfigPath?: string;
 }
 
-const value: (options?: Options) => Linter.FlatConfig[];
+const value: (options?: Options) => Linter.Config[];
 
 export default value;

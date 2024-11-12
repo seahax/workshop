@@ -1,8 +1,8 @@
 // XXX: The following line must stay exactly as-is so that the real base can be
 // injected at runtime.
 const base = '/';
-const pingUrl = window.location.protocol + '//' + window.location.host + base;
-const socketUrl = (window.location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + window.location.host + base;
+const pingUrl = location.protocol + '//' + location.host + base;
+const socketUrl = (location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host + base;
 
 function connect() {
   console.log('[vite] connecting...');
@@ -18,7 +18,7 @@ function connect() {
       const message = JSON.parse(event.data);
 
       if (message?.type === 'page-reload') {
-        window.location.reload();
+        location.reload();
       }
     }
     catch {
@@ -43,7 +43,6 @@ function connect() {
  * with a delay between requests.
  */
 async function reconnect() {
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
