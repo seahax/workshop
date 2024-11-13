@@ -14,7 +14,7 @@
     "build": "pnpm clean && vite build"
   },
   "type": "module",
-  "bin": "dist/index.js",
+  "bin": "bin.mjs",
   "files": [
     "dist"
   ],
