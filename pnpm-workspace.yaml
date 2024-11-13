@@ -1,4 +1,4 @@
 packages:
-  - apps/home/*
+  - apps/*/*
   - packages/*
   - templates/*

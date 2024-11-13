@@ -25,7 +25,7 @@ resource "digitalocean_app" "self" {
       build_command     = "pnpm install --frozen-lockfile && pnpm build"
       output_dir        = "apps/do-demo/frontend/dist"
       index_document    = "index.html"
-      catchall_document = "/index.html"
+      catchall_document = "index.html"
       github {
         repo           = "seahax/workshop"
         branch         = "digitalocean"
