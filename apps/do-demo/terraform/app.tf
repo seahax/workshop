@@ -22,7 +22,7 @@ resource "digitalocean_app" "self" {
 
     static_site {
       name              = "frontend"
-      build_command     = "pnpm install --frozen-lockfile && pnpm build"
+      build_command     = "pnpm install --frozen-lockfile && npx lerna run build --scope=@seahax/do-demo-frontend"
       output_dir        = "apps/do-demo/frontend/dist"
       index_document    = "index.html"
       catchall_document = "index.html"
