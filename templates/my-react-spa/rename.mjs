@@ -4,6 +4,7 @@ import { readFile, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import { $ } from 'execa';
+import JSON5 from 'json5';
 
 void (async () => {
   const newName = process.argv[2];
@@ -14,7 +15,7 @@ void (async () => {
   }
 
   const packageJson = await readFile('package.json', 'utf8').then(JSON.parse);
-  const tsConfigBuild = await readFile('tsconfig.build.json', 'utf8').then(JSON.parse);
+  const tsConfigBuild = await readFile('tsconfig.build.json', 'utf8').then(JSON5.parse);
   const readmeText = await readFile('README.md', 'utf8');
   const { stdout: directory } = await $`git rev-parse --show-prefix`;
 

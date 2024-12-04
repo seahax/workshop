@@ -14,7 +14,7 @@
     "modernize": "npx npm-check-updates@latest -i --root --workspaces --dep dev,prod,peer,optional,packageManager --peer --format group"
   },
   "type": "module",
-  "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee",
+  "packageManager": "pnpm@9.14.4+sha512.c8180b3fbe4e4bca02c94234717896b5529740a6cbadf19fa78254270403ea2f27d4e1d46a08a0f56c89b63dc8ebfd3ee53326da720273794e6200fcf0d184ab",
   "devDependencies": {
     "@seahax/bump": "workspace:*",
     "@seahax/eslint": "workspace:*",
@@ -24,6 +24,7 @@
     "execa": "^9.5.1",
     "glob": "^11.0.0",
     "jsdom": "^25.0.1",
+    "json5": "^2.2.3",
     "lerna": "^8.1.9",
     "nx": "^20.1.0",
     "typescript": "^5.6.3",
