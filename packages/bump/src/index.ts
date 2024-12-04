@@ -100,7 +100,12 @@ async function init(packageVersion: string): Promise<boolean> {
   return true;
 }
 
-async function updateChangelog(currentText = '', version: string, messages: Message[], note: string | undefined): Promise<void> {
+async function updateChangelog(
+  currentText = '',
+  version: string,
+  messages: Message[],
+  note: string | undefined,
+): Promise<void> {
   const text = getChangelog(currentText, version, messages, note);
 
   await fs.writeFile('CHANGELOG.md', text);

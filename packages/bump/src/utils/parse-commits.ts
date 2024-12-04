@@ -19,8 +19,9 @@ export function parseCommits(commits: Commit[]): Message[] {
 
 function parseBody(body: string): Message[] {
   const messages: Message[] = [];
+  const matches = body.matchAll(/^([a-z]+)(?:\((.*)\))?(!)?:[ \t]+(\S.*)$/gimu);
 
-  for (const [, parsedType = '', scope, breaking = '', description = ''] of body.matchAll(/^([a-z]+)(?:\((.*)\))?(!)?:[ \t]+(\S.*)$/gimu)) {
+  for (const [, parsedType = '', scope, breaking = '', description = ''] of matches) {
     const maybeType = parsedType.trim().toLowerCase();
 
     if (!isType(maybeType)) {

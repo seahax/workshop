@@ -88,7 +88,9 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
         'unicorn/numeric-separators-style': 'off',
         'unicorn/prefer-top-level-await': 'off',
         'unicorn/prevent-abbreviations': 'off',
+        'unicorn/prefer-ternary': 'off',
         'valid-typeof': 'off',
+        '@stylistic/max-len': ['warn', { code: 120, tabWidth: 2, ignoreComments: true, ignoreTemplateLiterals: true }],
       },
     },
 
@@ -98,11 +100,17 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
         '@typescript-eslint/ban-types': 'off',
         '@typescript-eslint/consistent-type-exports': ['warn', { fixMixedExportsWithInlineTypeSpecifier: true }],
         '@typescript-eslint/consistent-type-imports': ['warn', { fixStyle: 'inline-type-imports' }],
-        '@typescript-eslint/explicit-function-return-type': ['warn', { allowExpressions: true, allowConciseArrowFunctionExpressionsStartingWithVoid: true }],
+        '@typescript-eslint/explicit-function-return-type': [
+          'warn',
+          { allowExpressions: true, allowConciseArrowFunctionExpressionsStartingWithVoid: true },
+        ],
         '@typescript-eslint/no-confusing-void-expression': 'off',
         '@typescript-eslint/no-dynamic-delete': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
-        '@typescript-eslint/no-invalid-void-type': ['warn', { allowAsThisParameter: true, allowInGenericTypeArguments: true }],
+        '@typescript-eslint/no-invalid-void-type': [
+          'warn',
+          { allowAsThisParameter: true, allowInGenericTypeArguments: true },
+        ],
         '@typescript-eslint/no-namespace': 'off',
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/no-this-alias': 'off',
@@ -115,8 +123,14 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
         '@typescript-eslint/prefer-nullish-coalescing': 'off',
         '@typescript-eslint/prefer-regexp-exec': 'off',
         '@typescript-eslint/require-await': 'off',
-        '@typescript-eslint/restrict-template-expressions': ['error', { allowAny: true, allowNumber: true, allowBoolean: true, allowNullish: true }],
-        '@typescript-eslint/switch-exhaustiveness-check': ['warn', { considerDefaultExhaustiveForUnions: true, requireDefaultForNonUnion: true }],
+        '@typescript-eslint/restrict-template-expressions': [
+          'error',
+          { allowAny: true, allowNumber: true, allowBoolean: true, allowNullish: true },
+        ],
+        '@typescript-eslint/switch-exhaustiveness-check': [
+          'warn',
+          { considerDefaultExhaustiveForUnions: true, requireDefaultForNonUnion: true },
+        ],
       },
     },
 

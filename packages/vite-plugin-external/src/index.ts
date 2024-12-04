@@ -15,7 +15,9 @@ export default function external({ packageJsonPath = 'package.json' }: ExternalO
     name: 'external',
     async configResolved(config) {
       const external = getExternalCallback(config.build.rollupOptions.external);
-      const packageJson = packageJsonPath ? await fs.readFile(path.resolve(config.root, packageJsonPath), 'utf8').then(JSON.parse) : {};
+      const packageJson = packageJsonPath
+        ? await fs.readFile(path.resolve(config.root, packageJsonPath), 'utf8').then(JSON.parse)
+        : {};
       const prodDepNames = Object.keys({
         ...packageJson.dependencies,
         ...packageJson.peerDependencies,
@@ -26,7 +28,8 @@ export default function external({ packageJsonPath = 'package.json' }: ExternalO
         if (external(id, importer, isResolved)) return true;
         if (id.startsWith('node:')) return true;
         if (isBuiltin(id)) return true;
-        if (prodDepNames.includes(id)) return true;
+        const maybePackageName = id.match(/^(?:@[^/]+\/)?[^/]+/u)?.[0];
+        if (maybePackageName && prodDepNames.includes(maybePackageName)) return true;
 
         return false;
       };

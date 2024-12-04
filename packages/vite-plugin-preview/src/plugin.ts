@@ -1,7 +1,14 @@
 import { type Server } from 'node:http';
 
 import chalk from 'chalk';
-import { createLogger, type InlineConfig, mergeConfig, type PluginOption, preview as startPreview, type PreviewServer } from 'vite';
+import {
+  createLogger,
+  type InlineConfig,
+  mergeConfig,
+  type PluginOption,
+  preview as startPreview,
+  type PreviewServer,
+} from 'vite';
 import { WebSocket, WebSocketServer } from 'ws';
 
 import clientInject from './middleware/client-inject.js';
@@ -97,7 +104,10 @@ export default function plugin({ reload = true, ...previewConfig }: BuildPreview
             logger.clearScreen('error');
           }
 
-          logger.info('server restarted.' + (restartCount >= 2 ? chalk.yellow(` (x${restartCount})`) : ''), { timestamp: true });
+          logger.info(
+            `server restarted.${(restartCount >= 2 ? chalk.yellow(` (x${restartCount})`) : '')}`,
+            { timestamp: true },
+          );
         }
 
         preview = await startPreview(mergeConfig<InlineConfig, InlineConfig>({

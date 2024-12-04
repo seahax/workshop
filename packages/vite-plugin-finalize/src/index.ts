@@ -10,7 +10,9 @@ type TemplateArgs = [template: TemplateStringsArray, ...templateValues: readonly
 export default function finalize(callback: Callback): Plugin;
 export default function finalize(...args: TemplateArgs): Plugin;
 export default function finalize(options: Options): (...args: TemplateArgs) => Plugin;
-export default function finalize(...args: [callback: Callback] | [options: Options] | TemplateArgs): Plugin | ((...args: TemplateArgs) => Plugin) {
+export default function finalize(
+  ...args: [callback: Callback] | [options: Options] | TemplateArgs
+): Plugin | ((...args: TemplateArgs) => Plugin) {
   if (typeof args[0] === 'object' && !Array.isArray(args[0])) {
     return (...templateArgs: TemplateArgs) => finalize(async ($, config) => {
       const options = args[0] as Options;
