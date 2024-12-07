@@ -11,7 +11,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
-    "build": "pnpm clean && vite build && tsc -b"
+    "build": "pnpm clean && vite build && tsc -b --force"
   },
   "type": "module",
   "types": "dist/index.d.ts",

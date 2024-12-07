@@ -1,28 +1,20 @@
 import chmodx from '@seahax/vite-plugin-chmodx';
 import external, { type ExternalOptions } from '@seahax/vite-plugin-external';
-import finalize from '@seahax/vite-plugin-finalize';
 import { type LibraryFormats, mergeConfig, type PluginOption, type UserConfig } from 'vite';
 
 export interface LibOptions extends ExternalOptions {
-  readonly tscCommand?: string | false;
-  readonly tscArgs?: readonly string[];
   readonly bundle?: boolean;
   readonly minify?: boolean;
 }
 
 export default function plugin({
   packageJsonPath,
-  tscCommand = 'tsc',
-  tscArgs = ['-b', '--force'],
   bundle = false,
   minify = false,
 }: LibOptions = {}): PluginOption {
   return [
     external({ packageJsonPath: packageJsonPath ?? !bundle }),
     chmodx(),
-    finalize(async ($) => {
-      if (tscCommand) await $(tscCommand, tscArgs);
-    }),
     {
       name: 'lib',
       config(config) {

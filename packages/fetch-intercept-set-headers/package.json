@@ -28,7 +28,8 @@
     "access": "public"
   },
   "devDependencies": {
-    "@seahax/vite-plugin-lib": "workspace:*"
+    "@seahax/vite-plugin-lib": "workspace:*",
+    "@seahax/vite-plugin-finalize": "workspace:*"
   },
   "dependencies": {
     "@seahax/fetch": "workspace:^"
