@@ -127,12 +127,12 @@ function createLogFunction(
   };
 }
 
-const { error, warn, info, log, debug } = console;
+const { error, warn, log, debug } = console;
 
 Object.assign(console, {
   error: createLogFunction(LogLevel.error, chalk.red, error),
   warn: createLogFunction(LogLevel.warn, chalk.yellow, warn),
-  info: createLogFunction(LogLevel.info, (message) => message, info),
+  info: createLogFunction(LogLevel.info, (message) => message, error),
   log: createLogFunction(LogLevel.info, (message) => message, log),
   debug: createLogFunction(LogLevel.debug, chalk.gray, debug),
 });
