@@ -28,19 +28,29 @@ main(async () => {
 
   const published = await getPublished(current.name, current.version);
   const logs = published ? await getLogs(published.head) : [];
+  const release = logs.some(({ message }) => /^\S+!:/u.test(message))
+    ? 'major'
+    : (logs.some(({ message }) => message.startsWith('feat:'))
+        ? 'minor'
+        : 'patch');
   const isCurrentPublished = published?.version === current.version;
-  const isPrerelease = Boolean(semver.parse(current.version)?.prerelease.length);
-  const suggestedVersion = isCurrentPublished
-    ? semver.inc(current.version, isPrerelease ? 'prepatch' : 'patch') ?? ''
-    : current.version;
 
   if (isCurrentPublished && logs.length === 0) {
     console.log('No changes.');
     return;
   }
+  const isPrerelease = Boolean(semver.parse(current.version)?.prerelease.length);
+  let suggestedVersion = semver.inc(
+    !published || isCurrentPublished ? current.version : published.version,
+    isPrerelease ? `pre${release}` : release,
+  ) ?? '';
 
   if (!suggestedVersion) {
     throw new Error('Current version is invalid.');
+  }
+
+  if (semver.lt(suggestedVersion, current.version)) {
+    suggestedVersion = current.version;
   }
 
   console.log(`${chalk.bold('Package:')} ${current.name}@${current.version}`);
