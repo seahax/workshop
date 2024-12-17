@@ -83,17 +83,18 @@ main(async () => {
 
   await fs.writeFile('package.json', JSON.stringify({ ...current, version: newVersion }, null, indent) + '\n');
 
+  const changeLog = await fs.readFile('CHANGELOG.md', 'utf8').catch((error: unknown) => {
+    if ((error as any)?.code === 'ENOENT') return '';
+    throw error;
+  });
+  const [, header, rest = ''] = changeLog.match(/^(# \S.*?(?=\n#|$))(.*)$/su) ?? [];
+
   const date = new Date();
   const dateString = `${String(date.getFullYear()).padStart(4, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   const changeLogMessage = [
     `## ${newVersion} - ${dateString}\n`,
     ...logs.map(({ message, hash }) => `- ${message} (\`${hash}\`)`),
   ].join('\n');
-  const changeLog = await fs.readFile('CHANGELOG.md', 'utf8').catch((error: unknown) => {
-    if ((error as any)?.code === 'ENOENT') return '';
-    throw error;
-  });
-  const [, header, rest = ''] = changeLog.match(/^(# \S.*?(?=\n#|$))(.*)$/su) ?? [];
 
   await fs.writeFile('CHANGELOG.md', [
     header?.trim() || '# Changelog',
