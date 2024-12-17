@@ -32,7 +32,7 @@
     "@seahax/vite-plugin-finalize": "workspace:*"
   },
   "peerDependencies": {
-    "vite": "^5.4.11"
+    "vite": "^6.0.3"
   },
   "dependencies": {
     "@types/archiver": "^6.0.3",

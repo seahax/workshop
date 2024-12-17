@@ -1,7 +1,7 @@
 {
   "name": "@seahax/vite-plugin-finalize",
   "private": false,
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Run a task after the bundle is written.",
   "license": "Unlicense",
   "repository": {
@@ -31,9 +31,9 @@
     "@seahax/vite-plugin-external": "workspace:*"
   },
   "dependencies": {
-    "execa": "^9.5.1"
+    "execa": "^9.5.2"
   },
   "peerDependencies": {
-    "vite": "^5.4.11"
+    "vite": "^6.0.3"
   }
 }
