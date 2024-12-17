@@ -8,12 +8,12 @@ importers:
 
   .:
     devDependencies:
-      '@seahax/changes':
-        specifier: workspace:*
-        version: link:packages/changes
       '@seahax/eslint':
         specifier: workspace:*
         version: link:packages/eslint
+      '@seahax/rev':
+        specifier: workspace:*
+        version: link:packages/rev
       '@types/node':
         specifier: ^22.10.2
         version: 22.10.2
@@ -53,28 +53,6 @@ importers:
       yaml:
         specifier: ^2.6.1
         version: 2.6.1
-
-  packages/changes:
-    dependencies:
-      '@seahax/main':
-        specifier: workspace:*
-        version: link:../main
-      '@types/semver':
-        specifier: ^7.5.8
-        version: 7.5.8
-      execa:
-        specifier: ^9.5.2
-        version: 9.5.2
-      semver:
-        specifier: ^7.6.3
-        version: 7.6.3
-    devDependencies:
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
-      '@seahax/vite-plugin-lib':
-        specifier: workspace:*
-        version: link:../vite-plugin-lib
 
   packages/engage:
     dependencies:
@@ -294,6 +272,31 @@ importers:
       source-map-support:
         specifier: ^0.5.21
         version: 0.5.21
+    devDependencies:
+      '@seahax/vite-plugin-finalize':
+        specifier: workspace:*
+        version: link:../vite-plugin-finalize
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+
+  packages/rev:
+    dependencies:
+      '@seahax/main':
+        specifier: workspace:*
+        version: link:../main
+      '@types/semver':
+        specifier: ^7.5.8
+        version: 7.5.8
+      chalk:
+        specifier: ^5.3.0
+        version: 5.3.0
+      execa:
+        specifier: ^9.5.2
+        version: 9.5.2
+      semver:
+        specifier: ^7.6.3
+        version: 7.6.3
     devDependencies:
       '@seahax/vite-plugin-finalize':
         specifier: workspace:*

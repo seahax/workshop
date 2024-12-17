@@ -1,5 +1,5 @@
 {
-  "name": "@seahax/changes",
+  "name": "@seahax/rev",
   "private": true,
   "version": "0.2.0",
   "description": "",
@@ -7,7 +7,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
-    "directory": "packages/changes"
+    "directory": "packages/rev"
   },
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
@@ -22,12 +22,13 @@
     "access": "public"
   },
   "devDependencies": {
-    "@seahax/vite-plugin-lib": "workspace:*",
-    "@seahax/vite-plugin-finalize": "workspace:*"
+    "@seahax/vite-plugin-finalize": "workspace:*",
+    "@seahax/vite-plugin-lib": "workspace:*"
   },
   "dependencies": {
     "@seahax/main": "workspace:*",
     "@types/semver": "^7.5.8",
+    "chalk": "^5.3.0",
     "execa": "^9.5.2",
     "semver": "^7.6.3"
   }
