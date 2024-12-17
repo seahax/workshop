@@ -5,115 +5,77 @@ import readline from 'node:readline';
 import { main } from '@seahax/main';
 import chalk from 'chalk';
 import { $ } from 'execa';
-import semver from 'semver';
+import semver, { type ReleaseType } from 'semver';
 
 interface Package {
-  name?: unknown;
-  version?: unknown;
-  private: unknown;
+  readonly name: string;
+  readonly version: string;
+  readonly private?: boolean;
+}
+
+interface Info {
+  readonly head: string;
+  readonly version: string;
+}
+
+interface Log {
+  readonly hash: string;
+  readonly message: string;
 }
 
 main(async () => {
-  const packageText = await fs.readFile('package.json', 'utf8');
-  const current: Package | undefined = JSON.parse(packageText);
-
-  if (!current || typeof current.name !== 'string' || typeof current.version !== 'string') {
-    throw new Error('Invalid package.json file.');
-  }
+  const current = await readPackage();
 
   if (current.private) {
     console.log('Private package.');
     return;
   }
 
-  const published = await getPublished(current.name, current.version);
-  const logs = published ? await getLogs(published.head) : [];
-  const release = logs.some(({ message }) => /^\S+!:/u.test(message))
-    ? 'major'
-    : (logs.some(({ message }) => message.startsWith('feat:'))
-        ? 'minor'
-        : 'patch');
-  const isCurrentPublished = published?.version === current.version;
+  const previous = await getInfo(current.name, current.version);
+  const logs = previous ? await getLogs(previous.head) : [];
+  const release = getReleaseType(logs, current.version);
 
-  if (isCurrentPublished && logs.length === 0) {
+  // A version is published and no release is needed.
+  if (previous && release == null) {
     console.log('No changes.');
     return;
   }
-  const isPrerelease = Boolean(semver.parse(current.version)?.prerelease.length);
-  let suggestedVersion = semver.inc(
-    !published || isCurrentPublished ? current.version : published.version,
-    isPrerelease ? `pre${release}` : release,
-  ) ?? '';
 
-  if (!suggestedVersion) {
-    throw new Error('Current version is invalid.');
-  }
+  const suggestedVersion = getSuggestedVersion(previous?.version, current.version, release);
+  const newVersion = await prompt(current.name, previous?.version ?? current.version, suggestedVersion, logs);
 
-  if (semver.lt(suggestedVersion, current.version)) {
-    suggestedVersion = current.version;
-  }
-
-  console.log(`${chalk.bold('Package:')} ${current.name}@${current.version}`);
-  console.log(chalk.bold('Changes:'));
-  logs.forEach(({ hash, message }) => console.log(`  ${chalk.yellow(hash)} ${message}`));
-
-  let newVersion: string | null;
-
-  if (process.stdin.isTTY) {
-    newVersion = await ask(chalk.bold(`Version (${suggestedVersion})? `));
-
-    if (newVersion == null) {
-      process.exitCode ||= 1;
-      return;
-    }
-
-    if (newVersion) {
-      if (!semver.valid(newVersion)) {
-        throw new Error('Invalid version.');
-      }
-
-      if (semver[isCurrentPublished ? 'lte' : 'lt'](newVersion, current.version)) {
-        throw new Error('New version must be greater than or equal to the current version.');
-      }
-    }
-    else {
-      newVersion = suggestedVersion;
-    }
-  }
-  else {
-    newVersion = suggestedVersion;
-    console.log(`${chalk.bold('Version:')} ${newVersion}`);
-  }
-
-  if (newVersion === current.version) {
+  if (newVersion == null || newVersion === current.version) {
     return;
   }
 
-  const indent = packageText.match(/^\s+/mu)?.[0] || '  ';
-
-  await fs.writeFile('package.json', JSON.stringify({ ...current, version: newVersion }, null, indent) + '\n');
-
-  const changeLog = await fs.readFile('CHANGELOG.md', 'utf8').catch((error: unknown) => {
-    if ((error as any)?.code === 'ENOENT') return '';
-    throw error;
-  });
-  const [, header, rest = ''] = changeLog.match(/^(# \S.*?(?=\n#|$))(.*)$/su) ?? [];
-
-  const date = new Date();
-  const dateString = `${String(date.getFullYear()).padStart(4, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-  const changeLogMessage = [
-    `## ${newVersion} - ${dateString}\n`,
-    ...logs.map(({ message, hash }) => `- ${message} (\`${hash}\`)`),
-  ].join('\n');
-
-  await fs.writeFile('CHANGELOG.md', [
-    header?.trim() || '# Changelog',
-    changeLogMessage,
-    rest.trim(),
-  ].filter(Boolean).join('\n\n') + '\n');
+  await writePackage(newVersion);
+  await writeChangelog(newVersion, logs);
 });
 
-async function getPublished(name: string, currentVersion: string): Promise<null | { head: string; version: string }> {
+async function readPackage(): Promise<Package> {
+  const raw = await fs.readFile('package.json', 'utf8');
+  const pkg = JSON.parse(raw);
+
+  if (!isPackage(pkg)) {
+    throw new Error('Invalid package.json file.');
+  }
+
+  if (semver.parse(pkg.version) == null) {
+    throw new Error('Invalid package.json version.');
+  }
+
+  return pkg;
+}
+
+function isPackage(obj: undefined | Record<string, unknown> | Package): obj is Package {
+  return (
+    typeof obj?.name === 'string'
+    && typeof obj.version === 'string'
+    && (obj.private === undefined || typeof obj.private === 'boolean')
+  );
+}
+
+async function getInfo(name: string, currentVersion: string): Promise<Info | null> {
   const { stdout, stderr, stdio, exitCode } = await $({
     stdio: 'pipe',
     reject: false,
@@ -134,7 +96,7 @@ async function getPublished(name: string, currentVersion: string): Promise<null 
   return { head: closest.gitHead, version: closest.version };
 }
 
-async function getLogs(publishedHead: string): Promise<{ hash: string; message: string }[]> {
+async function getLogs(publishedHead: string): Promise<readonly Log[]> {
   const { stdout } = await $({
     stdout: 'pipe',
   })`git log ${'--pretty=format:%C(yellow)%h%C(reset) %s'} ${publishedHead}..HEAD -- .`;
@@ -143,6 +105,74 @@ async function getLogs(publishedHead: string): Promise<{ hash: string; message: 
     const match = line.match(/^\s*([a-f0-9]+)\s+(?=\S)(.+?)(?<=\S)\s*?$/mu);
     return match ? { hash: match[1]!, message: match[2]! } : [];
   });
+}
+
+function getReleaseType(logs: readonly Log[], currentVersion: string): ReleaseType | null {
+  if (logs.length === 0) return null;
+
+  const prefix = semver.parse(currentVersion)?.prerelease.length ? 'pre' : '';
+
+  if (logs.some(({ message }) => /^\S+!:/u.test(message))) return `${prefix}major`;
+  if (logs.some(({ message }) => message.startsWith('feat:'))) return `${prefix}minor`;
+
+  return `${prefix}patch`;
+}
+
+function getSuggestedVersion(
+  previousVersion: string | undefined,
+  currentVersion: string,
+  release: ReleaseType | null,
+): string {
+  if (!release) return currentVersion;
+
+  if (previousVersion) {
+    const suggestedVersion = semver.inc(previousVersion, release)!;
+
+    return semver.lt(suggestedVersion, currentVersion)
+      ? currentVersion
+      : suggestedVersion;
+  }
+
+  return semver.inc(currentVersion, release)!;
+}
+
+async function prompt(
+  name: string,
+  previousVersion: string,
+  suggestedVersion: string,
+  logs: readonly Log[],
+): Promise<string | null> {
+  console.log(`${chalk.bold('Package:')} ${name}@${previousVersion}`);
+  console.log(chalk.bold('Changes:'));
+  logs.forEach(({ hash, message }) => console.log(`  ${chalk.yellow(hash)} ${message}`));
+
+  if (process.stdin.isTTY) {
+    const newVersion = await ask(chalk.bold(`Version (${suggestedVersion})? `));
+
+    if (newVersion == null) {
+      process.exitCode ||= 1;
+      return null;
+    }
+
+    if (newVersion) {
+      if (!semver.valid(newVersion)) {
+        throw new Error('Invalid version.');
+      }
+
+      if (semver.lte(newVersion, previousVersion)) {
+        throw new Error('Version must be greater than the previously published version.');
+      }
+
+      return newVersion;
+    }
+    else {
+      return suggestedVersion;
+    }
+  }
+
+  console.log(`${chalk.bold('Version:')} ${suggestedVersion}`);
+
+  return suggestedVersion;
 }
 
 async function ask(question: string): Promise<string | null> {
@@ -160,4 +190,34 @@ async function ask(question: string): Promise<string | null> {
   finally {
     rl.close();
   }
+}
+
+async function writePackage(version: string): Promise<void> {
+  const text = await fs.readFile('package.json', 'utf8');
+  const json = JSON.parse(text);
+  const indent = text.match(/^\s+/mu)?.[0] || '  ';
+
+  await fs.writeFile('package.json', JSON.stringify({ ...json, version }, null, indent) + '\n');
+}
+
+async function writeChangelog(version: string, logs: readonly Log[]): Promise<void> {
+  const text = await fs.readFile('CHANGELOG.md', 'utf8').catch((error: unknown) => {
+    if ((error as any)?.code === 'ENOENT') return '';
+    throw error;
+  });
+  const [, header, rest = ''] = text.match(/^(# \S.*?(?=\n#|$))(.*)$/su) ?? [];
+  const date = new Date();
+  const year = String(date.getFullYear()).padStart(4, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const changeLogMessage = [
+    `## ${version} - ${year}-${month}-${day}\n`,
+    ...logs.map(({ message, hash }) => `- ${message} (\`${hash}\`)`),
+  ].join('\n');
+
+  await fs.writeFile('CHANGELOG.md', [
+    header?.trim() || '# Changelog',
+    changeLogMessage,
+    rest.trim(),
+  ].filter(Boolean).join('\n\n') + '\n');
 }
