@@ -1,0 +1,67 @@
+app: seahax-engage-demo
+domains:
+  - seahax.com
+  - www.seahax.com
+
+aws:
+  region: us-west-2
+  profile: seahax
+  accounts:
+    - 194722422414
+
+cdn:
+  source: ./demo
+  spa: true
+  caching:
+    "*.html": "max-age=31536000, must-revalidate"
+    "/*": max-age=31536000, must-revalidate"
+    "*": "max-age=31536000, immutable"
+  types:
+    "*.html": "text/html"
+#
+# Example of Engage future features.
+#
+# functions:
+#   api-notes:
+#     source: ./api/notes.zip
+#     runtime: nodejs22.x
+#     arch: arm64
+#     memory: 128
+#     timeout: 3
+#     policies:
+#       - Effect: Allow
+#         Action:
+#           - dynamodb:*
+#         Resource: "*"
+#   queue-audit:
+#     source: ./queue/audit.zip
+#   schedule-gc:
+#     source: ./schedule/gc.zip
+
+# apis:
+#   /api/notes/*:
+#     function: api-notes
+#   /api/other/*:
+#     proxy: https://example.com
+
+# queues:
+#   audit:
+#     function: queue-audit
+#     delay: 10
+#     retention: 60
+#     timeout: 30
+#     dead: foo
+
+# schedules:
+#   gc:
+#     function: schedule-gc
+#     expression: "cron(0 0 * * ? *)"
+
+# tables:
+#   auth-cache:
+#     hash: jwt:string
+#     range: timestamp:number
+#     expire: expireAt
+#     hooks:
+#       all:
+#         function: on-auth-cache
