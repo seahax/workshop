@@ -23,7 +23,13 @@ export enum LogLevel {
 
 type LogFunction = (...data: any[]) => void;
 
-const registeredErrorHandlers: { conditions: ErrorConditions<any>; handle: (error: any) => void }[] = [];
+interface ErrorHandlerEntry {
+  readonly conditions: ErrorConditions<any>;
+  readonly handle: (error: any) => void;
+}
+
+const errorHandlers = new Set<ErrorHandlerEntry>();
+const beforeLogHandlers = new Set<() => void>();
 
 export function main(action: () => void | Promise<void>): void {
   void action();
@@ -63,9 +69,27 @@ export function setLogLevel(level: LogLevel): void {
 export function registerErrorHandler<TError>(
   conditions: ErrorConditions<TError> | ErrorMatcher<TError>,
   handle: (error: TError) => void,
-): void {
-  conditions = typeof conditions === 'function' ? { match: conditions } : conditions;
-  registeredErrorHandlers.push({ conditions, handle: handle });
+): () => void {
+  const entry = {
+    conditions: typeof conditions === 'function' ? { match: conditions } : conditions,
+    handle,
+  };
+
+  errorHandlers.add(entry);
+
+  return () => {
+    errorHandlers.delete(entry);
+  };
+}
+
+export function registerBeforeLogHandler(handler: () => void): () => void {
+  const entry = (): void => handler();
+
+  beforeLogHandlers.add(entry);
+
+  return () => {
+    beforeLogHandlers.delete(entry);
+  };
 }
 
 function defaultErrorHandler(error: any): void {
@@ -75,7 +99,7 @@ function defaultErrorHandler(error: any): void {
 }
 
 function uncaught(reason: any): void {
-  const handler = registeredErrorHandlers.find(({ conditions }) =>
+  const handler = [...errorHandlers].find(({ conditions }) =>
     (conditions.name != null && reason?.name === conditions.name)
     || (conditions.code != null && reason?.code === conditions.code)
     || (conditions.type && reason instanceof conditions.type)
@@ -97,6 +121,7 @@ function createLogFunction(
 ): LogFunction {
   return (...data) => {
     if (isLogLevel(level)) {
+      beforeLogHandlers.forEach((handler) => handler());
       write(decorate(format(...data)));
     }
   };

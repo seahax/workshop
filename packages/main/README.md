@@ -8,11 +8,13 @@ Features:
 - Console log level filtering.
 
 Table of Contents:
-- [Usage](#usage)
-- [Log Level](#log-level)
-- [Default Error Handler](#default-error-handler)
-- [Custom Error Handlers](#custom-error-handlers)
-- [Main Function](#main-function)
+- [@seahax/main](#seahaxmain)
+  - [Usage](#usage)
+  - [Log Level](#log-level)
+  - [Default Error Handler](#default-error-handler)
+  - [Custom Error Handlers](#custom-error-handlers)
+  - [Before Log Handlers](#before-log-handlers)
+  - [Main Function](#main-function)
 
 
 ## Usage
@@ -84,6 +86,30 @@ registerErrorHandler({ code: 'ErrorCode'}, (error) => {
 registerErrorHandler({ match: isSomeErrorType }, (error) => {
   // Do something if the uncaught error matches a predicate.
 });
+```
+
+An `unregister` callback is returned which removes the error handler when called.
+
+```ts
+const unregister = registerErrorHandler(...);
+unregister();
+```
+
+## Before Log Handlers
+
+Register callbacks that are invoked before each log message is written. For example, this could be used to clear a status spinner before logging, so that the spinner doesn't interfere with log output.
+
+```ts
+import { registerBeforeLogHandler } from '@seahax/main';
+
+registerBeforeLogHandler(() => { ... });
+```
+
+An `unregister` callback is returned which removes the callback when called.
+
+```ts
+const unregister = registerBeforeLogHandler(...);
+unregister();
 ```
 
 ## Main Function
