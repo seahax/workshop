@@ -16,7 +16,7 @@ import { lock } from '../utils/lock.js';
 
 export default async function up({ app, aws, domains, cdn }: ResolvedConfig): Promise<void> {
   const { region, profile } = aws;
-  const { source, caching, types } = cdn;
+  const { source, responses, caching, types } = cdn;
   const ctx = new Context({ app, region, profile });
   const domain = await lock(ctx, async () => {
     await s3Bucket.up(ctx);
@@ -26,6 +26,7 @@ export default async function up({ app, aws, domains, cdn }: ResolvedConfig): Pr
     const { responseHeadersPolicyId } = await cloudfrontResponseHeadersPolicy.up(ctx);
     const { distributionId, distributionDomainName } = await cloudfrontDistribution.up(ctx, {
       domains,
+      responses,
       originAccessControlId,
       responseHeadersPolicyId,
     });

@@ -5,6 +5,7 @@ import { ACMClient, DescribeCertificateCommand, ListCertificatesCommand } from '
 import {
   CloudFrontClient,
   CreateDistributionWithTagsCommand,
+  type CustomErrorResponse,
   DeleteDistributionCommand,
   type DistributionConfig,
   GetDistributionCommand,
@@ -25,17 +26,18 @@ import { spinner } from '../utils/spinner.js';
 
 interface Params {
   readonly domains: readonly string[];
+  readonly responses: {
+    readonly root?: string;
+    readonly errors: Readonly<Record<number, { readonly path: string; readonly status: number }>>;
+  };
   readonly originAccessControlId: string;
   readonly responseHeadersPolicyId: string;
 }
 
-interface DistributionConfigOptions {
+interface DistributionConfigOptions extends Params {
   readonly app: string;
   readonly accountId: string;
   readonly region: string;
-  readonly originAccessControlId: string;
-  readonly responseHeadersPolicyId: string;
-  readonly domains: readonly string[];
   readonly certificateArn: string | undefined;
   readonly current: Partial<DistributionConfig>;
 }
@@ -45,7 +47,7 @@ const ORIGIN_ARCHIVE = 'archive';
 const ORIGIN_GROUP = 'fallback';
 
 export default createResource('CloudFront Distribution', {
-  async up(ctx, { domains, originAccessControlId, responseHeadersPolicyId }: Params) {
+  async up(ctx, { domains, responses, originAccessControlId, responseHeadersPolicyId }: Params) {
     const { app, region, createClient, getAccountId } = ctx;
     const client = createClient(CloudFrontClient);
     const accountId = await getAccountId();
@@ -73,12 +75,13 @@ export default createResource('CloudFront Distribution', {
         Id: id,
         IfMatch: ETag,
         DistributionConfig: getDistributionConfig({
+          domains,
+          responses,
+          originAccessControlId,
+          responseHeadersPolicyId,
           app,
           accountId,
           region,
-          originAccessControlId,
-          responseHeadersPolicyId,
-          domains,
           certificateArn,
           current: DistributionConfig,
         }),
@@ -92,12 +95,13 @@ export default createResource('CloudFront Distribution', {
       const { Distribution } = await client.send(new CreateDistributionWithTagsCommand({
         DistributionConfigWithTags: {
           DistributionConfig: getDistributionConfig({
+            domains,
+            responses,
+            originAccessControlId,
+            responseHeadersPolicyId,
             app,
             accountId,
             region,
-            originAccessControlId,
-            responseHeadersPolicyId,
-            domains,
             certificateArn: certificateArns?.[0],
             current: { CallerReference: randomUUID() },
           }),
@@ -231,16 +235,23 @@ async function findCertificateArns({ createClient }: Context, domains: readonly 
 }
 
 function getDistributionConfig({
+  domains,
+  responses,
+  originAccessControlId,
+  responseHeadersPolicyId,
   app,
   accountId,
   region,
-  originAccessControlId,
-  responseHeadersPolicyId,
-  domains,
   certificateArn,
   current,
 }: DistributionConfigOptions): DistributionConfig {
   const DomainName = `e4e-${app}-${accountId}.s3.${region}.amazonaws.com`;
+  const errorItems = Object.entries(responses.errors).map(([code, { path, status }]): CustomErrorResponse => ({
+    ErrorCode: Number.parseInt(code, 10),
+    ResponsePagePath: path,
+    ResponseCode: status.toString(10),
+    ErrorCachingMinTTL: 0,
+  }));
 
   return {
     ...current,
@@ -248,7 +259,7 @@ function getDistributionConfig({
     Enabled: true,
     Comment: `Distribution created by @seahax/engage.`,
     PriceClass: 'PriceClass_All',
-    DefaultRootObject: 'index.html',
+    DefaultRootObject: responses.root?.replace(/^\/+/u, ''),
     HttpVersion: 'http2and3',
     Origins: {
       Quantity: 2,
@@ -312,21 +323,8 @@ function getDistributionConfig({
       TargetOriginId: ORIGIN_GROUP,
     },
     CustomErrorResponses: {
-      Quantity: 2,
-      Items: [
-        {
-          ErrorCode: 404,
-          ResponsePagePath: '/index.html',
-          ResponseCode: '200',
-          ErrorCachingMinTTL: 0,
-        },
-        {
-          ErrorCode: 403,
-          ResponsePagePath: '/index.html',
-          ResponseCode: '200',
-          ErrorCachingMinTTL: 0,
-        },
-      ],
+      Quantity: errorItems.length,
+      Items: errorItems,
     },
     ViewerCertificate: certificateArn && domains.length > 0
       ? {

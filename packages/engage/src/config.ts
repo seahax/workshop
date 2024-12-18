@@ -93,7 +93,18 @@ function getResolvedConfig(config: Config, rootDir = process.cwd()): ResolvedCon
     },
     cdn: {
       source: path.resolve(rootDir, config.cdn?.source ?? './dist'),
-      spa: config.cdn?.spa ?? false,
+      responses: config.cdn?.responses === 'spa'
+        ? {
+            root: '/index.html',
+            errors: {
+              403: { path: '/index.html', status: 200 },
+              404: { path: '/index.html', status: 200 },
+            },
+          }
+        : {
+            ...config.cdn?.responses,
+            errors: config.cdn?.responses?.errors ?? {},
+          },
       caching: config.cdn?.caching ?? {},
       types: config.cdn?.types ?? {},
     },
@@ -121,6 +132,16 @@ const zConfig: z.ZodSchema<Config> = z.object({
   cdn: z.object({
     source: z.string().optional(),
     spa: z.boolean().or(z.string()).optional(),
+    responses: z.literal('spa').or(z.object({
+      root: z.string().optional(),
+      errors: z.record(
+        z.number().refine((value) => value >= 400 && value <= 599, 'A 400-599 HTTP status code is required.'),
+        z.object({
+          path: z.string(),
+          status: z.number().refine((value) => value >= 200 && value <= 599, 'A 200-599 HTTP status code is required.'),
+        }).strict(),
+      ).optional(),
+    })).optional(),
     caching: z.record(z.string()).optional(),
     types: z.record(z.string()).optional(),
   }).strict().optional(),

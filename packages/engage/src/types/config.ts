@@ -45,14 +45,6 @@ export interface Config {
     readonly source?: string;
 
     /**
-     * Set this to `true` to enable default SPA behavior. This will redirect
-     * all unmatched requests to `"/index.html"`, instead of returning a 404
-     * error. You can also specify a custom SPA fallback path. Defaults to
-     * `false`.
-     */
-    readonly spa?: boolean | string;
-
-    /**
      * Set a cache control response header for files matching glob patterns.
      *
      * Example:
@@ -73,6 +65,36 @@ export interface Config {
      * ```
      */
     readonly types?: Readonly<Record<string, string>>;
+
+    /**
+     * Custom responses for the root URL and errors. Set this to `"spa"` to
+     * enable default SPA behavior.
+     *
+     * Default SPA responses:
+     *
+     * ```ts
+     * {
+     *   root: '/index.html',
+     *   errors: {
+     *     403: {
+     *       path: '/index.html',
+     *       status: 200,
+     *     },
+     *     404: {
+     *       path: '/index.html',
+     *       status: 200,
+     *     },
+     *   },
+     * }
+     * ```
+     */
+    readonly responses?: 'spa' | {
+      readonly root?: string;
+      readonly errors?: Readonly<Record<number, {
+        readonly path: string;
+        readonly status: number;
+      }>>;
+    };
   };
 }
 
@@ -86,8 +108,14 @@ export interface ResolvedConfig extends Config {
   };
   readonly cdn: {
     readonly source: string;
-    readonly spa: boolean | string;
     readonly caching: Readonly<Record<string, string>>;
     readonly types: Readonly<Record<string, string>>;
+    readonly responses: {
+      readonly root?: string;
+      readonly errors: Readonly<Record<number, {
+        readonly path: string;
+        readonly status: number;
+      }>>;
+    };
   };
 }
