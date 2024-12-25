@@ -8,7 +8,6 @@ out
 coverage
 
 .DS_Store
-credentials*
 *.log
 *.tar
 *.gz
