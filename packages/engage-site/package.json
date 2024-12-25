@@ -1,0 +1,21 @@
+{
+  "name": "@seahax/engage-site",
+  "private": true,
+  "version": "0.1.0",
+  "description": "",
+  "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/engage-site"
+  },
+  "scripts": {
+    "clean": "rm -rf dist node_modules/.tsc",
+    "build": "pnpm clean && vite build",
+    "start": "vite dev"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@seahax/engage": "workspace:*"
+  }
+}

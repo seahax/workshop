@@ -1,0 +1,16 @@
+app: seahax-engage
+domains:
+  - engage.seahax.com
+
+aws:
+  region: us-west-2
+  profile: seahax
+  accounts:
+    - 194722422414
+
+cdn:
+  source: ./dist
+  responses: spa
+  caching:
+    "/*": max-age=31536000, must-revalidate"
+    "/assets/**": "max-age=31536000, immutable"
