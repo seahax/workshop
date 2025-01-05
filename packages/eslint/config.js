@@ -86,6 +86,7 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
         'unicorn/no-object-as-default-parameter': 'off',
         'unicorn/no-useless-undefined': 'off',
         'unicorn/numeric-separators-style': 'off',
+        'unicorn/prefer-default-parameters': 'off',
         'unicorn/prefer-native-coercion-functions': 'off',
         'unicorn/prefer-top-level-await': 'off',
         'unicorn/prefer-type-error': 'off',
