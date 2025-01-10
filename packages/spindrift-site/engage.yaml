@@ -1,6 +1,6 @@
-app: seahax-engage
+app: spindrift.seahax.com
 domains:
-  - engage.seahax.com
+  - spindrift.seahax.com
 
 aws:
   region: us-west-2

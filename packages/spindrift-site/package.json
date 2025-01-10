@@ -1,5 +1,5 @@
 {
-  "name": "@seahax/engage-site",
+  "name": "@seahax/spindrift-site",
   "private": true,
   "version": "0.1.0",
   "description": "",
@@ -7,15 +7,16 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
-    "directory": "packages/engage-site"
+    "directory": "packages/spindrift-site"
   },
   "scripts": {
     "clean": "rm -rf dist node_modules/.tsc",
     "build": "pnpm clean && vite build",
     "start": "vite dev"
   },
+  "type": "module",
   "dependencies": {},
   "devDependencies": {
-    "@seahax/engage": "workspace:*"
+    "@seahax/spindrift": "workspace:*"
   }
 }

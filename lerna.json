@@ -5,7 +5,8 @@
   "loglevel": "error",
   "command": {
     "run": {
-      "stream": true
+      "stream": true,
+      "concurrency": 1
     },
     "exec": {
       "stream": true,

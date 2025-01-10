@@ -253,7 +253,8 @@ function getDistributionConfig({
       Items: [
         {
           Id: ORIGIN_CURRENT,
-          DomainName,
+          
+          ,
           OriginPath: `/${BUCKET_PREFIX_CURRENT.replaceAll(/^\/+|\/+$/gu, '')}`,
           OriginAccessControlId: originAccessControlId,
           S3OriginConfig: { OriginAccessIdentity: '' },
