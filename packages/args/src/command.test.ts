@@ -167,8 +167,7 @@ test('actions', async () => {
 test('flag conflict error', async () => {
   const command = createCommand()
     .boolean('a', ['-a'])
-    .boolean('b', ['-a'])
-    .removeOption('a');
+    .boolean('b', ['-a']);
 
   await expect(command.parse([])).rejects.toThrowError('Duplicate flag "-a".');
   expect(() => command.getHelp()).toThrowError('Duplicate flag "-a".');

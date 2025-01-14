@@ -35,7 +35,7 @@ interface Params {
 }
 
 interface DistributionConfigOptions extends Params {
-  readonly app: string;
+  readonly appId: string;
   readonly accountId: string;
   readonly region: string;
   readonly certificateArn: string | undefined;
@@ -48,13 +48,12 @@ const ORIGIN_GROUP = 'fallback';
 
 export default createResource('CloudFront Distribution', {
   async up(
-    { app, region, createClient, getIdentity, cleanup },
+    { appId, region, accountId, createClient, cleanup },
     { domains, responses, originAccessControlId, responseHeadersPolicyId }: Params,
   ) {
     const client = createClient(CloudFrontClient);
     const acmClient = createClient(ACMClient, { region: 'us-east-1' });
-    const { Account } = await getIdentity();
-    const ids = await findIds(client, app);
+    const ids = await findIds(client, appId);
     let id = ids.shift();
     let domainName: string;
     let certificateArns: readonly string[] | undefined;
@@ -79,8 +78,8 @@ export default createResource('CloudFront Distribution', {
           responses,
           originAccessControlId,
           responseHeadersPolicyId,
-          app,
-          accountId: Account,
+          appId,
+          accountId: accountId,
           region,
           certificateArn,
           current: DistributionConfig!,
@@ -97,13 +96,13 @@ export default createResource('CloudFront Distribution', {
             responses,
             originAccessControlId,
             responseHeadersPolicyId,
-            app,
-            accountId: Account,
+            appId,
+            accountId: accountId,
             region,
             certificateArn: certificateArns?.[0],
             current: { CallerReference: randomUUID() },
           }),
-          Tags: { Items: [{ Key: TAG_NAME, Value: app }] },
+          Tags: { Items: [{ Key: TAG_NAME, Value: appId }] },
         },
       }));
 
@@ -126,15 +125,15 @@ export default createResource('CloudFront Distribution', {
     };
   },
 
-  async down({ app, createClient }) {
+  async down({ appId, createClient }) {
     const client = createClient(CloudFrontClient);
-    const ids = await findIds(client, app);
+    const ids = await findIds(client, appId);
     await deleteAll(client, ids);
   },
 
-  async get({ app, createClient }) {
+  async get({ appId, createClient }) {
     const client = createClient(CloudFrontClient);
-    const ids = await findIds(client, app);
+    const ids = await findIds(client, appId);
     const id = ids.shift();
 
     if (!id) return { cloudFrontDistributionId: null, cloudFrontDistributionDomainName: null };
@@ -148,7 +147,7 @@ export default createResource('CloudFront Distribution', {
   },
 });
 
-async function findIds(client: CloudFrontClient, app: string): Promise<string[]> {
+async function findIds(client: CloudFrontClient, appId: string): Promise<string[]> {
   return await collect(map(
     paginated(async (Marker) => {
       const { DistributionList } = await client.send(new ListDistributionsCommand({ Marker }));
@@ -158,7 +157,7 @@ async function findIds(client: CloudFrontClient, app: string): Promise<string[]>
       const { Tags } = await client.send(new ListTagsForResourceCommand({ Resource: distribution.ARN }));
       const tagName = Tags?.Items?.find((tag) => tag.Key === TAG_NAME)?.Value;
 
-      if (tagName === app) {
+      if (tagName === appId) {
         return distribution.Id;
       }
     },
@@ -226,13 +225,13 @@ function getDistributionConfig({
   responses,
   originAccessControlId,
   responseHeadersPolicyId,
-  app,
+  appId,
   accountId,
   region,
   certificateArn,
   current,
 }: DistributionConfigOptions): DistributionConfig {
-  const DomainName = `e4e-${app}-${accountId}.s3.${region}.amazonaws.com`;
+  const DomainName = `e4e-${appId}-${accountId}.s3.${region}.amazonaws.com`;
   const errorItems = Object.entries(responses.errors).map(([code, { path, status }]): CustomErrorResponse => ({
     ErrorCode: Number.parseInt(code, 10),
     ResponsePagePath: path,
@@ -253,8 +252,7 @@ function getDistributionConfig({
       Items: [
         {
           Id: ORIGIN_CURRENT,
-          
-          ,
+          DomainName,
           OriginPath: `/${BUCKET_PREFIX_CURRENT.replaceAll(/^\/+|\/+$/gu, '')}`,
           OriginAccessControlId: originAccessControlId,
           S3OriginConfig: { OriginAccessIdentity: '' },

@@ -1,4 +1,4 @@
-import { main, registerBeforeLogHandler } from '@seahax/main';
+import { main } from '@seahax/main';
 
 import { getAccountId } from './account.js';
 import commandConfig from './commands/config.js';
@@ -11,11 +11,11 @@ import { type ResolvedConfig } from './types/config.js';
 import { assert } from './utils/assert.js';
 import { spinner } from './utils/spinner.js';
 
-registerBeforeLogHandler(() => {
+main.events.on('beforeLog', () => {
   spinner.clear();
 });
 
-main(async () => {
+await main(async () => {
   const [command, filename] = process.argv.slice(2);
 
   if (command === 'help' || command === '-h' || command === '--help') {

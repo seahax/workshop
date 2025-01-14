@@ -23,7 +23,7 @@ interface Log {
   readonly message: string;
 }
 
-main(async () => {
+await main(async () => {
   const current = await readPackage();
 
   if (current.private) {
