@@ -94,6 +94,7 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
         'unicorn/prefer-ternary': 'off',
         'unicorn/prevent-abbreviations': 'off',
         'valid-typeof': 'off',
+        '@stylistic/indent-binary-ops': ['off'],
         '@stylistic/max-len': ['warn', { code: 120, tabWidth: 2, ignoreComments: true, ignoreTemplateLiterals: true }],
       },
     },
@@ -102,6 +103,7 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
       files: [`**/*.{${tsExt}}`],
       rules: {
         '@typescript-eslint/ban-types': 'off',
+        '@typescript-eslint/consistent-indexed-object-style': ['off'],
         '@typescript-eslint/consistent-type-exports': ['warn', { fixMixedExportsWithInlineTypeSpecifier: true }],
         '@typescript-eslint/consistent-type-imports': ['warn', { fixStyle: 'inline-type-imports' }],
         '@typescript-eslint/explicit-function-return-type': [
