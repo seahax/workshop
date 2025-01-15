@@ -7,11 +7,6 @@
     "outDir": "dist",
     // "noEmit": false,
     // "emitDeclarationOnly": true,
-    // "lib": [
-    //   "ES2022",
-    //   "DOM",
-    //   "DOM.Iterable"
-    // ],
     "types": [
       "node",
       "vite/client"

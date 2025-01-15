@@ -11,5 +11,6 @@ export default defineConfig({
   ],
   build: {
     target: ['node20'],
+    lib: { entry: 'src/bin.ts' },
   },
 });
