@@ -9,16 +9,12 @@
     "url": "git+https://github.com/seahax/workshop.git",
     "directory": "packages/eslint-progress"
   },
-  "scripts": {
-    "clean": "rm -rf dist node_modules/.tsc",
-    "build": "pnpm clean && vite build"
-  },
   "type": "module",
-  "types": "dist/index.d.ts",
+  "types": "plugin.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./plugin.d.ts",
+      "import": "./plugin.js"
     }
   },
   "files": [
@@ -26,10 +22,6 @@
   ],
   "publishConfig": {
     "access": "public"
-  },
-  "devDependencies": {
-    "@seahax/vite-plugin-lib": "workspace:*",
-    "@seahax/vite-plugin-finalize": "workspace:*"
   },
   "dependencies": {
     "eslint": "^9.17.0"
