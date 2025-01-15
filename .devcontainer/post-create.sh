@@ -16,4 +16,6 @@ set -e
   cp -rfv . ~
 ) || echo "Failed to copy dotfiles."
 
+npm i -g npm@latest
+npm i -g corepack
 pnpm install
