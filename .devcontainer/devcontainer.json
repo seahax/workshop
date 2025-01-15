@@ -9,6 +9,9 @@
 	},
 	"customizations": {
 		"vscode": {
+			"settings": {
+				"explorer.excludeGitIgnore": true
+			},
 			"extensions": [
 				"bierner.markdown-preview-github-styles",
 				"chrisbibby.hide-git-ignored",
