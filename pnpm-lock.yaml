@@ -199,13 +199,6 @@ importers:
       eslint:
         specifier: ^9.17.0
         version: 9.18.0
-    devDependencies:
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
-      '@seahax/vite-plugin-lib':
-        specifier: workspace:*
-        version: link:../vite-plugin-lib
 
   packages/evented:
     devDependencies:
