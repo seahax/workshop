@@ -14,4 +14,5 @@ export function initEvents(): void {
 
 events.on('uncaughtError', (error: any) => {
   process.exitCode ||= typeof error?.exitCode === 'number' ? error.exitCode : 1;
+  console.error(error);
 });
