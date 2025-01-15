@@ -7,5 +7,26 @@
 		},
 		"ghcr.io/martinaskestad/features/vimsrc:1": {}
 	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"bierner.markdown-preview-github-styles",
+				"chrisbibby.hide-git-ignored",
+				"dbaeumer.vscode-eslint",
+				"eamodio.gitlens",
+				"ecmel.vscode-html-css",
+				"github.copilot",
+				"github.copilot-chat",
+				"kingwl.vscode-vitest-runner",
+				"pflannery.vscode-versionlens",
+				"pkief.material-icon-theme",
+				"redhat.vscode-yaml",
+				"stkb.rewrap",
+				"streetsidesoftware.code-spell-checker",
+				"streetsidesoftware.code-spell-checker-scientific-terms",
+				"yzhang.markdown-all-in-one"
+			]
+		}
+	},
 	"postCreateCommand": "bash .devcontainer/post-create.sh"
 }
