@@ -3,6 +3,7 @@ import { ArgsError } from './error.js';
 import { type HelpConfig, renderHelp } from './help.js';
 import { META, type Meta, type MetaOption, type WithMeta } from './meta.js';
 import { parse } from './parse.js';
+import { type Plugin } from './plugin.js';
 import { last, multiple } from './utils.js';
 
 type Simplify<T> = T extends object ? { [P in keyof T]: T[P] } : T;
@@ -36,7 +37,7 @@ export interface BooleanOptionConfig<TValue> extends NamedOptionConfig {
    * Parse raw boolean values. By default, returns true if the option is
    * found at least once, or false if the option is missing
    */
-  readonly parse?: (values: readonly boolean[], usage: string) => TValue;
+  readonly parse?: (values: boolean[], usage: string) => TValue;
 }
 
 export interface StringOptionConfig<TValue> extends NamedOptionConfig {
@@ -44,7 +45,7 @@ export interface StringOptionConfig<TValue> extends NamedOptionConfig {
    * Parse raw string values. By default, the last value is returned (or
    * undefined if the option is missing).
    */
-  readonly parse?: (values: readonly string[], usage: string) => TValue;
+  readonly parse?: (values: string[], usage: string) => TValue;
 }
 
 export interface PositionalOptionConfig<TValue> extends CommonOptionConfig {
@@ -52,7 +53,7 @@ export interface PositionalOptionConfig<TValue> extends CommonOptionConfig {
    * Parse a raw positional value. Be default, the unmodified value is returned
    * (or undefined if the option is missing)
    */
-  readonly parse?: (values: readonly string[], usage: string) => TValue;
+  readonly parse?: (values: string[], usage: string) => TValue;
 }
 
 export interface VariadicOptionConfig<TValue> extends CommonOptionConfig {
@@ -60,7 +61,7 @@ export interface VariadicOptionConfig<TValue> extends CommonOptionConfig {
    * Parse raw variadic values. By default, an array of the unmodified values
    * is returned.
    */
-  readonly parse?: (values: readonly string[], usage: string) => TValue;
+  readonly parse?: (values: string[], usage: string) => TValue;
 }
 
 export type CommandResult<
@@ -142,10 +143,16 @@ export interface Command<
    * to the current command and returns the new command. It allows common
    * command configurations to be bundled up and applied to multiple commands.
    */
-  plugin<TCommand extends Command<any, any>>(
+  use<
+    TPluginOptions extends Record<string, unknown>,
+    TPluginSubcommands extends Record<string, Command<any, any>>,
+  >(
     this: void,
-    plugin: (command: Command<TOptions, TSubcommands>) => TCommand
-  ): TCommand;
+    plugin: Plugin<TPluginOptions, TPluginSubcommands>
+  ): Command<
+    Simplify<Omit<TOptions, keyof TPluginOptions> & TPluginOptions>,
+    Simplify<Omit<TSubcommands, keyof TPluginSubcommands> & TPluginSubcommands>
+  >;
 
   /**
    * Override the default usage text for the command.
@@ -261,14 +268,15 @@ export function createCommand(): Command<{}, {}> {
     printHelpOnError: false,
     version: '',
     action: async () => undefined,
-  });
+  }).help();
 }
 
 function createNextCommand(meta: Meta): Command<any, any> {
   const self: Command<any, any> = {
     [META]: meta,
-    plugin(plugin) {
-      return plugin(self);
+    use(plugin) {
+      const next: Command<any, any> = plugin(self);
+      return next;
     },
     usage(text) {
       return createNextCommand({
@@ -287,7 +295,11 @@ function createNextCommand(meta: Meta): Command<any, any> {
         return createNextCommand({ ...meta, helpOption: undefined });
       }
 
-      const { flags = ['--help', '-h'], usage = flags.join(', '), info = '' } = getConfigObject(init);
+      const {
+        flags = ['--help', '-h'],
+        usage = flags.join(', '),
+        info = 'Show this help message.',
+      } = getConfigObject(init);
 
       return createNextCommand({ ...meta, helpOption: { usage, info, flags } });
     },
@@ -373,16 +385,6 @@ function createNextCommand(meta: Meta): Command<any, any> {
           : new ArgsError(error instanceof Error ? error.message : String(error), { cause: error });
       }
 
-      if (result.type === 'help') {
-        self.printHelp();
-        return result;
-      }
-
-      if (result.type === 'version') {
-        console.log(meta.version);
-        return result;
-      }
-
       await runActions(result);
 
       return result;
@@ -465,6 +467,13 @@ function validateMeta(meta: Meta): void {
 
 async function runActions(result: CommandResult<any, any, any>): Promise<void> {
   await result.command[META].action(result);
+
+  if (result.type === 'help') {
+    result.command.printHelp();
+  }
+  else if (result.type === 'version') {
+    console.log(result.command[META].version);
+  }
 
   if (result.subcommand) {
     await runActions(result.subcommand.result);

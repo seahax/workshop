@@ -1,7 +1,8 @@
 import { expect, test, vi } from 'vitest';
 
 import { createCommand } from './command.js';
-import { multiple, required } from './utils.js';
+import { createPlugin } from './plugin.js';
+import { last, multiple, required } from './utils.js';
 
 test('command', async () => {
   const command = createCommand()
@@ -182,4 +183,35 @@ test('multiple variadic error', async () => {
   await expect(command.parse([])).rejects.toThrowError('Only one variadic option is allowed.');
   expect(() => command.getHelp()).toThrowError('Only one variadic option is allowed.');
   expect(() => command.action(async () => undefined)).toThrowError('Only one variadic option is allowed.');
+});
+
+test('last', async () => {
+  const command = createCommand()
+    .string('str', { parse: last() });
+
+  await expect(command.parse(['--str', 'a', '--str', 'b']).then((result) => result.options))
+    .resolves.toMatchInlineSnapshot(`
+    {
+      "str": "b",
+    }
+  `);
+});
+
+test('plugin', async () => {
+  const plugin = createPlugin((command) => {
+    return command.string('b');
+  });
+
+  const command = createCommand()
+    .string('a')
+    .use(plugin)
+    .string('c');
+
+  expect(command.getHelp()).toMatchInlineSnapshot(`
+    "Options:
+      --a <value>  
+      --b <value>  
+      --c <value>  
+    "
+  `);
 });

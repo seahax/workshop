@@ -54,11 +54,22 @@ export function parse(args: readonly string[], command: WithMeta): Result {
 
   if (args[0] != null) {
     const subcommand = subcommands[args[0]];
-    if (subcommand) return parseSubcommand(args[0], subcommand, args.slice(1));
+
+    if (subcommand) {
+      return {
+        type: 'subcommand',
+        subcommand: {
+          name: args[0],
+          result: parse(args.slice(1), subcommand),
+        },
+        args: [...args],
+        command,
+      };
+    }
   }
 
   const remaining = [...args];
-  const results: Record<string, any> = {};
+  const results: Record<string, any[]> = {};
   const entries = Object.entries(options);
   const optionEntries: [key: string, config: OptionConfig][] = [];
   const positionalKeys: string[] = [];
@@ -107,7 +118,7 @@ export function parse(args: readonly string[], command: WithMeta): Result {
 
   for (const [key, option] of entries) {
     if (option.parse) {
-      results[key] = option.parse(results[key] ?? [], option.usage);
+      results[key] = option.parse(results[key] ? [...results[key]] : [], option.usage);
     }
   }
 
@@ -141,18 +152,6 @@ export function parse(args: readonly string[], command: WithMeta): Result {
 
   function addResult(key: string, value: any): void {
     results[key] = [...results[key] ?? [], value];
-  }
-
-  function parseSubcommand(name: string, subcommand: WithMeta, args: readonly string[]): Result {
-    return {
-      type: 'subcommand',
-      subcommand: {
-        name,
-        result: parse(args.slice(1), subcommand),
-      },
-      args: [...args],
-      command,
-    };
   }
 }
 
