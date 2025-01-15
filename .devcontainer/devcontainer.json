@@ -6,5 +6,8 @@
 			"version": "latest"
 		},
 		"ghcr.io/martinaskestad/features/vimsrc:1": {}
-	}
+	},
+	"postCreateCommand": [
+		"pnpm install"
+	]
 }
