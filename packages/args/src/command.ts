@@ -49,7 +49,7 @@ export type HelpOptionConfig = Pick<OptionConfigParams, 'usage' | 'info' | 'flag
 export type VersionOptionConfig = Pick<OptionConfigParams, 'usage' | 'info' | 'flags' | 'version'>;
 
 export type BooleanOptionConfig<TValue> = Pick<
-  OptionConfigParams<boolean[], TValue>,
+  OptionConfigParams<true[], TValue>,
   'usage' | 'info' | 'flags' | 'parse'
 >;
 
@@ -197,7 +197,7 @@ export interface CommandBuilder<
   /**
    * Add a boolean named option.
    */
-  boolean<TKey extends string, TValue = boolean | undefined >(
+  boolean<TKey extends string, TValue = boolean>(
     this: void,
     key: TKey,
     config?: string | readonly Flag[] | BooleanOptionConfig<TValue>,
@@ -348,11 +348,11 @@ function createCommandBuilder(meta: Meta): CommandBuilder<any, any> {
     },
     boolean(key, init) {
       const {
-        parse = last(),
+        parse = (values) => Boolean(values.at(-1)),
         flags = [`--${getLabel(key)}`],
         usage = flags.join(', '),
         info = '',
-      } = getConfigObject(init);
+      }: BooleanOptionConfig<any> = getConfigObject(init);
 
       return addOption(key, { usage, info, type: 'boolean', flags, parse });
     },
@@ -363,7 +363,7 @@ function createCommandBuilder(meta: Meta): CommandBuilder<any, any> {
         flags = [`--${getLabel(key)}`],
         usage = `${flags.join(', ')} <value>`,
         info = '',
-      } = getConfigObject(init);
+      }: StringOptionConfig<any> | RequiredStringOptionConfig<any> = getConfigObject(init);
 
       return addOption(key, { usage, info, type: 'string', flags, required, parse });
     },
@@ -373,7 +373,7 @@ function createCommandBuilder(meta: Meta): CommandBuilder<any, any> {
         required = false,
         usage = `[${getLabel(key)}]`,
         info = '',
-      } = getConfigObject(init);
+      }: PositionalOptionConfig<any> | RequiredPositionalOptionConfig<any> = getConfigObject(init);
 
       return addOption(key, { usage, info, type: 'positional', required, parse });
     },
@@ -383,7 +383,7 @@ function createCommandBuilder(meta: Meta): CommandBuilder<any, any> {
         required = false,
         usage = `[${getLabel(key)}...]`,
         info = '',
-      } = getConfigObject(init);
+      }: PositionalOptionConfig<any> | RequiredPositionalOptionConfig<any> = getConfigObject(init);
 
       return addOption(key, { usage, info, type: 'variadic', required, parse });
     },
