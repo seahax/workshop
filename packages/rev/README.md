@@ -37,11 +37,13 @@ npm install --global @seahax/rev
 rev
 ```
 
-This tool is not monorepo aware. To use it in a monorepo, use a tool like PNPM to run it in all packages.
+This tool is not monorepo aware. To use it in a monorepo, use a tool like Lerna to run it in all packages.
 
 ```sh
-pnpm -r exec rev
+npx lerna --no-private --no-stream exec rev
 ```
+
+**NOTE:** It's important to use a tool for publishing that includes `gitHead` in the published package. NPM and Lerna do. PNPM does not.
 
 ## Committing
 
@@ -81,10 +83,11 @@ Changelog entries have a second level heading (`##`) which includes the version 
 
 ## Publishing
 
-This tool does not publish the package. Use a tool like PNPM to publish the package after versioning.
+This tool does not publish the package. Use a tool like Lerna to publish the package after versioning.
 
 ```sh
-pnpm publish
+npx lerna --no-private publish from-package --no-git-tag-version --no-push
+```
 
 # In a monorepo.
 pnpm -r publish
