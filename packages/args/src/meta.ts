@@ -24,6 +24,7 @@ export interface Meta {
     readonly usage: string;
     readonly info: string;
     readonly flags?: readonly string[];
+    readonly version?: string | (() => Promise<string>);
   } | undefined;
   readonly printHelpOnError: boolean;
   readonly version: string;

@@ -5,6 +5,7 @@ import { META, type Meta, type MetaOption, type WithMeta } from './meta.js';
 import { parse } from './parse.js';
 import { type Plugin } from './plugin.js';
 import { last, multiple } from './utils.js';
+import { getVersion } from './version.js';
 
 type Simplify<T> = T extends object ? { [P in keyof T]: T[P] } : T;
 type Flag = `-${string}`;
@@ -30,7 +31,13 @@ interface NamedOptionConfig extends CommonOptionConfig {
 
 export interface HelpOptionConfig extends NamedOptionConfig {}
 
-export interface VersionOptionConfig extends NamedOptionConfig {}
+export interface VersionOptionConfig extends NamedOptionConfig {
+  /**
+   * Explicitly set the version instead of automatically reading it from the
+   * nearest package.json file at runtime.
+   */
+  readonly version?: string | (() => Promise<string>);
+}
 
 export interface BooleanOptionConfig<TValue> extends NamedOptionConfig {
   /**
@@ -67,7 +74,6 @@ export interface VariadicOptionConfig<TValue> extends CommonOptionConfig {
 export type CommandResult<
   TOptions extends Record<string, unknown>,
   TSubcommands extends Record<string, Command<any, any>>,
-  TCommand extends ActionCommand<TOptions, TSubcommands> | Command<TOptions, TSubcommands>,
 > = (
   | {
     readonly type: 'options';
@@ -89,7 +95,7 @@ export type CommandResult<
       [P in keyof TSubcommands]: {
         readonly name: P;
         readonly result: TSubcommands[P] extends Command<infer TSubcommandOptions, infer TSubcommandSubcommands>
-          ? CommandResult<TSubcommandOptions, TSubcommandSubcommands, TSubcommands[P]>
+          ? CommandResult<TSubcommandOptions, TSubcommandSubcommands>
           : never;
       };
     }[keyof TSubcommands];
@@ -110,10 +116,10 @@ export type CommandResult<
   /**
    * The command that was parsed.
    */
-  readonly command: TCommand;
+  readonly command: Command<TOptions, TSubcommands>;
 };
 
-export interface ActionCommand<
+export interface Command<
   TOptions extends Record<string, unknown>,
   TSubcommands extends Record<string, Command<any, any>>,
 > extends WithMeta {
@@ -121,7 +127,7 @@ export interface ActionCommand<
    * Use the command to parse the given arguments. The arguments must be
    * pre-trimmed to only include the arguments the command should parse.
    */
-  parse(args: readonly string[]): Promise<CommandResult<TOptions, TSubcommands, this>>;
+  parse(this: void, args: readonly string[]): Promise<CommandResult<TOptions, TSubcommands>>;
 
   /**
    * Get the help text for the command.
@@ -134,10 +140,10 @@ export interface ActionCommand<
   printHelp(this: void, stream?: { write: (text: string) => void }): void;
 }
 
-export interface Command<
+export interface CommandBuilder<
   TOptions extends Record<string, unknown>,
   TSubcommands extends Record<string, Command<any, any>>,
-> extends ActionCommand<TOptions, TSubcommands> {
+> extends Command<TOptions, TSubcommands> {
   /**
    * Apply a plugin to the command. A plugin is a function that makes changes
    * to the current command and returns the new command. It allows common
@@ -149,7 +155,7 @@ export interface Command<
   >(
     this: void,
     plugin: Plugin<TPluginOptions, TPluginSubcommands>
-  ): Command<
+  ): CommandBuilder<
     Simplify<Omit<TOptions, keyof TPluginOptions> & TPluginOptions>,
     Simplify<Omit<TSubcommands, keyof TPluginSubcommands> & TPluginSubcommands>
   >;
@@ -157,18 +163,21 @@ export interface Command<
   /**
    * Override the default usage text for the command.
    */
-  usage(this: void, text: string | string[]): Command<TOptions, TSubcommands>;
+  usage(this: void, text: string | string[]): CommandBuilder<TOptions, TSubcommands>;
 
   /**
    * Add informational text to the help text (ie. a description).
    */
-  info(this: void, text: string | readonly string[]): Command<TOptions, TSubcommands>;
+  info(this: void, text: string | readonly string[]): CommandBuilder<TOptions, TSubcommands>;
 
   /**
    * Add an option for displaying the help text. The default flags are `--help`
    * and `-h`.
    */
-  help(this: void, config?: false | string | readonly Flag[] | HelpOptionConfig): Command<TOptions, TSubcommands>;
+  help(
+    this: void,
+    config?: false | string | readonly Flag[] | HelpOptionConfig
+  ): CommandBuilder<TOptions, TSubcommands>;
 
   /**
    * Add an option to display the command version. The default flag is
@@ -176,9 +185,8 @@ export interface Command<
    */
   version(
     this: void,
-    version: false | string,
-    config?: string | readonly Flag[] | VersionOptionConfig
-  ): Command<TOptions, TSubcommands>;
+    config?: false | string | readonly Flag[] | VersionOptionConfig
+  ): CommandBuilder<TOptions, TSubcommands>;
 
   /**
    * Add a boolean named option.
@@ -187,7 +195,7 @@ export interface Command<
     this: void,
     key: TKey,
     config?: string | readonly Flag[] | BooleanOptionConfig<TValue>,
-  ): Command<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
+  ): CommandBuilder<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
 
   /**
    * Add a named option that accepts a value.
@@ -196,7 +204,7 @@ export interface Command<
     this: void,
     key: TKey,
     config?: string | readonly Flag[] | StringOptionConfig<TValue>,
-  ): Command<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
+  ): CommandBuilder<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
 
   /**
    * Add a positional option.
@@ -205,7 +213,7 @@ export interface Command<
     this: void,
     key: TKey,
     config?: string | PositionalOptionConfig<TValue>,
-  ): Command<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
+  ): CommandBuilder<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
 
   /**
    * Accept all remaining arguments as a variadic option.
@@ -214,14 +222,14 @@ export interface Command<
     this: void,
     key: TKey,
     config?: string | VariadicOptionConfig<TValue>,
-  ): Command<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
+  ): CommandBuilder<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
 
   /**
    * Remove an option from the command.
    */
   removeOption<TKey extends keyof TOptions | (string & {})>(
     key: TKey
-  ): Command<Simplify<Omit<TOptions, TKey>>, TSubcommands>;
+  ): CommandBuilder<Simplify<Omit<TOptions, TKey>>, TSubcommands>;
 
   /**
    * Add a subcommand.
@@ -230,20 +238,20 @@ export interface Command<
     this: void,
     name: TName,
     subcommand: TSubcommand,
-  ): Command<TOptions, Simplify<Omit<TSubcommands, TName> & { [key in TName]: TSubcommand }>>;
+  ): CommandBuilder<TOptions, Simplify<Omit<TSubcommands, TName> & { [key in TName]: TSubcommand }>>;
 
   /**
    * Remove a subcommand from the command.
    */
   removeSubcommand<TName extends string>(
     name: TName | (string & {})
-  ): Command<TOptions, Simplify<Omit<TSubcommands, TName>>>;
+  ): CommandBuilder<TOptions, Simplify<Omit<TSubcommands, TName>>>;
 
   /**
    * Print an error message when parsing fails. Help will not be printed for
    * errors thrown by action callbacks.
    */
-  printHelpOnError(this: void, enabled?: boolean): Command<TOptions, TSubcommands>;
+  printHelpOnError(this: void, enabled?: boolean): CommandBuilder<TOptions, TSubcommands>;
 
   /**
    * Add an action which will be invoked after the command is parsed, and
@@ -251,14 +259,12 @@ export interface Command<
    */
   action(
     this: void,
-    callback: (
-      result: CommandResult<TOptions, TSubcommands, ActionCommand<TOptions, TSubcommands>>
-    ) => Promise<void>,
-  ): ActionCommand<TOptions, TSubcommands>;
+    callback: (result: CommandResult<TOptions, TSubcommands>) => Promise<void>,
+  ): Command<TOptions, TSubcommands>;
 }
 
-export function createCommand(): Command<{}, {}> {
-  return createNextCommand({
+export function createCommand(): CommandBuilder<{}, {}> {
+  return createCommandBuilder({
     usage: [],
     info: [],
     options: {},
@@ -268,49 +274,56 @@ export function createCommand(): Command<{}, {}> {
     printHelpOnError: false,
     version: '',
     action: async () => undefined,
-  }).help();
+  })
+    .help()
+    .version();
 }
 
-function createNextCommand(meta: Meta): Command<any, any> {
-  const self: Command<any, any> = {
+function createCommandBuilder(meta: Meta): CommandBuilder<any, any> {
+  const self: CommandBuilder<any, any> = {
     [META]: meta,
     use(plugin) {
-      const next: Command<any, any> = plugin(self);
+      const next: CommandBuilder<any, any> = plugin(self);
       return next;
     },
     usage(text) {
-      return createNextCommand({
+      return createCommandBuilder({
         ...meta,
         usage: [...meta.usage, ...(Array.isArray(text) ? text : (text ? [text] : []))],
       });
     },
     info(text) {
-      return createNextCommand({
+      return createCommandBuilder({
         ...meta,
         info: [...meta.info, ...(Array.isArray(text) ? text : (text ? [text] : []))],
       });
     },
     help(init) {
       if (init === false) {
-        return createNextCommand({ ...meta, helpOption: undefined });
+        return createCommandBuilder({ ...meta, helpOption: undefined });
       }
 
       const {
         flags = ['--help', '-h'],
         usage = flags.join(', '),
-        info = 'Show this help message.',
+        info = 'Print this help message.',
       } = getConfigObject(init);
 
-      return createNextCommand({ ...meta, helpOption: { usage, info, flags } });
+      return createCommandBuilder({ ...meta, helpOption: { usage, info, flags } });
     },
-    version(version, init) {
-      if (version === false) {
-        return createNextCommand({ ...meta, version: '', versionOption: undefined });
+    version(init) {
+      if (init === false) {
+        return createCommandBuilder({ ...meta, version: '', versionOption: undefined });
       }
 
-      const { flags = ['--version'], usage = flags.join(', '), info = '' } = getConfigObject(init);
+      const {
+        flags = ['--version'],
+        usage = flags.join(', '),
+        info = 'Print the version number.',
+        version,
+      } = getConfigObject(init);
 
-      return createNextCommand({ ...meta, versionOption: { usage, info, flags }, version });
+      return createCommandBuilder({ ...meta, versionOption: { usage, info, flags, version } });
     },
     boolean(key, init) {
       const {
@@ -353,27 +366,27 @@ function createNextCommand(meta: Meta): Command<any, any> {
     removeOption(key) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [key]: _, ...options } = meta.options;
-      return createNextCommand({ ...meta, options });
+      return createCommandBuilder({ ...meta, options });
     },
     subcommand(name, subcommand) {
-      return createNextCommand({ ...meta, subcommands: { ...meta.subcommands, [name]: subcommand } });
+      return createCommandBuilder({ ...meta, subcommands: { ...meta.subcommands, [name]: subcommand } });
     },
     removeSubcommand(name) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [name]: _, ...subcommands } = meta.subcommands;
-      return createNextCommand({ ...meta, subcommands });
+      return createCommandBuilder({ ...meta, subcommands });
     },
     action(callback) {
       validateMeta(meta);
-      return getActionCommand(createNextCommand({ ...meta, action: callback }));
+      return getCommand(createCommandBuilder({ ...meta, action: callback }));
     },
     async parse(args) {
       validateMeta(meta);
 
-      let result: CommandResult<any, any, any>;
+      let result: CommandResult<any, any>;
 
       try {
-        result = parse(args, this);
+        result = parse(args, getCommand(self));
       }
       catch (error) {
         if (meta.printHelpOnError) {
@@ -397,14 +410,14 @@ function createNextCommand(meta: Meta): Command<any, any> {
       writable.write(self.getHelp() + '\n');
     },
     printHelpOnError(enabled = true) {
-      return createNextCommand({ ...meta, printHelpOnError: enabled });
+      return createCommandBuilder({ ...meta, printHelpOnError: enabled });
     },
   };
 
   return self;
 
-  function addOption(key: string, optionConfig: MetaOption): Command<any, any> {
-    return createNextCommand({ ...meta, options: { ...meta.options, [key]: optionConfig } });
+  function addOption(key: string, optionConfig: MetaOption): CommandBuilder<any, any> {
+    return createCommandBuilder({ ...meta, options: { ...meta.options, [key]: optionConfig } });
   };
 }
 
@@ -422,7 +435,11 @@ function getLabel(key: string): string {
 function getHelpConfig(meta: Meta): HelpConfig {
   return {
     ...meta,
-    options: Object.values(meta.options).map(({ usage, info }) => ({ usage, info })),
+    options: [
+      ...Object.values(meta.options).map(({ usage, info }) => ({ usage, info })),
+      ...(meta.helpOption ? [meta.helpOption] : []),
+      ...(meta.versionOption ? [meta.versionOption] : []),
+    ],
     subcommands: Object.entries(meta.subcommands).map(([name, subcommand]) => ({
       usage: name,
       info: subcommand[META].info[0] ?? '',
@@ -431,15 +448,13 @@ function getHelpConfig(meta: Meta): HelpConfig {
   };
 }
 
-function getActionCommand(command: Command<any, any>): ActionCommand<any, any> {
-  const self: ActionCommand<any, any> = {
+function getCommand(command: CommandBuilder<any, any>): Command<any, any> {
+  return {
     [META]: command[META],
-    parse: (...args) => command.parse.call(self, ...args),
+    parse: command.parse,
     getHelp: command.getHelp,
     printHelp: command.printHelp,
   };
-
-  return self;
 }
 
 function validateMeta(meta: Meta): void {
@@ -465,14 +480,16 @@ function validateMeta(meta: Meta): void {
   }
 }
 
-async function runActions(result: CommandResult<any, any, any>): Promise<void> {
+async function runActions(result: CommandResult<any, any>): Promise<void> {
   await result.command[META].action(result);
 
   if (result.type === 'help') {
     result.command.printHelp();
   }
   else if (result.type === 'version') {
-    console.log(result.command[META].version);
+    const versionOrGetter = result.command[META].versionOption?.version ?? getVersion;
+    const version = typeof versionOrGetter === 'string' ? versionOrGetter : await versionOrGetter();
+    console.log(version);
   }
 
   if (result.subcommand) {
