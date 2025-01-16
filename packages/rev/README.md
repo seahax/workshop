@@ -74,9 +74,9 @@ Changelog entries have a second level heading (`##`) which includes the version 
 ```md
 ## 1.2.3 - 2024-01-20
 
-- some patch change (1234abcd)
-- feat: some minor change (2345abcd)
-- feat!: some major change (3456abcd)
+- __feat!:__ some major change (3456abcd)
+- __feat:__ some minor change (2345abcd)
+- __chore:__ some patch change (1234abcd)
 ```
 
 ## Publishing

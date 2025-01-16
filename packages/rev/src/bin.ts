@@ -35,7 +35,7 @@ await main(async () => {
 
       const npmMetadata = await getNpmMetadata(packageJson);
       const logs = npmMetadata
-        ? await getGitLogs(npmMetadata)
+        ? await getGitLogs(packageJson, npmMetadata)
         : [];
 
       if (!options.force && logs.length === 0 && npmMetadata) {
@@ -61,12 +61,27 @@ await main(async () => {
     .parse(process.argv.slice(2));
 });
 
-function printResult(name: string, message: string, nextVersion?: string, logs?: readonly GitLog[]): void {
+function printResult(
+  name: string,
+  message: string,
+  nextVersion?: string,
+  logs?: readonly Pick<GitLog, 'fullText'>[]): void {
   console.log(
     chalk.blue(`${name}:`) + (nextVersion
       ? chalk.dim(` ${message} -> `) + chalk.whiteBright(nextVersion)
       : chalk.dim(` ${message}`)),
   );
 
-  logs?.forEach((log) => console.log(chalk.dim(`  - ${log.subject} (${log.hash})`)));
+  logs?.forEach(({ fullText }) => {
+    const styledText = chalk.level === 0
+      ? fullText
+      : fullText
+          // Bold
+          .replaceAll(/(__|\*\*)(.*?)\1/gu, (_0, _1, text) => chalk.bold(text))
+          // Italic
+          .replaceAll(/(_|\*)(.*?)\1/gu, (_0, _1, text) => chalk.italic(text))
+    ;
+
+    console.log(chalk.dim(`  - ${styledText}`));
+  });
 }

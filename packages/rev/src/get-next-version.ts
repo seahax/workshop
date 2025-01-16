@@ -25,12 +25,12 @@ export function getNextVersion(
   let releaseTypeRecommended: ReleaseType = 'patch';
 
   for (const log of logs) {
-    if (/^[^:\s]*!:/mu.test(log.subject)) {
+    if (log.breaking) {
       releaseTypeRecommended = 'major';
       break;
     }
 
-    if (log.subject.startsWith('feat:')) {
+    if (log.type === 'feat') {
       releaseTypeRecommended = 'minor';
     }
   }
