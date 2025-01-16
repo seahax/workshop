@@ -18,7 +18,7 @@
   "dependencies": {
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.17.0",
-    "@seahax/eslint-progress": "workspace:*",
+    "@seahax/eslint-progress": "workspace:^",
     "@stylistic/eslint-plugin": "^2.12.1",
     "@types/eslint": "^9.6.1",
     "@types/eslint__eslintrc": "^2.1.2",

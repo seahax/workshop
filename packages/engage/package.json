@@ -39,7 +39,7 @@
     "@aws-sdk/client-s3": "^3.721.0",
     "@aws-sdk/client-sts": "^3.721.0",
     "@aws-sdk/credential-providers": "^3.721.0",
-    "@seahax/main": "workspace:*",
+    "@seahax/main": "workspace:^",
     "@smithy/types": "^3.7.2",
     "json5": "^2.2.3",
     "mime": "^4.0.4",
