@@ -19,4 +19,4 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm check
-      - run: pnpm -r publish
+      - run: npx lerna from-package --no-private --no-git-tag-version --no-push
