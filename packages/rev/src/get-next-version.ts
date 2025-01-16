@@ -46,7 +46,7 @@ export function getNextVersion(
     releaseTypeRecommended = 'patch';
   }
 
-  return semver.inc(npmMetadata.version, releaseTypeRecommended)!;
+  return semver.inc(packageJson.version, releaseTypeRecommended)!;
 }
 
 function isProdReleaseType(type: ReleaseType): type is ProdReleaseType {
