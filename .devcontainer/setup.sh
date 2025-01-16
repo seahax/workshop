@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 set -e
+unset LS_COLORS
+export NO_COLOR=1
+export TERM=xterm
 
 (
   if [ -z "$GITHUB_USER" ]; then
