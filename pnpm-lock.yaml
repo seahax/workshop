@@ -70,73 +70,6 @@ importers:
         specifier: workspace:*
         version: link:../vite-plugin-lib
 
-  packages/engage:
-    dependencies:
-      '@aws-sdk/client-acm':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/client-cloudfront':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/client-cloudwatch':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/client-cloudwatch-logs':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/client-dynamodb':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/client-iam':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/client-route-53':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/client-s3':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/client-sts':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/credential-providers':
-        specifier: ^3.721.0
-        version: 3.726.1(@aws-sdk/client-sso-oidc@3.726.0(@aws-sdk/client-sts@3.726.1))
-      '@seahax/main':
-        specifier: workspace:^
-        version: link:../main
-      '@smithy/types':
-        specifier: ^3.7.2
-        version: 3.7.2
-      json5:
-        specifier: ^2.2.3
-        version: 2.2.3
-      mime:
-        specifier: ^4.0.4
-        version: 4.0.6
-      minimatch:
-        specifier: ^10.0.1
-        version: 10.0.1
-      ora:
-        specifier: ^8.1.1
-        version: 8.1.1
-      tsx:
-        specifier: ^4.19.2
-        version: 4.19.2
-      yaml:
-        specifier: ^2.6.1
-        version: 2.7.0
-      zod:
-        specifier: ^3.24.1
-        version: 3.24.1
-    devDependencies:
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
-      '@seahax/vite-plugin-lib':
-        specifier: workspace:*
-        version: link:../vite-plugin-lib
-
   packages/eslint:
     dependencies:
       '@eslint/eslintrc':
@@ -314,113 +247,6 @@ importers:
         specifier: workspace:*
         version: link:../vite-plugin-lib
 
-  packages/spindrift:
-    dependencies:
-      '@aws-sdk/client-acm':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/client-cloudfront':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/client-cloudwatch':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/client-cloudwatch-logs':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/client-dynamodb':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/client-iam':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/client-route-53':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/client-s3':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/client-sts':
-        specifier: ^3.721.0
-        version: 3.726.1
-      '@aws-sdk/credential-providers':
-        specifier: ^3.721.0
-        version: 3.726.1(@aws-sdk/client-sso-oidc@3.726.0(@aws-sdk/client-sts@3.726.1))
-      '@aws-sdk/lib-dynamodb':
-        specifier: ^3.721.0
-        version: 3.726.1(@aws-sdk/client-dynamodb@3.726.1)
-      '@seahax/args':
-        specifier: workspace:^
-        version: link:../args
-      '@seahax/main':
-        specifier: workspace:^
-        version: link:../main
-      '@smithy/types':
-        specifier: ^3.7.2
-        version: 3.7.2
-      json5:
-        specifier: ^2.2.3
-        version: 2.2.3
-      mime:
-        specifier: ^4.0.4
-        version: 4.0.6
-      minimatch:
-        specifier: ^10.0.1
-        version: 10.0.1
-      ora:
-        specifier: ^8.1.1
-        version: 8.1.1
-      tsx:
-        specifier: ^4.19.2
-        version: 4.19.2
-      yaml:
-        specifier: ^2.6.1
-        version: 2.7.0
-      zod:
-        specifier: ^3.24.1
-        version: 3.24.1
-    devDependencies:
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
-      '@seahax/vite-plugin-lib':
-        specifier: workspace:*
-        version: link:../vite-plugin-lib
-
-  packages/spindrift-site:
-    devDependencies:
-      '@seahax/spindrift':
-        specifier: workspace:*
-        version: link:../spindrift
-
-  packages/store:
-    devDependencies:
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
-      '@seahax/vite-plugin-lib':
-        specifier: workspace:*
-        version: link:../vite-plugin-lib
-
-  packages/store-react:
-    dependencies:
-      '@seahax/store':
-        specifier: workspace:^
-        version: link:../store
-      '@types/react':
-        specifier: '>=18'
-        version: 19.0.4
-      react:
-        specifier: '>=18'
-        version: 19.0.0
-    devDependencies:
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
-      '@seahax/vite-plugin-lib':
-        specifier: workspace:*
-        version: link:../vite-plugin-lib
-
   packages/vite-plugin-chmodx:
     dependencies:
       vite:
@@ -573,6 +399,180 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.3.4
         version: 4.3.4(vite@6.0.7(@types/node@22.10.5)(tsx@4.19.2)(yaml@2.7.0))
+
+  unreleased/engage:
+    dependencies:
+      '@aws-sdk/client-acm':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/client-cloudfront':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/client-cloudwatch':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/client-cloudwatch-logs':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/client-dynamodb':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/client-iam':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/client-route-53':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/client-s3':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/client-sts':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/credential-providers':
+        specifier: ^3.721.0
+        version: 3.726.1(@aws-sdk/client-sso-oidc@3.726.0(@aws-sdk/client-sts@3.726.1))
+      '@seahax/main':
+        specifier: workspace:^
+        version: link:../../packages/main
+      '@smithy/types':
+        specifier: ^3.7.2
+        version: 3.7.2
+      json5:
+        specifier: ^2.2.3
+        version: 2.2.3
+      mime:
+        specifier: ^4.0.4
+        version: 4.0.6
+      minimatch:
+        specifier: ^10.0.1
+        version: 10.0.1
+      ora:
+        specifier: ^8.1.1
+        version: 8.1.1
+      tsx:
+        specifier: ^4.19.2
+        version: 4.19.2
+      yaml:
+        specifier: ^2.6.1
+        version: 2.7.0
+      zod:
+        specifier: ^3.24.1
+        version: 3.24.1
+    devDependencies:
+      '@seahax/vite-plugin-finalize':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-finalize
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-lib
+
+  unreleased/spindrift:
+    dependencies:
+      '@aws-sdk/client-acm':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/client-cloudfront':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/client-cloudwatch':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/client-cloudwatch-logs':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/client-dynamodb':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/client-iam':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/client-route-53':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/client-s3':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/client-sts':
+        specifier: ^3.721.0
+        version: 3.726.1
+      '@aws-sdk/credential-providers':
+        specifier: ^3.721.0
+        version: 3.726.1(@aws-sdk/client-sso-oidc@3.726.0(@aws-sdk/client-sts@3.726.1))
+      '@aws-sdk/lib-dynamodb':
+        specifier: ^3.721.0
+        version: 3.726.1(@aws-sdk/client-dynamodb@3.726.1)
+      '@seahax/args':
+        specifier: workspace:^
+        version: link:../../packages/args
+      '@seahax/main':
+        specifier: workspace:^
+        version: link:../../packages/main
+      '@smithy/types':
+        specifier: ^3.7.2
+        version: 3.7.2
+      json5:
+        specifier: ^2.2.3
+        version: 2.2.3
+      mime:
+        specifier: ^4.0.4
+        version: 4.0.6
+      minimatch:
+        specifier: ^10.0.1
+        version: 10.0.1
+      ora:
+        specifier: ^8.1.1
+        version: 8.1.1
+      tsx:
+        specifier: ^4.19.2
+        version: 4.19.2
+      yaml:
+        specifier: ^2.6.1
+        version: 2.7.0
+      zod:
+        specifier: ^3.24.1
+        version: 3.24.1
+    devDependencies:
+      '@seahax/vite-plugin-finalize':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-finalize
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-lib
+
+  unreleased/spindrift-site:
+    devDependencies:
+      '@seahax/spindrift':
+        specifier: workspace:*
+        version: link:../spindrift
+
+  unreleased/store:
+    devDependencies:
+      '@seahax/vite-plugin-finalize':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-finalize
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-lib
+
+  unreleased/store-react:
+    dependencies:
+      '@seahax/store':
+        specifier: workspace:^
+        version: link:../store
+      '@types/react':
+        specifier: '>=18'
+        version: 19.0.4
+      react:
+        specifier: '>=18'
+        version: 19.0.0
+    devDependencies:
+      '@seahax/vite-plugin-finalize':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-finalize
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-lib
 
 packages:
 
