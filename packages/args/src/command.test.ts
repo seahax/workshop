@@ -81,7 +81,7 @@ test('repeat options', async () => {
 test('help', async () => {
   const writeSpy = vi.spyOn(process.stdout, 'write').mockReset();
   const command = createCommand()
-    .string('str', { required: true })
+    .requiredString('str')
     .help();
 
   await command.parse(['--help']);
@@ -132,7 +132,7 @@ test('inline option value', async () => {
 
 test('required', async () => {
   const command = createCommand()
-    .string('str', { required: true });
+    .requiredString('str');
 
   await expect(command.parse([])).rejects.toThrowError('Missing required "--str <value>".');
   await expect(command.parse(['--str', 'value'])).resolves.not.toThrow();
@@ -140,7 +140,7 @@ test('required', async () => {
 
 test('required multiple', async () => {
   const command = createCommand()
-    .string('str', { required: true, parse: multiple() });
+    .requiredString('str', { parse: multiple() });
 
   await expect(command.parse([])).rejects.toThrowError('Missing required "--str <value>".');
   await expect(command.parse(['--str', 'a'])).resolves.not.toThrow();

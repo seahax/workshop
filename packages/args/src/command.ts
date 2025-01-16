@@ -29,13 +29,6 @@ interface NamedOptionConfig {
   readonly flags?: readonly Flag[];
 }
 
-interface MaybeRequiredOptionConfig<TRequired extends boolean> {
-  /**
-   * Whether the option is required.
-   */
-  readonly required?: TRequired;
-}
-
 export interface HelpOptionConfig extends CommonOptionConfig, NamedOptionConfig {}
 
 export interface VersionOptionConfig extends CommonOptionConfig, NamedOptionConfig {
@@ -54,17 +47,17 @@ export interface BooleanOptionConfig<TValue> extends CommonOptionConfig, NamedOp
   readonly parse?: (values: boolean[], usage: string) => TValue;
 }
 
-export interface StringOptionConfig<TValue, TRequired extends boolean>
-  extends CommonOptionConfig, NamedOptionConfig, MaybeRequiredOptionConfig<TRequired> {
+export interface StringOptionConfig<TValue, TRequired extends boolean> extends CommonOptionConfig, NamedOptionConfig {
   /**
    * Parse raw values. By default, the last value is returned (or undefined if
    * the option is missing).
    */
-  readonly parse?: (values: TRequired extends true ? [string, ...string[]] : string[], usage: string) => TValue;
+  readonly parse?: TRequired extends true
+    ? (values: [string, ...string[]], usage: string) => TValue
+    : (values: string[], usage: string) => TValue;
 }
 
-export interface PositionalOptionConfig<TValue, TRequired extends boolean>
-  extends CommonOptionConfig, MaybeRequiredOptionConfig<TRequired> {
+export interface PositionalOptionConfig<TValue, TRequired extends boolean> extends CommonOptionConfig {
   /**
    * Parse a raw positional value. Be default, the unmodified value is returned
    * (or undefined if the option is missing)
@@ -72,8 +65,7 @@ export interface PositionalOptionConfig<TValue, TRequired extends boolean>
   readonly parse?: (values: TRequired extends true ? [string, ...string[]] : string[], usage: string) => TValue;
 }
 
-export interface VariadicOptionConfig<TValue, TRequired extends boolean>
-  extends CommonOptionConfig, MaybeRequiredOptionConfig<TRequired> {
+export interface VariadicOptionConfig<TValue, TRequired extends boolean> extends CommonOptionConfig {
   /**
    * Parse raw variadic values. By default, an array of the unmodified values
    * is returned.
@@ -210,40 +202,56 @@ export interface CommandBuilder<
   /**
    * Add a named option that accepts a value.
    */
-  string<
-    TKey extends string,
-    TRequired extends boolean = false,
-    TValue = TRequired extends true ? string : string | undefined,
-  >(
+  string< TKey extends string, TValue = string | undefined>(
     this: void,
     key: TKey,
-    config?: string | readonly Flag[] | StringOptionConfig<TValue, TRequired>,
+    config?: string | readonly Flag[] | StringOptionConfig<TValue, false>,
+  ): CommandBuilder<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
+
+  /**
+   * Add a required named option that accepts a value.
+   */
+  requiredString< TKey extends string, TValue = string>(
+    this: void,
+    key: TKey,
+    config?: string | readonly Flag[] | StringOptionConfig<TValue, true>,
   ): CommandBuilder<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
 
   /**
    * Add a positional option.
    */
-  positional<
-    TKey extends string,
-    TRequired extends boolean = false,
-    TValue = TRequired extends true ? string : string | undefined,
-  >(
+  positional<TKey extends string, TValue = string | undefined>(
     this: void,
     key: TKey,
-    config?: string | PositionalOptionConfig<TValue, TRequired>,
+    config?: string | PositionalOptionConfig<TValue, false>,
+  ): CommandBuilder<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
+
+  /**
+   * Add a required positional option.
+   */
+  requiredPositional<TKey extends string, TValue = string>(
+    this: void,
+    key: TKey,
+    config?: string | PositionalOptionConfig<TValue, true>,
   ): CommandBuilder<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
 
   /**
    * Accept all remaining arguments as a variadic option.
    */
-  variadic<
-    TKey extends string,
-    TRequired extends boolean = false,
-    TValue = TRequired extends true ? [string, ...string[]] : string[],
-  >(
+  variadic<TKey extends string, TValue = string[]>(
     this: void,
     key: TKey,
-    config?: string | VariadicOptionConfig<TValue, TRequired>,
+    config?: string | VariadicOptionConfig<TValue, false>,
+  ): CommandBuilder<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
+
+  /**
+   * Accept all remaining arguments as a variadic option. At least one value
+   * is required.
+   */
+  requiredVariadic<TKey extends string, TValue = [string, ...string[]]>(
+    this: void,
+    key: TKey,
+    config?: string | VariadicOptionConfig<TValue, true>,
   ): CommandBuilder<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
 
   /**
@@ -360,33 +368,58 @@ function createCommandBuilder(meta: Meta): CommandBuilder<any, any> {
     string(key, init) {
       const {
         parse = last(),
-        required = false,
         flags = [`--${getLabel(key)}`],
         usage = `${flags.join(', ')} <value>`,
         info = '',
       } = getConfigObject(init);
 
-      return addOption(key, { usage, info, type: 'string', flags, required, parse });
+      return addOption(key, { usage, info, type: 'string', flags, required: false, parse });
+    },
+    requiredString(key, init) {
+      const {
+        parse = last(),
+        flags = [`--${getLabel(key)}`],
+        usage = `${flags.join(', ')} <value>`,
+        info = '',
+      } = getConfigObject(init);
+
+      return addOption(key, { usage, info, type: 'string', flags, required: true, parse });
     },
     positional(key, init) {
       const {
         parse = last(),
-        required = false,
-        usage = required ? `<${getLabel(key)}>` : `[${getLabel(key)}]`,
+        usage = `[${getLabel(key)}]`,
         info = '',
       } = getConfigObject(init);
 
-      return addOption(key, { usage, info, type: 'positional', required, parse });
+      return addOption(key, { usage, info, type: 'positional', required: false, parse });
+    },
+    requiredPositional(key, init) {
+      const {
+        parse = last(),
+        usage = `<${getLabel(key)}>`,
+        info = '',
+      } = getConfigObject(init);
+
+      return addOption(key, { usage, info, type: 'positional', required: true, parse });
     },
     variadic(key, init) {
       const {
         parse = multiple(),
-        required = false,
-        usage = required ? `<${getLabel(key)}...>` : `[${getLabel(key)}...]`,
+        usage = `[${getLabel(key)}...]`,
         info = '',
       } = getConfigObject(init);
 
-      return addOption(key, { usage, info, type: 'variadic', required, parse });
+      return addOption(key, { usage, info, type: 'variadic', required: false, parse });
+    },
+    requiredVariadic(key, init) {
+      const {
+        parse = multiple(),
+        usage = `<${getLabel(key)}...>`,
+        info = '',
+      } = getConfigObject(init);
+
+      return addOption(key, { usage, info, type: 'variadic', required: true, parse });
     },
     removeOption(key) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
