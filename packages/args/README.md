@@ -1,3 +1,3 @@
 # @seahax/args
 
-Args and command parsing.
+Args and command parsing tool.
