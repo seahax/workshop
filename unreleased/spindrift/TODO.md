@@ -1,7 +1,7 @@
 # TODO
 
 - [x] Allow longer resource names (256 unicode characters)
-- [x] Add CloudFront logging config
+- [ ] Add CloudFront logging
 - [ ] Add CSP config to CDN
 - [ ] Add functions
 - [ ] Add function execution roles
