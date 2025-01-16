@@ -97,6 +97,12 @@ export function parse(args: readonly string[], command: WithMeta): Result {
   });
 
   const remaining = [...args];
+  const results = {
+    options: {} as Record<string, any>,
+    add(key: string, value: any): void {
+      results.options[key] = [...results.options[key] ?? [], value];
+    },
+  };
   let forcePositional = false;
 
   while (remaining.length > 0) {
@@ -120,26 +126,24 @@ export function parse(args: readonly string[], command: WithMeta): Result {
     const positionalKey = positionalKeys.shift() ?? variadicKey;
 
     if (positionalKey) {
-      addResult(positionalKey, arg);
+      results.add(positionalKey, arg);
       continue;
     }
 
     throw new ArgsError(`Unexpected argument "${arg}".`);
   }
 
-  const results: Record<string, any[]> = {};
-
   for (const [key, option] of entries) {
-    if (option.required && !results[key]?.length) {
+    if (option.required && !results.options[key]?.length) {
       throw new ArgsError(`Missing required "${option.usage}".`);
     }
 
     if (option.parse) {
-      results[key] = option.parse(results[key] ? [...results[key]] : [], option.usage);
+      results.options[key] = option.parse(results.options[key] ? [...results.options[key]] : [], option.usage);
     }
   }
 
-  return { type: 'options', options: results, args, command };
+  return { type: 'options', options: results.options, args, command };
 
   function handleOption(arg: OptionArg): Result | undefined {
     for (const [key, config] of optionEntries) {
@@ -152,23 +156,19 @@ export function parse(args: readonly string[], command: WithMeta): Result {
 
       if (config.type === 'boolean') {
         if (arg.value != null) throw new ArgsError(`Unexpected value for option "${arg.flag}".`);
-        addResult(key, true);
+        results.add(key, true);
         return;
       }
 
       if (config.type === 'string') {
         const value = arg.value ?? remaining.shift();
         if (value == null || value.startsWith('-')) throw new ArgsError(`Missing value for option "${arg.flag}".`);
-        addResult(key, value);
+        results.add(key, value);
         return;
       }
     }
 
     throw new ArgsError(`Unknown option "${arg.flag}".`);
-  }
-
-  function addResult(key: string, value: any): void {
-    results[key] = [...results[key] ?? [], value];
   }
 }
 
