@@ -1,6 +1,6 @@
 # @seahax/rev
 
-Conventional(-ish) versioning.
+Conventional(-ish) versioning tool.
 
 - [Features](#features)
 - [Getting Started](#getting-started)
@@ -42,8 +42,6 @@ This tool is not monorepo aware. To use it in a monorepo, use a tool like Lerna 
 ```sh
 npx lerna --no-private --no-stream exec rev
 ```
-
-**NOTE:** It's important to use a tool for publishing that includes `gitHead` in the published package. NPM and Lerna do. PNPM does not.
 
 ## Committing
 
@@ -89,9 +87,4 @@ This tool does not publish the package. Use a tool like Lerna to publish the pac
 npx lerna --no-private publish from-package --no-git-tag-version --no-push
 ```
 
-# In a monorepo.
-pnpm -r publish
-
-# Fail (instead of skip) already published versions.
-pnpm -r publish --force
-```
+**NOTE:** It's important to use a tool for publishing that includes `gitHead` in the published package. NPM and Lerna do. PNPM does not.

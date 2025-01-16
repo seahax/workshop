@@ -1,5 +1,6 @@
 import { assert } from 'node:console';
 
+import { createCommand } from '@seahax/args';
 import { main } from '@seahax/main';
 import chalk from 'chalk';
 import semver from 'semver';
@@ -13,27 +14,46 @@ import { updateChangelog } from './update-changelog.js';
 import { updatePackageJson } from './update-package-json.js';
 
 await main(async () => {
-  const packageJson = await getPackageJson();
+  await createCommand()
+    .usage('rev [options]')
+    .info([
+      `Conventional(-ish) versioning tool. Run the command at the root of a
+      package to bump its version and update its changelog. The type of
+      version bump (patch, minor, or major) is based loosely on the
+      Conventional Commits spec.`,
+      'Read the docs: https://github.com/seahax/workshop/blob/main/packages/rev/README.md',
+    ])
+    .boolean('force', 'Bump the version even if there are no new commits.')
+    .action(async ({ options }) => {
+      if (!options) return;
 
-  if (packageJson.private) return;
+      const packageJson = await getPackageJson();
 
-  assert(await getGitIsClean(), 'Git working directory is not clean.');
-  const npmMetadata = await getNpmMetadata(packageJson);
-  const logs = npmMetadata
-    ? await getGitLogs(npmMetadata)
-    : [];
-  const nextVersion = getNextVersion(packageJson, npmMetadata, logs);
-  const isPrereleaseVersion = semver.prerelease(nextVersion) != null;
+      if (packageJson.private) return;
 
-  await updatePackageJson(nextVersion);
+      const npmMetadata = await getNpmMetadata(packageJson);
+      const logs = npmMetadata
+        ? await getGitLogs(npmMetadata)
+        : [];
 
-  if (!isPrereleaseVersion) {
-    await updateChangelog(nextVersion, logs);
-  }
+      if (!options.force && logs.length === 0 && npmMetadata) return;
 
-  console.log(
-    chalk.blue(`${packageJson.name}:`)
-    + chalk.dim(` ${packageJson.version} -> `)
-    + chalk.whiteBright(nextVersion),
-  );
+      assert(await getGitIsClean(), 'Git working directory is not clean.');
+
+      const nextVersion = getNextVersion(packageJson, npmMetadata, logs);
+      const isPrereleaseVersion = semver.prerelease(nextVersion) != null;
+
+      await updatePackageJson(nextVersion);
+
+      if (!isPrereleaseVersion) {
+        await updateChangelog(nextVersion, logs);
+      }
+
+      console.log(
+        chalk.blue(`${packageJson.name}:`)
+        + chalk.dim(` ${packageJson.version} -> `)
+        + chalk.whiteBright(nextVersion),
+      );
+    })
+    .parse(process.argv.slice(2));
 });

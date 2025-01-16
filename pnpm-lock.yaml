@@ -224,6 +224,9 @@ importers:
 
   packages/rev:
     dependencies:
+      '@seahax/args':
+        specifier: workspace:^
+        version: link:../args
       '@seahax/main':
         specifier: workspace:^
         version: link:../main
