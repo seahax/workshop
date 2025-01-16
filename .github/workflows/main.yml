@@ -1,6 +1,9 @@
 on:
   push:
     branches: [main]
+    paths:
+      - '!templates/**'
+      - '!unreleased/**'
 concurrency:
   group: ${{ github.workflow }}
 env:
