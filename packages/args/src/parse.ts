@@ -97,12 +97,7 @@ export function parse(args: readonly string[], command: WithMeta): Result {
   });
 
   const remaining = [...args];
-  const results = {
-    options: {} as Record<string, any>,
-    add(key: string, value: any): void {
-      results.options[key] = [...results.options[key] ?? [], value];
-    },
-  };
+  const results: Record<string, any[]> = {};
   let forcePositional = false;
 
   while (remaining.length > 0) {
@@ -126,7 +121,7 @@ export function parse(args: readonly string[], command: WithMeta): Result {
     const positionalKey = positionalKeys.shift() ?? variadicKey;
 
     if (positionalKey) {
-      results.add(positionalKey, arg);
+      addResult(positionalKey, arg);
       continue;
     }
 
@@ -134,16 +129,20 @@ export function parse(args: readonly string[], command: WithMeta): Result {
   }
 
   for (const [key, option] of entries) {
-    if (option.required && !results.options[key]?.length) {
+    if (option.required && !results[key]?.length) {
       throw new ArgsError(`Missing required "${option.usage}".`);
     }
 
     if (option.parse) {
-      results.options[key] = option.parse(results.options[key] ? [...results.options[key]] : [], option.usage);
+      results[key] = option.parse(results[key] ? [...results[key]] : [], option.usage);
     }
   }
 
-  return { type: 'options', options: results.options, args, command };
+  return { type: 'options', options: results, args, command };
+
+  function addResult(key: string, value: any): void {
+    results[key] = [...results[key] ?? [], value];
+  };
 
   function handleOption(arg: OptionArg): Result | undefined {
     for (const [key, config] of optionEntries) {
@@ -156,14 +155,14 @@ export function parse(args: readonly string[], command: WithMeta): Result {
 
       if (config.type === 'boolean') {
         if (arg.value != null) throw new ArgsError(`Unexpected value for option "${arg.flag}".`);
-        results.add(key, true);
+        addResult(key, true);
         return;
       }
 
       if (config.type === 'string') {
         const value = arg.value ?? remaining.shift();
         if (value == null || value.startsWith('-')) throw new ArgsError(`Missing value for option "${arg.flag}".`);
-        results.add(key, value);
+        addResult(key, value);
         return;
       }
     }
