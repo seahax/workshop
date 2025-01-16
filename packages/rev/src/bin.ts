@@ -56,12 +56,7 @@ await main(async () => {
         }
       }
 
-      printResult(packageJson.name, 'Current version', nextVersion, logs);
-      console.log(
-        chalk.blue(`${packageJson.name}:`)
-        + chalk.dim(` ${packageJson.version} -> `)
-        + chalk.whiteBright(nextVersion),
-      );
+      printResult(packageJson.name, packageJson.version, nextVersion, logs);
     })
     .parse(process.argv.slice(2));
 });
