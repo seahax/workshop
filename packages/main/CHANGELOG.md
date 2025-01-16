@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.3 - 2025-01-16
+
+No changes.
+
 ## 0.2.2 - 2025-01-16
 
 - fix main not logging uncaught errors (`0a79f9e`)
