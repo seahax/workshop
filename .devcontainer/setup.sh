@@ -1,6 +1,32 @@
 #!/usr/bin/env bash
 set -e
 
+(
+  if [ -z "$GITHUB_USER" ]; then
+    echo "GITHUB_USER is not set."
+    exit 1
+  fi
+
+  export DEVCONTAINER_DOTFILES_CLONE_DIR="$HOME/.devcontainer-dotfiles"
+  
+  echo "Copying dotfiles..."
+  mkdir -p "$DEVCONTAINER_DOTFILES_CLONE_DIR"
+  git clone \
+    "${GITHUB_SERVER_URL:-https://github.com}/$GITHUB_USER/devcontainer-dotfiles" \
+    "$DEVCONTAINER_DOTFILES_CLONE_DIR"
+
+  if [ -f "$DEVCONTAINER_DOTFILES_CLONE_DIR/setup.sh" ]; then
+    ( cd "$DEVCONTAINER_DOTFILES_CLONE_DIR"; bash setup.sh )
+    exit
+  fi
+
+  rsync -av "$DEVCONTAINER_DOTFILES_CLONE_DIR" "$HOME" --exclude ".git"
+) || echo "Failed to copy dotfiles."
+
+if [ -f "${HOME}/.profile" ]; then
+  source "${HOME}/.profile"
+fi
+
 export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
 npm i -g npm@latest
