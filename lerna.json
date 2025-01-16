@@ -11,15 +11,6 @@
     "exec": {
       "stream": true,
       "concurrency": 1
-    },
-    "version": {
-      "private": false,
-      "conventionalCommits": true,
-      "gitTagVersion": false,
-      "push": false
-    },
-    "publish": {
-      "private": false
     }
   }
 }
