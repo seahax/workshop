@@ -37,7 +37,7 @@ npm install --global @seahax/rev
 rev
 ```
 
-This tool is not monorepo aware. To use it in a monorepo, use a tool like PNPM to run it in all public workspaces.
+This tool is not monorepo aware. To use it in a monorepo, use a tool like PNPM to run it in all packages.
 
 ```sh
 pnpm -r exec rev
@@ -45,7 +45,7 @@ pnpm -r exec rev
 
 ## Committing
 
-This tool tries to determine the bump type based on conventional(-ish) commit subjects (first message lines). It does not strictly follow the conventional commits spec.
+This tool tries to determine the bump type based on conventional(-ish) commit subjects (ie. the first line of each commit message). It does not strictly follow the conventional commits spec.
 
 A commit subject that starts with `<type>!:` (where `<type>` is any string without whitespace), is considered a major change.
 
@@ -67,9 +67,9 @@ A minor or major increment may be used if indicated by "conventional" commit mes
 
 ### Changelog
 
-A `CHANGELOG.md` file is created or updated with the relevant commit messages. New change messages are added before the first second level heading (ie. `##`), or at the end of the file. No attempt is made to sort or deduplicate versions.
+A `CHANGELOG.md` file is created or updated with the relevant commit messages. New change entries are added before the first second level heading (ie. `##`), or at the end of the file. No attempt is made to sort or deduplicate existing entries.
 
-Changelog entries have a second level heading (`##`) which includes the version number and the date the entry was added. The body of the entry is a list of commit subjects (first message lines) and their hashes in parentheses.
+Changelog entries have a second level heading (`##`) which includes the version number and the date the entry was added. The body of the entry is a list of commit subject lines and hashes.
 
 ```md
 ## 1.2.3 - 2024-01-20
@@ -86,6 +86,9 @@ This tool does not publish the package. Use a tool like PNPM to publish the pack
 ```sh
 pnpm publish
 
-# Or, in a monorepo..
+# In a monorepo.
 pnpm -r publish
+
+# Fail (instead of skip) already published versions.
+pnpm -r publish --force
 ```
