@@ -13,6 +13,7 @@ export TERM=xterm
   export DEVCONTAINER_DOTFILES_CLONE_DIR="$HOME/.devcontainer-dotfiles"
   
   echo "Copying dotfiles..."
+  rm -rf "$DEVCONTAINER_DOTFILES_CLONE_DIR"
   mkdir -p "$DEVCONTAINER_DOTFILES_CLONE_DIR"
   git clone \
     "${GITHUB_SERVER_URL:-https://github.com}/$GITHUB_USER/devcontainer-dotfiles" \
@@ -23,7 +24,7 @@ export TERM=xterm
     exit
   fi
 
-  rsync -av "$DEVCONTAINER_DOTFILES_CLONE_DIR" "$HOME" --exclude ".git"
+  rsync -arv "$DEVCONTAINER_DOTFILES_CLONE_DIR/" "$HOME/" --exclude ".git"
 ) || echo "Failed to copy dotfiles."
 
 if [ -f "${HOME}/.profile" ]; then
