@@ -1,6 +1,14 @@
 import wrap from 'wrap-ansi';
 
-export interface HelpEntry {
+import { type MetaType } from './meta.js';
+
+export interface HelpOption {
+  readonly type: MetaType;
+  readonly usage: string;
+  readonly info: string;
+}
+
+export interface HelpSubcommand {
   readonly usage: string;
   readonly info: string;
 }
@@ -8,8 +16,8 @@ export interface HelpEntry {
 export interface HelpConfig {
   readonly usage: readonly string[];
   readonly info: readonly string[];
-  readonly options: readonly HelpEntry[];
-  readonly subcommands: readonly HelpEntry[];
+  readonly options: readonly HelpOption[];
+  readonly subcommands: readonly HelpSubcommand[];
   readonly columns: number;
 }
 
@@ -33,10 +41,28 @@ export function renderHelp({
     text += paragraphs(info);
   }
 
-  if (options.length > 0) {
+  const named: HelpOption[] = [];
+  const positional: HelpOption[] = [];
+
+  for (const option of options) {
+    if (option.type === 'positional' || option.type === 'variadic') {
+      positional.push(option);
+    }
+    else {
+      named.push(option);
+    }
+  }
+
+  if (named.length > 0) {
     if (text) text += '\n';
     text += 'Options:\n';
-    text += list(options.map(({ usage, info }) => [`  ${usage}  `, info]));
+    text += list(named.map(({ usage, info }) => [`  ${usage}  `, info]));
+  }
+
+  if (positional.length > 0) {
+    if (text) text += '\n';
+    text += 'Arguments:\n';
+    text += list(positional.map(({ usage, info }) => [`  ${usage}  `, info]));
   }
 
   if (subcommands.length > 0) {

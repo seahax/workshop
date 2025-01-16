@@ -4,6 +4,7 @@ export type MetaType = 'boolean' | 'string' | 'positional' | 'variadic';
 
 export interface MetaOption {
   readonly usage: string;
+  readonly required?: boolean;
   readonly info: string;
   readonly type: MetaType;
   readonly flags?: readonly string[];

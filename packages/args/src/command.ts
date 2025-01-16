@@ -22,16 +22,23 @@ interface CommonOptionConfig {
   readonly info?: string;
 }
 
-interface NamedOptionConfig extends CommonOptionConfig {
+interface NamedOptionConfig {
   /**
    * Override the default option flags.
    */
   readonly flags?: readonly Flag[];
 }
 
-export interface HelpOptionConfig extends NamedOptionConfig {}
+interface MaybeRequiredOptionConfig<TRequired extends boolean> {
+  /**
+   * Whether the option is required.
+   */
+  readonly required?: TRequired;
+}
 
-export interface VersionOptionConfig extends NamedOptionConfig {
+export interface HelpOptionConfig extends CommonOptionConfig, NamedOptionConfig {}
+
+export interface VersionOptionConfig extends CommonOptionConfig, NamedOptionConfig {
   /**
    * Explicitly set the version instead of automatically reading it from the
    * nearest package.json file at runtime.
@@ -39,7 +46,7 @@ export interface VersionOptionConfig extends NamedOptionConfig {
   readonly version?: string | (() => Promise<string>);
 }
 
-export interface BooleanOptionConfig<TValue> extends NamedOptionConfig {
+export interface BooleanOptionConfig<TValue> extends CommonOptionConfig, NamedOptionConfig {
   /**
    * Parse raw boolean values. By default, returns true if the option is
    * found at least once, or false if the option is missing
@@ -47,28 +54,31 @@ export interface BooleanOptionConfig<TValue> extends NamedOptionConfig {
   readonly parse?: (values: boolean[], usage: string) => TValue;
 }
 
-export interface StringOptionConfig<TValue> extends NamedOptionConfig {
+export interface StringOptionConfig<TValue, TRequired extends boolean>
+  extends CommonOptionConfig, NamedOptionConfig, MaybeRequiredOptionConfig<TRequired> {
   /**
-   * Parse raw string values. By default, the last value is returned (or
-   * undefined if the option is missing).
+   * Parse raw values. By default, the last value is returned (or undefined if
+   * the option is missing).
    */
-  readonly parse?: (values: string[], usage: string) => TValue;
+  readonly parse?: (values: TRequired extends true ? [string, ...string[]] : string[], usage: string) => TValue;
 }
 
-export interface PositionalOptionConfig<TValue> extends CommonOptionConfig {
+export interface PositionalOptionConfig<TValue, TRequired extends boolean>
+  extends CommonOptionConfig, MaybeRequiredOptionConfig<TRequired> {
   /**
    * Parse a raw positional value. Be default, the unmodified value is returned
    * (or undefined if the option is missing)
    */
-  readonly parse?: (values: string[], usage: string) => TValue;
+  readonly parse?: (values: TRequired extends true ? [string, ...string[]] : string[], usage: string) => TValue;
 }
 
-export interface VariadicOptionConfig<TValue> extends CommonOptionConfig {
+export interface VariadicOptionConfig<TValue, TRequired extends boolean>
+  extends CommonOptionConfig, MaybeRequiredOptionConfig<TRequired> {
   /**
    * Parse raw variadic values. By default, an array of the unmodified values
    * is returned.
    */
-  readonly parse?: (values: string[], usage: string) => TValue;
+  readonly parse?: (values: TRequired extends true ? [string, ...string[]] : string[], usage: string) => TValue;
 }
 
 export type CommandResult<
@@ -200,28 +210,40 @@ export interface CommandBuilder<
   /**
    * Add a named option that accepts a value.
    */
-  string<TKey extends string, TValue = string | undefined>(
+  string<
+    TKey extends string,
+    TRequired extends boolean = false,
+    TValue = TRequired extends true ? string : string | undefined,
+  >(
     this: void,
     key: TKey,
-    config?: string | readonly Flag[] | StringOptionConfig<TValue>,
+    config?: string | readonly Flag[] | StringOptionConfig<TValue, TRequired>,
   ): CommandBuilder<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
 
   /**
    * Add a positional option.
    */
-  positional<TKey extends string, TValue = string | undefined>(
+  positional<
+    TKey extends string,
+    TRequired extends boolean = false,
+    TValue = TRequired extends true ? string : string | undefined,
+  >(
     this: void,
     key: TKey,
-    config?: string | PositionalOptionConfig<TValue>,
+    config?: string | PositionalOptionConfig<TValue, TRequired>,
   ): CommandBuilder<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
 
   /**
    * Accept all remaining arguments as a variadic option.
    */
-  variadic<TKey extends string, TValue = string[]>(
+  variadic<
+    TKey extends string,
+    TRequired extends boolean = false,
+    TValue = TRequired extends true ? [string, ...string[]] : string[],
+  >(
     this: void,
     key: TKey,
-    config?: string | VariadicOptionConfig<TValue>,
+    config?: string | VariadicOptionConfig<TValue, TRequired>,
   ): CommandBuilder<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
 
   /**
@@ -327,41 +349,44 @@ function createCommandBuilder(meta: Meta): CommandBuilder<any, any> {
     },
     boolean(key, init) {
       const {
+        parse = last(),
         flags = [`--${getLabel(key)}`],
         usage = flags.join(', '),
         info = '',
-        parse = last(),
       } = getConfigObject(init);
 
       return addOption(key, { usage, info, type: 'boolean', flags, parse });
     },
     string(key, init) {
       const {
+        parse = last(),
+        required = false,
         flags = [`--${getLabel(key)}`],
         usage = `${flags.join(', ')} <value>`,
         info = '',
-        parse = last(),
       } = getConfigObject(init);
 
-      return addOption(key, { usage, info, type: 'string', flags, parse });
+      return addOption(key, { usage, info, type: 'string', flags, required, parse });
     },
     positional(key, init) {
       const {
-        usage = `<${getLabel(key)}>`,
-        info = '',
         parse = last(),
+        required = false,
+        usage = required ? `<${getLabel(key)}>` : `[${getLabel(key)}]`,
+        info = '',
       } = getConfigObject(init);
 
-      return addOption(key, { usage, info, type: 'positional', parse });
+      return addOption(key, { usage, info, type: 'positional', required, parse });
     },
     variadic(key, init) {
       const {
-        usage = `<${getLabel(key)}...>`,
-        info = '',
         parse = multiple(),
+        required = false,
+        usage = required ? `<${getLabel(key)}...>` : `[${getLabel(key)}...]`,
+        info = '',
       } = getConfigObject(init);
 
-      return addOption(key, { usage, info, type: 'variadic', parse });
+      return addOption(key, { usage, info, type: 'variadic', required, parse });
     },
     removeOption(key) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -421,7 +446,9 @@ function createCommandBuilder(meta: Meta): CommandBuilder<any, any> {
   };
 }
 
-function getConfigObject<T extends NamedOptionConfig>(init: string | readonly Flag[] | T = {} as T): T {
+function getConfigObject<T extends CommonOptionConfig & NamedOptionConfig>(
+  init: string | readonly Flag[] | T = {} as T,
+): T {
   if (typeof init === 'string') return { info: init } as T;
   // eslint-disable-next-line unicorn/no-instanceof-array
   if (init instanceof Array) return { flags: init } as T;
@@ -433,19 +460,20 @@ function getLabel(key: string): string {
 }
 
 function getHelpConfig(meta: Meta): HelpConfig {
-  return {
-    ...meta,
-    options: [
-      ...Object.values(meta.options).map(({ usage, info }) => ({ usage, info })),
-      ...(meta.helpOption ? [meta.helpOption] : []),
-      ...(meta.versionOption ? [meta.versionOption] : []),
-    ],
-    subcommands: Object.entries(meta.subcommands).map(([name, subcommand]) => ({
-      usage: name,
-      info: subcommand[META].info[0] ?? '',
-    })),
-    columns: process.stdout.columns <= 0 ? 80 : Math.min(process.stdout.columns, 80),
-  };
+  const options: MetaOption[] = [
+    ...Object.values(meta.options).map(({ type, usage, info }) => ({ type, usage, info })),
+    ...(meta.versionOption ? [{ type: 'boolean' as const, ...meta.versionOption }] : []),
+    ...(meta.helpOption ? [{ type: 'boolean' as const, ...meta.helpOption }] : []),
+  ];
+
+  const subcommands = Object.entries(meta.subcommands).map(([name, subcommand]) => ({
+    usage: name,
+    info: subcommand[META].info[0] ?? '',
+  }));
+
+  const columns = process.stdout.columns <= 0 ? 80 : Math.min(process.stdout.columns, 80);
+
+  return { ...meta, options, subcommands, columns };
 }
 
 function getCommand(command: CommandBuilder<any, any>): Command<any, any> {
@@ -460,14 +488,25 @@ function getCommand(command: CommandBuilder<any, any>): Command<any, any> {
 function validateMeta(meta: Meta): void {
   const flags = new Set<string>();
   let variadicCount = 0;
+  let optionalPositionalCount = 0;
 
   for (const option of Object.values(meta.options)) {
     if (option.type === 'variadic') {
       if (variadicCount > 0) {
-        throw new ArgsError('Only one variadic option is allowed.');
+        throw new ArgsError('Only one variadic argument is allowed.');
       }
 
       variadicCount += 1;
+    }
+    else if (option.type === 'positional') {
+      if (option.required) {
+        if (optionalPositionalCount > 0) {
+          throw new ArgsError('Required arguments must come before optional arguments.');
+        }
+      }
+      else {
+        optionalPositionalCount += 1;
+      }
     }
 
     for (const flag of option.flags ?? []) {

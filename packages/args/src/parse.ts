@@ -4,6 +4,7 @@ import { META, type MetaType } from './meta.js';
 interface Option {
   readonly usage: string;
   readonly type: MetaType;
+  readonly required?: boolean;
   readonly flags?: readonly string[];
   readonly parse?: (value: any, usage: string) => any;
 }
@@ -117,6 +118,10 @@ export function parse(args: readonly string[], command: WithMeta): Result {
   }
 
   for (const [key, option] of entries) {
+    if (option.required && !results[key]?.length) {
+      throw new ArgsError(`Missing required "${option.usage}".`);
+    }
+
     if (option.parse) {
       results[key] = option.parse(results[key] ? [...results[key]] : [], option.usage);
     }

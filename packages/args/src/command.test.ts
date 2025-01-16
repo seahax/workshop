@@ -2,7 +2,7 @@ import { expect, test, vi } from 'vitest';
 
 import { createCommand } from './command.js';
 import { createPlugin } from './plugin.js';
-import { last, multiple, required } from './utils.js';
+import { last, multiple } from './utils.js';
 
 test('command', async () => {
   const command = createCommand()
@@ -25,8 +25,12 @@ test('command', async () => {
       --my-bool          A boolean option.
       --string <value>   A string option.
       --foo, -f <value>  An option with custom flags.
-      <my-positional>    A positional option.
-      <variadic...>      A variadic option.
+      --version          Print the version number.
+      --help, -h         Print this help message.
+
+    Arguments:
+      [my-positional]  A positional option.
+      [variadic...]    A variadic option.
     "
   `);
 
@@ -77,7 +81,7 @@ test('repeat options', async () => {
 test('help', async () => {
   const writeSpy = vi.spyOn(process.stdout, 'write').mockReset();
   const command = createCommand()
-    .string('str', { parse: required() })
+    .string('str', { required: true })
     .help();
 
   await command.parse(['--help']);
@@ -85,6 +89,8 @@ test('help', async () => {
   expect(writeSpy.mock.calls[0]?.[0]).toMatchInlineSnapshot(`
     "Options:
       --str <value>  
+      --version      Print the version number.
+      --help, -h     Print this help message.
 
     "
   `);
@@ -103,7 +109,7 @@ test('help', async () => {
 test('version', async () => {
   const logSpy = vi.spyOn(console, 'log').mockReset();
   const command = createCommand()
-    .version('1.0.0');
+    .version({ version: '1.0.0' });
 
   await command.parse(['--version']);
   expect(logSpy).toHaveBeenCalledOnce();
@@ -126,17 +132,17 @@ test('inline option value', async () => {
 
 test('required', async () => {
   const command = createCommand()
-    .string('str', { parse: required() });
+    .string('str', { required: true });
 
-  await expect(command.parse([])).rejects.toThrowError('Missing "--str <value>".');
+  await expect(command.parse([])).rejects.toThrowError('Missing required "--str <value>".');
   await expect(command.parse(['--str', 'value'])).resolves.not.toThrow();
 });
 
 test('required multiple', async () => {
   const command = createCommand()
-    .string('str', { parse: required(multiple()) });
+    .string('str', { required: true, parse: multiple() });
 
-  await expect(command.parse([])).rejects.toThrowError('Missing "--str <value>".');
+  await expect(command.parse([])).rejects.toThrowError('Missing required "--str <value>".');
   await expect(command.parse(['--str', 'a'])).resolves.not.toThrow();
   await expect(command.parse(['--str', 'a', '--str', 'b']).then((result) => result.options))
     .resolves.toMatchInlineSnapshot(`
@@ -149,20 +155,18 @@ test('required multiple', async () => {
   `);
 });
 
-test('actions', async () => {
-  const commands: any[] = [];
+test('action order', async () => {
+  const order: number[] = [];
   const inner = createCommand()
-    .action(async (result) => void commands.push(result.command));
+    .action(async () => void order.push(2));
   const outer = createCommand()
     .subcommand('inner', inner)
-    .action(async (result) => void commands.push(result.command));
+    .action(async () => void order.push(1));
 
   const result = await outer.parse(['inner']);
 
   expect('string' in result.command).toBe(false);
-  expect(commands.length).toBe(2);
-  expect(commands[0]).toBe(outer);
-  expect(commands[1]).toBe(inner);
+  expect(order).toEqual([1, 2]);
 });
 
 test('flag conflict error', async () => {
@@ -180,9 +184,9 @@ test('multiple variadic error', async () => {
     .variadic('a')
     .variadic('b');
 
-  await expect(command.parse([])).rejects.toThrowError('Only one variadic option is allowed.');
-  expect(() => command.getHelp()).toThrowError('Only one variadic option is allowed.');
-  expect(() => command.action(async () => undefined)).toThrowError('Only one variadic option is allowed.');
+  await expect(command.parse([])).rejects.toThrowError('Only one variadic argument is allowed.');
+  expect(() => command.getHelp()).toThrowError('Only one variadic argument is allowed.');
+  expect(() => command.action(async () => undefined)).toThrowError('Only one variadic argument is allowed.');
 });
 
 test('last', async () => {
@@ -212,6 +216,8 @@ test('plugin', async () => {
       --a <value>  
       --b <value>  
       --c <value>  
+      --version    Print the version number.
+      --help, -h   Print this help message.
     "
   `);
 });
