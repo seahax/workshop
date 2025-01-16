@@ -6,7 +6,7 @@ import chalk from 'chalk';
 import semver from 'semver';
 
 import { getGitIsClean } from './get-git-is-clean.js';
-import { getGitLogs } from './get-git-logs.js';
+import { getGitLogs, type GitLog } from './get-git-logs.js';
 import { getNextVersion } from './get-next-version.js';
 import { getNpmMetadata } from './get-npm-metadata.js';
 import { getPackageJson } from './get-package-json.js';
@@ -24,6 +24,8 @@ await main(async () => {
       'Read the docs: https://github.com/seahax/workshop/blob/main/packages/rev/README.md',
     ])
     .boolean('force', 'Bump the version even if there are no new commits.')
+    .boolean('allowDirty', 'Allow the Git working directory to be dirty.')
+    .boolean('dryRun', 'Do not write any files.')
     .action(async ({ options }) => {
       if (!options) return;
 
@@ -36,19 +38,25 @@ await main(async () => {
         ? await getGitLogs(npmMetadata)
         : [];
 
-      if (!options.force && logs.length === 0 && npmMetadata) return;
+      if (!options.force && logs.length === 0 && npmMetadata) {
+        printResult(packageJson.name, 'No changes.');
+        return;
+      }
 
-      assert(await getGitIsClean(), 'Git working directory is not clean.');
+      assert(options.allowDirty || await getGitIsClean(), 'Git working directory is not clean.');
 
       const nextVersion = getNextVersion(packageJson, npmMetadata, logs);
       const isPrereleaseVersion = semver.prerelease(nextVersion) != null;
 
-      await updatePackageJson(nextVersion);
+      if (!options.dryRun) {
+        await updatePackageJson(nextVersion);
 
-      if (!isPrereleaseVersion) {
-        await updateChangelog(nextVersion, logs);
+        if (!isPrereleaseVersion) {
+          await updateChangelog(nextVersion, logs);
+        }
       }
 
+      printResult(packageJson.name, 'Current version', nextVersion, logs);
       console.log(
         chalk.blue(`${packageJson.name}:`)
         + chalk.dim(` ${packageJson.version} -> `)
@@ -57,3 +65,13 @@ await main(async () => {
     })
     .parse(process.argv.slice(2));
 });
+
+function printResult(name: string, message: string, nextVersion?: string, logs?: readonly GitLog[]): void {
+  console.log(
+    chalk.blue(`${name}:`) + (nextVersion
+      ? chalk.dim(` ${message} -> `) + chalk.whiteBright(nextVersion)
+      : chalk.dim(` ${message}`)),
+  );
+
+  logs?.forEach((log) => console.log(chalk.dim(`  - ${log.subject} (${log.hash})`)));
+}
