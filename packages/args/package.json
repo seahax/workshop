@@ -1,6 +1,6 @@
 {
   "name": "@seahax/args",
-  "private": true,
+  "private": false,
   "version": "0.1.0",
   "description": "",
   "license": "Unlicense",
