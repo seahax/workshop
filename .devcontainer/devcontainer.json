@@ -1,10 +1,9 @@
 {
 	"name": "Seahax Workshop",
-	"image": "mcr.microsoft.com/devcontainers/universal:2",
+	"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
 	"features": {
-		"ghcr.io/devcontainers-extra/features/corepack:1": {
-			"version": "latest"
-		},
+		"ghcr.io/devcontainers-extra/features/corepack:1": {},
+		"ghcr.io/devcontainers-extra/features/pnpm:2": {},
 		"ghcr.io/jungaretti/features/vim:1": {}
 	},
 	"customizations": {
@@ -16,7 +15,7 @@
 				"bierner.markdown-preview-github-styles",
 				"chrisbibby.hide-git-ignored",
 				"dbaeumer.vscode-eslint",
-				"eamodio.gitlens",
+				"donjayamanne.githistory",
 				"ecmel.vscode-html-css",
 				"github.copilot",
 				"github.copilot-chat",
@@ -29,7 +28,9 @@
 				"streetsidesoftware.code-spell-checker-scientific-terms",
 				"yzhang.markdown-all-in-one",
 				"byi8220.indented-block-highlighting",
-				"foxundermoon.shell-format"
+				"foxundermoon.shell-format",
+				"codezombiech.gitignore",
+				"ziyasal.vscode-open-in-github"
 			]
 		}
 	},
