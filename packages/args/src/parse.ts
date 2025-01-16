@@ -69,15 +69,14 @@ export function parse(args: readonly string[], command: WithMeta): Result {
     }
   }
 
-  const remaining = [...args];
-  const results: Record<string, any[]> = {};
   const entries = Object.entries(options);
   const optionEntries: [key: string, config: OptionConfig][] = [];
-  const positionalKeys: string[] = [];
-  let variadicKey: string | undefined;
 
   if (versionOption) optionEntries.unshift(['', { type: 'version', ...versionOption }]);
   if (helpOption) optionEntries.unshift(['', { type: 'help', ...helpOption }]);
+
+  const positionalKeys: string[] = [];
+  let variadicKey: string | undefined;
 
   entries.forEach(([key, config]) => {
     switch (config.type) {
@@ -97,14 +96,25 @@ export function parse(args: readonly string[], command: WithMeta): Result {
     }
   });
 
+  const remaining = [...args];
+  let forcePositional = false;
+
   while (remaining.length > 0) {
     const arg = remaining.shift()!;
-    const option = getOptionArg(arg);
 
-    if (option) {
-      const result = handleOption(option);
-      if (result) return result;
-      continue;
+    if (!forcePositional) {
+      if (arg === '--') {
+        forcePositional = true;
+        continue;
+      }
+
+      const option = getOptionArg(arg);
+
+      if (option) {
+        const result = handleOption(option);
+        if (result) return result;
+        continue;
+      }
     }
 
     const positionalKey = positionalKeys.shift() ?? variadicKey;
@@ -116,6 +126,8 @@ export function parse(args: readonly string[], command: WithMeta): Result {
 
     throw new ArgsError(`Unexpected argument "${arg}".`);
   }
+
+  const results: Record<string, any[]> = {};
 
   for (const [key, option] of entries) {
     if (option.required && !results[key]?.length) {
