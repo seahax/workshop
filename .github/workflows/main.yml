@@ -1,11 +1,10 @@
 on:
   push:
     branches: [main]
-    paths:
-      - '**'
-      - '!.devcontainer/**'
-      - '!templates/**'
-      - '!unreleased/**'
+    paths-ignore:
+      - '.devcontainer/**'
+      - 'templates/**'
+      - 'unreleased/**'
 concurrency:
   group: ${{ github.workflow }}
 env:
