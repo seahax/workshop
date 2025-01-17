@@ -1,17 +1,10 @@
 import { type AwsCredentialIdentityProvider } from '@smithy/types';
 
-type ClientFactoryGlobal = (credentials: AwsCredentialIdentityProvider) => object;
 type ClientFactory = (credentials: AwsCredentialIdentityProvider, region: string) => object;
 
 export function createClientFactory<TClientFactory extends ClientFactory>(
   factory: TClientFactory,
-): TClientFactory;
-export function createClientFactory<TClientFactory extends ClientFactoryGlobal>(
-  factory: TClientFactory,
-): TClientFactory;
-export function createClientFactory(
-  factory: ClientFactoryGlobal | ClientFactory,
-): ClientFactoryGlobal | ClientFactory {
+): TClientFactory {
   return factory;
 }
 
