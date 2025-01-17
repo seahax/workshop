@@ -1,11 +1,6 @@
 {
 	"name": "Seahax Workshop",
 	"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-	"features": {
-		"ghcr.io/devcontainers-extra/features/corepack:1": {},
-		"ghcr.io/devcontainers-extra/features/pnpm:2": {},
-		"ghcr.io/jungaretti/features/vim:1": {}
-	},
 	"mounts": [
 		"source=${localEnv:HOME}/.aws,target=/.aws,type=bind,readonly"
 	],
