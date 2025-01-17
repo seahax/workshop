@@ -11,7 +11,11 @@
 	"customizations": {
 		"vscode": {
 			"settings": {
-				"explorer.excludeGitIgnore": true
+				"explorer.excludeGitIgnore": true,
+				"terminal.integrated.defaultProfile.linux": "zsh",
+				"workbench.view.showQuietly": {
+					"workbench.panel.output": true
+				}
 			},
 			"extensions": [
 				"bierner.markdown-preview-github-styles",
