@@ -139,67 +139,6 @@ importers:
         specifier: workspace:*
         version: link:../vite-plugin-lib
 
-  packages/fetch:
-    devDependencies:
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
-      '@seahax/vite-plugin-lib':
-        specifier: workspace:*
-        version: link:../vite-plugin-lib
-
-  packages/fetch-intercept-retry:
-    dependencies:
-      '@seahax/fetch':
-        specifier: workspace:^
-        version: link:../fetch
-    devDependencies:
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
-      '@seahax/vite-plugin-lib':
-        specifier: workspace:*
-        version: link:../vite-plugin-lib
-
-  packages/fetch-intercept-set-headers:
-    dependencies:
-      '@seahax/fetch':
-        specifier: workspace:^
-        version: link:../fetch
-    devDependencies:
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
-      '@seahax/vite-plugin-lib':
-        specifier: workspace:*
-        version: link:../vite-plugin-lib
-
-  packages/fetch-intercept-throw:
-    dependencies:
-      '@seahax/fetch':
-        specifier: workspace:^
-        version: link:../fetch
-    devDependencies:
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
-      '@seahax/vite-plugin-lib':
-        specifier: workspace:*
-        version: link:../vite-plugin-lib
-
-  packages/fetch-intercept-timeout:
-    dependencies:
-      '@seahax/fetch':
-        specifier: workspace:^
-        version: link:../fetch
-    devDependencies:
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
-      '@seahax/vite-plugin-lib':
-        specifier: workspace:*
-        version: link:../vite-plugin-lib
-
   packages/main:
     dependencies:
       '@types/source-map-support':
@@ -350,31 +289,6 @@ importers:
         specifier: workspace:*
         version: link:../vite-plugin-lib
 
-  packages/vite-plugin-zip:
-    dependencies:
-      '@types/archiver':
-        specifier: ^6.0.3
-        version: 6.0.3
-      archiver:
-        specifier: ^7.0.1
-        version: 7.0.1
-      fast-glob:
-        specifier: ^3.3.2
-        version: 3.3.3
-      minimatch:
-        specifier: ^10.0.1
-        version: 10.0.1
-      vite:
-        specifier: ^6.0.3
-        version: 6.0.7(@types/node@22.10.5)(tsx@4.19.2)(yaml@2.7.0)
-    devDependencies:
-      '@seahax/vite-plugin-finalize':
-        specifier: workspace:*
-        version: link:../vite-plugin-finalize
-      '@seahax/vite-plugin-lib':
-        specifier: workspace:*
-        version: link:../vite-plugin-lib
-
   templates/my-library:
     devDependencies:
       '@seahax/vite-plugin-finalize':
@@ -462,6 +376,67 @@ importers:
       zod:
         specifier: ^3.24.1
         version: 3.24.1
+    devDependencies:
+      '@seahax/vite-plugin-finalize':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-finalize
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-lib
+
+  unreleased/fetch:
+    devDependencies:
+      '@seahax/vite-plugin-finalize':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-finalize
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-lib
+
+  unreleased/fetch-intercept-retry:
+    dependencies:
+      '@seahax/fetch':
+        specifier: workspace:^
+        version: link:../fetch
+    devDependencies:
+      '@seahax/vite-plugin-finalize':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-finalize
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-lib
+
+  unreleased/fetch-intercept-set-headers:
+    dependencies:
+      '@seahax/fetch':
+        specifier: workspace:^
+        version: link:../fetch
+    devDependencies:
+      '@seahax/vite-plugin-finalize':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-finalize
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-lib
+
+  unreleased/fetch-intercept-throw:
+    dependencies:
+      '@seahax/fetch':
+        specifier: workspace:^
+        version: link:../fetch
+    devDependencies:
+      '@seahax/vite-plugin-finalize':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-finalize
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-lib
+
+  unreleased/fetch-intercept-timeout:
+    dependencies:
+      '@seahax/fetch':
+        specifier: workspace:^
+        version: link:../fetch
     devDependencies:
       '@seahax/vite-plugin-finalize':
         specifier: workspace:*
@@ -569,6 +544,31 @@ importers:
       react:
         specifier: '>=18'
         version: 19.0.0
+    devDependencies:
+      '@seahax/vite-plugin-finalize':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-finalize
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-lib
+
+  unreleased/vite-plugin-zip:
+    dependencies:
+      '@types/archiver':
+        specifier: ^6.0.3
+        version: 6.0.3
+      archiver:
+        specifier: ^7.0.1
+        version: 7.0.1
+      fast-glob:
+        specifier: ^3.3.2
+        version: 3.3.3
+      minimatch:
+        specifier: ^10.0.1
+        version: 10.0.1
+      vite:
+        specifier: ^6.0.3
+        version: 6.0.7(@types/node@22.10.5)(tsx@4.19.2)(yaml@2.7.0)
     devDependencies:
       '@seahax/vite-plugin-finalize':
         specifier: workspace:*
