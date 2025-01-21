@@ -5,5 +5,5 @@ export function detectIndentString(sourceCode: SourceCode, tabWidth: number | 't
   if (sourceCode.text.includes('\t')) return '\t';
   if (tabWidth === 'tab') return '\t';
 
-  return ''.padEnd(tabWidth, ' ');
+  return ' '.repeat(tabWidth);
 }
