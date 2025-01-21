@@ -15,12 +15,12 @@ Table of Contents:
 - [Getting Started](#getting-started)
 - [Options](#options)
 - [Rules](#rules)
-  - [`@seahax-wrap/import`](#seahax-wrapimport)
-  - [`@seahax-wrap/function`](#seahax-wrapfunction)
-  - [`@seahax-wrap/object`](#seahax-wrapobject)
-  - [`@seahax-wrap/array`](#seahax-wraparray)
-  - [`@seahax-wrap/ternary`](#seahax-wrapternary)
-  - [`@seahax-wrap/union`](#seahax-wrapunion)
+  - [`@seahax/wrap/import`](#seahaxwrapimport)
+  - [`@seahax/wrap/function`](#seahaxwrapfunction)
+  - [`@seahax/wrap/object`](#seahaxwrapobject)
+  - [`@seahax/wrap/array`](#seahaxwraparray)
+  - [`@seahax/wrap/ternary`](#seahaxwrapternary)
+  - [`@seahax/wrap/union`](#seahaxwrapunion)
 
 ## Getting Started
 
@@ -58,7 +58,7 @@ Example: Set options for a single rule.
 ```json
 {
   "rules": {
-    "@seahax-wrap/import": ["warn", { "maxLen": 80, "tabWidth": 4, "autoFix": true }]
+    "@seahax/wrap/import": ["warn", { "maxLen": 80, "tabWidth": 4, "autoFix": true }]
   }
 }
 ```
@@ -68,14 +68,14 @@ Example: Override default option values.
 ```json
 {
   "settings": {
-    "@seahax-wrap": { "maxLen": 80, "tabWidth": 4, "autoFix": true }
+    "@seahax/wrap": { "maxLen": 80, "tabWidth": 4, "autoFix": true }
   }
 }
 ```
 
 ## Rules
 
-### `@seahax-wrap/import`
+### `@seahax/wrap/import`
 
 Wrap named imports if the import is a single line, and it exceeds the
 max line length.
@@ -94,7 +94,7 @@ import defaultExport, {
 } from 'some-package';
 ```
 
-### `@seahax-wrap/function`
+### `@seahax/wrap/function`
 
 Wrap function args if the function header is a single line, and it exceeds the max line length. If the function accepts a single destructured object argument (params), then the destructured properties will be wrapped instead of the argument.
 
@@ -128,7 +128,7 @@ function withParams({
 }
 ```
 
-### `@seahax-wrap/object`
+### `@seahax/wrap/object`
 
 Wrap object properties if the object is one line, and it exceeds the max line length.
 
@@ -146,7 +146,7 @@ const object = {
 };
 ```
 
-### `@seahax-wrap/array`
+### `@seahax/wrap/array`
 
 Wrap array elements if the array is one line, and it exceeds the max line length.
 
@@ -164,7 +164,7 @@ const array = [
 ];
 ```
 
-### `@seahax-wrap/ternary`
+### `@seahax/wrap/ternary`
 
 Wrap a ternary expression if it is one line, and it exceeds the max line length.
 
@@ -180,7 +180,7 @@ const result = condition
   : ifFalse;
 ```
 
-### `@seahax-wrap/union`
+### `@seahax/wrap/union`
 
 Wrap union types if the union is one line, and it exceeds the max line length.
 

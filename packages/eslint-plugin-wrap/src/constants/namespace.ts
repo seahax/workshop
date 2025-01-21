@@ -1,1 +1,1 @@
-export const NAMESPACE = '@seahax-wrap';
+export const NAMESPACE = '@seahax/wrap';
