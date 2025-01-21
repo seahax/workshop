@@ -4,3 +4,4 @@ export const OBJECT_PROPS = 'Wrap object properties to reduce line length.';
 export const ARRAY_ELEMENTS = 'Wrap array elements to reduce line length.';
 export const TERNARY_BRANCHES = 'Wrap ternary branches to reduce line length.';
 export const UNION_TYPES = 'Wrap union types to reduce line length.';
+export const CHAIN = 'Wrap chain to reduce line length.';

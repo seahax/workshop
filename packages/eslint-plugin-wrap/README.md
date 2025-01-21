@@ -22,6 +22,7 @@ Table of Contents:
   - [`@seahax/wrap/array`](#seahaxwraparray)
   - [`@seahax/wrap/ternary`](#seahaxwrapternary)
   - [`@seahax/wrap/union`](#seahaxwrapunion)
+  - [`@seahax/wrap/chain`](#seahaxwrapchain)
 
 ## Getting Started
 
@@ -215,4 +216,20 @@ type MyType =
   | Foo
   | Bar
   | Baz;
+```
+
+### `@seahax/wrap/chain`
+
+Wrap chains if the chain is one line, and it exceeds the max line length.
+
+Before:
+```ts
+const result = await action().then(() => { ... }).catch((error) => { ... });
+```
+
+After:
+```ts
+const result = await action()
+  .then(() => { ... })
+  .catch((error) => { ... });
 ```

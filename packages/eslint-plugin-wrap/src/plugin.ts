@@ -3,6 +3,7 @@ import { type ESLint, type Linter } from 'eslint';
 import { NAMESPACE } from './constants/namespace.js';
 import { type Options } from './options.js';
 import ruleArray from './rules/array.js';
+import ruleChain from './rules/chain.js';
 import ruleExport from './rules/export.js';
 import ruleFunction from './rules/function.js';
 import ruleImport from './rules/import.js';
@@ -22,6 +23,7 @@ const rules = {
   array: ruleArray,
   ternary: ruleTernary,
   union: ruleUnion,
+  chain: ruleChain,
 } as const;
 
 const plugin = {
@@ -40,6 +42,7 @@ const plugin = {
           [`${NAMESPACE}/array`]: 'warn',
           [`${NAMESPACE}/ternary`]: 'warn',
           [`${NAMESPACE}/union`]: 'warn',
+          [`${NAMESPACE}/chain`]: 'warn',
         } satisfies Record<`${typeof NAMESPACE}/${keyof typeof rules}`, 'warn'>,
       };
     },
