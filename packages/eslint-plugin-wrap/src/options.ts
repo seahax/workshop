@@ -13,13 +13,15 @@ export interface Options {
   readonly maxLen?: number;
 
   /**
-   * The width of a tab character in spaces. Or more generally, the number of
-   * spaces in a single level of indentation. This is used to add correct
-   * indentation when wrapping lines.
+   * The width of a tab (single level of indent) in spaces. This is used to add
+   * correct indentation when wrapping lines.
+   *
+   * An attempt is always made to match existing indentation, but this setting
+   * is used if there is no existing indentation to match in a file.
    *
    * Default: `4`
    */
-  readonly tabWidth?: number;
+  readonly tabWidth?: number | 'tab';
 
   /**
    * If `false`, fixes are provided as suggestions. This prevents fixes from
@@ -39,8 +41,10 @@ export const OPTIONS_SCHEMA = {
       minimum: 0,
     },
     tabWidth: {
-      type: 'integer',
-      minimum: 0,
+      anyOf: [
+        { type: 'integer', minimum: 0 },
+        { type: 'string', enum: ['tab'] },
+      ],
     },
     autoFix: {
       type: 'boolean',

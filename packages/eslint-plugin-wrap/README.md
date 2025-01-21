@@ -46,8 +46,8 @@ The `wrap.config()` helper generates a config that includes all [rules](#rules) 
 - `"maxLen": <number>`
   - The maximum desired line length. Wrapping will be recommended on lines that exceed this length. Should be less than or equal to the `@stylistic/max-len` config.
   - Default: `80`
-- `"tabWidth": <number>`
-  - The width of a tab character in spaces. Or more generally, the number of spaces in a single level of indentation. This is used to add correct indentation when wrapping lines. Should match the `@stylistic/indent` config (only spaces are supported).
+- `"tabWidth": <number> | "tab"`
+  - The width of a tab (single level of indent) in spaces. This is used to add correct indentation when wrapping lines.
   - Default: `4`
 - `"autoFix": <boolean>`
   - If `false`, fixes are provided as suggestions. This prevents fixes from being automatically applied when the ESLint CLI `--fix` option is used, and when using ESLint as a VSCode formatter.
