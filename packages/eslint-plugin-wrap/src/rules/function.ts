@@ -33,9 +33,8 @@ export default createRule((context) => {
   };
 
   function listener(node: FunctionNode): void {
-    const { loc, parent } = node;
-    const start = parent.type === AST_NODE_TYPES.MethodDefinition ? parent.loc.start : loc.start;
-    const end = 'body' in node ? node.body.loc.start : loc.end;
+    const start = getStart(node);
+    const end = getEnd(node);
 
     // Already wrapped.
     if (start.line !== end.line) return;
@@ -65,6 +64,20 @@ export default createRule((context) => {
     });
   }
 });
+
+function getStart(node: FunctionNode): TSESTree.Position {
+  if (node.parent.type === AST_NODE_TYPES.MethodDefinition) return node.parent.loc.start;
+  if (node.type === AST_NODE_TYPES.CallExpression || node.type === AST_NODE_TYPES.NewExpression) {
+    if (node.callee.type === AST_NODE_TYPES.Identifier) return node.callee.loc.start;
+    if (node.callee.type === AST_NODE_TYPES.MemberExpression) return node.callee.property.loc.start;
+  }
+
+  return node.loc.start;
+}
+
+function getEnd(node: FunctionNode): TSESTree.Position {
+  return 'body' in node ? node.body.loc.start : node.loc.end;
+}
 
 function getNodes(node: FunctionNode): (TSESTree.Node | null)[] {
   const params = 'params' in node ? node.params : node.arguments;
