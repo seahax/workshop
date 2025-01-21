@@ -3,6 +3,7 @@ import { type ESLint, type Linter } from 'eslint';
 import { NAMESPACE } from './constants/namespace.js';
 import { type Options } from './options.js';
 import ruleArray from './rules/array.js';
+import ruleExport from './rules/export.js';
 import ruleFunction from './rules/function.js';
 import ruleImport from './rules/import.js';
 import ruleObject from './rules/object.js';
@@ -15,6 +16,7 @@ interface Plugin extends ESLint.Plugin {
 
 const rules = {
   import: ruleImport,
+  export: ruleExport,
   function: ruleFunction,
   object: ruleObject,
   array: ruleArray,
@@ -32,6 +34,7 @@ const plugin = {
         },
         rules: {
           [`${NAMESPACE}/import`]: 'warn',
+          [`${NAMESPACE}/export`]: 'warn',
           [`${NAMESPACE}/function`]: 'warn',
           [`${NAMESPACE}/object`]: 'warn',
           [`${NAMESPACE}/array`]: 'warn',

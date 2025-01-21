@@ -16,6 +16,7 @@ Table of Contents:
 - [Options](#options)
 - [Rules](#rules)
   - [`@seahax/wrap/import`](#seahaxwrapimport)
+  - [`@seahax/wrap/export`](#seahaxwrapexport)
   - [`@seahax/wrap/function`](#seahaxwrapfunction)
   - [`@seahax/wrap/object`](#seahaxwrapobject)
   - [`@seahax/wrap/array`](#seahaxwraparray)
@@ -90,8 +91,27 @@ After:
 import defaultExport, {
   foo,
   bar,
-  baz,
+  baz
 } from 'some-package';
+```
+
+### `@seahax/wrap/export`
+
+Wrap named exports if the export is a single line, and it exceeds the
+max line length.
+
+Before:
+```ts
+export { foo, bar, baz };
+```
+
+After:
+```ts
+export {
+  foo,
+  bar,
+  baz
+};
 ```
 
 ### `@seahax/wrap/function`
@@ -114,7 +134,7 @@ After:
 function withArgs(
   foo: string,
   bar: string,
-  baz: string,
+  baz: string
 ): void {
   ...
 }
@@ -122,7 +142,7 @@ function withArgs(
 function withParams({
   foo,
   bar,
-  baz,
+  baz
 }: Params): void {
   ...
 }
@@ -142,7 +162,7 @@ After:
 const object = {
   foo: 1,
   bar: 2,
-  ...otherProps,
+  ...otherProps
 };
 ```
 
@@ -160,7 +180,7 @@ After:
 const array = [
   1,
   2,
-  3,
+  3
 ];
 ```
 
