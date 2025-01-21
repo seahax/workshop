@@ -8,6 +8,15 @@ import { detectIndentString } from '../utils/detect-indent-string.js';
 import { getLeadingWhitespace } from '../utils/get-leading-whitespace.js';
 import { getLine } from '../utils/get-line.js';
 
+type FunctionNode =
+  | TSESTree.FunctionDeclaration
+  | TSESTree.FunctionExpression
+  | TSESTree.ArrowFunctionExpression
+  | TSESTree.TSFunctionType
+  | TSESTree.TSMethodSignature
+  | TSESTree.CallExpression
+  | TSESTree.NewExpression;
+
 export default createRule((context) => {
   const { maxLen, tabWidth, autoFix } = getOptions(context);
   const eol = detectEOL(context.sourceCode);
@@ -20,17 +29,10 @@ export default createRule((context) => {
     TSFunctionType: listener,
     TSMethodSignature: listener,
     CallExpression: listener,
+    NewExpression: listener,
   };
 
-  type Node =
-    | TSESTree.FunctionDeclaration
-    | TSESTree.FunctionExpression
-    | TSESTree.ArrowFunctionExpression
-    | TSESTree.TSFunctionType
-    | TSESTree.TSMethodSignature
-    | TSESTree.CallExpression;
-
-  function listener({ loc, parent, ...rest }: Node): void {
+  function listener({ loc, parent, ...rest }: FunctionNode): void {
     loc = {
       start: parent.type === AST_NODE_TYPES.MethodDefinition ? parent.loc.start : loc.start,
       end: 'body' in rest ? rest.body.loc.start : loc.end,
@@ -45,7 +47,11 @@ export default createRule((context) => {
     if (line.length <= maxLen) return;
 
     const params = 'params' in rest ? rest.params : rest.arguments;
-    const nodes = params[0]?.type === AST_NODE_TYPES.ObjectPattern ? params[0].properties : params;
+    const nodes = (
+      params[0]?.type === AST_NODE_TYPES.ObjectPattern || params[0]?.type === AST_NODE_TYPES.ObjectExpression
+        ? params[0].properties
+        : params
+    );
 
     // Nothing to wrap.
     if (nodes.length === 0) return;
