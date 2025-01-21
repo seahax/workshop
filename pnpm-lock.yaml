@@ -11,9 +11,6 @@ importers:
       '@seahax/eslint':
         specifier: workspace:*
         version: link:packages/eslint
-      '@seahax/eslint-plugin-wrap':
-        specifier: workspace:*
-        version: link:unreleased/eslint-plugin-wrap
       '@seahax/rev':
         specifier: workspace:*
         version: link:packages/rev
@@ -81,6 +78,9 @@ importers:
       '@eslint/js':
         specifier: ^9.17.0
         version: 9.18.0
+      '@seahax/eslint-plugin-wrap':
+        specifier: workspace:^
+        version: link:../eslint-plugin-wrap
       '@seahax/eslint-progress':
         specifier: workspace:^
         version: link:../eslint-progress
@@ -126,6 +126,30 @@ importers:
       typescript-eslint:
         specifier: ^8.18.1
         version: 8.19.1(eslint@9.18.0)(typescript@5.7.3)
+
+  packages/eslint-plugin-wrap:
+    dependencies:
+      '@types/eslint':
+        specifier: ^9.6.1
+        version: 9.6.1
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.10.5
+      '@typescript-eslint/parser':
+        specifier: ^8.18.1
+        version: 8.21.0(eslint@9.18.0)(typescript@5.7.3)
+      '@typescript-eslint/utils':
+        specifier: ^8.20.0
+        version: 8.20.0(eslint@9.18.0)(typescript@5.7.3)
+      eslint:
+        specifier: ^9.17.0
+        version: 9.18.0
+      tsx:
+        specifier: ^4.19.2
+        version: 4.19.2
+      typescript:
+        specifier: '>=5.0.0'
+        version: 5.7.3
 
   packages/eslint-progress:
     dependencies:
@@ -386,30 +410,6 @@ importers:
       '@seahax/vite-plugin-lib':
         specifier: workspace:*
         version: link:../../packages/vite-plugin-lib
-
-  unreleased/eslint-plugin-wrap:
-    dependencies:
-      '@types/eslint':
-        specifier: ^9.6.1
-        version: 9.6.1
-      '@types/node':
-        specifier: ^22.10.2
-        version: 22.10.5
-      '@typescript-eslint/parser':
-        specifier: ^8.18.1
-        version: 8.21.0(eslint@9.18.0)(typescript@5.7.3)
-      '@typescript-eslint/utils':
-        specifier: ^8.20.0
-        version: 8.20.0(eslint@9.18.0)(typescript@5.7.3)
-      eslint:
-        specifier: ^9.17.0
-        version: 9.18.0
-      tsx:
-        specifier: ^4.19.2
-        version: 4.19.2
-      typescript:
-        specifier: '>=5.0.0'
-        version: 5.7.3
 
   unreleased/fetch:
     devDependencies:

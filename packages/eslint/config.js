@@ -1,5 +1,6 @@
 import { FlatCompat } from '@eslint/eslintrc';
 import eslint from '@eslint/js';
+import wrap from '@seahax/eslint-plugin-wrap';
 import progress from '@seahax/eslint-progress';
 import stylistic from '@stylistic/eslint-plugin';
 import importPlugin from 'eslint-plugin-import';
@@ -22,6 +23,7 @@ export default function config({ ignores = [], tsconfigPath } = {}) {
     progress(),
     eslint.configs.recommended,
     stylistic.configs.customize({ indent: 2, quoteProps: 'as-needed', arrowParens: true, semi: true }),
+    wrap.config({ maxLen: 120, tabWidth: 2 }),
     react.configs.flat.recommended,
     react.configs.flat['jsx-runtime'],
     compat.config({ extends: ['plugin:react-hooks/recommended'] }),
