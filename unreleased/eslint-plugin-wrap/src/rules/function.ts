@@ -32,26 +32,20 @@ export default createRule((context) => {
     NewExpression: listener,
   };
 
-  function listener({ loc, parent, ...rest }: FunctionNode): void {
-    loc = {
-      start: parent.type === AST_NODE_TYPES.MethodDefinition ? parent.loc.start : loc.start,
-      end: 'body' in rest ? rest.body.loc.start : loc.end,
-    };
+  function listener(node: FunctionNode): void {
+    const { loc, parent } = node;
+    const start = parent.type === AST_NODE_TYPES.MethodDefinition ? parent.loc.start : loc.start;
+    const end = 'body' in node ? node.body.loc.start : loc.end;
 
     // Already wrapped.
-    if (loc.start.line !== loc.end.line) return;
+    if (start.line !== end.line) return;
 
-    const line = getLine(context.sourceCode, loc.start.line);
+    const line = getLine(context.sourceCode, start.line);
 
     // Line is short enough.
     if (line.length <= maxLen) return;
 
-    const params = 'params' in rest ? rest.params : rest.arguments;
-    const nodes = (
-      params[0]?.type === AST_NODE_TYPES.ObjectPattern || params[0]?.type === AST_NODE_TYPES.ObjectExpression
-        ? params[0].properties
-        : params
-    );
+    const nodes = getNodes(node);
 
     // Nothing to wrap.
     if (nodes.length === 0) return;
@@ -66,8 +60,28 @@ export default createRule((context) => {
 
     context.report({
       messageId: 'FUNCTION_PARAMS',
-      loc,
+      loc: { start, end },
       ...(autoFix ? { fix } : { suggest: [{ messageId: 'FUNCTION_PARAMS', fix }] }),
     });
   }
 });
+
+function getNodes(node: FunctionNode): (TSESTree.Node | null)[] {
+  const params = 'params' in node ? node.params : node.arguments;
+
+  if (!params[0]) return [];
+  if (params.length === 1) {
+    if (isObjectNode(params[0])) return params[0].properties;
+    if (isArrayNode(params[0])) return params[0].elements;
+  }
+
+  return params;
+}
+
+function isObjectNode(node: TSESTree.Node): node is TSESTree.ObjectExpression | TSESTree.ObjectPattern {
+  return node.type === AST_NODE_TYPES.ObjectExpression || node.type === AST_NODE_TYPES.ObjectPattern;
+}
+
+function isArrayNode(node: TSESTree.Node): node is TSESTree.ArrayExpression {
+  return node.type === AST_NODE_TYPES.ArrayExpression;
+}
