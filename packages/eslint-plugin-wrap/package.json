@@ -13,6 +13,7 @@
     "array",
     "object",
     "import",
+    "export",
     "ternary",
     "union",
     "function",
