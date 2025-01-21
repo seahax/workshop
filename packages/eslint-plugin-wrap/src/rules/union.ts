@@ -1,3 +1,5 @@
+import { AST_TOKEN_TYPES } from '@typescript-eslint/utils';
+
 import { getOptions } from '../options.js';
 import { createRule } from '../utils/create-rule.js';
 import { createRuleFix } from '../utils/create-rule-fix.js';
@@ -23,14 +25,17 @@ export default createRule((context) => {
       // Nothing to wrap.
       if (types.length <= 1) return;
 
-      const nodes = [...types.map((type, i) => i === 0 ? type : context.sourceCode.getTokenBefore(type)), null];
+      const nodes = [...types.map((current) => {
+        const prev = context.sourceCode.getTokenBefore(current);
+        return prev?.type === AST_TOKEN_TYPES.Punctuator && prev.value === '|' ? prev : current;
+      }), null];
       const leadingWhitespace = getLeadingWhitespace(line);
       const fix = createRuleFix(nodes, {
         sourceCode: context.sourceCode,
         eol,
         leadingWhitespace,
         indentString,
-        leaderString: '| ',
+        leaderString: nodes[0]?.type === AST_TOKEN_TYPES.Punctuator ? undefined : '| ',
       });
 
       context.report({
