@@ -34,9 +34,9 @@ export default createRule((context) => {
       });
 
       context.report({
-        messageId: 'wrapUnionTypes',
+        messageId: 'UNION_TYPES',
         loc,
-        ...(autoFix ? { fix } : { suggest: [{ messageId: 'wrapUnionTypes', fix }] }),
+        ...(autoFix ? { fix } : { suggest: [{ messageId: 'UNION_TYPES', fix }] }),
       });
     },
   };

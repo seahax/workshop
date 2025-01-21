@@ -39,9 +39,9 @@ export default createRule((context) => {
     });
 
     context.report({
-      messageId: 'wrapTernaryBranches',
+      messageId: 'TERNARY_BRANCHES',
       loc,
-      ...(autoFix ? { fix } : { suggest: [{ messageId: 'wrapTernaryBranches', fix }] }),
+      ...(autoFix ? { fix } : { suggest: [{ messageId: 'TERNARY_BRANCHES', fix }] }),
     });
   }
 });

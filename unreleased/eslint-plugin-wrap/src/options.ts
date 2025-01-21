@@ -1,3 +1,4 @@
+import { type JSONSchema4 } from '@typescript-eslint/utils/json-schema';
 import { type RuleContext } from '@typescript-eslint/utils/ts-eslint';
 
 import { NAMESPACE } from './constants/namespace.js';
@@ -29,6 +30,24 @@ export interface Options {
    */
   readonly autoFix?: boolean;
 }
+
+export const OPTIONS_SCHEMA = {
+  type: 'object',
+  properties: {
+    maxLen: {
+      type: 'integer',
+      minimum: 0,
+    },
+    tabWidth: {
+      type: 'integer',
+      minimum: 0,
+    },
+    autoFix: {
+      type: 'boolean',
+    },
+  },
+  additionalProperties: false,
+} as const satisfies JSONSchema4;
 
 export function getOptions(context: Readonly<RuleContext<string, [Options?]>>): Required<Options> {
   const settings = context.settings[NAMESPACE] as Options | undefined;

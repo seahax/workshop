@@ -43,9 +43,9 @@ export default createRule((context) => {
     });
 
     context.report({
-      messageId: 'wrapObjectProperties',
+      messageId: 'OBJECT_PROPS',
       loc,
-      ...(autoFix ? { fix } : { suggest: [{ messageId: 'wrapObjectProperties', fix }] }),
+      ...(autoFix ? { fix } : { suggest: [{ messageId: 'OBJECT_PROPS', fix }] }),
     });
   }
 });

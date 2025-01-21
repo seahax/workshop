@@ -59,9 +59,9 @@ export default createRule((context) => {
     });
 
     context.report({
-      messageId: 'wrapFunctionParams',
+      messageId: 'FUNCTION_PARAMS',
       loc,
-      ...(autoFix ? { fix } : { suggest: [{ messageId: 'wrapFunctionParams', fix }] }),
+      ...(autoFix ? { fix } : { suggest: [{ messageId: 'FUNCTION_PARAMS', fix }] }),
     });
   }
 });

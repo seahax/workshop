@@ -37,9 +37,9 @@ export default createRule((context) => {
       });
 
       context.report({
-        messageId: 'wrapNamedImports',
+        messageId: 'NAMED_IMPORTS',
         loc,
-        ...(autoFix ? { fix } : { suggest: [{ messageId: 'wrapNamedImports', fix }] }),
+        ...(autoFix ? { fix } : { suggest: [{ messageId: 'NAMED_IMPORTS', fix }] }),
       });
     },
   };

@@ -41,9 +41,9 @@ export default createRule((context) => {
     });
 
     context.report({
-      messageId: 'wrapArrayElements',
+      messageId: 'ARRAY_ELEMENTS',
       loc,
-      ...(autoFix ? { fix } : { suggest: [{ messageId: 'wrapArrayElements', fix }] }),
+      ...(autoFix ? { fix } : { suggest: [{ messageId: 'ARRAY_ELEMENTS', fix }] }),
     });
   }
 });
