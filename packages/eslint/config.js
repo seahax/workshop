@@ -10,12 +10,11 @@ import unicorn from 'eslint-plugin-unicorn';
 import typescript from 'typescript-eslint';
 
 const compat = new FlatCompat({ baseDirectory: import.meta.dirname });
-
 const jsExt = ['js', 'mjs', 'cjs', 'jsx'];
 const tsExt = ['ts', 'cts', 'mts', 'tsx'];
 const ext = [...jsExt, ...tsExt];
 
-export default function config({ ignores = [], tsconfigPath = './tsconfig.json' } = {}) {
+export default function config({ ignores = [], tsconfigPath } = {}) {
   return [
     { ignores },
 
@@ -25,35 +24,28 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
     stylistic.configs.customize({ indent: 2, quoteProps: 'as-needed', arrowParens: true, semi: true }),
     react.configs.flat.recommended,
     react.configs.flat['jsx-runtime'],
-    ...compat.config({ extends: ['plugin:react-hooks/recommended'] }),
+    compat.config({ extends: ['plugin:react-hooks/recommended'] }),
     regexp.configs['flat/recommended'],
+    unicorn.configs['flat/recommended'],
     { plugins: { import: importPlugin } },
     { plugins: { 'import-sort': importSort } },
-    unicorn.configs['flat/recommended'],
-    ...[
-      ...typescript.configs.recommendedTypeChecked,
-      ...typescript.configs.stylisticTypeChecked,
-      ...typescript.configs.strictTypeChecked,
-    ].map((config) => ({ ...config, files: [...config.files ?? [], `**/*.{${tsExt}}`] })),
+    [
+      typescript.configs.recommendedTypeChecked,
+      typescript.configs.stylisticTypeChecked,
+      typescript.configs.strictTypeChecked,
+    ].flat().map((config) => ({ ...config, files: [...config.files ?? [], `**/*.{${tsExt}}`] })),
 
     // Settings
     {
       languageOptions: {
-        // All source local packages and source files should be using ESM.
         sourceType: 'module',
         ecmaVersion: 'latest',
         parserOptions: {
           project: tsconfigPath,
-          // // Detect relative typescript config instead of setting the `project`
-          // // option. Required when using typescript project references.
-          // EXPERIMENTAL_useProjectService: true,
-          // // Future name of the above experimental option (v8 beta, v9).
-          // projectService: true,
         },
       },
       settings: {
         'import/parsers': {
-          // espree: ['.js'],
           '@typescript-eslint/parser': tsExt.map((ext) => `.${ext}`),
         },
         'import/resolver': {
@@ -66,7 +58,8 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
       },
     },
 
-    { // Rules: General
+    // Rules: General
+    {
       rules: {
         'import-sort/exports': 'warn',
         'import-sort/imports': 'warn',
@@ -99,7 +92,8 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
       },
     },
 
-    { // Rules: TypeScript
+    // Rules: TypeScript
+    {
       files: [`**/*.{${tsExt}}`],
       rules: {
         '@typescript-eslint/ban-types': 'off',
@@ -138,12 +132,13 @@ export default function config({ ignores = [], tsconfigPath = './tsconfig.json' 
       },
     },
 
-    { // Rules: Tests, Configs
+    // Rules: Tests, Configs
+    {
       files: [`**/*.{test,spec,config,setup}.{${ext}}`],
       rules: {
         'max-lines': 'off',
         'import/no-extraneous-dependencies': ['off'],
       },
     },
-  ];
+  ].flat();
 }

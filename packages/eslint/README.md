@@ -1,3 +1,3 @@
-# tsconfig
+# @seahax/eslint
 
 Yet another ESLint configuration.
