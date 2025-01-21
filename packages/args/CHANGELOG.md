@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 - 2025-01-21
+
+- __chore:__ add eslint-plugin-wrap package (665386f)
+
 ## 0.3.0 - 2025-01-16
 
 - __feat:__ remove `required*` methods in favor of a `required` boolean option (402be56)
