@@ -8,7 +8,11 @@ test('renderHelp', () => {
     info: ['info 0', 'info 1'],
     options: [
       { type: 'boolean', usage: '--option', info: 'Option description.' },
-      { type: 'boolean', usage: '--flag', info: `A longer description that should end up wrapping a few times. The quick red fox jumped over the slow dog. The cat in the hat sat in a vat with a bat.` },
+      {
+        type: 'boolean',
+        usage: '--flag',
+        info: `A longer description that should end up wrapping a few times. The quick red fox jumped over the slow dog. The cat in the hat sat in a vat with a bat.`,
+      },
     ],
     subcommands: [
       { usage: 'command', info: 'Command description.' },

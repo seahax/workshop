@@ -1,0 +1,37 @@
+{
+  "name": "@seahax/eslint-plugin-wrap",
+  "private": false,
+  "version": "0.1.0",
+  "description": "ESLint plugin with wrapping fixes for long lines.",
+  "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/eslint-plugin-wrap"
+  },
+  "scripts": {
+    "build": "tsc --noEmit"
+  },
+  "type": "module",
+  "types": "dist/plugin.d.ts",
+  "exports": {
+    ".": {
+      "import": "./jit.js",
+      "types": "./jit.d.ts"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@types/eslint": "^9.6.1",
+    "@types/node": "^22.10.2",
+    "@typescript-eslint/utils": "^8.20.0",
+    "tsx": "^4.19.2"
+  },
+  "peerDependencies": {
+    "@typescript-eslint/parser": "^8.18.1",
+    "eslint": "^9.17.0",
+    "typescript": ">=5.0.0"
+  }
+}

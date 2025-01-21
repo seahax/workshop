@@ -60,7 +60,9 @@ export default function plugin({
       const cwd = path.resolve(configRoot, root ?? outDir);
       const absOutFile = path.resolve(configRoot, outDir, outFile ?? 'bundle.zip');
 
-      logger.info(`creating zip "${path.relative(configRoot, absOutFile)}" (root: "${path.relative(configRoot, cwd)}")`);
+      logger.info(
+        `creating zip "${path.relative(configRoot, absOutFile)}" (root: "${path.relative(configRoot, cwd)}")`,
+      );
 
       await fs.mkdir(path.dirname(absOutFile), { recursive: true });
       await fs.open(absOutFile, 'w').then(async (outputHandle) => {
