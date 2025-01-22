@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0 - 2025-01-21
+
+- __feat:__ add chain rule (b3db983)
+- __feat:__ add export rule (807c787)
+- __fix:__ correct report range for call/new expressions (546ffe5)
+- __chore:__ add export package keyword (44b49ea)
+
 ## 0.2.0 - 2025-01-21
 
 - __feat:__ allow `"tab"` value for the `tabWidth` option (92f8d95)
