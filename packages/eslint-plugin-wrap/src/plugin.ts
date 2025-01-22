@@ -12,7 +12,11 @@ import ruleTernary from './rules/ternary.js';
 import ruleUnion from './rules/union.js';
 
 interface Plugin extends ESLint.Plugin {
-  config: (options?: Options) => Linter.Config;
+  readonly config: (options?: Options) => Linter.Config;
+}
+
+interface ConfigOptions extends Options {
+  readonly severity?: 'off' | 'warn' | 'error';
 }
 
 const rules = {
@@ -30,29 +34,27 @@ const plugin = {
   rules,
   configs: {
     get recommended(): Linter.Config {
-      return {
-        plugins: {
-          [NAMESPACE]: plugin,
-        },
-        rules: {
-          [`${NAMESPACE}/import`]: 'warn',
-          [`${NAMESPACE}/export`]: 'warn',
-          [`${NAMESPACE}/function`]: 'warn',
-          [`${NAMESPACE}/object`]: 'warn',
-          [`${NAMESPACE}/array`]: 'warn',
-          [`${NAMESPACE}/ternary`]: 'warn',
-          [`${NAMESPACE}/union`]: 'warn',
-          [`${NAMESPACE}/chain`]: 'warn',
-        } satisfies Record<`${typeof NAMESPACE}/${keyof typeof rules}`, 'warn'>,
-      };
+      return plugin.config();
     },
   },
-  config: (options: Options = {}): Linter.Config => {
+  config: ({ severity = 'warn', ...options }: ConfigOptions = {}): Linter.Config => {
     return {
-      ...plugin.configs.recommended,
+      plugins: {
+        [NAMESPACE]: plugin,
+      },
       settings: {
         [NAMESPACE]: options,
       },
+      rules: {
+        [`${NAMESPACE}/import`]: severity,
+        [`${NAMESPACE}/export`]: severity,
+        [`${NAMESPACE}/function`]: severity,
+        [`${NAMESPACE}/object`]: severity,
+        [`${NAMESPACE}/array`]: severity,
+        [`${NAMESPACE}/ternary`]: severity,
+        [`${NAMESPACE}/union`]: severity,
+        [`${NAMESPACE}/chain`]: severity,
+      } satisfies Record<`${typeof NAMESPACE}/${keyof typeof rules}`, typeof severity>,
     };
   },
 } as const satisfies Plugin;
