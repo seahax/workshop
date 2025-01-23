@@ -7,7 +7,7 @@ import {
 import { createClientFactory } from '../client.js';
 import { silence } from '../utils/silence.js';
 
-export const createLogClient = createClientFactory(async (credentials) => {
+export const createLogClient = createClientFactory(async ({ credentials }) => {
   const client = new CloudWatchLogsClient({ region: 'us-east-1', credentials });
 
   return {
