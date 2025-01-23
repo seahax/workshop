@@ -395,9 +395,6 @@ importers:
       ora:
         specifier: ^8.1.1
         version: 8.1.1
-      tsx:
-        specifier: ^4.19.2
-        version: 4.19.2
       yaml:
         specifier: ^2.6.1
         version: 2.7.0
@@ -529,9 +526,6 @@ importers:
       ora:
         specifier: ^8.1.1
         version: 8.1.1
-      tsx:
-        specifier: ^4.19.2
-        version: 4.19.2
       yaml:
         specifier: ^2.6.1
         version: 2.7.0
@@ -8860,6 +8854,7 @@ snapshots:
       '@esbuild/win32-arm64': 0.23.1
       '@esbuild/win32-ia32': 0.23.1
       '@esbuild/win32-x64': 0.23.1
+    optional: true
 
   esbuild@0.24.2:
     optionalDependencies:
@@ -11361,6 +11356,7 @@ snapshots:
       get-tsconfig: 4.8.1
     optionalDependencies:
       fsevents: 2.3.3
+    optional: true
 
   tuf-js@2.2.1:
     dependencies:
