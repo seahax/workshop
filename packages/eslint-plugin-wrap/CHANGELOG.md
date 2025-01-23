@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0 - 2025-01-23
+
+- __feat:__ add severity option to config helper (ea2273c)
+- __chore:__ add column to report messages (ad474f4)
+
 ## 0.3.0 - 2025-01-21
 
 - __feat:__ add chain rule (b3db983)

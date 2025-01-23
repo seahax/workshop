@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.7 - 2025-01-23
+
+- __chore:__ fixing package.json "files" arrays (15cbac3)
+
 ## 0.1.6 - 2025-01-16
 
 No changes.

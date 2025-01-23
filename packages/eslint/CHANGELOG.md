@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.4 - 2025-01-23
+
+- __chore:__ disable eslint-plugin-wrap autoFix (3253173)
+
 ## 0.2.3 - 2025-01-21
 
 - __refactor:__ cleanup (4e69a13)
