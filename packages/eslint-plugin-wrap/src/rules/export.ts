@@ -5,6 +5,7 @@ import { detectEOL } from '../utils/detect-eol.js';
 import { detectIndentString } from '../utils/detect-indent-string.js';
 import { getLeadingWhitespace } from '../utils/get-leading-whitespace.js';
 import { getLine } from '../utils/get-line.js';
+import { getReportDescriptor } from '../utils/get-report-descriptor.js';
 
 export default createRule((context) => {
   const { maxLen, tabWidth, autoFix } = getOptions(context);
@@ -32,11 +33,7 @@ export default createRule((context) => {
         indentString,
       });
 
-      context.report({
-        messageId: 'NAMED_IMPORTS',
-        loc,
-        ...(autoFix ? { fix } : { suggest: [{ messageId: 'NAMED_IMPORTS', fix }] }),
-      });
+      context.report(getReportDescriptor('EXPORTS', loc, fix, autoFix));
     },
   };
 });

@@ -7,6 +7,7 @@ import { detectEOL } from '../utils/detect-eol.js';
 import { detectIndentString } from '../utils/detect-indent-string.js';
 import { getLeadingWhitespace } from '../utils/get-leading-whitespace.js';
 import { getLine } from '../utils/get-line.js';
+import { getReportDescriptor } from '../utils/get-report-descriptor.js';
 
 type FunctionNode =
   | TSESTree.FunctionDeclaration
@@ -57,11 +58,7 @@ export default createRule((context) => {
       indentString,
     });
 
-    context.report({
-      messageId: 'FUNCTION_PARAMS',
-      loc: { start, end },
-      ...(autoFix ? { fix } : { suggest: [{ messageId: 'FUNCTION_PARAMS', fix }] }),
-    });
+    context.report(getReportDescriptor('FUNCTION_PARAMS', { start, end }, fix, autoFix));
   }
 });
 

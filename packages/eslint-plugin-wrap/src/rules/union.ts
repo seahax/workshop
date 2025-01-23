@@ -7,6 +7,7 @@ import { detectEOL } from '../utils/detect-eol.js';
 import { detectIndentString } from '../utils/detect-indent-string.js';
 import { getLeadingWhitespace } from '../utils/get-leading-whitespace.js';
 import { getLine } from '../utils/get-line.js';
+import { getReportDescriptor } from '../utils/get-report-descriptor.js';
 
 export default createRule((context) => {
   const { maxLen, tabWidth, autoFix } = getOptions(context);
@@ -38,11 +39,7 @@ export default createRule((context) => {
         leaderString: nodes[0]?.type === AST_TOKEN_TYPES.Punctuator ? undefined : '| ',
       });
 
-      context.report({
-        messageId: 'UNION_TYPES',
-        loc,
-        ...(autoFix ? { fix } : { suggest: [{ messageId: 'UNION_TYPES', fix }] }),
-      });
+      context.report(getReportDescriptor('UNION_TYPES', loc, fix, autoFix));
     },
   };
 });
