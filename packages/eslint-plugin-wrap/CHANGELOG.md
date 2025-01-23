@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.2 - 2025-01-23
+
+- __fix:__ severity option should not allow 'off' (bee774e)
+- __chore:__ remove tsx based jit loader for running non-compiled typescript source (9adbeca)
+
 ## 0.4.1 - 2025-01-23
 
 - __docs:__ add severity option to docs (6b4cb76)

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.5 - 2025-01-23
+
+- __chore:__ disable type checking on eslint config.js (972fed6)
+
 ## 0.2.4 - 2025-01-23
 
 - __chore:__ disable eslint-plugin-wrap autoFix (3253173)
