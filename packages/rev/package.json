@@ -16,6 +16,7 @@
   "type": "module",
   "bin": "bin.js",
   "files": [
+    "bin.js",
     "dist"
   ],
   "publishConfig": {

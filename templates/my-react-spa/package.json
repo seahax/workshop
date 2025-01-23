@@ -16,9 +16,6 @@
     "rename": "node rename.mjs"
   },
   "type": "module",
-  "files": [
-    "dist"
-  ],
   "publishConfig": {
     "access": "public"
   },

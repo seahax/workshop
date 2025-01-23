@@ -23,6 +23,7 @@
     "engage": "./bin.js"
   },
   "files": [
+    "bin.js",
     "dist"
   ],
   "publishConfig": {

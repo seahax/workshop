@@ -17,9 +17,6 @@
       "import": "./plugin.js"
     }
   },
-  "files": [
-    "dist"
-  ],
   "publishConfig": {
     "access": "public"
   },
