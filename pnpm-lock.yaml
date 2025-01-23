@@ -132,9 +132,6 @@ importers:
       '@types/eslint':
         specifier: ^9.6.1
         version: 9.6.1
-      '@types/node':
-        specifier: ^22.10.2
-        version: 22.10.5
       '@typescript-eslint/parser':
         specifier: ^8.18.1
         version: 8.21.0(eslint@9.18.0)(typescript@5.7.3)
@@ -144,12 +141,16 @@ importers:
       eslint:
         specifier: ^9.17.0
         version: 9.18.0
-      tsx:
-        specifier: ^4.19.2
-        version: 4.19.2
       typescript:
         specifier: '>=5.0.0'
         version: 5.7.3
+    devDependencies:
+      '@seahax/vite-plugin-finalize':
+        specifier: workspace:*
+        version: link:../vite-plugin-finalize
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
 
   packages/eslint-progress:
     dependencies:
