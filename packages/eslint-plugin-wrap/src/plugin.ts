@@ -15,8 +15,8 @@ interface Plugin extends ESLint.Plugin {
   readonly config: (options?: Options) => Linter.Config;
 }
 
-interface ConfigOptions extends Options {
-  readonly severity?: 'off' | 'warn' | 'error';
+export interface ConfigOptions extends Options {
+  readonly severity?: 'warn' | 'error';
 }
 
 const rules = {
