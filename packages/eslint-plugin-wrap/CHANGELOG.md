@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1 - 2025-01-23
+
+- __docs:__ add severity option to docs (6b4cb76)
+
 ## 0.4.0 - 2025-01-23
 
 - __feat:__ add severity option to config helper (ea2273c)
