@@ -57,6 +57,9 @@ export default function config({ ignores = [], tsconfigPath } = {}) {
         react: {
           version: '18',
         },
+        '@seahax/wrap': {
+          autoFix: false,
+        },
       },
     },
 
