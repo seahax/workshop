@@ -35,7 +35,8 @@ export default [
     // The following options are the default values.
     maxLen: 80,
     tabWidth: 4,
-    autoFix: true
+    autoFix: true,
+    severity: 'warn'
   }),
   // ...other ESLint config items.
 ];
@@ -54,6 +55,10 @@ The `wrap.config()` helper generates a config that includes all [rules](#rules) 
 - `"autoFix": <boolean>`
   - If `false`, fixes are provided as suggestions. This prevents fixes from being automatically applied when the ESLint CLI `--fix` option is used, and when using ESLint as a VSCode formatter.
   - Default: `true`
+- `"severity": "warn" | "error"`
+  - _Only applies to the `wrap.config()` helper._
+  - The severity level for all rules.
+  - Default: `"warn"`
 
 Example: Set options for a single rule.
 
