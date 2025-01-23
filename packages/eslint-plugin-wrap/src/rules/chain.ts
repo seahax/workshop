@@ -16,16 +16,13 @@ export default createRule((context) => {
   const indentString = detectIndentString(context.sourceCode, tabWidth);
 
   return {
-    MemberExpression(node) {
-      // Only look at top-level MemberExpressions so that chains are treated as
-      // a single unit.
-      if (context.sourceCode.getAncestors(node).some((ancestor) => ancestor.type === AST_NODE_TYPES.MemberExpression)) {
-        return;
-      }
-      // Already wrapped.
-      if (node.loc.start.line !== node.loc.end.line) return;
+    CallExpression(node) {
+      // Not a method call.
+      if (node.callee.type !== AST_NODE_TYPES.MemberExpression) return;
+      // Not the last call in a call chain.
+      if (node.parent.parent?.type === AST_NODE_TYPES.CallExpression) return;
 
-      const line = getLine(context.sourceCode, node.loc.start.line);
+      const line = getLine(context.sourceCode, node.loc.end.line);
 
       // Line does not exceed max length.
       if (line.length <= maxLen) return;
@@ -35,33 +32,37 @@ export default createRule((context) => {
       // Nothing to wrap.
       if (nodes.length === 0) return;
 
+      // Already wrapped.
+      if (nodes[0]!.object.loc.end.line !== node.loc.end.line) return;
+
+      const tokens = nodes.map((node) => context.sourceCode.getTokenBefore(node.property));
       const leadingWhitespace = getLeadingWhitespace(line);
-      const fix = createRuleFix([...nodes, null], {
+      const loc = {
+        start: tokens[0]!.loc.start,
+        end: node.loc.end,
+      };
+      const fix = createRuleFix([...tokens, null], {
         sourceCode: context.sourceCode,
         eol,
         leadingWhitespace,
-        indentString,
+        indentString: nodes[0]?.object.type === AST_NODE_TYPES.MemberExpression ? '' : indentString,
       });
 
-      context.report(getReportDescriptor('CHAIN', getReportNode(node), fix, autoFix));
+      context.report(getReportDescriptor('CHAIN', loc, fix, autoFix));
     },
   };
 });
 
-function getReportNode(node: TSESTree.MemberExpression): TSESTree.Node {
-  if (node.parent.type === AST_NODE_TYPES.CallExpression) return node.parent;
-  if (node.parent.type === AST_NODE_TYPES.NewExpression) return node.parent;
-  return node;
-}
-
-function getNodes(sourceCode: SourceCode, node: TSESTree.Node): (TSESTree.Node | TSESTree.Token)[] {
-  const current = 'property' in node ? sourceCode.getTokenBefore(node.property) : undefined;
-  const next = 'object' in node
-    ? getNodes(sourceCode, node.object)
-    : ('callee' in node ? getNodes(sourceCode, node.callee) : []);
+function getNodes(sourceCode: SourceCode, current: TSESTree.Node): TSESTree.MemberExpression[] {
+  // Not a call.
+  if (current.type !== AST_NODE_TYPES.CallExpression) return [];
+  // Not a method call.
+  if (current.callee.type !== AST_NODE_TYPES.MemberExpression) return [];
+  // First call in the chain.
+  if (current.callee.object.type === AST_NODE_TYPES.Identifier) return [];
 
   return [
-    ...(current ? [current] : []),
-    ...next,
+    ...getNodes(sourceCode, current.callee.object),
+    current.callee,
   ];
 }
