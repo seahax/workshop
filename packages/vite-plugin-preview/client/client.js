@@ -48,7 +48,7 @@ async function reconnect() {
 
     try {
       // Fetch should reject a networking error if the server is down.
-      response = await fetch(pingUrl, {
+      const response = await fetch(pingUrl, {
         mode: 'no-cors',
         headers: {
           // Custom headers won't be included in a request with no-cors so

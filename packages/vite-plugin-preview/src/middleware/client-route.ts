@@ -1,12 +1,15 @@
+import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { type Connect } from 'vite';
 
-import TEMPLATE_CLIENT_SCRIPT from '../template/client.js?raw';
+// import TEMPLATE_CLIENT_SCRIPT from '../template/client.js?raw';
 
 interface Config {
   readonly base: string;
 }
+
+const TEMPLATE_CLIENT_SCRIPT = await fs.readFile(path.resolve(import.meta.dirname, '../client/client.js'), 'utf8');
 
 export const CLIENT_SCRIPT_NAME = '/@seahax/vite-plugin-preview/client.js';
 

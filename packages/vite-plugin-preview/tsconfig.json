@@ -4,6 +4,9 @@
       "path": "./tsconfig.build.json"
     },
     {
+      "path": "./tsconfig.client.json"
+    },
+    {
       "path": "./tsconfig.dev.json"
     },
     {

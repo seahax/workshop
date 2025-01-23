@@ -1,2 +1,3 @@
 #!/usr/bin/env node
-await import('./dist/bin.js');
+const BIN_FILENAME = './dist/bin.js';
+await import(BIN_FILENAME);

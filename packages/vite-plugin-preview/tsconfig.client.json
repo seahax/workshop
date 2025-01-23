@@ -13,7 +13,7 @@
     ]
   },
   "include": [
-    "dev/src"
+    "client"
   ],
   "exclude": [
     "**/*.test.*"
