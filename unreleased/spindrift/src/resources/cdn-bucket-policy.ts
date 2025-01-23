@@ -4,11 +4,10 @@ import { createResource } from '../resource.js';
 export default createResource({
   title: 'CDN > Bucket Policy',
 
-  async up({ config, sts, components, credentials }) {
+  async up({ config, user, components }) {
     const bucket = components.getRequired('bucket');
     const cdn = components.getRequired('cdn');
-    const client = createBucketClient(credentials, config.region);
-    const identity = await sts.getIdentity();
+    const client = createBucketClient(user, config.region);
 
     await client.putSimplePolicy(bucket.name, {
       AllowCloudFrontServicePrincipalReadOnly: {
@@ -17,7 +16,7 @@ export default createResource({
         prefix: '*',
         condition: {
           StringEquals: {
-            'AWS:SourceArn': `arn:aws:cloudfront::${identity.accountId}:distribution/${cdn.id}`,
+            'AWS:SourceArn': `arn:aws:cloudfront::${user.accountId}:distribution/${cdn.id}`,
           },
         },
       },

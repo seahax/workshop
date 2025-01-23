@@ -1,13 +1,12 @@
 import assert from 'node:assert';
 
-import { type AwsCredentialIdentityProvider } from '@smithy/types';
-
 import { itemsWithQuantity } from '../client.js';
 import { createAcmClient } from '../clients/acm.js';
 import { type CdnConfig, createCdnClient } from '../clients/cdn.js';
 import { type ResolvedConfig } from '../config.js';
 import { type Components } from '../data/components.js';
 import { createResource } from '../resource.js';
+import { type User } from '../user.js';
 import { CDN_BUCKET_PREFIX_ARCHIVE, CDN_BUCKET_PREFIX_CURRENT } from './bucket.js';
 import resourceCdnBucketPolicy from './cdn-bucket-policy.js';
 import resourceCdnContent from './cdn-content.js';
@@ -24,10 +23,10 @@ const POLICY_ORIGIN_REQUEST_CORS_S3 = '88a5eaf4-2fd4-4709-b370-b4c650ea3fcf';
 export default createResource({
   title: 'CDN',
 
-  async up({ config, components, task, credentials }) {
-    const certArn = await getAcmCertArn({ aliases: config.cdn.dns.aliases, credentials });
+  async up({ config, user, components, task }) {
+    const certArn = await getAcmCertArn({ user, aliases: config.cdn.dns.aliases });
     const cdnConfig = await getCdnConfig({ config, components, certArn });
-    const client = createCdnClient(credentials);
+    const client = createCdnClient(user);
 
     let meta = await components.get('cdn');
 
@@ -46,12 +45,12 @@ export default createResource({
     task.detail(`https://${meta.domain}`);
   },
 
-  async down({ components, task, credentials }) {
+  async down({ user, components, task }) {
     const meta = await components.get('cdn');
 
     if (!meta) return;
 
-    const client = createCdnClient(credentials);
+    const client = createCdnClient(user);
 
     await client.disable(meta.id);
     await task.step('Deploying...', async () => await client.waitForDeployment(meta.id));
@@ -142,13 +141,13 @@ async function getCdnConfig({ config, components, certArn }: {
   };
 }
 
-async function getAcmCertArn({ aliases, credentials }: {
+async function getAcmCertArn({ user, aliases }: {
+  readonly user: User;
   readonly aliases: readonly string[];
-  readonly credentials: AwsCredentialIdentityProvider;
 }): Promise<string | undefined> {
   if (aliases.length === 0) return;
 
-  const client = createAcmClient(credentials);
+  const client = createAcmClient(user);
   const arn = await client.find(aliases);
 
   // TODO: Create the cert if possible.

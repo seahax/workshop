@@ -1,6 +1,6 @@
-import { type AwsCredentialIdentityProvider } from '@smithy/types';
+import { type User } from './user.js';
 
-type ClientFactory = (credentials: AwsCredentialIdentityProvider, region: string) => object;
+type ClientFactory = (user: User, region: string) => object;
 
 export function createClientFactory<TClientFactory extends ClientFactory>(
   factory: TClientFactory,

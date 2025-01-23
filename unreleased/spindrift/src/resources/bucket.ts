@@ -8,8 +8,8 @@ export const CDN_BUCKET_PREFIX_ARCHIVE = '.archive';
 export default createResource({
   title: 'Buckets',
 
-  async up({ config, app, components, task, credentials }) {
-    const client = createBucketClient(credentials, config.region);
+  async up({ config, user, app, components, task }) {
+    const client = createBucketClient(user, config.region);
     const entries = Object.entries(config.buckets);
     const counter = task.counter({ total: entries.length + 1 });
 
@@ -48,8 +48,8 @@ export default createResource({
     }
   },
 
-  async cleanup({ config, components, task, credentials }) {
-    const client = createBucketClient(credentials, config.region);
+  async cleanup({ config, user, components, task }) {
+    const client = createBucketClient(user, config.region);
     const buckets = await components.query('bucket');
     const entries = [...buckets.entries()].filter(([key]) => !components.isResolved(key));
     const counter = task.counter({ total: entries.length });
@@ -61,8 +61,8 @@ export default createResource({
     }
   },
 
-  async down({ config, components, task, credentials }) {
-    const client = createBucketClient(credentials, config.region);
+  async down({ config, user, components, task }) {
+    const client = createBucketClient(user, config.region);
     const buckets = await components.query('bucket');
     const entries = [...buckets.entries()];
     const counter = task.counter({ total: entries.length });

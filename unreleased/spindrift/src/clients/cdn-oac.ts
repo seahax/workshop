@@ -11,7 +11,7 @@ import {
 import { createClientFactory } from '../client.js';
 import { silence } from '../utils/silence.js';
 
-export const createCdnOacClient = createClientFactory((credentials) => {
+export const createCdnOacClient = createClientFactory(({ credentials }) => {
   const client = new CloudFrontClient({ region: 'us-east-1', credentials });
 
   return {

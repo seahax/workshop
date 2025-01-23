@@ -11,9 +11,9 @@ import { CDN_BUCKET_PREFIX_ARCHIVE, CDN_BUCKET_PREFIX_CURRENT } from './bucket.j
 export default createResource({
   title: 'CDN > Content',
 
-  async up({ config, components, task, credentials }) {
+  async up({ config, user, components, task }) {
     const bucket = components.getRequired('bucket');
-    const client = createBucketClient(credentials, config.region);
+    const client = createBucketClient(user, config.region);
     const [filenames, currentKeys] = await Promise.all([
       getFilenames(),
       client.listObjects(`${bucket.name}/${CDN_BUCKET_PREFIX_CURRENT}`),

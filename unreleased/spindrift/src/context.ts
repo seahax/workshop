@@ -1,20 +1,16 @@
 import assert from 'node:assert';
 
-import { type AwsCredentialIdentityProvider } from '@smithy/types';
-
-import { createStsClient } from './clients/sts.js';
 import { type ResolvedConfig } from './config.js';
-import { createCredentials } from './credentials.js';
 import { type App, createApp, createAppKey } from './data/app.js';
 import { type Components, createComponents } from './data/components.js';
 import { createLock } from './data/lock.js';
+import { getUser, type User } from './user.js';
 
 export interface Context {
   readonly config: ResolvedConfig;
-  readonly sts: ReturnType<typeof createStsClient>;
+  readonly user: User;
   readonly app: App;
   readonly components: Components;
-  readonly credentials: AwsCredentialIdentityProvider;
 }
 
 export async function withContext<T>(
@@ -22,13 +18,12 @@ export async function withContext<T>(
   callback: (context: Context) => Promise<T>,
 ): Promise<T> {
   const appKey = createAppKey(config);
-  const credentials = await createCredentials(config.auth);
-  const sts = createStsClient(credentials);
-  const identity = await sts.getIdentity();
+  const user = await getUser({ profile: config.auth.profile });
+  const { credentials } = user;
 
   assert(
-    config.auth.accounts.length <= 0 || config.auth.accounts.includes(identity.accountId),
-    `Account ID "${identity.accountId}" is not allowed by the configuration.`,
+    config.auth.accounts.length <= 0 || config.auth.accounts.includes(user.accountId),
+    `Account ID "${user.accountId}" is not allowed by the configuration.`,
   );
 
   const lock = await createLock({ appKey, credentials });
@@ -37,7 +32,7 @@ export async function withContext<T>(
     const app = await createApp({ appKey, credentials });
     const components = await createComponents({ appKey, app, credentials });
 
-    return await callback({ config, sts, app, components, credentials });
+    return await callback({ config, user, app, components });
   }
   finally {
     await lock.delete();

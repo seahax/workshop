@@ -10,7 +10,7 @@ import { createClientFactory } from '../client.js';
 import { paginated } from '../utils/paginated.js';
 import { silence } from '../utils/silence.js';
 
-export const createAcmClient = createClientFactory((credentials) => {
+export const createAcmClient = createClientFactory(({ credentials }) => {
   const client = new ACMClient({ region: 'us-east-1', credentials });
 
   return {

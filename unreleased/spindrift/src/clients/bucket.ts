@@ -31,7 +31,7 @@ import { paginated } from '../utils/paginated.js';
 import { silence } from '../utils/silence.js';
 import { slice } from '../utils/slice.js';
 
-export const createBucketClient = createClientFactory((credentials, region) => {
+export const createBucketClient = createClientFactory(({ credentials }, region) => {
   const client = new S3Client({ region, credentials });
   const self = {
     async create(name: string): Promise<boolean> {

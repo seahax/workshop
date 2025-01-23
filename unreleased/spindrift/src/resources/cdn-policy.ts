@@ -6,8 +6,8 @@ export const CDN_RESPONSE_HEADERS_POLICY_KEY = 'cdn-policy.$response-headers';
 export default createResource({
   title: 'CDN > Policies',
 
-  async up({ config, components, credentials }) {
-    const client = createCdnPolicyClient(credentials);
+  async up({ config, user, components }) {
+    const client = createCdnPolicyClient(user);
 
     let meta = await components.get(CDN_RESPONSE_HEADERS_POLICY_KEY);
 
@@ -25,11 +25,11 @@ export default createResource({
     await components.resolve(CDN_RESPONSE_HEADERS_POLICY_KEY, meta);
   },
 
-  async down({ components, credentials }) {
+  async down({ user, components }) {
     const meta = await components.get(CDN_RESPONSE_HEADERS_POLICY_KEY);
 
     if (meta) {
-      const client = createCdnPolicyClient(credentials);
+      const client = createCdnPolicyClient(user);
       await client.deleteResponseHeadersPolicy(meta.id);
       await components.delete(CDN_RESPONSE_HEADERS_POLICY_KEY);
     }

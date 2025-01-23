@@ -11,7 +11,7 @@ import {
 import { createClientFactory, itemsWithQuantity } from '../client.js';
 import { silence } from '../utils/silence.js';
 
-export const createCdnPolicyClient = createClientFactory((credentials) => {
+export const createCdnPolicyClient = createClientFactory(({ credentials }) => {
   const client = new CloudFrontClient({ region: 'us-east-1', credentials });
 
   return {

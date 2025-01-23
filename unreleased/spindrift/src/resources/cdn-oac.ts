@@ -6,9 +6,9 @@ import { createResource } from '../resource.js';
 export default createResource({
   title: 'CDN > Origin Access Control',
 
-  async up({ components, credentials }) {
+  async up({ user, components }) {
     const bucket = components.getRequired('bucket');
-    const client = createCdnOacClient(credentials);
+    const client = createCdnOacClient(user);
     const config: OriginAccessControlConfig = {
       Name: bucket.name,
       OriginAccessControlOriginType: 's3',
@@ -30,11 +30,11 @@ export default createResource({
     await components.resolve('cdn-oac', meta);
   },
 
-  async down({ components, credentials }) {
+  async down({ user, components }) {
     const meta = await components.get('cdn-oac');
 
     if (meta) {
-      const client = createCdnOacClient(credentials);
+      const client = createCdnOacClient(user);
       await client.deleteOac(meta.id);
       await components.delete('cdn-oac');
     }

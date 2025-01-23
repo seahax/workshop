@@ -23,7 +23,7 @@ export type CdnConfig = Omit<
   | 'HttpVersion'
 >;
 
-export const createCdnClient = createClientFactory((credentials) => {
+export const createCdnClient = createClientFactory(({ credentials }) => {
   const client = new CloudFrontClient({ region: 'us-east-1', credentials });
 
   return {
