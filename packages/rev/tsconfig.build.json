@@ -3,16 +3,14 @@
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "node_modules/.tsc/build.tsbuildinfo",
-    "rootDir": "src",
-    "outDir": "dist",
-    // "noEmit": false,
-    // "emitDeclarationOnly": true,
+    "checkJs": true,
     "types": [
       "node",
       "vite/client"
     ]
   },
   "include": [
+    "bin.js",
     "src"
   ],
   "exclude": [
