@@ -1,9 +1,11 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "types": [
-      "node"
-    ],
-    "checkJs": true
-  }
+  "references": [
+    {
+      "path": "./tsconfig.build.json"
+    },
+    {
+      "path": "./tsconfig.test.json"
+    }
+  ],
+  "files": []
 }

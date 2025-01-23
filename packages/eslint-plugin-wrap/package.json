@@ -17,6 +17,7 @@
     "ternary",
     "union",
     "function",
+    "chain",
     "length",
     "indent",
     "format",
@@ -30,24 +31,30 @@
     "directory": "packages/eslint-plugin-wrap"
   },
   "scripts": {
-    "build": "tsc --noEmit"
+    "clean": "rm -rf dist node_modules/.tsc",
+    "build": "pnpm clean && vite build"
   },
   "type": "module",
-  "types": "dist/plugin.d.ts",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./jit.js",
-      "types": "./jit.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     }
   },
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
     "access": "public"
   },
+  "devDependencies": {
+    "@seahax/vite-plugin-finalize": "workspace:*",
+    "@seahax/vite-plugin-lib": "workspace:*"
+  },
   "dependencies": {
     "@types/eslint": "^9.6.1",
-    "@types/node": "^22.10.2",
-    "@typescript-eslint/utils": "^8.20.0",
-    "tsx": "^4.19.2"
+    "@typescript-eslint/utils": "^8.20.0"
   },
   "peerDependencies": {
     "@typescript-eslint/parser": "^8.18.1",
