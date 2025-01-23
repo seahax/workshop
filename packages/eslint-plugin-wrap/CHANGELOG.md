@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0 - 2025-01-23
+
+- __feat:__ only wrap chained methods (0e0ecf3)
+
 ## 0.4.2 - 2025-01-23
 
 - __fix:__ severity option should not allow 'off' (bee774e)
