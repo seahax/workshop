@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { FlatCompat } from '@eslint/eslintrc';
 import eslint from '@eslint/js';
 import wrap from '@seahax/eslint-plugin-wrap';
