@@ -15,6 +15,7 @@
     "noImplicitOverride": true,
     "esModuleInterop": true,
     "allowJs": true,
+    "checkJs": true,
     "noEmit": true
   },
 }
