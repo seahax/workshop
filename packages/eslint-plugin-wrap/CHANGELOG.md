@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.0 - 2025-01-24
+
+- __feat:__ improve fix ordering, fix message templates, and fix some missed chain wrapping opportunities (e72ac40)
+- __docs:__ correct auto fix order is AST order (7d1ddaa)
+
 ## 0.5.0 - 2025-01-23
 
 - __feat:__ only wrap chained methods (0e0ecf3)
