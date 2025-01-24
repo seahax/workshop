@@ -24,7 +24,7 @@ Table of Contents:
   - [`@seahax/wrap/union`](#seahaxwrapunion)
   - [`@seahax/wrap/chain`](#seahaxwrapchain)
 - [Formatting](#formatting)
-- [Known Issue: Fix Order](#known-issue-fix-order)
+- [Auto Fix Order](#auto-fix-order)
 
 ## Getting Started
 
@@ -247,31 +247,10 @@ When this plugin wraps code, it will attempt to maintain the existing indentatio
 
 No trailing punctuation is added when wrapping. For instance, when wrapping object literal properties, no trailing comma is added after the last property. This kind of stylistic fixing/formatting is already handled adequately by the ESLint Stylistic rules, which can be used in concert with this plugin.
 
-## Known Issue: Fix Order
+## Auto Fix Order
 
-When running ESLint with the `--fix` option (or using it as a formatter), fixes are not always applied in a predictable order. This can result in some unnecessary fixes when there are multiple wrapping opportunities on a single line.
+If there are multiple fixes that could be applied to a single line, they are applied first-to-last, until all resulting lines are short enough, or there are no more wrapping opportunities.
 
-Before:
-```ts
-const result = action().then((value) => ...).catch((error) => error?.message.toLowerCase().trim());
-```
+This may not always be the result you want. If you are using VSCode (or another ESLint aware IDE), you can selectively choose fixes in any order, rather than trigging a full auto-fix run. Because this plugin leaves existing wrapping alone, you can always safely choose fix suggestions or even manually fix long lines, without interference.
 
-After:
-```ts
-const result = action()
-  .then((value) => ...)
-  .catch(
-    (error) => error?.message.toLowerCase().trim()
-  );
-```
-
-The chained methods fix was applied, but so was the `catch` function argument wrapping fix (which was unnecessary). But, for some reason, the `then` function argument was not fixed/wrapped, and neither was the error message method chain.
-
-Unfortunately, there doesn't seem to be a way to control this behavior with ESLint fixes at this time. Ideally, fixes would be applied either first-to-last, with any subsequent fixes only applied if still applicable after the previous fixes.
-
-Another alternative that was considered was only recommending a single fix per
-line. This is also difficult to achieve in ESLint rules, because there is no
-way for two rules to communicate that they're both trying to fix the same line.
-
-If this poses a significant problem, you may want to set the `autoFix` option to false, and manually choose which fixes to apply for long lines.
-
+If you never want to rely on the auto-fix order, you can completely disable auto-fixing by setting the `autoFix` option to `false`. This will make all fixes "suggestions" which you can selectively apply using your IDE.

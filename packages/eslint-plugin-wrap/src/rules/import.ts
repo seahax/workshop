@@ -7,9 +7,8 @@ import { detectEOL } from '../utils/detect-eol.js';
 import { detectIndentString } from '../utils/detect-indent-string.js';
 import { getLeadingWhitespace } from '../utils/get-leading-whitespace.js';
 import { getLine } from '../utils/get-line.js';
-import { getReportDescriptor } from '../utils/get-report-descriptor.js';
 
-export default createRule((context) => {
+export default createRule('import', 'Wrap import names on long lines.', (context, report) => {
   const { maxLen, tabWidth, autoFix } = getOptions(context);
   const eol = detectEOL(context.sourceCode);
   const indentString = detectIndentString(context.sourceCode, tabWidth);
@@ -37,7 +36,7 @@ export default createRule((context) => {
         indentString,
       });
 
-      context.report(getReportDescriptor('IMPORTS', loc, fix, autoFix));
+      report('IMPORTS', loc, fix, autoFix);
     },
   };
 });

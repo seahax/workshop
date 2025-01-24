@@ -8,9 +8,8 @@ import { detectEOL } from '../utils/detect-eol.js';
 import { detectIndentString } from '../utils/detect-indent-string.js';
 import { getLeadingWhitespace } from '../utils/get-leading-whitespace.js';
 import { getLine } from '../utils/get-line.js';
-import { getReportDescriptor } from '../utils/get-report-descriptor.js';
 
-export default createRule((context) => {
+export default createRule('chain', 'Wrap chained method calls on long lines.', (context, report) => {
   const { maxLen, tabWidth, autoFix } = getOptions(context);
   const eol = detectEOL(context.sourceCode);
   const indentString = detectIndentString(context.sourceCode, tabWidth);
@@ -20,7 +19,10 @@ export default createRule((context) => {
       // Not a method call.
       if (node.callee.type !== AST_NODE_TYPES.MemberExpression) return;
       // Not the last call in a call chain.
-      if (node.parent.parent?.type === AST_NODE_TYPES.CallExpression) return;
+      if (
+        node.parent.type === AST_NODE_TYPES.MemberExpression
+        && node.parent.parent.type === AST_NODE_TYPES.CallExpression
+      ) return;
 
       const line = getLine(context.sourceCode, node.loc.end.line);
 
@@ -48,7 +50,7 @@ export default createRule((context) => {
         indentString: nodes[0]?.object.type === AST_NODE_TYPES.MemberExpression ? '' : indentString,
       });
 
-      context.report(getReportDescriptor('CHAIN', loc, fix, autoFix));
+      report('CHAIN', loc, fix, autoFix);
     },
   };
 });

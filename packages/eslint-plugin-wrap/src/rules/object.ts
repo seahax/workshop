@@ -7,9 +7,8 @@ import { detectEOL } from '../utils/detect-eol.js';
 import { detectIndentString } from '../utils/detect-indent-string.js';
 import { getLeadingWhitespace } from '../utils/get-leading-whitespace.js';
 import { getLine } from '../utils/get-line.js';
-import { getReportDescriptor } from '../utils/get-report-descriptor.js';
 
-export default createRule((context) => {
+export default createRule('object', 'Wrap object properties on long lines.', (context, report) => {
   const { maxLen, tabWidth, autoFix } = getOptions(context);
   const eol = detectEOL(context.sourceCode);
   const indentString = detectIndentString(context.sourceCode, tabWidth);
@@ -43,6 +42,6 @@ export default createRule((context) => {
       trailerString,
     });
 
-    context.report(getReportDescriptor('OBJECT_PROPS', loc, fix, autoFix));
+    report('OBJECT_PROPS', loc, fix, autoFix);
   }
 });

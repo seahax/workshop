@@ -7,7 +7,6 @@ import { detectEOL } from '../utils/detect-eol.js';
 import { detectIndentString } from '../utils/detect-indent-string.js';
 import { getLeadingWhitespace } from '../utils/get-leading-whitespace.js';
 import { getLine } from '../utils/get-line.js';
-import { getReportDescriptor } from '../utils/get-report-descriptor.js';
 
 type FunctionNode =
   | TSESTree.FunctionDeclaration
@@ -18,7 +17,7 @@ type FunctionNode =
   | TSESTree.CallExpression
   | TSESTree.NewExpression;
 
-export default createRule((context) => {
+export default createRule('function', 'Wrap function arguments on long lines.', (context, report) => {
   const { maxLen, tabWidth, autoFix } = getOptions(context);
   const eol = detectEOL(context.sourceCode);
   const indentString = detectIndentString(context.sourceCode, tabWidth);
@@ -58,7 +57,7 @@ export default createRule((context) => {
       indentString,
     });
 
-    context.report(getReportDescriptor('FUNCTION_PARAMS', { start, end }, fix, autoFix));
+    report('FUNCTION_PARAMS', { start, end }, fix, autoFix);
   }
 });
 

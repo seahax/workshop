@@ -7,9 +7,8 @@ import { detectEOL } from '../utils/detect-eol.js';
 import { detectIndentString } from '../utils/detect-indent-string.js';
 import { getLeadingWhitespace } from '../utils/get-leading-whitespace.js';
 import { getLine } from '../utils/get-line.js';
-import { getReportDescriptor } from '../utils/get-report-descriptor.js';
 
-export default createRule((context) => {
+export default createRule('ternary', 'Wrap ternary branches on long lines.', (context, report) => {
   const { maxLen, tabWidth, autoFix } = getOptions(context);
   const eol = detectEOL(context.sourceCode);
   const indentString = detectIndentString(context.sourceCode, tabWidth);
@@ -39,6 +38,6 @@ export default createRule((context) => {
       indentString,
     });
 
-    context.report(getReportDescriptor('TERNARY_BRANCHES', loc, fix, autoFix));
+    report('TERNARY_BRANCHES', loc, fix, autoFix);
   }
 });
