@@ -249,8 +249,10 @@ No trailing punctuation is added when wrapping. For instance, when wrapping obje
 
 ## Auto Fix Order
 
-If there are multiple fixes that could be applied to a single line, they are applied first-to-last, until all resulting lines are short enough, or there are no more wrapping opportunities.
+If there are multiple fixes that could be applied to a single line, they are applied in AST order, until all resulting lines are short enough, or there are no more wrapping opportunities.
 
-This may not always be the result you want. If you are using VSCode (or another ESLint aware IDE), you can selectively choose fixes in any order, rather than trigging a full auto-fix run. Because this plugin leaves existing wrapping alone, you can always safely choose fix suggestions or even manually fix long lines, without interference.
+For the most part, AST order is page top-to-bottom and line start-to-end. However, in the case of chained method calls, the AST is actually recursive and depth-first, which means the last call in the chain is the "first" in the AST.
+
+Sometimes, you may not get the result you want from auto-fixing. If you are using VSCode (or another ESLint aware IDE), you can selectively choose fixes in any order, rather than trigging a full auto-fix run. Because this plugin leaves existing wrapping alone, you can always safely choose to selectively apply suggestions or even manually fix long lines, without interference.
 
 If you never want to rely on the auto-fix order, you can completely disable auto-fixing by setting the `autoFix` option to `false`. This will make all fixes "suggestions" which you can selectively apply using your IDE.
