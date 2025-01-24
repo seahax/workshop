@@ -59,7 +59,7 @@ export default function config({ ignores = [], tsconfigPath } = {}) {
           version: '18',
         },
         '@seahax/wrap': {
-          autoFix: false,
+          autoFix: true,
         },
       },
     },
