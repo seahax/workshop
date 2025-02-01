@@ -1,24 +1,24 @@
 {
-  "name": "@seahax/fetch-intercept-set-headers",
+  "name": "@seahax/vitest",
   "private": true,
   "version": "0.1.0",
-  "description": "Fetch intercept that sets headers.",
+  "description": "",
   "license": "Unlicense",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
-    "directory": "packages/fetch-intercept-set-headers"
+    "directory": "packages/vitest"
   },
   "scripts": {
     "clean": "rm -rf dist",
     "build": "pnpm clean && vite build"
   },
   "type": "module",
-  "types": "dist/index.d.ts",
+  "types": "dist/config.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./dist/config.d.ts",
+      "import": "./dist/config.mjs"
     }
   },
   "files": [
@@ -32,7 +32,7 @@
     "@seahax/vite-plugin-lib": "workspace:*",
     "@seahax/vite-plugin-finalize": "workspace:*"
   },
-  "dependencies": {
-    "@seahax/fetch": "workspace:^"
+  "peerDependencies": {
+    "vitest": "catalog:"
   }
 }

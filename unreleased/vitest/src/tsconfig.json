@@ -2,14 +2,9 @@
   "extends": "@seahax/tsconfig",
   "compilerOptions": {
     "outDir": "../dist",
+    "noEmit": false,
     "types": [
-      "node",
       "vite/client"
     ]
-  },
-  "references": [
-    {
-      "path": "./tsconfig.build.json"
-    }
-  ]
+  }
 }

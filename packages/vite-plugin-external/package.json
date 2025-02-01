@@ -18,7 +18,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.mjs"
     }
   },
   "files": [
@@ -29,6 +29,6 @@
     "access": "public"
   },
   "peerDependencies": {
-    "vite": "^6.0.3"
+    "vite": "catalog:"
   }
 }

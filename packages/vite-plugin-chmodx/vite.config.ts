@@ -19,7 +19,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         preserveModules: true,
-        entryFileNames: '[name].js',
+        entryFileNames: '[name].mjs',
       },
     },
   },

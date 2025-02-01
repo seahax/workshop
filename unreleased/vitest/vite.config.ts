@@ -9,4 +9,9 @@ export default defineConfig({
     lib(),
     finalize`tsc -b src/tsconfig.json --force`,
   ],
+  build: {
+    lib: {
+      entry: ['src/config.ts', 'src/config.global-setup.ts', 'src/config.setup.ts'],
+    },
+  },
 });

@@ -8,14 +8,4 @@ const { packages } = YAML.parse(fs.readFileSync(`${import.meta.dirname}/pnpm-wor
 
 export default globSync(packages, { nodir: false, withFileTypes: true })
   .filter((path) => path.isDirectory())
-  .map((path) => `${path.parentPath}/${path.name}`)
-  .filter((path) => {
-    const files = fs.readdirSync(path, { withFileTypes: true, recursive: true })
-      .filter((dirent) => dirent.isFile())
-      .map((dirent) => `${dirent.parentPath}/${dirent.name}`);
-
-    return (
-      files.some((file) => /\bvitest\.config(?:\..*)?\.ts$/.test(file))
-      && files.some((file) => file.endsWith('.spec.ts'))
-    );
-  });
+  .flatMap((path) => globSync('vitest.config.*', { cwd: path.fullpath(), absolute: true }));

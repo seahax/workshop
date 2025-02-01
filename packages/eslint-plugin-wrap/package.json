@@ -39,7 +39,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.mjs"
     }
   },
   "files": [
@@ -54,12 +54,12 @@
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "dependencies": {
-    "@types/eslint": "^9.6.1",
+    "@types/eslint": "catalog:",
     "@typescript-eslint/utils": "^8.20.0"
   },
   "peerDependencies": {
     "@typescript-eslint/parser": "^8.18.1",
-    "eslint": "^9.17.0",
-    "typescript": ">=5.0.0"
+    "eslint": "catalog:",
+    "typescript": "catalog:"
   }
 }

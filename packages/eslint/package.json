@@ -14,7 +14,7 @@
   "exports": {
     ".": {
       "types": "./src/config.d.ts",
-      "import": "./src/config.js"
+      "import": "./src/config.mjs"
     }
   },
   "publishConfig": {
@@ -26,7 +26,7 @@
     "@seahax/eslint-progress": "workspace:^",
     "@seahax/eslint-plugin-wrap": "workspace:^",
     "@stylistic/eslint-plugin": "^2.12.1",
-    "@types/eslint": "^9.6.1",
+    "@types/eslint": "catalog:",
     "@types/eslint__eslintrc": "^2.1.2",
     "@types/eslint__js": "^8.42.3",
     "eslint-import-resolver-typescript": "^3.7.0",
@@ -39,7 +39,7 @@
     "typescript-eslint": "^8.18.1"
   },
   "peerDependencies": {
-    "eslint": "^9.17.0",
-    "typescript": "^5.7.2"
+    "eslint": "catalog:",
+    "typescript": "catalog:"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "extends": "../../../tsconfig.base.json",
+  "extends": "@seahax/tsconfig",
   "compilerOptions": {
     "outDir": "../dist",
     "lib": [

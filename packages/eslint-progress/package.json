@@ -14,13 +14,13 @@
   "exports": {
     ".": {
       "types": "./src/plugin.d.ts",
-      "import": "./src/plugin.js"
+      "import": "./src/plugin.mjs"
     }
   },
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "eslint": "^9.17.0"
+    "eslint": "catalog:"
   }
 }

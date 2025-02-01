@@ -24,7 +24,7 @@ export default defineConfig({
       external: (id) => prodDepNames.includes(id) || isBuiltin(id) || id.startsWith('node:'),
       output: {
         preserveModules: true,
-        entryFileNames: '[name].js',
+        entryFileNames: '[name].mjs',
       },
     },
   },

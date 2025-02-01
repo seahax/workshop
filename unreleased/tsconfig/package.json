@@ -1,0 +1,16 @@
+{
+  "name": "@seahax/tsconfig",
+  "private": true,
+  "version": "0.1.0",
+  "description": "",
+  "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/tsconfig"
+  },
+  "main": "tsconfig.json",
+  "publishConfig": {
+    "access": "public"
+  }
+}

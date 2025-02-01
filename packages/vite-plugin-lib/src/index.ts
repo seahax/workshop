@@ -1,6 +1,6 @@
 import chmodx from '@seahax/vite-plugin-chmodx';
 import external, { type ExternalOptions } from '@seahax/vite-plugin-external';
-import { type LibraryFormats, mergeConfig, type PluginOption, type UserConfig } from 'vite';
+import { type LibraryFormats, type LibraryOptions, mergeConfig, type PluginOption, type UserConfig } from 'vite';
 
 export interface LibOptions extends ExternalOptions {
   readonly bundle?: boolean;
@@ -8,35 +8,44 @@ export interface LibOptions extends ExternalOptions {
 }
 
 export default function plugin({
-  packageJsonPath,
   bundle = false,
-  minify = false,
+  minify = bundle,
+  packageJsonPath = !bundle,
 }: LibOptions = {}): PluginOption {
   return [
-    external({ packageJsonPath: packageJsonPath ?? !bundle }),
+    external({ packageJsonPath }),
     chmodx(),
     {
       name: 'lib',
       config(config) {
-        const formats: undefined | LibraryFormats | LibraryFormats[] = config.build?.lib && config.build.lib.formats
-          ? undefined
-          : ['es'];
-
-        const target = config.build?.target
+        const targetOverride = config.build?.target
           ? (Array.isArray(config.build.target)
               ? config.build.target
               : [config.build.target])
           : ['es2022'];
 
-        const isNodeTarget = target.length > 0 && target.every((t) => /^node/iu.test(t));
+        const entryOverride = typeof config.build?.lib === 'object'
+          ? config.build.lib.entry
+          : 'src/index.ts';
 
-        return mergeConfig<UserConfig, UserConfig>({
+        const formatsOverride:
+          | undefined
+          | LibraryFormats
+          | LibraryFormats[] = config.build?.lib && config.build.lib.formats
+            ? undefined
+            : ['es'];
+
+        const isNodeTarget = targetOverride.length > 0 && targetOverride.every((t) => /^node/iu.test(t));
+
+        config = mergeConfig<UserConfig, UserConfig>({
           build: {
-            target,
             lib: {
               entry: 'src/index.ts',
-              formats,
-              fileName: '[name]',
+              fileName: (format, entryName) => {
+                if (format === 'es') return `${entryName}.mjs`;
+                if (format === 'cjs') return `${entryName}.cjs`;
+                return `${entryName}.${format}.js`;
+              },
             },
             minify,
             sourcemap: true,
@@ -44,6 +53,7 @@ export default function plugin({
               output: {
                 preserveModules: !bundle,
               },
+              treeshake: bundle,
             },
           },
           resolve: {
@@ -53,6 +63,12 @@ export default function plugin({
             mainFields: [...(isNodeTarget ? [] : ['browser']), 'module', 'jsnext:main', 'jsnext'],
           },
         }, config);
+
+        config.build!.target = targetOverride;
+        (config.build!.lib as LibraryOptions).entry = entryOverride;
+        (config.build!.lib as LibraryOptions).formats = formatsOverride;
+
+        return config;
       },
     },
   ];
