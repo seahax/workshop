@@ -10,11 +10,11 @@
     "directory": "packages/eslint-progress"
   },
   "type": "module",
-  "types": "plugin.d.ts",
+  "types": "src/plugin.d.ts",
   "exports": {
     ".": {
-      "types": "./plugin.d.ts",
-      "import": "./plugin.js"
+      "types": "./src/plugin.d.ts",
+      "import": "./src/plugin.js"
     }
   },
   "publishConfig": {

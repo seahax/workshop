@@ -10,14 +10,15 @@
     "directory": "packages/rev"
   },
   "scripts": {
-    "clean": "rm -rf dist node_modules/.tsc",
+    "clean": "rm -rf dist",
     "build": "pnpm clean && vite build"
   },
   "type": "module",
   "bin": "bin.js",
   "files": [
     "bin.js",
-    "dist"
+    "dist",
+    "!dist/*.tsbuildinfo"
   ],
   "publishConfig": {
     "access": "public"

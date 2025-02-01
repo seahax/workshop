@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [
     external(),
     chmodx(),
-    finalize`tsc -b --force`,
+    finalize`tsc -b src/tsconfig.json --force`,
   ],
   build: {
     target: ['es2022'],

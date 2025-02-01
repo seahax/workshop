@@ -10,8 +10,8 @@
     "directory": "packages/vite-plugin-external"
   },
   "scripts": {
-    "clean": "rm -rf dist node_modules/.tsc",
-    "build": "pnpm clean && vite build && tsc -b --force"
+    "clean": "rm -rf dist",
+    "build": "pnpm clean && vite build && tsc -b src/tsconfig.json --force"
   },
   "type": "module",
   "types": "dist/index.d.ts",
@@ -22,7 +22,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/*.tsbuildinfo"
   ],
   "publishConfig": {
     "access": "public"

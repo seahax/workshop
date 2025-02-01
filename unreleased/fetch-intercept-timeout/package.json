@@ -10,7 +10,7 @@
     "directory": "packages/fetch-intercept-timeout"
   },
   "scripts": {
-    "clean": "rm -rf dist node_modules/.tsc",
+    "clean": "rm -rf dist",
     "build": "pnpm clean && vite build"
   },
   "type": "module",
@@ -22,7 +22,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/*.tsbuildinfo"
   ],
   "publishConfig": {
     "access": "public"

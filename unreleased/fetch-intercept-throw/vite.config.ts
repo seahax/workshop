@@ -7,6 +7,6 @@ process.chdir(import.meta.dirname);
 export default defineConfig({
   plugins: [
     lib(),
-    finalize`tsc -b --force`,
+    finalize`tsc -b src/tsconfig.json --force`,
   ],
 });

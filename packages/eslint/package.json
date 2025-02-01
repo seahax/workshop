@@ -10,8 +10,13 @@
     "directory": "packages/eslint"
   },
   "type": "module",
-  "types": "config.d.ts",
-  "main": "config.js",
+  "types": "src/config.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/config.d.ts",
+      "import": "./src/config.js"
+    }
+  },
   "publishConfig": {
     "access": "public"
   },

@@ -1,9 +1,12 @@
 {
   "compilerOptions": {
-    "module": "Node16",
     "moduleDetection": "force",
+    "moduleResolution": "bundler",
+    "module": "ES2022",
     "target": "ES2022",
-    "lib": ["ES2022"],
+    "lib": [
+      "ES2022"
+    ],
     "types": [],
     "jsx": "preserve",
     "strict": true,
@@ -16,6 +19,8 @@
     "esModuleInterop": true,
     "allowJs": true,
     "checkJs": true,
-    "noEmit": true
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "noEmit": true,
   },
 }

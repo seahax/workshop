@@ -10,9 +10,8 @@
     "directory": "packages/vite-plugin-preview"
   },
   "scripts": {
-    "clean": "rm -rf dist node_modules/.tsc",
-    "build": "pnpm clean && vite build",
-    "start": "pnpm run build && vite build --watch --config=dev/vite.config.ts"
+    "clean": "rm -rf dist",
+    "build": "pnpm clean && vite build"
   },
   "type": "module",
   "types": "dist/index.d.ts",
@@ -24,7 +23,7 @@
   },
   "files": [
     "dist",
-    "client"
+    "!dist/*.tsbuildinfo"
   ],
   "publishConfig": {
     "access": "public"

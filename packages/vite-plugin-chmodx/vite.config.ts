@@ -7,7 +7,7 @@ process.chdir(import.meta.dirname);
 export default defineConfig({
   plugins: [
     external(),
-    finalize`tsc -b --force`,
+    finalize`tsc -b src/tsconfig.json --force`,
   ],
   build: {
     target: ['es2022'],

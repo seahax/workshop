@@ -1,16 +1,13 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
-
 import ansiHtml from 'ansi-html';
 import { htmlEscape } from 'escape-goat';
 import Negotiator from 'negotiator';
 import { type Connect } from 'vite';
 
+import TEMPLATE_ERROR_HTML from '../template/error.html?raw';
+
 interface Config {
   readonly getError: () => Error | undefined;
 }
-
-const TEMPLATE_ERROR_HTML = await fs.readFile(path.resolve(import.meta.dirname, '../client/error.html'), 'utf8');
 
 export default function middleware({ getError }: Config): Connect.NextHandleFunction {
   return (req, res, next) => {
