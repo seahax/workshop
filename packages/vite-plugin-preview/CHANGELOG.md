@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.7 - 2025-02-01
+
+- __chore:__ refactored all the tsconfigs (80f8ffd)
+- __chore:__ add shared vitest configs and tsconfig (095774c)
+
 ## 0.1.6 - 2025-01-23
 
 - __chore:__ fix build errors (d9dde17)

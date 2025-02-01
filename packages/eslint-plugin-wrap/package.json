@@ -1,7 +1,7 @@
 {
   "name": "@seahax/eslint-plugin-wrap",
   "private": false,
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "ESLint plugin with wrapping fixes for long lines.",
   "keywords": [
     "eslint",

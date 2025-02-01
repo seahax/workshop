@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.2 - 2025-02-01
+
+- __chore:__ refactored all the tsconfigs (80f8ffd)
+- __chore:__ add shared vitest configs and tsconfig (095774c)
+
 ## 0.3.1 - 2025-01-21
 
 - __chore:__ add eslint-plugin-wrap package (665386f)
