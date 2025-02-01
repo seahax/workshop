@@ -1,7 +1,6 @@
 {
   "extends": "@seahax/tsconfig",
   "compilerOptions": {
-    "outDir": "../dist",
     "types": [
       "node"
     ]
