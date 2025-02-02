@@ -10,14 +10,14 @@ concurrency:
   group: ${{ github.workflow }}
 env:
   NODE_OPTIONS: --no-deprecation
+  NPM_TOKEN: ${{secrets.NPM_TOKEN}}
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        with: { fetch-depth: 0 }
       - name: Setup
         run: ./.github/workflows/setup.sh
       - name: Install
@@ -28,5 +28,3 @@ jobs:
         run: pnpm check
       - name: Publish
         run: npx lerna --no-private publish from-package --no-git-tag-version --no-push --yes
-        env:
-          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
