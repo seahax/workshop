@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 export ASDF_DATA_DIR=$HOME/.asdf
 export ASDF_DIR=$ASDF_DATA_DIR/bin
-export PATH="$ASDF_DATA_DIR/shims:$ASDF_DIR:$PATH"
+export PATH=$ASDF_DATA_DIR/shims:$ASDF_DIR:$PATH
 
 echo "$ASDF_DATA_DIR/shims" >> "$GITHUB_PATH"
 echo "$ASDF_DIR" >> "$GITHUB_PATH"
