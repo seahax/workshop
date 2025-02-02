@@ -19,7 +19,7 @@ jobs:
         with: { fetch-depth: 0 }
       - name: Setup
         working-directory: ./.github/workflows
-        run: ./setup.sh
+        run: ./setup.sh &>/dev/null
       - name: Install
         run: pnpm install --frozen-lockfile
       - name: Build
