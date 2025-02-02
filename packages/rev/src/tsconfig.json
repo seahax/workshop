@@ -6,10 +6,5 @@
       "vite/client",
       "node"
     ]
-  },
-  "references": [
-    {
-      "path": "./tsconfig.build.json"
-    }
-  ]
+  }
 }
