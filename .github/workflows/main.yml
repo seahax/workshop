@@ -16,35 +16,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
         with: { fetch-depth: 0 }
-      - name: asdf
-        run: |
-          set -e
-          set -x
-          PATH="$HOME/bin:$PATH"
-          PATH="$HOME/.asdf/bin:$PATH"
-          echo "$HOME/bin" >> "$GITHUB_PATH"
-          echo "$HOME/.asdf/bin" >> "$GITHUB_PATH"
-          wget https://github.com/asdf-vm/asdf/releases/download/v0.16.0/asdf-v0.16.0-linux-amd64.tar.gz -P "$HOME"
-          mkdir -p "$HOME/bin"
-          tar -xvf "$HOME/asdf-v0.16.0-linux-amd64.tar.gz" -C "$HOME/bin"
-          asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
-          asdf plugin add pnpm https://github.com/jonathanmorley/asdf-pnpm.git
-          asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
-          asdf install
-          node -v
-          pnpm -v
-          golang version
-      - name: install
-        run: |
-          cat "$GITHUB_PATH"
-          echo "$PATH"
-          pnpm install --frozen-lockfile
-      - name: build
+      - name: Setup
+        run: ./setup.sh
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Build
         run: pnpm build
-      - name: check
+      - name: Check
         run: pnpm check
-      - name: publish
+      - name: Publish
         run: npx lerna --no-private publish from-package --no-git-tag-version --no-push --yes
