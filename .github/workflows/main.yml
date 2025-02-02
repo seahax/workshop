@@ -9,6 +9,9 @@ on:
 concurrency:
   group: ${{ github.workflow }}
 env:
+  TERM: xterm
+  NO_COLOR: 1
+  FORCE_COLOR: ''
   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 jobs:
   build:
