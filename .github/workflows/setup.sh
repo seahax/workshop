@@ -6,7 +6,7 @@ export PATH="$ASDF_DATA_DIR/shims:$ASDF_DIR:$PATH"
 echo "$ASDF_DATA_DIR/shims" >> "$GITHUB_PATH"
 echo "$ASDF_DIR" >> "$GITHUB_PATH"
 
-echo <<EOF >> "${RUNNER_TEMP:-.}/.npmrc"
+echo <<EOF >> "$HOME/.npmrc"
 //registry.npmjs.org/:_authToken=\${NODE_AUTH_TOKEN}
 registry=https://registry.npmjs.org/
 always-auth=true
@@ -20,7 +20,3 @@ asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
 asdf plugin add pnpm https://github.com/jonathanmorley/asdf-pnpm.git
 asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
 asdf install
-
-node -v
-pnpm -v
-go version
