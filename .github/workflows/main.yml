@@ -18,9 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
-      - run: corepack enable
-      - uses: actions/setup-node@v4
-        with: { node-version: lts/*, registry-url: 'https://registry.npmjs.org' }
+      - uses: asdf-vm/actions/install@v3
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm check
