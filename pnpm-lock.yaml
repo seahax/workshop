@@ -213,6 +213,22 @@ importers:
         specifier: workspace:*
         version: link:../vite-plugin-lib
 
+  packages/neverhaven:
+    dependencies:
+      '@seahax/args':
+        specifier: workspace:^
+        version: link:../args
+      '@seahax/main':
+        specifier: workspace:^
+        version: link:../main
+    devDependencies:
+      '@seahax/vite-plugin-finalize':
+        specifier: workspace:*
+        version: link:../vite-plugin-finalize
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+
   packages/rev:
     dependencies:
       '@seahax/args':
