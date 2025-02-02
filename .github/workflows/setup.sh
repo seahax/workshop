@@ -8,6 +8,12 @@ echo "$NODE_OPTIONS --no-deprecation" >> "$GITHUB_ENV"
 echo "$ASDF_DATA_DIR/shims" >> "$GITHUB_PATH"
 echo "$ASDF_DIR" >> "$GITHUB_PATH"
 
+echo <<EOF >> "$HOME/.npmrc"
+//registry.npmjs.org/:_authToken=\${NODE_AUTH_TOKEN}
+registry=https://registry.npmjs.org/
+always-auth=true
+EOF
+
 mkdir -p "$ASDF_DIR"
 wget -q https://github.com/asdf-vm/asdf/releases/download/v0.16.0/asdf-v0.16.0-linux-amd64.tar.gz -P "$ASDF_DIR"
 tar -xvf "$ASDF_DIR/asdf-v0.16.0-linux-amd64.tar.gz" -C "$ASDF_DIR"
