@@ -1,13 +1,10 @@
 {
 	"name": "Seahax Workshop",
-	"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+	"dockerFile": "Dockerfile",
+	"postCreateCommand": "zsh .devcontainer/create",
 	"mounts": [
-		"source=${localEnv:HOME}/.aws,target=/.aws,type=bind,readonly"
+		"source=${localEnv:HOME}/.aws,target=/home/vscode/.aws,type=bind,readonly"
 	],
-	"containerEnv": {
-		"AWS_CONFIG_FILE": "/.aws/config",
-		"AWS_SHARED_CREDENTIALS_FILE": "/.aws/credentials"
-	},
 	"customizations": {
 		"vscode": {
 			"settings": {
@@ -36,9 +33,9 @@
 				"byi8220.indented-block-highlighting",
 				"foxundermoon.shell-format",
 				"codezombiech.gitignore",
-				"ziyasal.vscode-open-in-github"
+				"ziyasal.vscode-open-in-github",
+				"bmalehorn.shell-syntax"
 			]
 		}
-	},
-	"postCreateCommand": "bash .devcontainer/setup.sh"
+	}
 }
