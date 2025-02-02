@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
+set -e
+
 export ASDF_DATA_DIR=$HOME/.asdf
 export ASDF_DIR=$ASDF_DATA_DIR/bin
 export PATH=$ASDF_DATA_DIR/shims:$ASDF_DIR:$PATH
 
 echo "$ASDF_DATA_DIR/shims" >> "$GITHUB_PATH"
 echo "$ASDF_DIR" >> "$GITHUB_PATH"
-echo '//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}' >> "$HOME/.npmrc"
+echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> "$HOME/.npmrc"
 
 mkdir -p "$ASDF_DIR"
 wget -q https://github.com/asdf-vm/asdf/releases/download/v0.16.0/asdf-v0.16.0-linux-amd64.tar.gz -P "$ASDF_DIR"
