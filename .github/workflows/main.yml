@@ -34,10 +34,12 @@ jobs:
           asdf plugin add pnpm https://github.com/jonathanmorley/asdf-pnpm.git
           asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
           asdf install
-          echo done
+          node -v
+          pnpm -v
+          golang version
       - name: install
         run: |
-          cat "$GITHUB_PATH""
+          cat "$GITHUB_PATH"
           echo "$PATH"
           pnpm install --frozen-lockfile
       - name: build
