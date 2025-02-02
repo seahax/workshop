@@ -27,6 +27,10 @@ jobs:
       - name: Check
         run: pnpm check
       - name: Publish
-        run: npx lerna --no-private publish from-package --no-git-tag-version --no-push --yes
+        run: |
+          echo $NODE_AUTH_TOKEN
+          pwd
+          cat "${RUNNER_TEMP:-.}/.npmrc"
+          npx lerna --no-private publish from-package --no-git-tag-version --no-push --yes
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

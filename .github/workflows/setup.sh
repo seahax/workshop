@@ -6,7 +6,7 @@ export PATH="$ASDF_DATA_DIR/shims:$ASDF_DIR:$PATH"
 echo "$ASDF_DATA_DIR/shims" >> "$GITHUB_PATH"
 echo "$ASDF_DIR" >> "$GITHUB_PATH"
 
-echo <<EOF >> "${RUNNER_TEMP:-}/.npmrc"
+echo <<EOF >> "${RUNNER_TEMP:-.}/.npmrc"
 //registry.npmjs.org/:_authToken=\${NODE_AUTH_TOKEN}
 registry=https://registry.npmjs.org/
 always-auth=true
