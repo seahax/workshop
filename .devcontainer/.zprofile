@@ -12,8 +12,9 @@ path=(
 )
 
 export LANG=en_US.UTF-8
-export EDITOR='vim'
+export EDITOR=vim
 export AWS_REGION=us-west-2
+export NODE_OPTIONS="$NODE_OPTIONS --no-deprecation"
 export PNPM_HOME=$HOME/.pnpm
 
 mkdir -p "$PNPM_HOME"
