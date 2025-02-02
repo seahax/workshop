@@ -1,8 +1,11 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+const entryDir = path.dirname(process.argv[1]!);
+
 export async function getVersion(): Promise<string> {
-  let dir = import.meta.dirname;
+  let dir = entryDir;
+
   const root = path.parse(dir).root;
 
   do {
