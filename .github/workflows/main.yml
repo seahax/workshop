@@ -3,9 +3,9 @@ on:
   push:
     branches: [main]
     paths-ignore:
-      - '.devcontainer/**'
-      - 'templates/**'
-      - 'unreleased/**'
+      - ".devcontainer/**"
+      - "templates/**"
+      - "unreleased/**"
 concurrency:
   group: ${{ github.workflow }}
 env:
@@ -16,10 +16,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@v4
         with: { fetch-depth: 0 }
-      - uses: asdf-vm/actions/install@v3
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build
-      - run: pnpm check
-      - run: npx lerna --no-private publish from-package --no-git-tag-version --no-push --yes
+      - name: asdf
+        run: |
+          PATH="$HOME/bin:$PATH"
+          PATH="$HOME/.asdf/bin:$PATH"
+          echo "$HOME/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.asdf/bin" >> "$GITHUB_PATH"
+          cd "$HOME"
+          wget https://github.com/asdf-vm/asdf/releases/download/v0.16.0/asdf-v0.16.0-linux-arm64.tar.gz
+          mkdir -p bin
+          tar -xvf asdf-v0.16.0-linux-arm64.tar.gz -C bin
+          asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+          asdf plugin add pnpm https://github.com/jonathanmorley/asdf-pnpm.git
+          asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
+          asdf install
+      - name: install
+        run: pnpm install --frozen-lockfile
+      - name: build
+        run: pnpm build
+      - name: check
+        run: pnpm check
+      - name: publish
+        run: npx lerna --no-private publish from-package --no-git-tag-version --no-push --yes
