@@ -21,6 +21,8 @@ jobs:
         with: { fetch-depth: 0 }
       - name: asdf
         run: |
+          set -e
+          set -x
           PATH="$HOME/bin:$PATH"
           PATH="$HOME/.asdf/bin:$PATH"
           echo "$HOME/bin" >> "$GITHUB_PATH"
@@ -32,8 +34,12 @@ jobs:
           asdf plugin add pnpm https://github.com/jonathanmorley/asdf-pnpm.git
           asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
           asdf install
+          echo done
       - name: install
-        run: pnpm install --frozen-lockfile
+        run: |
+          cat "$GITHUB_PATH""
+          echo "$PATH"
+          pnpm install --frozen-lockfile
       - name: build
         run: pnpm build
       - name: check
