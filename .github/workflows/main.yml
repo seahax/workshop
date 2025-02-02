@@ -10,6 +10,7 @@ concurrency:
   group: ${{ github.workflow }}
 env:
   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+  NODE_OPTIONS: --no-deprecation
 jobs:
   build:
     runs-on: ubuntu-latest
