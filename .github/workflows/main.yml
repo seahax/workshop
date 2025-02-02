@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
         with: { fetch-depth: 0 }
       - name: Setup
-        run: ./setup.sh
+        run: ./.github/workflows/setup.sh
       - run: cat "$HOME/.npmrc"
       - name: Install
         run: pnpm install --frozen-lockfile
