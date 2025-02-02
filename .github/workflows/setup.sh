@@ -1,22 +1,18 @@
 #!/usr/bin/env bash
 set -e
 set -x
-export PATH="$HOME/bin:$PATH"
-export PATH="$HOME/.asdf/bin:$PATH"
 
-OLD_PATHS=$(cat "$GITHUB_PATH")
-NEW_PATHS=<<EOF
-$HOME/bin
-$HOME/.asdf/bin
-$OLD_PATHS
-EOF
-echo "$PATHS" > "$GITHUB_PATH"
-cat "$GITHUB_PATH"
+export ASDF_DATA_DIR=$HOME/.asdf
+export ASDF_DIR=$ASDF_DATA_DIR/bin
+export PATH="$ASDF_DATA_DIR/shims:$PATH"
+export PATH="$ASDF_DIR:$PATH"
 
-wget https://github.com/asdf-vm/asdf/releases/download/v0.16.0/asdf-v0.16.0-linux-amd64.tar.gz -P "$HOME"
+echo "$ASDF_DATA_DIR/shims" >> "$GITHUB_PATH"
+echo "$ASDF_DIR" >> "$GITHUB_PATH"
 
-mkdir -p "$HOME/bin"
-tar -xvf "$HOME/asdf-v0.16.0-linux-amd64.tar.gz" -C "$HOME/bin"
+mkdir -p "$ASDF_DIR"
+wget https://github.com/asdf-vm/asdf/releases/download/v0.16.0/asdf-v0.16.0-linux-amd64.tar.gz -P "$ASDF_DIR"
+tar -xvf "$ASDF_DIR/asdf-v0.16.0-linux-amd64.tar.gz" -C "$ASDF_DIR"
 
 asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
 asdf plugin add pnpm https://github.com/jonathanmorley/asdf-pnpm.git
