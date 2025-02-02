@@ -4,11 +4,11 @@ set -x
 export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/.asdf/bin:$PATH"
 
-PATHS=$(cat "$GITHUB_PATH")
-PATHS=<<EOF
+OLD_PATHS=$(cat "$GITHUB_PATH")
+NEW_PATHS=<<EOF
 $HOME/bin
 $HOME/.asdf/bin
-$PATHS
+$OLD_PATHS
 EOF
 echo "$PATHS" > "$GITHUB_PATH"
 cat "$GITHUB_PATH"
