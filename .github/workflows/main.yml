@@ -8,6 +8,8 @@ on:
       - "unreleased/**"
 concurrency:
   group: ${{ github.workflow }}
+env:
+  NODE_OPTIONS: --no-deprecation
 jobs:
   build:
     runs-on: ubuntu-latest

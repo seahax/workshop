@@ -1,14 +1,12 @@
 #!/usr/bin/env bash
-export NODE_OPTIONS="$NODE_OPTIONS --no-deprecation"
 export ASDF_DATA_DIR=$HOME/.asdf
 export ASDF_DIR=$ASDF_DATA_DIR/bin
 export PATH="$ASDF_DATA_DIR/shims:$ASDF_DIR:$PATH"
 
-echo "NODE_OPTIONS=$NODE_OPTIONS" >> "$GITHUB_ENV"
 echo "$ASDF_DATA_DIR/shims" >> "$GITHUB_PATH"
 echo "$ASDF_DIR" >> "$GITHUB_PATH"
 
-echo <<EOF >> "$HOME/.npmrc"
+echo <<EOF >> "${RUNNER_TEMP:-}/.npmrc"
 //registry.npmjs.org/:_authToken=\${NODE_AUTH_TOKEN}
 registry=https://registry.npmjs.org/
 always-auth=true
