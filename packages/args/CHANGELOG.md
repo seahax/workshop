@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.3 - 2025-02-02
+
+- __fix:__ default version detection using args package version instead of the entry file package version (8b5cca1)
+
 ## 0.3.2 - 2025-02-01
 
 - __chore:__ refactored all the tsconfigs (80f8ffd)

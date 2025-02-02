@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.9 - 2025-02-02
+
+- __chore:__ remove unnecessary tsconfig outDir (d4d44f7)
+
 ## 0.1.8 - 2025-02-01
 
 - __chore:__ refactored all the tsconfigs (80f8ffd)

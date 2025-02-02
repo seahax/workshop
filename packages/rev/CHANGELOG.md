@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3 - 2025-02-02
+
+- __chore:__ remove unnecessary build tsconfig (b1ce799)
+
 ## 0.1.2 - 2025-02-01
 
 - __fix:__ broken bin script (4a2442b)
