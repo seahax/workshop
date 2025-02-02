@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-PATH="$HOME/bin:$PATH"
-PATH="$HOME/.asdf/bin:$PATH"
+set -e
+set -x
+export PATH="$HOME/bin:$PATH"
+export PATH="$HOME/.asdf/bin:$PATH"
 
 PATHS=$(cat "$GITHUB_PATH")
 PATHS=<<EOF
