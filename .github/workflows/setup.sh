@@ -7,6 +7,8 @@ export PATH=$ASDF_DATA_DIR/shims:$ASDF_DIR:$PATH
 
 echo "$ASDF_DATA_DIR/shims" >> "$GITHUB_PATH"
 echo "$ASDF_DIR" >> "$GITHUB_PATH"
+echo loglevel=error >> "$HOME/.npmrc"
+echo always-auth=true >> "$HOME/.npmrc"
 echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> "$HOME/.npmrc"
 
 mkdir -p "$ASDF_DIR"
