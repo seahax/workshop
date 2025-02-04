@@ -218,9 +218,18 @@ importers:
       '@seahax/args':
         specifier: workspace:^
         version: link:../args
+      '@seahax/evented':
+        specifier: workspace:^
+        version: link:../evented
       '@seahax/main':
         specifier: workspace:^
         version: link:../main
+      chalk:
+        specifier: ^5.3.0
+        version: 5.4.1
+      wrap-ansi:
+        specifier: ^9.0.0
+        version: 9.0.0
     devDependencies:
       '@seahax/vite-plugin-finalize':
         specifier: workspace:*
