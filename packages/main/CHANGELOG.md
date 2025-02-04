@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0 - 2025-02-04
+
+- __feat:__ silently exit on uncaught AbortError (46cafb4)
+- __fix:__ don't clear ora on log unless spinning (8bbbebc)
+
 ## 0.2.4 - 2025-02-01
 
 - __chore:__ refactored all the tsconfigs (80f8ffd)

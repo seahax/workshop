@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.9 - 2025-02-04
+
+- __chore:__ eslint changes (66fdaf9)
+
 ## 0.2.8 - 2025-02-02
 
 - __chore:__ remove unnecessary tsconfig outDir (d4d44f7)
