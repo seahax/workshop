@@ -194,6 +194,8 @@ const stack: StackFrame[] = [];
 const ora = createOra();
 
 events.on('beforeLog', () => {
-  // Make sure that the spinner doesn't interfere with regular logging.
-  ora.clear();
+  if (ora.isSpinning) {
+    // Make sure that the spinner doesn't interfere with regular logging.
+    ora.clear();
+  }
 });
