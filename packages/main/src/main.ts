@@ -15,8 +15,10 @@ async function main(action: () => void | Promise<void>): Promise<never> {
   try {
     await action();
   }
-  catch (error) {
-    events.emit('uncaughtError', error);
+  catch (error: any) {
+    if (error?.name !== 'AbortError') {
+      events.emit('uncaughtError', error);
+    }
   }
 
   return process.exit();
