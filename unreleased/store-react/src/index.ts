@@ -1,2 +1,2 @@
-export * from './create-store-context.js';
-export type * from './types/store-context.js';
+export * from './create-store-context.ts';
+export type * from './types/store-context.ts';

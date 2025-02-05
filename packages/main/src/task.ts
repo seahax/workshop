@@ -1,7 +1,7 @@
 import createOra from 'ora';
 
-import { AbortError } from './error.js';
-import { events } from './events.js';
+import { AbortError } from './error.ts';
+import { events } from './events.ts';
 
 interface StackFrame {
   readonly update: () => void;

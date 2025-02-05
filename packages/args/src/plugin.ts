@@ -1,4 +1,4 @@
-import { type Command, type CommandBuilder } from './command.js';
+import { type Command, type CommandBuilder } from './command.ts';
 
 export type Plugin<
   TOptions extends Record<string, any>,

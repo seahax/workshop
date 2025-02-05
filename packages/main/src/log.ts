@@ -2,7 +2,7 @@ import { format } from 'node:util';
 
 import chalk from 'chalk';
 
-import { events } from './events.js';
+import { events } from './events.ts';
 
 type LogFunction = (...data: any[]) => void;
 

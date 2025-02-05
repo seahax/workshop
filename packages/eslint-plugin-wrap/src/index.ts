@@ -1,3 +1,3 @@
-export type { Options } from './options.js';
-export type * from './plugin.js';
-export { default } from './plugin.js';
+export type { Options } from './options.ts';
+export type * from './plugin.ts';
+export { default } from './plugin.ts';

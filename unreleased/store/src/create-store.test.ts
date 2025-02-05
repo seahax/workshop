@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 
-import { createStore } from './create-store.js';
-import { type Store } from './types/store.js';
+import { createStore } from './create-store.ts';
+import { type Store } from './types/store.ts';
 
 interface State {
   value: number;

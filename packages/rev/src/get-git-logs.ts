@@ -1,7 +1,7 @@
 import { $ } from 'execa';
 
-import { type NpmMetadata } from './get-npm-metadata.js';
-import { type PackageJson } from './get-package-json.js';
+import { type NpmMetadata } from './get-npm-metadata.ts';
+import { type PackageJson } from './get-package-json.ts';
 
 export interface GitLog {
   readonly hash: string;

@@ -3,9 +3,9 @@
     "moduleDetection": "force",
     "moduleResolution": "bundler",
     "module": "ES2022",
-    "target": "ES2022",
+    "target": "ES2023",
     "lib": [
-      "ES2022"
+      "ES2023"
     ],
     "types": [],
     "jsx": "preserve",
@@ -22,5 +22,6 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "noEmit": true,
+    "rewriteRelativeImportExtensions": true
   },
 }

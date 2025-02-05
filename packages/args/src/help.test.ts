@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 
-import { renderHelp } from './help.js';
+import { renderHelp } from './help.ts';
 
 test('renderHelp', () => {
   const text = renderHelp({

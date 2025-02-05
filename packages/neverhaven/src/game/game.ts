@@ -1,6 +1,6 @@
-import { style } from './style';
-import { type Terminal } from './terminal';
-import { type World } from './world';
+import { style } from './style.ts';
+import { type Terminal } from './terminal.ts';
+import { type World } from './world.ts';
 
 export class Game {
   readonly #terminal: Terminal;

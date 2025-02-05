@@ -1,8 +1,8 @@
 import { type Store, type StoreSelect, type StoreSelectOptions, type StoreState } from '@seahax/store';
 import { createContext, useContext, useEffect, useState } from 'react';
 
-import { type StoreContext } from './types/store-context.js';
-import { useStableSelect } from './use-stable-select.js';
+import { type StoreContext } from './types/store-context.ts';
+import { useStableSelect } from './use-stable-select.ts';
 
 export function createStoreContext<TState extends object>(store: Store<TState>): StoreContext<TState> {
   const StoreContext = Object.assign(createContext(store), { displayName: 'StoreContext' });

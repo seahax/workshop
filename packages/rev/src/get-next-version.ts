@@ -1,8 +1,8 @@
 import semver, { type ReleaseType } from 'semver';
 
-import { type GitLog } from './get-git-logs.js';
-import { type NpmMetadata } from './get-npm-metadata.js';
-import { type PackageJson } from './get-package-json.js';
+import { type GitLog } from './get-git-logs.ts';
+import { type NpmMetadata } from './get-npm-metadata.ts';
+import { type PackageJson } from './get-package-json.ts';
 
 type ProdReleaseType = 'patch' | 'minor' | 'major';
 

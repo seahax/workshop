@@ -5,13 +5,13 @@ import { main } from '@seahax/main';
 import chalk from 'chalk';
 import semver from 'semver';
 
-import { getGitIsClean } from './get-git-is-clean.js';
-import { getGitLogs, type GitLog } from './get-git-logs.js';
-import { getNextVersion } from './get-next-version.js';
-import { getNpmMetadata } from './get-npm-metadata.js';
-import { getPackageJson } from './get-package-json.js';
-import { updateChangelog } from './update-changelog.js';
-import { updatePackageJson } from './update-package-json.js';
+import { getGitIsClean } from './get-git-is-clean.ts';
+import { getGitLogs, type GitLog } from './get-git-logs.ts';
+import { getNextVersion } from './get-next-version.ts';
+import { getNpmMetadata } from './get-npm-metadata.ts';
+import { getPackageJson } from './get-package-json.ts';
+import { updateChangelog } from './update-changelog.ts';
+import { updatePackageJson } from './update-package-json.ts';
 
 await main(async () => {
   await createCommand()

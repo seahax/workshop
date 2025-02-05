@@ -1,4 +1,4 @@
-import { type StoreState } from './store-state.js';
+import { type StoreState } from './store-state.ts';
 
 export type StoreSet<TState extends object> = (
   factory: (state: StoreState<TState>

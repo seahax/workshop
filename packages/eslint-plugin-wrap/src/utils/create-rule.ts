@@ -8,8 +8,8 @@ import {
 } from '@typescript-eslint/utils/ts-eslint';
 import { type Rule } from 'eslint';
 
-import * as messages from '../constants/messages.js';
-import { type Options, OPTIONS_SCHEMA } from '../options.js';
+import * as messages from '../constants/messages.ts';
+import { type Options, OPTIONS_SCHEMA } from '../options.ts';
 
 type MessageId = keyof typeof messages;
 type Report = (

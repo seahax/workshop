@@ -1,7 +1,7 @@
-import { type StoreSelect } from './store-select.js';
-import { type StoreSelectOptions } from './store-select-options.js';
-import { type StoreState } from './store-state.js';
-import { type StoreSubscriber } from './store-subscriber.js';
+import { type StoreSelect } from './store-select.ts';
+import { type StoreSelectOptions } from './store-select-options.ts';
+import { type StoreState } from './store-state.ts';
+import { type StoreSubscriber } from './store-subscriber.ts';
 
 export interface Store<TState extends object> {
   readonly state: StoreState<TState>;

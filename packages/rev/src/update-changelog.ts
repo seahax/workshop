@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 
-import { type GitLog } from './get-git-logs.js';
+import { type GitLog } from './get-git-logs.ts';
 
 export async function updateChangelog(version: string, logs: readonly Pick<GitLog, 'fullText'>[]): Promise<void> {
   const text = await fs.readFile('CHANGELOG.md', 'utf8').catch((error: unknown) => {

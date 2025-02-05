@@ -79,7 +79,7 @@ interface Config {
 
 const TARGET = {
   any: ['es2022'],
-  node: ['node22'],
+  node: ['node20'],
   web: ['es2022'],
 } as const satisfies Record<Target, string[]>;
 

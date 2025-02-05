@@ -1,9 +1,9 @@
-import { type Store } from './types/store.js';
-import { type StoreGet } from './types/store-get.js';
-import { type StoreInit } from './types/store-init.js';
-import { type StoreSelectOptions } from './types/store-select-options.js';
-import { type StoreSet } from './types/store-set.js';
-import { type StoreState } from './types/store-state.js';
+import { type Store } from './types/store.ts';
+import { type StoreGet } from './types/store-get.ts';
+import { type StoreInit } from './types/store-init.ts';
+import { type StoreSelectOptions } from './types/store-select-options.ts';
+import { type StoreSet } from './types/store-set.ts';
+import { type StoreState } from './types/store-state.ts';
 
 const NONE = Symbol('NONE');
 

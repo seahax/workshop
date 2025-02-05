@@ -6,7 +6,7 @@ import Negotiator from 'negotiator';
 import replace from 'stream-replace-string';
 import { type Connect } from 'vite';
 
-import { CLIENT_SCRIPT_NAME } from './client-route.js';
+import { CLIENT_SCRIPT_NAME } from './client-route.ts';
 
 interface Config {
   readonly base: string;

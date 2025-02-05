@@ -11,10 +11,10 @@ import {
 } from 'vite';
 import { WebSocket, WebSocketServer } from 'ws';
 
-import clientInject from './middleware/client-inject.js';
-import clientRoute from './middleware/client-route.js';
-import error from './middleware/error.js';
-import ping from './middleware/ping.js';
+import clientInject from './middleware/client-inject.ts';
+import clientRoute from './middleware/client-route.ts';
+import error from './middleware/error.ts';
+import ping from './middleware/ping.ts';
 
 export interface BuildPreviewConfig extends Pick<InlineConfig, 'plugins'> {
   reload?: boolean;

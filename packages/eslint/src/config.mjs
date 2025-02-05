@@ -74,10 +74,8 @@ export default function config({ ignores = DEFAULT_IGNORES } = {}) {
       rules: {
         'import-sort/exports': 'warn',
         'import-sort/imports': 'warn',
-        'import/extensions': ['error', { ignorePackages: true, pattern: { js: 'always' } }],
-        'import/no-cycle': 'error',
+        'import/extensions': ['error', 'always', { ignorePackages: true, checkTypeImports: true }],
         'import/no-extraneous-dependencies': ['error', { devDependencies: false }],
-        'import/no-self-import': 'error',
         'max-lines': ['warn', { max: 300, skipBlankLines: true, skipComments: true }],
         'no-empty': 'off',
         'no-implicit-coercion': 'warn',

@@ -1,5 +1,5 @@
-import { ArgsError } from './error.js';
-import { META, type MetaType } from './meta.js';
+import { ArgsError } from './error.ts';
+import { META, type MetaType } from './meta.ts';
 
 interface Option {
   readonly usage: string;

@@ -1,7 +1,7 @@
 import { $ } from 'execa';
 import semver from 'semver';
 
-import { type PackageJson } from './get-package-json.js';
+import { type PackageJson } from './get-package-json.ts';
 
 export interface NpmMetadata {
   readonly version: string;

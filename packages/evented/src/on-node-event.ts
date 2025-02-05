@@ -1,4 +1,4 @@
-import { type OverloadUnion } from './types';
+import { type OverloadUnion } from './types.ts';
 
 interface NodeEventEmitter {
   on(event: string, listener: (...args: any[]) => any): any;

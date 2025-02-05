@@ -1,11 +1,11 @@
 /* eslint-disable max-lines */
-import { ArgsError } from './error.js';
-import { type HelpConfig, renderHelp } from './help.js';
-import { META, type Meta, type MetaOption, type WithMeta } from './meta.js';
-import { parse } from './parse.js';
-import { type Plugin } from './plugin.js';
-import { last, multiple } from './utils.js';
-import { getVersion } from './version.js';
+import { ArgsError } from './error.ts';
+import { type HelpConfig, renderHelp } from './help.ts';
+import { META, type Meta, type MetaOption, type WithMeta } from './meta.ts';
+import { parse } from './parse.ts';
+import { type Plugin } from './plugin.ts';
+import { last, multiple } from './utils.ts';
+import { getVersion } from './version.ts';
 
 type Simplify<T> = T extends object ? { [P in keyof T]: T[P] } : T;
 type Flag = `-${string}`;

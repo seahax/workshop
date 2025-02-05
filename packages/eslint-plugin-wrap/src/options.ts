@@ -1,7 +1,7 @@
 import { type JSONSchema4 } from '@typescript-eslint/utils/json-schema';
 import { type RuleContext } from '@typescript-eslint/utils/ts-eslint';
 
-import { NAMESPACE } from './constants/namespace.js';
+import { NAMESPACE } from './constants/namespace.ts';
 
 export interface Options {
   /**

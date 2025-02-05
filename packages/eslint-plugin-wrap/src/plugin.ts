@@ -1,15 +1,15 @@
 import { type ESLint, type Linter } from 'eslint';
 
-import { NAMESPACE } from './constants/namespace.js';
-import { type Options } from './options.js';
-import ruleArray from './rules/array.js';
-import ruleChain from './rules/chain.js';
-import ruleExport from './rules/export.js';
-import ruleFunction from './rules/function.js';
-import ruleImport from './rules/import.js';
-import ruleObject from './rules/object.js';
-import ruleTernary from './rules/ternary.js';
-import ruleUnion from './rules/union.js';
+import { NAMESPACE } from './constants/namespace.ts';
+import { type Options } from './options.ts';
+import ruleArray from './rules/array.ts';
+import ruleChain from './rules/chain.ts';
+import ruleExport from './rules/export.ts';
+import ruleFunction from './rules/function.ts';
+import ruleImport from './rules/import.ts';
+import ruleObject from './rules/object.ts';
+import ruleTernary from './rules/ternary.ts';
+import ruleUnion from './rules/union.ts';
 
 interface Plugin extends ESLint.Plugin {
   readonly config: (options?: Options) => Linter.Config;

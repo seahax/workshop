@@ -1,8 +1,8 @@
 import { expect, test, vi } from 'vitest';
 
-import { createCommand } from './command.js';
-import { createPlugin } from './plugin.js';
-import { last, multiple } from './utils.js';
+import { createCommand } from './command.ts';
+import { createPlugin } from './plugin.ts';
+import { last, multiple } from './utils.ts';
 
 test('command', async () => {
   const command = createCommand()

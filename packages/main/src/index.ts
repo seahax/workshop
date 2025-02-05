@@ -1,4 +1,4 @@
-export * from './error.js';
-export { getLogLevel, isLogLevel, LogLevel, setLogLevel, toErrorString } from './log.js';
-export { default as main } from './main.js';
-export * from './task.js';
+export * from './error.ts';
+export { getLogLevel, isLogLevel, LogLevel, setLogLevel, toErrorString } from './log.ts';
+export { default as main } from './main.ts';
+export * from './task.ts';

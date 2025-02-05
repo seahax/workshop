@@ -1,4 +1,4 @@
-import { type PickByType, type UnionToIntersection } from './types.js';
+import { type PickByType, type UnionToIntersection } from './types.ts';
 
 type Events<TEvents extends object> = (
   PickByType<TEvents, (...args: any[]) => void>

@@ -1,6 +1,6 @@
 import wrap from 'wrap-ansi';
 
-import { type MetaType } from './meta.js';
+import { type MetaType } from './meta.ts';
 
 export interface HelpOption {
   readonly type: MetaType;

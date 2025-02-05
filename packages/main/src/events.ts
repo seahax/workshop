@@ -1,6 +1,6 @@
 import EventEmitter from 'node:events';
 
-import { type LogLevel } from './log.js';
+import { type LogLevel } from './log.ts';
 
 export const events = new EventEmitter<{
   beforeLog: [level: LogLevel | 'stdout' | 'stderr'];

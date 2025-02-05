@@ -1,8 +1,8 @@
 /* eslint-disable unicorn/no-process-exit */
 import sourceMapSupport from 'source-map-support';
 
-import { events, initEvents } from './events.js';
-import { initLog } from './log.js';
+import { events, initEvents } from './events.ts';
+import { initLog } from './log.ts';
 
 async function main(action: () => void | Promise<void>): Promise<never> {
   if ('called' in main) throw new Error('The main function can only be called once.');

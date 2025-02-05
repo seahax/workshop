@@ -1,10 +1,10 @@
-import { getOptions } from '../options.js';
-import { createRule } from '../utils/create-rule.js';
-import { createRuleFix } from '../utils/create-rule-fix.js';
-import { detectEOL } from '../utils/detect-eol.js';
-import { detectIndentString } from '../utils/detect-indent-string.js';
-import { getLeadingWhitespace } from '../utils/get-leading-whitespace.js';
-import { getLine } from '../utils/get-line.js';
+import { getOptions } from '../options.ts';
+import { createRule } from '../utils/create-rule.ts';
+import { createRuleFix } from '../utils/create-rule-fix.ts';
+import { detectEOL } from '../utils/detect-eol.ts';
+import { detectIndentString } from '../utils/detect-indent-string.ts';
+import { getLeadingWhitespace } from '../utils/get-leading-whitespace.ts';
+import { getLine } from '../utils/get-line.ts';
 
 export default createRule('export', 'Wrap export names on long lines.', (context, report) => {
   const { maxLen, tabWidth, autoFix } = getOptions(context);
