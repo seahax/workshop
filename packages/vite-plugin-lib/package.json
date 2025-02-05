@@ -29,9 +29,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@seahax/vite-plugin-chmodx": "workspace:^",
-    "@seahax/vite-plugin-external": "workspace:^",
-    "@seahax/vite-plugin-finalize": "workspace:^"
+    "execa": "^9.5.2"
   },
   "peerDependencies": {
     "vite": "catalog:"
