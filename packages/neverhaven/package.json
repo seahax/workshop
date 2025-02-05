@@ -11,12 +11,12 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "pnpm clean && vite build",
-    "start": "pnpm build && node bin.js"
+    "start": "pnpm build && node bin.mjs"
   },
   "type": "module",
-  "bin": "bin.js",
+  "bin": "bin.mjs",
   "files": [
-    "bin.js",
+    "bin.mjs",
     "dist",
     "!dist/*.tsbuildinfo"
   ],
@@ -24,7 +24,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "@seahax/vite-plugin-finalize": "workspace:*",
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "dependencies": {
