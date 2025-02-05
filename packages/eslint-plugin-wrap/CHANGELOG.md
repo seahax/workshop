@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.2 - 2025-02-05
+
+- __chore:__ update configs for vite-plugin-lib changes (2d3822f)
+- __chore:__ eslint changed to require extensions (tsconfig module bundler) (3562375)
+
 ## 0.6.1 - 2025-02-01
 
 - __chore:__ refactored all the tsconfigs (80f8ffd)

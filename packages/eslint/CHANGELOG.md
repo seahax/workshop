@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.10 - 2025-02-05
+
+- __chore:__ eslint changed to require extensions (tsconfig module bundler) (3562375)
+
 ## 0.2.9 - 2025-02-04
 
 - __chore:__ eslint changes (66fdaf9)

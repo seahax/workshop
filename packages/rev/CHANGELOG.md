@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.4 - 2025-02-05
+
+- __chore:__ update configs for vite-plugin-lib changes (2d3822f)
+- __chore:__ eslint changed to require extensions (tsconfig module bundler) (3562375)
+
 ## 0.1.3 - 2025-02-02
 
 - __chore:__ remove unnecessary build tsconfig (b1ce799)

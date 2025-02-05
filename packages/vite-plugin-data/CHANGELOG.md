@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.6 - 2025-02-05
+
+- __chore:__ update configs for vite-plugin-lib changes (2d3822f)
+
 ## 1.0.5 - 2025-02-01
 
 - __chore:__ refactored all the tsconfigs (80f8ffd)

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.4 - 2025-02-05
+
+- __chore:__ update configs for vite-plugin-lib changes (2d3822f)
+- __chore:__ eslint changed to require extensions (tsconfig module bundler) (3562375)
+
 ## 0.3.3 - 2025-02-02
 
 - __fix:__ default version detection using args package version instead of the entry file package version (8b5cca1)

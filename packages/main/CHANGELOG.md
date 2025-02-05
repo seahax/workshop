@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.1 - 2025-02-05
+
+- __chore:__ update configs for vite-plugin-lib changes (2d3822f)
+- __chore:__ eslint changed to require extensions (tsconfig module bundler) (3562375)
+
 ## 0.3.0 - 2025-02-04
 
 - __feat:__ silently exit on uncaught AbortError (46cafb4)
