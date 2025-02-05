@@ -2,6 +2,7 @@ import os from 'node:os';
 
 import { Evented, onDOMEvent } from '@seahax/evented';
 import { AbortError } from '@seahax/main';
+import ansiRegex from 'ansi-regex';
 import wrap from 'wrap-ansi';
 
 interface Entry {
@@ -74,6 +75,12 @@ export class Terminal {
   async print(strings: TemplateStringsArray | string = '', ...args: any[]): Promise<void> {
     await this.#next(async (signal) => {
       const ac = new AbortController();
+      const removeKeypressHandler = this.#events.on('keypress', () => {
+        ac.abort();
+      }, { once: true });
+      const keypressPromise = new Promise<void>((resolve) => {
+        ac.signal.addEventListener('abort', () => resolve());
+      });
 
       let text = typeof strings === 'string'
         ? strings
@@ -88,25 +95,40 @@ export class Terminal {
         : line,
       ).join(os.EOL + os.EOL);
 
-      const removeKeypressHandler = this.#events.on('keypress', () => {
-        ac.abort();
-      }, { once: true });
+      const segments: string[] = [];
+      let index = 0;
+      let delay = 0;
 
-      const keypressPromise = new Promise<void>((resolve) => {
-        ac.signal.addEventListener('abort', () => resolve());
-      });
+      for (const match of text.matchAll(ansiRegex())) {
+        if (match.index > index) {
+          segments.push(...text.slice(index, match.index));
+        }
 
-      for (const [i, char] of [...text].entries()) {
+        segments.push(match[0]);
+        index = match.index + match[0].length;
+      }
+
+      if (index < text.length) {
+        segments.push(...text.slice(index));
+      }
+
+      for (const [i, segment] of segments.entries()) {
         if (ac.signal.aborted) {
-          process.stdout.write(text.slice(i));
+          process.stdout.write(segments.slice(i).join(''));
           break;
         }
 
-        process.stdout.write(char);
-        const delay = getCharDelay(char);
+        process.stdout.write(segment);
+        delay = getSegmentDelay(segment);
 
         if (delay) await Promise.race([keypressPromise, new Promise((resolve) => setTimeout(resolve, delay))]);
         if (signal.aborted) break;
+      }
+
+      const finalDelay = getSegmentDelay('.');
+
+      if (finalDelay > delay) {
+        await Promise.race([keypressPromise, new Promise((resolve) => setTimeout(resolve, finalDelay - delay))]);
       }
 
       process.stdout.write(os.EOL);
@@ -270,8 +292,8 @@ function isPrintableCharacter(char: string): boolean {
   return [...char].length === 1 && /^[\p{L}\p{M}\p{N}\p{P}\p{S}\p{Zs}]+$/u.test(char);
 }
 
-function getCharDelay(char: string): number {
-  switch (char) {
+function getSegmentDelay(segment: string): number {
+  switch (segment) {
     case '…': {
       return 3000;
     }
@@ -288,9 +310,10 @@ function getCharDelay(char: string): number {
       return 200;
     }
     default: {
-      if (char.includes('\u001B')) return 0;
-      if (/\p{P}/u.test(char)) return 0;
-      return 40;
+      if (segment.includes('\u001B')) return 0;
+      if (segment.includes('\u009B')) return 0;
+      if (/\p{P}/u.test(segment)) return 0;
+      return 30;
     }
   }
 }
