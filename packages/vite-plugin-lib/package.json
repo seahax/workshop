@@ -22,11 +22,12 @@
     "!dist/*.tsbuildinfo"
   ],
   "scripts": {
-    "build": "pnpm clean && vite build",
+    "build": "vite build",
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "execa": "^9.5.2"
+    "execa": "^9.5.2",
+    "json5": "^2.2.3"
   },
   "peerDependencies": {
     "vite": "catalog:"

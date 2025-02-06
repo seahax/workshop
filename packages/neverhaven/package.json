@@ -16,7 +16,7 @@
     "!dist/*.tsbuildinfo"
   ],
   "scripts": {
-    "build": "pnpm clean && vite build",
+    "build": "vite build",
     "clean": "rm -rf dist",
     "start": "pnpm build && node bin.mjs"
   },
