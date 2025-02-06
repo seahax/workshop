@@ -1,6 +1,7 @@
 .nx
 .vscode
 .terraform
+.pnpm-store
 node_modules
 dist
 lib

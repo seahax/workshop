@@ -1,7 +1,7 @@
 {
 	"name": "Seahax Workshop",
 	"dockerFile": "Dockerfile",
-	"postCreateCommand": "zsh .devcontainer/create",
+	"postCreateCommand": "zsh .devcontainer/post-create.zsh",
 	"mounts": [
 		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.npmrc,target=/home/vscode/.npmrc,type=bind,readonly",
 		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.aws,target=/home/vscode/.aws,type=bind,readonly"
