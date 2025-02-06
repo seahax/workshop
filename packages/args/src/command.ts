@@ -206,12 +206,12 @@ export interface CommandBuilder<
   /**
    * Add a named option that accepts a value.
    */
-  string< TKey extends string, TValue = string>(
+  string<TKey extends string, TValue = string>(
     this: void,
     key: TKey,
     config: RequiredStringOptionConfig<TValue>,
   ): CommandBuilder<Simplify<Omit<TOptions, TKey> & { [key in TKey]: TValue }>, TSubcommands>;
-  string< TKey extends string, TValue = string | undefined>(
+  string<TKey extends string, TValue = string | undefined>(
     this: void,
     key: TKey,
     config?: string | readonly Flag[] | StringOptionConfig<TValue>,

@@ -91,6 +91,7 @@ export default function config({ ignores = DEFAULT_IGNORES } = {}) {
         'unicorn/prefer-default-parameters': 'off',
         'unicorn/prefer-event-target': 'off',
         'unicorn/prefer-native-coercion-functions': 'off',
+        'unicorn/prefer-spread': 'off',
         'unicorn/prefer-switch': 'off',
         'unicorn/prefer-top-level-await': 'off',
         'unicorn/prefer-type-error': 'off',

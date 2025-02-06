@@ -101,7 +101,7 @@ export class Terminal {
 
       for (const match of text.matchAll(ansiRegex())) {
         if (match.index > index) {
-          segments.push(...text.slice(index, match.index));
+          segments.push(...text.slice(index, match.index).split(''));
         }
 
         segments.push(match[0]);
@@ -109,7 +109,7 @@ export class Terminal {
       }
 
       if (index < text.length) {
-        segments.push(...text.slice(index));
+        segments.push(...text.slice(index).split(''));
       }
 
       for (const [i, segment] of segments.entries()) {
@@ -177,7 +177,7 @@ export class Terminal {
             if (historyEnabled && historyIndex + 1 < this.#history.length) {
               ++historyIndex;
               chars.length = 0;
-              chars.push(...this.#history[historyIndex]!);
+              chars.push(...this.#history[historyIndex]!.split(''));
               process.stdout.moveCursor(-index, 0);
               process.stdout.clearLine(1);
               process.stdout.write(chars.join(''));
@@ -192,7 +192,7 @@ export class Terminal {
               process.stdout.moveCursor(-index, 0);
               process.stdout.clearLine(1);
               if (historyIndex >= 0) {
-                chars.push(...this.#history[historyIndex]!);
+                chars.push(...this.#history[historyIndex]!.split(''));
                 process.stdout.write(chars.join(''));
               }
               index = chars.length;
@@ -289,7 +289,7 @@ export class Terminal {
 }
 
 function isPrintableCharacter(char: string): boolean {
-  return [...char].length === 1 && /^[\p{L}\p{M}\p{N}\p{P}\p{S}\p{Zs}]+$/u.test(char);
+  return char.split('').length === 1 && /^[\p{L}\p{M}\p{N}\p{P}\p{S}\p{Zs}]+$/u.test(char);
 }
 
 function getSegmentDelay(segment: string): number {
