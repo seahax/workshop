@@ -3,6 +3,7 @@ import { isBuiltin } from 'node:module';
 import path from 'node:path';
 
 import { execa, ExecaError, type Options } from 'execa';
+import JSON from 'json5';
 import { createLogger, mergeConfig, type Plugin, type UserConfig } from 'vite';
 
 type Target = 'any' | 'node' | 'web';
@@ -14,7 +15,7 @@ interface Config {
    *
    * Default: `'src/index.ts'`
    */
-  readonly entry?: string | string[];
+  readonly entry?: string | readonly [string, ...string[]];
 
   /**
    * The target environment for the library.
@@ -33,7 +34,7 @@ interface Config {
    *
    * Default: `['es']`
    */
-  readonly formats?: Format[];
+  readonly format?: Format | [Format, ...Format[]];
 
   /**
    * Whether to create a bundle which combines source files into fewer chunks,
@@ -77,18 +78,37 @@ interface Config {
   readonly tsc?: false | string;
 }
 
+const TARGET_ANY = ['es2022'];
 const TARGET = {
-  any: ['es2022'],
-  node: ['node20'],
-  web: ['es2022'],
-} as const satisfies Record<Target, string[]>;
+  any: TARGET_ANY,
+  node: [...TARGET_ANY, 'node20'],
+  web: TARGET_ANY,
+} as const satisfies Record<Target, readonly string[]>;
 
-const TSCONFIGS = ['src/tsconfig.json', 'tsconfig.json'] as const;
+const ADDITIONAL_CONDITIONS = {
+  any: [],
+  node: ['node'],
+  web: [],
+} as const satisfies Record<Target, readonly string[]>;
+
+const MAIN_FIELDS_ANY = ['module', 'jsnext:main', 'jsnext'];
+const MAIN_FIELDS = {
+  any: MAIN_FIELDS_ANY,
+  node: MAIN_FIELDS_ANY,
+  web: ['browser', ...MAIN_FIELDS_ANY],
+} as const satisfies Record<Target, readonly string[]>;
+
+const TSCONFIGS = [
+  'src/tsconfig.build.json',
+  'src/tsconfig.json',
+  'tsconfig.build.json',
+  'tsconfig.json',
+] as const;
 
 export default function plugin({
   entry = 'src/index.ts',
   target = 'any',
-  formats = ['es'],
+  format = 'es',
   bundle = false,
   packageJsonPath = 'package.json',
   tsconfigPath,
@@ -98,106 +118,75 @@ export default function plugin({
 
   return {
     name: 'lib',
-    async config(configOverrides, { command }) {
-      root = configOverrides.root ?? root;
+    config: {
+      order: 'pre',
+      async handler(configOverrides, { command }) {
+        root = configOverrides.root ?? root;
 
-      let configDefaults: UserConfig = {
-        build: {
-          target: TARGET[target],
-          sourcemap: true,
-          minify: false,
-          rollupOptions: {
-            treeshake: false,
-            output: { preserveModules: true },
-          },
-        },
-        resolve: {
-          mainFields: ['module', 'jsnext:main', 'jsnext'],
-        },
-      };
-
-      if (target === 'node') {
-        configDefaults = mergeConfig(configDefaults, {
-          resolve: {
-            conditions: ['node'],
-          },
-        } satisfies UserConfig);
-      }
-      else if (target === 'web') {
-        configDefaults = mergeConfig(configDefaults, {
-          resolve: {
-            mainFields: ['browser', 'module', 'jsnext:main', 'jsnext'],
-          },
-        } satisfies UserConfig);
-      }
-
-      if (command === 'build') {
-        configDefaults = mergeConfig(configDefaults, {
+        let configDefaults: UserConfig = {
           build: {
-            lib: {
-              entry,
-              formats,
-              fileName: (format, entryName) => {
-                if (format === 'es') return `${entryName}.mjs`;
-                if (format === 'cjs') return `${entryName}.cjs`;
-                return `${entryName}.${format}.js`;
+            target: [...TARGET[target]],
+            sourcemap: true,
+            minify: bundle,
+            rollupOptions: {
+              treeshake: bundle,
+              output: { preserveModules: !bundle },
+              external: bundle ? undefined : await getExternalCallback(root, packageJsonPath),
+            },
+          },
+          resolve: {
+            conditions: [...ADDITIONAL_CONDITIONS[target]],
+            mainFields: [...MAIN_FIELDS[target]],
+          },
+        };
+
+        if (command === 'build') {
+          configDefaults = mergeConfig(configDefaults, {
+            build: {
+              lib: {
+                entry: typeof entry === 'string' ? [entry] : [...entry],
+                formats: typeof format === 'string' ? [format] : [...format],
+                fileName: (format, entryName) => {
+                  if (format === 'es') return `${entryName}.mjs`;
+                  if (format === 'cjs') return `${entryName}.cjs`;
+                  return `${entryName}.${format}.js`;
+                },
               },
             },
-          },
-        } satisfies UserConfig);
-      }
+          } satisfies UserConfig);
+        }
 
-      if (bundle) {
-        configDefaults = mergeConfig(configDefaults, {
-          build: {
-            minify: true,
-            rollupOptions: {
-              treeshake: true,
-              output: { preserveModules: false },
-            },
-          },
-        } satisfies UserConfig);
-      }
-      else {
-        configDefaults = mergeConfig(configDefaults, {
-          build: {
-            rollupOptions: {
-              external: await getExternalCallback(root, packageJsonPath),
-            },
-          },
-        } satisfies UserConfig);
-      }
-
-      return mergeConfig(configDefaults, configOverrides);
+        return mergeConfig(configDefaults, configOverrides);
+      },
     },
-    configResolved(config) {
-      root = config.root;
+    configResolved: {
+      order: 'post',
+      handler(config) {
+        root = config.root;
+      },
     },
     writeBundle: {
-      sequential: true,
       order: 'post',
+      sequential: true,
       async handler() {
         if (tsc === false) return;
 
         const configs = tsconfigPath == null ? TSCONFIGS : [tsconfigPath];
-        const results = await Promise.all(configs.map(async (filename) => {
-          filename = path.resolve(root, filename);
-          return { filename, access: await fs.access(filename).then(() => true, () => false) };
+        const configsArgs = await Promise.allSettled(configs.map(async (filename) => {
+          const text = await fs.readFile(path.resolve(root, filename), 'utf8');
+          const json = JSON.parse(text);
+          return json?.references ? ['--build', '--force', filename] : ['--project', filename];
         }));
-        const config = results.find((result) => result.access)?.filename;
+        const args = configsArgs.find((result) => result.status === 'fulfilled')?.value;
 
-        if (config == null) {
-          throw new Error('Missing Typescript config file.');
+        if (!args) {
+          throw new Error('Missing valid Typescript config file for type checking.');
         }
 
-        createLogger().info(`exec: ${tsc} --build --force ${path.relative(root, config)}`);
+        createLogger().info(`exec: ${tsc} ${args.join(' ')}`);
 
         try {
-          await execa(
-            tsc,
-            ['--build', '--force', config],
-          { stdio: 'inherit', preferLocal: true, cwd: root } satisfies Options,
-          );
+          await execa(tsc, args, { stdio: 'inherit', preferLocal: true, cwd: root } satisfies Options);
         }
         catch (error) {
           if (error instanceof ExecaError && error.exitCode !== 0) {
@@ -218,7 +207,7 @@ async function getExternalCallback(root: string, packageJsonPath: string): Promi
   const deps = Object.keys({ ...json.dependencies, ...json.peerDependencies, ...json.optionalDependencies });
 
   return (source) => {
-    if (source.startsWith('node:')) return true;
+    if (/^[a-z]+:/iu.test(source)) return true;
     if (isBuiltin(source)) return true;
 
     const id = source.match(/^(?:@[^/]+\/)?[^/]+/u)?.[0];
