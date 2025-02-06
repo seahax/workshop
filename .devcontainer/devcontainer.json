@@ -3,7 +3,8 @@
 	"dockerFile": "Dockerfile",
 	"postCreateCommand": "zsh .devcontainer/create",
 	"mounts": [
-		"source=${localEnv:HOME}/.aws,target=/home/vscode/.aws,type=bind,readonly"
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.npmrc,target=/home/vscode/.npmrc,type=bind,readonly",
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.aws,target=/home/vscode/.aws,type=bind,readonly"
 	],
 	"customizations": {
 		"vscode": {
@@ -12,7 +13,10 @@
 				"terminal.integrated.defaultProfile.linux": "zsh",
 				"workbench.view.showQuietly": {
 					"workbench.panel.output": true
-				}
+				},
+				"editor.codeActionsOnSave": [
+					"source.sortPackageJson"
+				]
 			},
 			"extensions": [
 				"bierner.markdown-preview-github-styles",
@@ -34,7 +38,11 @@
 				"foxundermoon.shell-format",
 				"codezombiech.gitignore",
 				"ziyasal.vscode-open-in-github",
-				"bmalehorn.shell-syntax"
+				"bmalehorn.shell-syntax",
+				"formulahendry.code-runner",
+				"aldijav.golangwithdidi",
+				"milhouse-solutions.npm-deps-versions",
+				"unional.vscode-sort-package-json"
 			]
 		}
 	}
