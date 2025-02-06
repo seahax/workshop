@@ -6,8 +6,6 @@ RUN apt-get install -y git vim awscli
 RUN chsh -s /usr/bin/zsh vscode
 
 COPY content /.temp-content
-
-# User set by the base image.
 USER vscode
 RUN zsh /.temp-content/setup.zsh "$TARGETARCH"
 USER root
