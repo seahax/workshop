@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "composite": true,
     "moduleDetection": "force",
     "moduleResolution": "bundler",
     "module": "ES2022",
