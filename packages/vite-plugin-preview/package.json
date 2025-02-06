@@ -1,35 +1,29 @@
 {
   "name": "@seahax/vite-plugin-preview",
-  "private": false,
   "version": "0.1.8",
+  "private": false,
   "description": "Start a preview server when Vite build watching.",
-  "license": "Unlicense",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
     "directory": "packages/vite-plugin-preview"
   },
-  "scripts": {
-    "clean": "rm -rf dist",
-    "build": "pnpm clean && vite build"
-  },
+  "license": "Unlicense",
   "type": "module",
-  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs"
     }
   },
+  "types": "dist/index.d.ts",
   "files": [
     "dist",
     "!dist/*.tsbuildinfo"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "devDependencies": {
-    "@seahax/vite-plugin-lib": "workspace:*"
+  "scripts": {
+    "build": "pnpm clean && vite build",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@types/ansi-html": "^0.0.0",
@@ -42,7 +36,13 @@
     "stream-replace-string": "^2.0.0",
     "ws": "^8.18.0"
   },
+  "devDependencies": {
+    "@seahax/vite-plugin-lib": "workspace:*"
+  },
   "peerDependencies": {
     "vite": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

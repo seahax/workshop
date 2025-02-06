@@ -1,37 +1,37 @@
 {
   "name": "@seahax/vite-plugin-chmodx",
-  "private": false,
   "version": "0.1.7",
+  "private": false,
   "description": "Set executable bits on chunks that contain shebangs.",
-  "license": "Unlicense",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
     "directory": "packages/vite-plugin-chmodx"
   },
-  "scripts": {
-    "clean": "rm -rf dist",
-    "build": "pnpm clean && vite build"
-  },
+  "license": "Unlicense",
   "type": "module",
-  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs"
     }
   },
+  "types": "dist/index.d.ts",
   "files": [
     "dist",
     "!dist/*.tsbuildinfo"
   ],
-  "publishConfig": {
-    "access": "public"
+  "scripts": {
+    "build": "pnpm clean && vite build",
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "peerDependencies": {
     "vite": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

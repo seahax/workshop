@@ -2,16 +2,16 @@
   "name": "-",
   "private": true,
   "license": "Unlicense",
-  "scripts": {
-    "clean": "lerna run clean && nx reset",
-    "build": "lerna run build",
-    "lint": "lerna run lint && eslint .",
-    "test": "lerna run test && vitest run",
-    "check": "pnpm build && pnpm lint --max-warnings=0 && pnpm test",
-    "rev": "lerna --no-private --no-stream exec rev",
-    "modernize": "npx npm-check-updates@latest -i --root --workspaces --dep dev,prod,peer,optional,packageManager --peer --format group"
-  },
   "type": "module",
+  "scripts": {
+    "build": "lerna run build",
+    "check": "pnpm build && pnpm lint --max-warnings=0 && pnpm test",
+    "clean": "lerna run clean && nx reset",
+    "lint": "lerna run lint && eslint .",
+    "modernize": "npx npm-check-updates@latest -i --root --workspaces --dep dev,prod,peer,optional,packageManager --peer --format group",
+    "rev": "lerna --no-private --no-stream exec rev",
+    "test": "lerna run test && vitest run"
+  },
   "devDependencies": {
     "@seahax/eslint": "workspace:*",
     "@seahax/rev": "workspace:*",

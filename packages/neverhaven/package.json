@@ -2,17 +2,12 @@
   "name": "neverhaven",
   "version": "0.1.2",
   "private": false,
-  "license": "Unlicense",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
     "directory": "packages/neverhaven"
   },
-  "scripts": {
-    "clean": "rm -rf dist",
-    "build": "pnpm clean && vite build",
-    "start": "pnpm build && node bin.mjs"
-  },
+  "license": "Unlicense",
   "type": "module",
   "bin": "bin.mjs",
   "files": [
@@ -20,11 +15,10 @@
     "dist",
     "!dist/*.tsbuildinfo"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "devDependencies": {
-    "@seahax/vite-plugin-lib": "workspace:*"
+  "scripts": {
+    "build": "pnpm clean && vite build",
+    "clean": "rm -rf dist",
+    "start": "pnpm build && node bin.mjs"
   },
   "dependencies": {
     "@seahax/args": "workspace:^",
@@ -33,5 +27,11 @@
     "ansi-regex": "^6.1.0",
     "chalk": "^5.3.0",
     "wrap-ansi": "^9.0.0"
+  },
+  "devDependencies": {
+    "@seahax/vite-plugin-lib": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

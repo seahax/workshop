@@ -1,18 +1,14 @@
 {
   "name": "@seahax/rev",
-  "private": false,
   "version": "0.1.4",
+  "private": false,
   "description": "",
-  "license": "Unlicense",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
     "directory": "packages/rev"
   },
-  "scripts": {
-    "clean": "rm -rf dist",
-    "build": "pnpm clean && vite build"
-  },
+  "license": "Unlicense",
   "type": "module",
   "bin": "bin.mjs",
   "files": [
@@ -20,11 +16,9 @@
     "dist",
     "!dist/*.tsbuildinfo"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "devDependencies": {
-    "@seahax/vite-plugin-lib": "workspace:*"
+  "scripts": {
+    "build": "pnpm clean && vite build",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@seahax/args": "workspace:^",
@@ -33,5 +27,11 @@
     "chalk": "^5.3.0",
     "execa": "^9.5.2",
     "semver": "^7.6.3"
+  },
+  "devDependencies": {
+    "@seahax/vite-plugin-lib": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

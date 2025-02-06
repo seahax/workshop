@@ -1,7 +1,7 @@
 {
   "name": "@seahax/eslint-plugin-wrap",
-  "private": false,
   "version": "0.6.2",
+  "private": false,
   "description": "ESLint plugin with wrapping fixes for long lines.",
   "keywords": [
     "eslint",
@@ -24,41 +24,41 @@
     "pretty",
     "prettier"
   ],
-  "license": "Unlicense",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
     "directory": "packages/eslint-plugin-wrap"
   },
-  "scripts": {
-    "clean": "rm -rf dist",
-    "build": "pnpm clean && vite build"
-  },
+  "license": "Unlicense",
   "type": "module",
-  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs"
     }
   },
+  "types": "dist/index.d.ts",
   "files": [
     "dist",
     "!dist/*.tsbuildinfo"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "devDependencies": {
-    "@seahax/vite-plugin-lib": "workspace:*"
+  "scripts": {
+    "build": "pnpm clean && vite build",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@types/eslint": "catalog:",
     "@typescript-eslint/utils": "^8.20.0"
   },
+  "devDependencies": {
+    "@seahax/vite-plugin-lib": "workspace:*"
+  },
   "peerDependencies": {
     "@typescript-eslint/parser": "^8.18.1",
     "eslint": "catalog:",
     "typescript": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

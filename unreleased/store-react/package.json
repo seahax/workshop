@@ -1,32 +1,29 @@
 {
   "name": "@seahax/store-react",
-  "private": true,
   "version": "0.1.0",
+  "private": true,
   "description": "",
-  "license": "Unlicense",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
     "directory": "packages/store-react"
   },
-  "scripts": {
-    "clean": "rm -rf dist",
-    "build": "pnpm clean && vite build"
-  },
+  "license": "Unlicense",
   "type": "module",
-  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs"
     }
   },
+  "types": "dist/index.d.ts",
   "files": [
     "dist",
     "!dist/*.tsbuildinfo"
   ],
-  "publishConfig": {
-    "access": "public"
+  "scripts": {
+    "build": "pnpm clean && vite build",
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*"
@@ -35,5 +32,8 @@
     "@seahax/store": "workspace:^",
     "@types/react": ">=18",
     "react": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

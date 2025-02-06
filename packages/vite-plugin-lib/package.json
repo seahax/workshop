@@ -1,37 +1,37 @@
 {
   "name": "@seahax/vite-plugin-lib",
-  "private": false,
   "version": "0.3.0",
+  "private": false,
   "description": "Just build a library.",
-  "license": "Unlicense",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
     "directory": "packages/vite-plugin-lib"
   },
-  "scripts": {
-    "clean": "rm -rf dist",
-    "build": "pnpm clean && vite build"
-  },
+  "license": "Unlicense",
   "type": "module",
-  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs"
     }
   },
+  "types": "dist/index.d.ts",
   "files": [
     "dist",
     "!dist/*.tsbuildinfo"
   ],
-  "publishConfig": {
-    "access": "public"
+  "scripts": {
+    "build": "pnpm clean && vite build",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "execa": "^9.5.2"
   },
   "peerDependencies": {
     "vite": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

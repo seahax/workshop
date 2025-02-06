@@ -1,37 +1,37 @@
 {
   "name": "@seahax/vite-plugin-data",
-  "private": false,
   "version": "1.0.6",
+  "private": false,
   "description": "Compile time data modules.",
-  "license": "Unlicense",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
     "directory": "packages/vite-plugin-data"
   },
-  "scripts": {
-    "clean": "rm -rf dist",
-    "build": "pnpm clean && vite build"
-  },
+  "license": "Unlicense",
   "type": "module",
-  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs"
     }
   },
+  "types": "dist/index.d.ts",
   "files": [
     "dist",
     "!dist/*.tsbuildinfo"
   ],
-  "publishConfig": {
-    "access": "public"
+  "scripts": {
+    "build": "pnpm clean && vite build",
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "peerDependencies": {
     "vite": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

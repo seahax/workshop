@@ -1,37 +1,37 @@
 {
   "name": "@seahax/vitest",
-  "private": true,
   "version": "0.1.0",
+  "private": true,
   "description": "",
-  "license": "Unlicense",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
     "directory": "packages/vitest"
   },
-  "scripts": {
-    "clean": "rm -rf dist",
-    "build": "pnpm clean && vite build"
-  },
+  "license": "Unlicense",
   "type": "module",
-  "types": "dist/config.d.ts",
   "exports": {
     ".": {
       "types": "./dist/config.d.ts",
       "import": "./dist/config.mjs"
     }
   },
+  "types": "dist/config.d.ts",
   "files": [
     "dist",
     "!dist/*.tsbuildinfo"
   ],
-  "publishConfig": {
-    "access": "public"
+  "scripts": {
+    "build": "pnpm clean && vite build",
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "peerDependencies": {
     "vitest": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
