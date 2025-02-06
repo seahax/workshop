@@ -79,7 +79,7 @@ test('repeat options', async () => {
 });
 
 test('help', async () => {
-  const writeSpy = vi.spyOn(process.stdout, 'write').mockReset();
+  const writeSpy = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
   const command = createCommand()
     .string('str', { required: true })
     .help();
@@ -107,7 +107,7 @@ test('help', async () => {
 });
 
 test('version', async () => {
-  const logSpy = vi.spyOn(console, 'log').mockReset();
+  const logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
   const command = createCommand()
     .version({ version: '1.0.0' });
 
