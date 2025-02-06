@@ -29,7 +29,7 @@
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "peerDependencies": {
-    "vitest": "catalog:"
+    "vitest": "^3.0.5"
   },
   "publishConfig": {
     "access": "public"
