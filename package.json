@@ -17,18 +17,18 @@
     "@seahax/rev": "workspace:*",
     "@seahax/tsconfig": "workspace:*",
     "@seahax/vitest": "workspace:*",
-    "@types/node": "^22.10.2",
-    "@vitest/coverage-v8": "^2.1.8",
+    "@types/node": "^22.13.1",
+    "@vitest/coverage-v8": "catalog:",
     "eslint": "catalog:",
     "execa": "^9.5.2",
-    "glob": "^11.0.0",
-    "jsdom": "^25.0.1",
+    "glob": "^11.0.1",
+    "jsdom": "^26.0.0",
     "json5": "^2.2.3",
     "lerna": "^8.1.9",
-    "nx": "^20.2.2",
+    "nx": "^20.4.0",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
-    "yaml": "^2.6.1"
+    "yaml": "^2.7.0"
   }
 }
