@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.2 - 2025-02-06
+
+- __chore:__ sort package.json files (7e2658f)
+- __chore:__ remove unnecessary clean step from build scripts (5667218)
+- __chore:__ default all tsconfigs to composite throw shared base (78b0008)
+
 ## 0.2.1 - 2025-02-05
 
 - __chore:__ update configs for vite-plugin-lib changes (2d3822f)

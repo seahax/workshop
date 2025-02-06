@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.11 - 2025-02-06
+
+- __chore:__ sort package.json files (7e2658f)
+- __chore:__ lint fixes (4257a3c)
+- __chore:__ version updates (4f5f731)
+
 ## 0.2.10 - 2025-02-05
 
 - __chore:__ eslint changed to require extensions (tsconfig module bundler) (3562375)

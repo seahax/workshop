@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0 - 2025-02-06
+
+- __feat:__ fix and improve typescript compile (54c9388)
+- __chore:__ sort package.json files (7e2658f)
+- __chore:__ remove unnecessary clean step from build scripts (5667218)
+- __chore:__ default all tsconfigs to composite throw shared base (78b0008)
+- __chore:__ version updates (4f5f731)
+
 ## 0.3.0 - 2025-02-05
 
 - __feat:__ completely refactored and merged in the external and finalize plugins (aa9e2a1)
