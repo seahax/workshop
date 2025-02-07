@@ -2,7 +2,6 @@
 export ARCH=$1
 
 cd ~
-rsync -rv /.temp-content/dotfiles/ .
 source .zprofile
 
 (
@@ -12,4 +11,7 @@ source .zprofile
   asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
   asdf plugin add pnpm https://github.com/jonathanmorley/asdf-pnpm.git
   asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
+  asdf install
 )
+
+npm i -g npm@latest

@@ -6,16 +6,12 @@
 #   - Things that are not inherited by child shells
 
 export ZSH="$HOME/.oh-my-zsh"
-
-zstyle ':omz:update' mode auto
-zstyle ':omz:update' frequency 31
-
 ZSH_THEME=devcontainers
 DISABLE_UNTRACKED_FILES_DIRTY=true
 DISABLE_MAGIC_FUNCTIONS=true
 DISABLE_AUTO_TITLE=true
 plugins=(git asdf aws vscode)
-
+zstyle ':omz:update' mode disabled
 source $ZSH/oh-my-zsh.sh
 
 alias g=git
