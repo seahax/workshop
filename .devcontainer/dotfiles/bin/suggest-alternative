@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-echo "Don't use ${1:-that command}. Use ${2:-the recommended tool} instead."
+echo "Use ${2:-the right tool} instead of ${1:-whatever that was}."
 exit 1
