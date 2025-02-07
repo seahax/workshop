@@ -15,8 +15,8 @@ zstyle ':omz:update' mode disabled
 source $ZSH/oh-my-zsh.sh
 
 alias g=git
-alias n=npm
 alias p=pnpm
+alias npm="suggest-alternative npm pnpm"
 
 for file in "$HOME/.zshrc.d/*.zsh"(N); do
   source "$file"
