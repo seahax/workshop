@@ -1,23 +1,6 @@
 {
-	"name": "Seahax Workshop",
-	"dockerFile": "../devcontainer.Dockerfile",
-	"postCreateCommand": "zsh .devcontainer/init-workspace.zsh",
-	"mounts": [
-		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.npmrc,target=/home/vscode/.npmrc,type=bind",
-		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.aws,target=/home/vscode/.aws,type=bind"
-	],
 	"customizations": {
 		"vscode": {
-			"settings": {
-				"explorer.excludeGitIgnore": true,
-				"terminal.integrated.defaultProfile.linux": "zsh",
-				"workbench.view.showQuietly": {
-					"workbench.panel.output": true
-				},
-				"editor.codeActionsOnSave": [
-					"source.sortPackageJson"
-				]
-			},
 			"extensions": [
 				"bierner.markdown-preview-github-styles",
 				"byi8220.indented-block-highlighting",
@@ -42,7 +25,33 @@
 				"yzhang.markdown-all-in-one",
 				"ziyasal.vscode-open-in-github",
 				"zxh404.vscode-proto3"
-			]
+			],
+			"settings": {
+				"editor.codeActionsOnSave": [
+					"source.sortPackageJson"
+				],
+				"editor.tabSize": 2,
+				"explorer.excludeGitIgnore": true,
+				"files.eol": "\n",
+				"markdown.extension.toc.levels": "2..4",
+				"terminal.integrated.defaultProfile.linux": "zsh",
+				"typescript.preferences.importModuleSpecifierEnding": "js",
+				"typescript.preferences.quoteStyle": "single",
+				"typescript.suggest.completeJSDocs": false,
+				"typescript.suggest.jsdoc.generateReturns": false,
+				"typescript.tsdk": "node_modules/typescript/lib",
+				"window.confirmBeforeClose": "keyboardOnly",
+				"workbench.view.showQuietly": {
+					"workbench.panel.output": true
+				}
+			}
 		}
-	}
+	},
+	"dockerFile": "../devcontainer.Dockerfile",
+	"mounts": [
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.npmrc,target=/home/vscode/.npmrc,type=bind",
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.aws,target=/home/vscode/.aws,type=bind"
+	],
+	"name": "Seahax Workshop",
+	"postCreateCommand": "zsh .devcontainer/init-workspace.zsh"
 }

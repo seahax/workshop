@@ -129,6 +129,7 @@ export default function config({ ignores = DEFAULT_IGNORES } = {}) {
         '@typescript-eslint/no-unsafe-member-access': 'off',
         '@typescript-eslint/no-unsafe-return': 'off',
         '@typescript-eslint/no-unused-expressions': ['warn', { allowTaggedTemplates: true }],
+        '@typescript-eslint/prefer-literal-enum-member': 'off',
         '@typescript-eslint/prefer-namespace-keyword': 'off',
         '@typescript-eslint/prefer-nullish-coalescing': 'off',
         '@typescript-eslint/prefer-regexp-exec': 'off',

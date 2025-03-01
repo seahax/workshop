@@ -20,6 +20,7 @@ interface EventListenerOptions {
   once?: boolean;
 }
 
+// eslint-disable-next-line functional/no-classes
 export class Evented<const TEvents extends object> {
   private readonly _listeners = new Map<string | number | symbol, Set<(...args: any[]) => void>>();
 

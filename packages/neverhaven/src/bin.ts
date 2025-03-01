@@ -1,9 +1,9 @@
 import { createCommand } from '@seahax/args';
 import { main } from '@seahax/main';
 
-import { Game } from './game/game.ts';
-import { Terminal } from './game/terminal.ts';
-import { World } from './game/world.ts';
+import { createGame } from './game.ts';
+import { createStore } from './store/store.ts';
+import { createTerminal } from './terminal.ts';
 
 await main(async () => {
   await createCommand()
@@ -12,11 +12,11 @@ await main(async () => {
     .action(async (result) => {
       if (result.type !== 'options') return;
 
-      const terminal = new Terminal();
-      const world = new World();
-      const game = new Game({ terminal, world });
+      const terminal = createTerminal();
+      const store = createStore();
+      const game = createGame({ terminal, store });
 
-      await game.run();
+      await game.start();
     })
     .parse(process.argv.slice(2));
 });
