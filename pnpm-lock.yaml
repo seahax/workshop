@@ -161,12 +161,6 @@ importers:
         specifier: ^9.19.0
         version: 9.19.0
 
-  packages/evented:
-    devDependencies:
-      '@seahax/vite-plugin-lib':
-        specifier: workspace:*
-        version: link:../vite-plugin-lib
-
   packages/main:
     dependencies:
       '@types/source-map-support':
@@ -191,12 +185,12 @@ importers:
       '@seahax/args':
         specifier: workspace:^
         version: link:../args
-      '@seahax/evented':
-        specifier: workspace:^
-        version: link:../evented
       '@seahax/main':
         specifier: workspace:^
         version: link:../main
+      '@seahax/semaphore':
+        specifier: workspace:^
+        version: link:../semaphore
       '@seahax/store':
         specifier: workspace:^
         version: link:../store
@@ -237,6 +231,12 @@ importers:
       semver:
         specifier: ^7.7.1
         version: 7.7.1
+    devDependencies:
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+
+  packages/semaphore:
     devDependencies:
       '@seahax/vite-plugin-lib':
         specifier: workspace:*

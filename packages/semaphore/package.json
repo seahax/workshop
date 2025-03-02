@@ -1,12 +1,12 @@
 {
-  "name": "@seahax/evented",
-  "version": "0.2.2",
+  "name": "@seahax/semaphore",
+  "version": "0.1.0",
   "private": false,
-  "description": "Add typed events to classes.",
+  "description": "",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
-    "directory": "packages/evented"
+    "directory": "packages/semaphore"
   },
   "license": "Unlicense",
   "type": "module",
