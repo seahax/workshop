@@ -20,10 +20,10 @@ importers:
         version: link:packages/rev
       '@seahax/tsconfig':
         specifier: workspace:*
-        version: link:unreleased/tsconfig
+        version: link:packages/tsconfig
       '@seahax/vitest':
         specifier: workspace:*
-        version: link:unreleased/vitest
+        version: link:packages/vitest
       '@types/node':
         specifier: ^22.13.9
         version: 22.13.9
@@ -36,18 +36,9 @@ importers:
       eslint-plugin-functional:
         specifier: ^9.0.1
         version: 9.0.1(eslint@9.21.0)(typescript@5.8.2)
-      execa:
-        specifier: ^9.5.2
-        version: 9.5.2
-      glob:
-        specifier: ^11.0.1
-        version: 11.0.1
       jsdom:
         specifier: ^26.0.0
         version: 26.0.0
-      json5:
-        specifier: ^2.2.3
-        version: 2.2.3
       lerna:
         specifier: ^8.2.1
         version: 8.2.1(encoding@0.1.13)
@@ -63,9 +54,6 @@ importers:
       vitest:
         specifier: ^3.0.7
         version: 3.0.7(@types/node@22.13.9)(jsdom@26.0.0)(tsx@4.19.2)(yaml@2.7.0)
-      yaml:
-        specifier: ^2.7.0
-        version: 2.7.0
 
   packages/args:
     dependencies:
@@ -261,6 +249,8 @@ importers:
         specifier: workspace:*
         version: link:../vite-plugin-lib
 
+  packages/tsconfig: {}
+
   packages/vite-plugin-chmodx:
     dependencies:
       vite:
@@ -352,17 +342,24 @@ importers:
         specifier: workspace:*
         version: link:../vite-plugin-lib
 
-  unreleased/tsconfig: {}
-
-  unreleased/vitest:
+  packages/vitest:
     dependencies:
+      callsites:
+        specifier: ^4.2.0
+        version: 4.2.0
+      glob:
+        specifier: ^11.0.1
+        version: 11.0.1
       vitest:
         specifier: ^3.0.7
         version: 3.0.7(@types/node@22.13.9)(jsdom@26.0.0)(tsx@4.19.2)(yaml@2.7.0)
+      yaml:
+        specifier: ^2.7.0
+        version: 2.7.0
     devDependencies:
       '@seahax/vite-plugin-lib':
         specifier: workspace:*
-        version: link:../../packages/vite-plugin-lib
+        version: link:../vite-plugin-lib
 
 packages:
 
@@ -1453,6 +1450,10 @@ packages:
   callsites@3.1.0:
     resolution: {integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==}
     engines: {node: '>=6'}
+
+  callsites@4.2.0:
+    resolution: {integrity: sha512-kfzR4zzQtAE9PC7CzZsjl3aBNbXWuXiSeOCdLcPpBfGW8YuCqQHcRPFDbr/BPVmd3EEPVpuFzLyuT/cUhPr4OQ==}
+    engines: {node: '>=12.20'}
 
   camelcase-keys@6.2.2:
     resolution: {integrity: sha512-YrwaA0vEKazPBkn0ipTiMpSajYDSe+KjQfrjhcBMxJt/znbvlHd8Pw/Vamaz5EB4Wfhs3SUR3Z9mwRu/P3s3Yg==}
@@ -5627,6 +5628,8 @@ snapshots:
       get-intrinsic: 1.2.7
 
   callsites@3.1.0: {}
+
+  callsites@4.2.0: {}
 
   camelcase-keys@6.2.2:
     dependencies:

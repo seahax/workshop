@@ -1,7 +1,7 @@
 {
   "name": "@seahax/tsconfig",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "description": "",
   "repository": {
     "type": "git",
