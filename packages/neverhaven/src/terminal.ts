@@ -29,6 +29,7 @@ export function createTerminal({ keyboard }: {
 
   return {
     print: semaphore.controlled(async (
+      signal,
       strings: TemplateStringsArray | string = '', ...args: any[]
     ) => {
       const segments: string[] = [];
@@ -79,7 +80,7 @@ export function createTerminal({ keyboard }: {
         delay = getSegmentDelay(segment);
 
         if (delay) await Promise.race([abortControllerPromise, new Promise((resolve) => setTimeout(resolve, delay))]);
-        if (semaphore.signal.aborted) break;
+        if (signal.aborted) break;
       }
 
       if (FINAL_DELAY > delay) {
@@ -98,6 +99,7 @@ export function createTerminal({ keyboard }: {
     }),
 
     prompt: semaphore.controlled(async (
+      signal,
       message = DEFAULT_PROMPT_MESSAGE,
     ) => {
       const promiseController = new PromiseController<string>();
@@ -109,7 +111,7 @@ export function createTerminal({ keyboard }: {
 
       process.stdout.write(os.EOL + message);
       keyboard.on('keypress', onKeyPress);
-      semaphore.signal.addEventListener('abort', cancel, { once: true });
+      signal.addEventListener('abort', cancel, { once: true });
 
       // All the logic is handled in callbacks, which will resolve/reject the
       // promise controller when an end condition is met.
@@ -225,7 +227,7 @@ export function createTerminal({ keyboard }: {
 
       function removeListeners(): void {
         keyboard.removeListener('keypress', onKeyPress);
-        semaphore.signal.removeEventListener('abort', cancel);
+        signal.removeEventListener('abort', cancel);
       };
 
       function enableHistory(enabled: boolean): void {
