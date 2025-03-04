@@ -36,16 +36,20 @@ try {
 Async functions can be decorated so that they automatically acquire and release tokens when called.
 
 ```ts
-const callback = semaphore.controlled(async (arg: string): Promise<void> => {
+const callback = semaphore.controlled(async (signal, arg: string): Promise<void> => {
   // Do something with limited concurrency...
+  // Use the injected signal to support interruption.
+  signal.throwIfAborted();
 });
 
+// The returned callback is curried so that the signal is provided by the
+// semaphore. The signal is not passed in as an argument.
 await callback('Hello, World!');
 ```
 
 ## Aborting
 
-The semaphore is also an `AbortController`. Calling the `abort` method prevents all future token acquisitions, which means that all unresolved and future `acquire` calls will reject with an `AbortError`.
+The semaphore is also an `AbortController`. Calling the `abort` method prevents all future token acquisitions, which means that all unresolved and future `acquire` calls will reject with an `AbortError`. Controlled functions can also check the injected signal to support interruptions.
 
 ```ts
 semaphore.abort();

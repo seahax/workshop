@@ -45,7 +45,7 @@ export interface Semaphore extends AbortController {
    * a token when called.
    */
   controlled<TReturn, TArgs extends any[]>(
-    callback: (...args: TArgs) => Promise<TReturn>
+    callback: (signal: AbortSignal, ...args: TArgs) => Promise<TReturn>
   ): (...args: TArgs) => Promise<TReturn>;
 }
 
@@ -109,7 +109,7 @@ export function createSemaphore({ capacity = 1 }: SemaphoreOptions = {}): Semaph
         const token = await this.acquire();
 
         try {
-          return await callback(...args);
+          return await callback(this.signal, ...args);
         }
         finally {
           token.release();
