@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.6 - 2025-03-04
+
+- __chore:__ update deps (ae1e38c)
+
 ## 0.3.5 - 2025-02-06
 
 - __chore:__ sort package.json files (7e2658f)

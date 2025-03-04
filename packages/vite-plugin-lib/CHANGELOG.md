@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1 - 2025-03-04
+
+- __chore:__ update deps (ae1e38c)
+
 ## 0.4.0 - 2025-02-06
 
 - __feat:__ fix and improve typescript compile (54c9388)

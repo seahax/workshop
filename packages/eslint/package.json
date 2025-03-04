@@ -1,6 +1,6 @@
 {
   "name": "@seahax/eslint",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "private": false,
   "description": "Yet another ESLint configuration.",
   "repository": {

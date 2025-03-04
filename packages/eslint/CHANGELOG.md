@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.12 - 2025-03-04
+
+- __chore:__ releasing the store package (64cf65d)
+- __chore:__ update deps (ae1e38c)
+
 ## 0.2.11 - 2025-02-06
 
 - __chore:__ sort package.json files (7e2658f)

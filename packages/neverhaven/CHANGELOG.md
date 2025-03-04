@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.4 - 2025-03-04
+
+- __chore:__ releasing the store package (64cf65d)
+- __chore:__ improve neverhaven terminal async handling (58f5c83)
+- __chore:__ add promise-controller package (456a3ec)
+- __chore:__ update deps (ae1e38c)
+
 ## 0.1.3 - 2025-02-06
 
 - __chore:__ improve neverhaven text "typing" timing (9a316b7)
