@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.6 - 2025-03-04
+
+- __chore:__ update for semaphore changes (e097a3e)
+
 ## 0.1.5 - 2025-03-04
 
 - __chore:__ refactor terminal for readability (d2dcf57)
