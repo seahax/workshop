@@ -65,7 +65,9 @@ export function createTerminal({ keyboard }: {
         segments.push(...text.slice(index).split(''));
       }
 
-      keyboard.once('keypress', onKeyPress);
+      // On keypress, print the remaining output immediately, aborting the
+      // "typewriter" effect.
+      keyboard.once('keypress', printImmediate);
 
       for (const [i, segment] of segments.entries()) {
         if (abortController.signal.aborted) {
@@ -88,9 +90,9 @@ export function createTerminal({ keyboard }: {
       }
 
       process.stdout.write(os.EOL);
-      keyboard.removeListener('keypress', onKeyPress);
+      keyboard.removeListener('keypress', printImmediate);
 
-      function onKeyPress(): void {
+      function printImmediate(): void {
         abortController.abort();
       }
     }),
@@ -107,8 +109,10 @@ export function createTerminal({ keyboard }: {
 
       process.stdout.write(os.EOL + message);
       keyboard.on('keypress', onKeyPress);
-      semaphore.signal.addEventListener('abort', onSemaphoreAbort, { once: true });
+      semaphore.signal.addEventListener('abort', cancel, { once: true });
 
+      // All the logic is handled in callbacks, which will resolve/reject the
+      // promise controller when an end condition is met.
       return await promiseController.promise;
 
       function onKeyPress(event: KeypressEvent): void {
@@ -213,7 +217,7 @@ export function createTerminal({ keyboard }: {
         }
       }
 
-      function onSemaphoreAbort(): void {
+      function cancel(): void {
         removeListeners();
         process.stdout.write(os.EOL);
         promiseController.reject(new DOMException('Terminal closed.', 'AbortError'));
@@ -221,7 +225,7 @@ export function createTerminal({ keyboard }: {
 
       function removeListeners(): void {
         keyboard.removeListener('keypress', onKeyPress);
-        semaphore.signal.removeEventListener('abort', onSemaphoreAbort);
+        semaphore.signal.removeEventListener('abort', cancel);
       };
 
       function enableHistory(enabled: boolean): void {
