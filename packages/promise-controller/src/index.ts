@@ -1,4 +1,3 @@
-// eslint-disable-next-line functional/no-classes
 export class PromiseController<T> {
   readonly promise: Promise<T>;
   readonly #resolve: (value: T) => void;
