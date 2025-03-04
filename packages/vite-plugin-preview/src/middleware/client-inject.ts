@@ -124,14 +124,10 @@ export default function middleware({ base }: Config): Connect.NextHandleFunction
       start();
 
       if (!replaceStream) {
-        return original.end(...args as Parameters<typeof res.end>);
+        return original.end(...args);
       }
 
-      if (args[0] != null && typeof args[0] !== 'function') {
-        replaceStream.write(args[0], typeof args[1] === 'string' ? args[1] : undefined);
-      }
-
-      replaceStream.end(args.find((arg): arg is () => void => typeof arg === 'function'));
+      replaceStream.end(...args);
 
       return res;
     };

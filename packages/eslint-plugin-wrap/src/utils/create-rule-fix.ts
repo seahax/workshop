@@ -19,7 +19,7 @@ export function createRuleFix(targets: readonly (TSESTree.Node | TSESTree.Token 
   leaderString,
   trailerString,
 }: Omit<RuleFixContext, 'fixer'>): (fixer: RuleFixer) => Generator<RuleFix> {
-  return function * fix(fixer) {
+  return function* fix(fixer) {
     const lastIndex = targets.length - 1;
 
     for (const [i, node] of targets.entries()) {

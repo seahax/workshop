@@ -449,8 +449,7 @@ function getConfigObject<T extends OptionConfigParams>(
   init: string | readonly Flag[] | T = {} as T,
 ): T {
   if (typeof init === 'string') return { info: init } as T;
-  // eslint-disable-next-line unicorn/no-instanceof-array
-  if (init instanceof Array) return { flags: init } as T;
+  if (Symbol.iterator in init) return { flags: init } as T;
   return init;
 }
 

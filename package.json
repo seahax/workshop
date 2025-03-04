@@ -17,19 +17,25 @@
     "@seahax/rev": "workspace:*",
     "@seahax/tsconfig": "workspace:*",
     "@seahax/vitest": "workspace:*",
-    "@types/node": "^22.13.1",
-    "@vitest/coverage-v8": "^3.0.5",
-    "eslint": "^9.19.0",
-    "eslint-plugin-functional": "^8.0.0",
+    "@types/node": "^22.13.9",
+    "@vitest/coverage-v8": "^3.0.7",
+    "eslint": "^9.21.0",
+    "eslint-plugin-functional": "^9.0.1",
     "execa": "^9.5.2",
     "glob": "^11.0.1",
     "jsdom": "^26.0.0",
     "json5": "^2.2.3",
-    "lerna": "^8.1.9",
-    "nx": "^20.4.0",
-    "typescript": "^5.7.3",
-    "vite": "^6.1.0",
-    "vitest": "^3.0.5",
+    "lerna": "^8.2.1",
+    "nx": "^20.4.6",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0",
+    "vitest": "^3.0.7",
     "yaml": "^2.7.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@octokit/request@>=1.0.0 <9.2.1": ">=9.2.1",
+      "esbuild@<=0.24.2": ">=0.25.0"
+    }
   }
 }

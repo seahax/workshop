@@ -34,13 +34,13 @@
     "escape-goat": "^4.0.0",
     "negotiator": "^1.0.0",
     "stream-replace-string": "^2.0.0",
-    "ws": "^8.18.0"
+    "ws": "^8.18.1"
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "peerDependencies": {
-    "vite": "^6.1.0"
+    "vite": "^6.2.0"
   },
   "publishConfig": {
     "access": "public"
