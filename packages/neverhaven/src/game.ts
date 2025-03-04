@@ -1,6 +1,6 @@
 import type { Store } from './store/store.ts';
 import { style } from './style.ts';
-import { type Terminal } from './terminal.ts';
+import { type Terminal } from './terminal/terminal.ts';
 
 export interface Game {
   start(): Promise<void>;

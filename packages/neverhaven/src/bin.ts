@@ -4,7 +4,7 @@ import { main } from '@seahax/main';
 import { createGame } from './game.ts';
 import { createKeyboard } from './keyboard.ts';
 import { createStore } from './store/store.ts';
-import { createTerminal } from './terminal.ts';
+import { createTerminal } from './terminal/terminal.ts';
 
 await main(async () => {
   await createCommand()
