@@ -8,9 +8,9 @@ import YAML from 'yaml';
 /**
  * Smart Vitest workspace definition.
  *
- * - Automatically use PNPM, NPM, or Yarn workspaces if no globs are given.
- * - Returns an array of `vitest.config.*` files found in the workspace
- *   directory globs.
+ * - Automatically detect workspace directory globs from `pnpm-workspace.yaml`
+ *   or `package.json` (optional).
+ * - Find all `vitest.config.*` files in workspace directories.
  */
 export function defineWorkspace(workspaceGlobs?: readonly string[]): string[] {
   const dir = path.dirname(callsites()[1]!.getFileName()!);
