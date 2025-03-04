@@ -188,6 +188,9 @@ importers:
       '@seahax/main':
         specifier: workspace:^
         version: link:../main
+      '@seahax/promise-controller':
+        specifier: workspace:^
+        version: link:../promise-controller
       '@seahax/semaphore':
         specifier: workspace:^
         version: link:../semaphore
@@ -206,6 +209,12 @@ importers:
       yaml:
         specifier: ^2.7.0
         version: 2.7.0
+    devDependencies:
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+
+  packages/promise-controller:
     devDependencies:
       '@seahax/vite-plugin-lib':
         specifier: workspace:*

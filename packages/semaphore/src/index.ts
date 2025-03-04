@@ -52,7 +52,7 @@ export interface Semaphore extends AbortController {
 export function createSemaphore({ capacity = 1 }: SemaphoreOptions = {}): Semaphore {
   capacity = Math.max(1, capacity);
 
-  const ac = new AbortController();
+  const abortController = new AbortController();
   const onDrain: (() => void)[] = [];
   const queue: (() => void)[] = [];
   let acquired = 0;
@@ -67,11 +67,11 @@ export function createSemaphore({ capacity = 1 }: SemaphoreOptions = {}): Semaph
     },
 
     get signal() {
-      return ac.signal;
+      return abortController.signal;
     },
 
     async acquire() {
-      ac.signal.throwIfAborted();
+      abortController.signal.throwIfAborted();
 
       let released = false;
 
@@ -81,7 +81,7 @@ export function createSemaphore({ capacity = 1 }: SemaphoreOptions = {}): Semaph
       });
 
       async function acquire(): Promise<SemaphoreToken> {
-        ac.signal.throwIfAborted();
+        abortController.signal.throwIfAborted();
 
         ++acquired;
 
@@ -118,7 +118,7 @@ export function createSemaphore({ capacity = 1 }: SemaphoreOptions = {}): Semaph
     },
 
     abort(reason?: Error) {
-      ac.abort(reason);
+      abortController.abort(reason);
     },
 
     async drain() {
