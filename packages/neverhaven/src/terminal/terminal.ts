@@ -16,9 +16,10 @@ const CLEAR = `\u001B[2J\u001B[3J\u001B[H`;
 export function createTerminal({ keyboard }: {
   readonly keyboard: Keyboard;
 }): Terminal {
-  const semaphore = createSemaphore();
-  const print = createPrintFunction(keyboard);
-  const prompt = createPromptFunction(keyboard);
+  const closeController = new AbortController();
+  const semaphore = createSemaphore({ signal: closeController.signal });
+  const print = createPrintFunction(closeController.signal, keyboard);
+  const prompt = createPromptFunction(closeController.signal, keyboard);
 
   process.stdout.write(CLEAR);
 
@@ -27,8 +28,8 @@ export function createTerminal({ keyboard }: {
     prompt: semaphore.controlled(prompt),
 
     async close() {
-      if (!semaphore.signal.aborted) {
-        semaphore.abort();
+      if (!closeController.signal.aborted) {
+        closeController.abort();
         keyboard.close();
       }
 

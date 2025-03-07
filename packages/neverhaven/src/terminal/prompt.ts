@@ -4,14 +4,14 @@ import { PromiseController } from '@seahax/promise-controller';
 
 import type { Keyboard, KeypressEvent } from '../keyboard.ts';
 
-export type PromptFunction = (signal: AbortSignal, message?: string) => Promise<string>;
+export type PromptFunction = (message?: string) => Promise<string>;
 
 const DEFAULT_PROMPT_MESSAGE = '> ';
 
-export function createPromptFunction(keyboard: Keyboard): PromptFunction {
+export function createPromptFunction(signal: AbortSignal, keyboard: Keyboard): PromptFunction {
   let history: string[] = [];
 
-  return async (signal, message = DEFAULT_PROMPT_MESSAGE) => {
+  return async (message = DEFAULT_PROMPT_MESSAGE) => {
     const promiseController = new PromiseController<string>();
     const chars: string[] = [];
 

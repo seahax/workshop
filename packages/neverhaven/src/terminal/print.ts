@@ -6,7 +6,6 @@ import wrap from 'wrap-ansi';
 import type { Keyboard } from '../keyboard.ts';
 
 export type PrintFunction = (
-  signal: AbortSignal,
   ...args:
     | [message?: string]
     | [strings: TemplateStringsArray, ...args: any[]]
@@ -14,12 +13,12 @@ export type PrintFunction = (
 
 const FINAL_DELAY = getSegmentDelay('.');
 
-export function createPrintFunction(keyboard: Keyboard): PrintFunction {
-  return async (signal, ...[messageOrTemplateStrings = '', ...args]) => {
+export function createPrintFunction(signal: AbortSignal, keyboard: Keyboard): PrintFunction {
+  return async (...[messageOrTemplateStrings = '', ...args]) => {
     const segments: string[] = [];
-    const abortController = new AbortController();
-    const abortControllerPromise = new Promise<void>((resolve) => {
-      abortController.signal.addEventListener('abort', () => resolve(), { once: true });
+    const printImmediateController = new AbortController();
+    const printImmediatePromise = new Promise<void>((resolve) => {
+      printImmediateController.signal.addEventListener('abort', () => resolve(), { once: true });
     });
 
     let index = 0;
@@ -55,7 +54,7 @@ export function createPrintFunction(keyboard: Keyboard): PrintFunction {
     keyboard.once('keypress', printImmediate);
 
     for (const [i, segment] of segments.entries()) {
-      if (abortController.signal.aborted) {
+      if (printImmediateController.signal.aborted) {
         process.stdout.write(segments.slice(i).join(''));
         break;
       }
@@ -63,13 +62,13 @@ export function createPrintFunction(keyboard: Keyboard): PrintFunction {
       process.stdout.write(segment);
       delay = getSegmentDelay(segment);
 
-      if (delay) await Promise.race([abortControllerPromise, new Promise((resolve) => setTimeout(resolve, delay))]);
+      if (delay) await Promise.race([printImmediatePromise, new Promise((resolve) => setTimeout(resolve, delay))]);
       if (signal.aborted) break;
     }
 
     if (FINAL_DELAY > delay) {
       await Promise.race([
-        abortControllerPromise,
+        printImmediatePromise,
         new Promise((resolve) => setTimeout(resolve, FINAL_DELAY - delay)),
       ]);
     }
@@ -78,7 +77,7 @@ export function createPrintFunction(keyboard: Keyboard): PrintFunction {
     keyboard.removeListener('keypress', printImmediate);
 
     function printImmediate(): void {
-      abortController.abort();
+      printImmediateController.abort();
     }
   };
 }
