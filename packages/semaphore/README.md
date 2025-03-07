@@ -9,7 +9,10 @@ Declare a semaphore.
 ```ts
 import { createSemaphore } from '@seahax/semaphore';
 
+const abortController = new AbortController();
 const semaphore = createSemaphore({
+  // Abort signal to prevent new acquisitions (optional).
+  signal: abortController.signal,
   // Maximum number of tokens (Default: 1)
   capacity: 1
 });
@@ -36,10 +39,8 @@ try {
 Async functions can be decorated so that they automatically acquire and release tokens when called.
 
 ```ts
-const callback = semaphore.controlled(async (signal, arg: string): Promise<void> => {
+const callback = semaphore.controlled(async (arg: string): Promise<void> => {
   // Do something with limited concurrency...
-  // Use the injected signal to support interruption.
-  signal.throwIfAborted();
 });
 
 // The returned callback is curried so that the signal is provided by the
@@ -47,18 +48,9 @@ const callback = semaphore.controlled(async (signal, arg: string): Promise<void>
 await callback('Hello, World!');
 ```
 
-## Aborting
-
-The semaphore is also an `AbortController`. Calling the `abort` method prevents all future token acquisitions, which means that all unresolved and future `acquire` calls will reject with an `AbortError`. Controlled functions can also check the injected signal to support interruptions.
-
-```ts
-semaphore.abort();
-semaphore.signal.throwIfAborted();
-```
-
 ## Draining
 
-It is possible to wait for all semaphore tokens to be released. This is useful for cleanup. This works even if the semaphore is aborted.
+It is possible to wait for all semaphore tokens to be released. This is useful for cleanup.
 
 ```ts
 await semaphore.drain();
