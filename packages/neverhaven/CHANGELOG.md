@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.7 - 2025-03-08
+
+- __chore:__ refactor terminal (0b36a9f)
+- __chore:__ update for semaphore changes (cf3e2bc)
+
 ## 0.1.6 - 2025-03-04
 
 - __chore:__ update for semaphore changes (e097a3e)

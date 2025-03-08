@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0 - 2025-03-08
+
+- __feat:__ Accept an abort signal instead of the semaphore being an AbortController (7e368f9)
+
 ## 0.2.0 - 2025-03-04
 
 - __feat:__ inject to signal into controlled functions (19b531d)
