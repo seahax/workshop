@@ -20,7 +20,8 @@
     "check": "pnpm lint --max-warnings=0",
     "clean": "rm -rf dist",
     "lint": "eslint src",
-    "start": "node dist/backend/index.mjs"
+    "start": "node dist/backend/index.mjs",
+    "start:docker": "docker run -it --rm -p 8080:8080 \"$npm_package_name\""
   },
   "dependencies": {
     "@types/express": "^5.0.1",
