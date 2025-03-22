@@ -28,4 +28,6 @@ jobs:
       - name: Check
         run: npx lerna --scope="$APP_NAME" run check
       - name: Deploy
-        run: docker push ghcr.io/seahax/${APP_NAME}:latest
+        run: |
+          docker login ghcr.io -u "${{ github.actor }}" -p "${{ secrets.GITHUB_TOKEN }}"
+          docker push ghcr.io/seahax/${APP_NAME}:latest
