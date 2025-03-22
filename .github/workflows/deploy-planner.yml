@@ -44,4 +44,4 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_TOKEN }}
           project_id: ${{ secrets.DIGITALOCEAN_PROJECT }}
-          app_spec_location: "${APP_PATH}/app.yaml"
+          app_spec_location: apps/planner/app.yaml
