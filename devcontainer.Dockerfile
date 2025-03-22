@@ -3,7 +3,8 @@ ARG TARGETARCH
 
 # Configure the system.
 RUN apt-get update
-RUN apt-get install -y vim git awscli
+RUN yes | /usr/local/sbin/unminimize
+RUN apt-get install -y git vim awscli
 RUN chsh -s /usr/bin/zsh vscode
 
 # Install dotfiles.
