@@ -1,5 +1,7 @@
 FROM ubuntu:24.04
 
+LABEL org.opencontainers.image.source=https://github.com/seahax/workshop
+
 RUN apt-get update
 RUN apt-get install -y curl
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -s

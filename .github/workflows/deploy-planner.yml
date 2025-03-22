@@ -7,7 +7,7 @@ on:
 concurrency:
   group: ${{ github.workflow }}
 env:
-  LERNA_SCOPE: "seahax-planner"
+  APP_NAME: "seahax-planner"
 
 jobs:
   build:
@@ -23,8 +23,9 @@ jobs:
       - name: Build
         run: |
           set -e
-          npx lerna --scope="$LERNA_SCOPE" run build
-          npx lerna --scope="$LERNA_SCOPE" run build:docker
+          npx lerna --scope="$APP_NAME" run build
+          npx lerna --scope="$APP_NAME" run build:docker
       - name: Check
-        run: npx lerna --scope="$LERNA_SCOPE" run check
-      # TODO: Build and publish container to GitHub Container Registry.
+        run: npx lerna --scope="$APP_NAME" run check
+      - name: Deploy
+        run: docker push ghcr.io/seahax/${APP_NAME}:latest
