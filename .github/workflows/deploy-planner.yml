@@ -5,15 +5,16 @@ on:
     paths:
       - apps/planner/**
 
+env:
+  APP_NAME: "seahax-planner"
+  APP_PATH: "apps/planner"
+
 permissions:
   contents: read
   packages: write
 
 concurrency:
   group: ${{ github.workflow }}
-
-env:
-  APP_NAME: "seahax-planner"
 
 jobs:
   build:
@@ -33,7 +34,14 @@ jobs:
           npx lerna --scope="$APP_NAME" run build:docker -- -t "registry.digitalocean.com/seahax/${APP_NAME}:latest"
       - name: Check
         run: npx lerna --scope="$APP_NAME" run check
-      - name: Deploy
+      - name: Push
         run: |
-          docker login registry.digitalocean.com -u "${{ secrets.DOCR_USERNAME }}" -p "${{ secrets.DOCR_TOKEN }}"
+          set -e
+          docker login registry.digitalocean.com -u "${{ secrets.DIGITALOCEAN_USERNAME }}" -p "${{ secrets.DIGITALOCEAN_TOKEN }}"
           docker push "registry.digitalocean.com/seahax/${APP_NAME}:latest"
+      - name: Deploy
+        uses: digitalocean/app_action/deploy@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          project_id: ${{ secrets.DIGITALOCEAN_PROJECT }}
+          app_spec_location: "${APP_PATH}/app.yaml"
