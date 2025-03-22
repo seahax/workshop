@@ -67,6 +67,9 @@ importers:
         specifier: ^8.1.0
         version: 8.1.0
     devDependencies:
+      '@seahax/eslint':
+        specifier: workspace:*
+        version: link:../../packages/eslint
       '@seahax/vite-batch':
         specifier: workspace:*
         version: link:../../packages/vite-batch
