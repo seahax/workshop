@@ -17,6 +17,6 @@ asdf plugin add pnpm https://github.com/jonathanmorley/asdf-pnpm.git
 asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
 asdf install
 
-if [ -n "NPM_TOKEN" ]; then
+if [ -n "$NPM_TOKEN" ]; then
   npm config set -L user //registry.npmjs.org/:_authToken '${NPM_TOKEN}'
 fi
