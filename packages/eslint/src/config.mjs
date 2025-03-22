@@ -90,6 +90,7 @@ export default function config({ ignores = DEFAULT_IGNORES } = {}) {
         'unicorn/numeric-separators-style': 'off',
         'unicorn/prefer-default-parameters': 'off',
         'unicorn/prefer-event-target': 'off',
+        'unicorn/prefer-global-this': 'off',
         'unicorn/prefer-native-coercion-functions': 'off',
         'unicorn/prefer-spread': 'off',
         'unicorn/prefer-switch': 'off',
