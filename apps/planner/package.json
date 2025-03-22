@@ -24,10 +24,6 @@
     "@seahax/vite-batch": "workspace:*",
     "@seahax/vite-plugin-lib": "workspace:*"
   },
-  "engines": {
-    "node": "^22.13.1",
-    "pnpm": "^10.2.1"
-  },
   "publishConfig": {
     "access": "public"
   }
