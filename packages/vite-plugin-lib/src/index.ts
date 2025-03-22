@@ -115,6 +115,7 @@ export default function plugin({
   tsc = 'tsc',
 }: Config = {}): Plugin {
   let root = process.cwd();
+  let logger = createLogger();
 
   return {
     name: 'lib',
@@ -163,6 +164,7 @@ export default function plugin({
       order: 'post',
       handler(config) {
         root = config.root;
+        logger = config.logger;
       },
     },
     writeBundle: {
@@ -183,7 +185,7 @@ export default function plugin({
           throw new Error('Missing valid Typescript config file for type checking.');
         }
 
-        createLogger().info(`exec: ${tsc} ${args.join(' ')}`);
+        logger.info(`exec: ${tsc} ${args.join(' ')}`);
 
         try {
           await execa(tsc, args, { stdio: 'inherit', preferLocal: true, cwd: root } satisfies Options);
