@@ -20,17 +20,18 @@ app.all('/health', async (req, res) => {
 app.use('/assets/', express.static(`${STATIC_ROOT}/assets`, {
   redirect: false,
   fallthrough: true,
-  cacheControl: true,
-  immutable: true,
-  maxAge: '2y',
+  cacheControl: false,
+  setHeaders: (res) => res.setHeader('Cache-Control', 'public, max-age=31536000, immutable'),
 }));
 
 // Other static assets (un-hashed)
 app.use(express.static(STATIC_ROOT, {
   redirect: false,
+  cacheControl: false,
+  setHeaders: (res) => res.setHeader('Cache-Control', 'public, max-age=86400, must-revalidate'),
 }));
 
-const server = app.listen(8080, '0.0.0.0', () => {
+const server = app.listen(8080, () => {
   console.log(`Server is listening on port ${(server.address() as AddressInfo).port}`);
 });
 
