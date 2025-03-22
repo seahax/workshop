@@ -16,11 +16,17 @@
   ],
   "scripts": {
     "build": "vite-batch",
+    "check": "pnpm lint --max-warnings=0",
     "clean": "rm -rf dist",
+    "lint": "eslint src",
     "serve": "node dist/backend/index.mjs",
     "start": "pnpm build && pnpm serve"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@types/express": "^5.0.1",
+    "express": "^5.0.1",
+    "helmet": "^8.1.0"
+  },
   "devDependencies": {
     "@seahax/vite-batch": "workspace:*",
     "@seahax/vite-plugin-lib": "workspace:*"

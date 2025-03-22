@@ -7,7 +7,7 @@ on:
 concurrency:
   group: ${{ github.workflow }}
 env:
-  PACKAGE: "@seahax/planner"
+  LERNA_SCOPE: "@seahax/planner"
 
 jobs:
   build:
@@ -21,7 +21,10 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
       - name: Build
-        run: npx lerna --scope="$PACKAGE" run build
+        run: |
+          set -e
+          npx lerna --scope="$LERNA_SCOPE" run build
+          npx lerna --scope="$LERNA_SCOPE" run build:docker
       - name: Check
-        run: npx lerna --scope="$PACKAGE" run check
+        run: npx lerna --scope="$LERNA_SCOPE" run check
       # TODO: Build and publish container to GitHub Container Registry.
