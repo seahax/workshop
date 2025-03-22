@@ -1,3 +1,5 @@
 import { defineWorkspace } from '@seahax/vitest';
 
-export default defineWorkspace();
+export default defineWorkspace([
+  'packages/*',
+]);
