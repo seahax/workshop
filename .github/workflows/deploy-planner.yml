@@ -30,7 +30,7 @@ jobs:
         run: |
           set -e
           npx lerna --scope="$APP_NAME" run build
-          npx lerna --scope="$APP_NAME" run build:docker -t "registry.digitalocean.com/seahax/${APP_NAME}:latest"
+          npx lerna --scope="$APP_NAME" run build:docker -- -t "registry.digitalocean.com/seahax/${APP_NAME}:latest"
       - name: Check
         run: npx lerna --scope="$APP_NAME" run check
       - name: Deploy
