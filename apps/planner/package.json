@@ -1,0 +1,29 @@
+{
+  "name": "@seahax/planner",
+  "version": "0.1.0",
+  "private": true,
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "apps/planner"
+  },
+  "license": "Unlicense",
+  "type": "module",
+  "files": [
+    "dist",
+    "!dist/*.tsbuildinfo"
+  ],
+  "scripts": {
+    "build": "vite-batch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@seahax/vite-batch": "workspace:*",
+    "@seahax/vite-plugin-lib": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/backend",
+    "noEmit": false,
+    "types": [
+      "node",
+      "vite/client"
+    ]
+  },
+  "exclude": [
+    "vite.config.ts",
+    "**/*.test.*"
+  ],
+}

@@ -8,7 +8,7 @@ export default defineConfig({
       enabled: true,
       reporter: ['text', 'html', 'lcovonly'],
       provider: 'v8',
-      include: ['packages/*/src/**/*'],
+      include: ['packages/*/src/**/*', 'apps/*/src/**/*'],
       exclude: ['**/index.*', '**/types/**/*', '**/constants/**/*'],
     },
   },
