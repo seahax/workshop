@@ -1,3 +1,4 @@
+import assert from 'node:assert';
 import fs from 'node:fs/promises';
 import { isBuiltin } from 'node:module';
 import path from 'node:path';
@@ -110,7 +111,7 @@ export default function plugin({
   target = 'any',
   format = 'es',
   bundle = false,
-  packageJsonPath = 'package.json',
+  packageJsonPath: maybePackageJsonPath,
   tsconfigPath,
   tsc = 'tsc',
 }: Config = {}): Plugin {
@@ -132,7 +133,9 @@ export default function plugin({
             rollupOptions: {
               treeshake: bundle,
               output: { preserveModules: !bundle },
-              external: bundle ? undefined : await getExternalCallback(root, packageJsonPath),
+              external: bundle
+                ? getBundleExternalCallback()
+                : await getNonBundleExternalCallback(),
             },
           },
           resolve: {
@@ -201,19 +204,49 @@ export default function plugin({
       },
     },
   };
-}
 
-async function getExternalCallback(root: string, packageJsonPath: string): Promise<(source: string) => boolean> {
-  const text = await fs.readFile(path.resolve(root, packageJsonPath), 'utf8');
-  const json = JSON.parse(text);
-  const deps = Object.keys({ ...json.dependencies, ...json.peerDependencies, ...json.optionalDependencies });
+  function getBundleExternalCallback(): (source: string) => boolean {
+    return (source) => {
+      assert.ok(target === 'node' || !source.startsWith('node:'), 'Non-NodeJS targets cannot import NodeJS built-ins.');
 
-  return (source) => {
-    if (/^[a-z]+:/iu.test(source)) return true;
-    if (isBuiltin(source)) return true;
+      if (/^[a-z]+:/iu.test(source)) return true;
+      if (isBuiltin(source)) return true;
 
-    const id = source.match(/^(?:@[^/]+\/)?[^/]+/u)?.[0];
+      return false;
+    };
+  }
 
-    return Boolean(id && deps.includes(id));
-  };
+  async function getNonBundleExternalCallback(): Promise<(source: string) => boolean> {
+    const packageJsonPath = maybePackageJsonPath ?? await findPackageJsonPath();
+    const text = await fs.readFile(path.resolve(root, packageJsonPath), 'utf8');
+    const json = JSON.parse(text);
+    const deps = Object.keys({ ...json.dependencies, ...json.peerDependencies, ...json.optionalDependencies });
+
+    return (source) => {
+      assert.ok(target === 'node' || !source.startsWith('node:'), 'Non-NodeJS targets cannot import NodeJS built-ins.');
+
+      if (/^[a-z]+:/iu.test(source)) return true;
+      if (isBuiltin(source)) return true;
+
+      const id = source.match(/^(?:@[^/]+\/)?[^/]+/u)?.[0];
+
+      return Boolean(id && deps.includes(id));
+    };
+  }
+
+  async function findPackageJsonPath(): Promise<string> {
+    async function next(dir: string): Promise<string> {
+      const filename = path.resolve(dir, 'package.json');
+      const exist = await fs.access(filename).then(() => true, () => false);
+
+      if (exist) return filename;
+
+      const nextDir = path.dirname(dir);
+      assert.ok(nextDir !== dir, 'Cannot find package.json file.');
+
+      return next(nextDir);
+    }
+
+    return next(path.resolve(root));
+  }
 }
