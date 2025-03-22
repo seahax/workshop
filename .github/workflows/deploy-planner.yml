@@ -1,0 +1,27 @@
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - apps/planner/**
+concurrency:
+  group: ${{ github.workflow }}
+env:
+  PACKAGE: "@seahax/planner"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Setup
+        run: ./.github/workflows/setup.sh
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Build
+        run: npx lerna --scope="$PACKAGE" run build
+      - name: Check
+        run: npx lerna --scope="$PACKAGE" run check
+      # TODO: Build and publish container to GitHub Container Registry.
