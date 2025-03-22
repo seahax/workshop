@@ -1,3 +1,3 @@
-# @seahax/planner
+# Seahax Planner
 
-Planner app.
+Planner web application with todo list, calendar, notes, and other features.

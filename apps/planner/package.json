@@ -1,5 +1,5 @@
 {
-  "name": "@seahax/planner",
+  "name": "seahax-planner",
   "version": "0.1.0",
   "private": true,
   "description": "",
@@ -16,6 +16,7 @@
   ],
   "scripts": {
     "build": "vite-batch",
+    "build:docker": "pnpm build && docker build -t \"$npm_package_name\" .",
     "check": "pnpm lint --max-warnings=0",
     "clean": "rm -rf dist",
     "lint": "eslint src",
