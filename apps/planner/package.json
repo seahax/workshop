@@ -17,7 +17,8 @@
   "scripts": {
     "build": "vite-batch",
     "clean": "rm -rf dist",
-    "serve": "node dist/backend/index.mjs"
+    "serve": "node dist/backend/index.mjs",
+    "start": "pnpm build && pnpm serve"
   },
   "dependencies": {},
   "devDependencies": {
