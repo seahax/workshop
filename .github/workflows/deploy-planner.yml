@@ -21,7 +21,10 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
       - name: Build
-        run: npx lerna --scope="$LERNA_SCOPE" run build:docker
+        run: |
+          set -e
+          npx lerna --scope="$LERNA_SCOPE" run build
+          npx lerna --scope="$LERNA_SCOPE" run build:docker
       - name: Check
         run: npx lerna --scope="$LERNA_SCOPE" run check
       # TODO: Build and publish container to GitHub Container Registry.

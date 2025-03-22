@@ -16,12 +16,11 @@
   ],
   "scripts": {
     "build": "vite-batch",
-    "build:docker": "pnpm build && docker build -t \"$npm_package_name\" .",
+    "build:docker": "docker build -t \"$npm_package_name\" .",
     "check": "pnpm lint --max-warnings=0",
     "clean": "rm -rf dist",
     "lint": "eslint src",
-    "serve": "node dist/backend/index.mjs",
-    "start": "pnpm build && pnpm serve"
+    "start": "node dist/backend/index.mjs"
   },
   "dependencies": {
     "@types/express": "^5.0.1",
