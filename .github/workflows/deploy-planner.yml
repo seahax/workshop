@@ -4,8 +4,14 @@ on:
     branches: [main]
     paths:
       - apps/planner/**
+
+permissions:
+  contents: read
+  packages: write
+
 concurrency:
   group: ${{ github.workflow }}
+
 env:
   APP_NAME: "seahax-planner"
 
