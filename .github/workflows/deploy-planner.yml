@@ -30,10 +30,10 @@ jobs:
         run: |
           set -e
           npx lerna --scope="$APP_NAME" run build
-          npx lerna --scope="$APP_NAME" run build:docker
+          npx lerna --scope="$APP_NAME" run build:docker -t "registry.digitalocean.com/seahax/${APP_NAME}:latest"
       - name: Check
         run: npx lerna --scope="$APP_NAME" run check
       - name: Deploy
         run: |
-          docker login ghcr.io -u "${{ github.actor }}" -p "${{ secrets.GITHUB_TOKEN }}"
-          docker push ghcr.io/seahax/${APP_NAME}:latest
+          docker login registry.digitalocean.com -u "${{ secrets.DOCR_USERNAME }}" -p "${{ secrets.DOCR_TOKEN }}"
+          docker push "registry.digitalocean.com/seahax/${APP_NAME}:latest"

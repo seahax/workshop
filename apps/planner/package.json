@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "build": "vite-batch",
-    "build:docker": "docker build -t \"ghcr.io/seahax/$npm_package_name\" .",
+    "build:docker": "docker build . -t \"$npm_package_name\"",
     "check": "pnpm lint --max-warnings=0",
     "clean": "rm -rf dist",
     "lint": "eslint src",
