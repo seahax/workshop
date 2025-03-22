@@ -28,6 +28,7 @@
     "helmet": "^8.1.0"
   },
   "devDependencies": {
+    "@seahax/eslint": "workspace:*",
     "@seahax/vite-batch": "workspace:*",
     "@seahax/vite-plugin-lib": "workspace:*"
   },
