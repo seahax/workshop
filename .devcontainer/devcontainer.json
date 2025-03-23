@@ -24,7 +24,8 @@
 				"unional.vscode-sort-package-json",
 				"yzhang.markdown-all-in-one",
 				"ziyasal.vscode-open-in-github",
-				"zxh404.vscode-proto3"
+				"zxh404.vscode-proto3",
+				"42Crunch.vscode-openapi"
 			],
 			"settings": {
 				"editor.codeActionsOnSave": [
