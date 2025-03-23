@@ -15,13 +15,20 @@
     "!dist/*.tsbuildinfo"
   ],
   "scripts": {
-    "build": "vite-batch",
-    "build:image": "docker build . -t \"$npm_package_name\"",
-    "check": "pnpm lint --max-warnings=0",
+    "build": "run-all build.",
+    "build.0-openapi": "openapi-typescript openapi.yaml --output src/__generated__/openapi.d.ts",
+    "build.1-frontend": "vite build -c src/frontend/vite.config.ts",
+    "build.2-backend": "vite build -c src/backend/vite.config.ts",
+    "check": "pnpm lint",
     "clean": "rm -rf dist",
-    "lint": "eslint src",
+    "docker.build": "docker build . -t \"$npm_package_name\"",
+    "docker.run": "docker run -it --rm -p 8080:8080 \"$npm_package_name\"",
+    "postinstall": "pnpm run build.0-openapi",
+    "lint": "eslint src --max-warnings=0",
     "start": "node dist/backend/index.mjs",
-    "start:docker": "docker run -it --rm -p 8080:8080 \"$npm_package_name\""
+    "test": "run-all test.",
+    "test.0-lint": "pnpm lint --max-warnings=0",
+    "test.1-openapi": "pnpm build.0-openapi --validate"
   },
   "dependencies": {
     "express": "^5.0.1",
@@ -30,10 +37,11 @@
   },
   "devDependencies": {
     "@seahax/eslint": "workspace:*",
-    "@seahax/vite-batch": "workspace:*",
+    "@seahax/run-all": "workspace:*",
     "@seahax/vite-plugin-lib": "workspace:*",
     "@types/express": "^5.0.1",
-    "@types/morgan": "^1.9.9"
+    "@types/morgan": "^1.9.9",
+    "openapi-typescript": "^7.6.1"
   },
   "publishConfig": {
     "access": "public"

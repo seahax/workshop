@@ -1,0 +1,34 @@
+{
+  "name": "@seahax/run-all",
+  "version": "0.1.0",
+  "private": false,
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/run-all"
+  },
+  "license": "Unlicense",
+  "type": "module",
+  "bin": "bin.mjs",
+  "files": [
+    "bin.mjs",
+    "dist",
+    "!dist/*.tsbuildinfo"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@seahax/args": "workspace:^",
+    "@seahax/main": "workspace:^",
+    "execa": "^9.5.2"
+  },
+  "devDependencies": {
+    "@seahax/vite-plugin-lib": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

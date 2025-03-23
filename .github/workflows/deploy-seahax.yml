@@ -45,7 +45,7 @@ jobs:
         run: npx lerna --scope="$APP_NAME" run build
 
       - name: Build Image
-        run: npx lerna --scope="$APP_NAME" run build:image -- -t "registry.digitalocean.com/seahax/${APP_NAME}:latest"
+        run: npx lerna --scope="$APP_NAME" run docker.build -- -t "registry.digitalocean.com/seahax/${APP_NAME}:latest"
 
       - name: Check
         run: npx lerna --scope="$APP_NAME" run check
