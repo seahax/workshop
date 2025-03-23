@@ -1,3 +1,5 @@
+**/src/.**
+**/src/_**
 .nx
 .vscode
 .terraform
