@@ -18,6 +18,9 @@ importers:
       '@seahax/rev':
         specifier: workspace:*
         version: link:packages/rev
+      '@seahax/run-all':
+        specifier: workspace:*
+        version: link:packages/run-all
       '@seahax/tsconfig':
         specifier: workspace:*
         version: link:packages/tsconfig

@@ -35,8 +35,8 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Check
-        run: pnpm check
+      - name: Test
+        run: pnpm test
 
       - name: Publish
         run: npx lerna --no-private publish from-package --no-git-tag-version --no-push --yes

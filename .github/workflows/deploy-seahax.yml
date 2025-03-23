@@ -44,13 +44,13 @@ jobs:
       - name: Build
         run: npx lerna --scope="$APP_NAME" run build
 
-      - name: Build Image
+      - name: Docker Build
         run: npx lerna --scope="$APP_NAME" run docker.build -- -t "registry.digitalocean.com/seahax/${APP_NAME}:latest"
 
-      - name: Check
-        run: npx lerna --scope="$APP_NAME" run check
+      - name: Test
+        run: npx lerna --scope="$APP_NAME" run test
 
-      - name: Push
+      - name: Docker Push
         run: docker push "registry.digitalocean.com/seahax/${APP_NAME}:latest"
 
       - name: Deploy
