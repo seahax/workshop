@@ -301,25 +301,6 @@ importers:
 
   packages/tsconfig: {}
 
-  packages/vite-batch:
-    dependencies:
-      '@seahax/args':
-        specifier: workspace:^
-        version: link:../args
-      '@seahax/main':
-        specifier: workspace:^
-        version: link:../main
-      '@seahax/vite-plugin-data':
-        specifier: workspace:^
-        version: link:../vite-plugin-data
-      vite:
-        specifier: ^6.2.0
-        version: 6.2.0(@types/node@22.13.9)(tsx@4.19.3)(yaml@2.7.0)
-    devDependencies:
-      '@seahax/vite-plugin-lib':
-        specifier: workspace:*
-        version: link:../vite-plugin-lib
-
   packages/vite-plugin-chmodx:
     dependencies:
       vite:
