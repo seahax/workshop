@@ -3,11 +3,13 @@ import path from 'node:path';
 
 import express from 'express';
 import helmet from 'helmet';
+import morgan from 'morgan';
 
 const STATIC_ROOT = path.resolve(import.meta.dirname, '../frontend');
 const app = express();
 
 app.use(helmet());
+app.use(morgan('tiny'));
 
 // Health check
 app.all('/health', async (req, res) => {
