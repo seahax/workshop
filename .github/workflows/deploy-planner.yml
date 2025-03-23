@@ -25,23 +25,20 @@ jobs:
         with: { fetch-depth: 0 }
       - name: Setup
         run: ./.github/workflows/setup.sh
-      - name: Install
+      - name: Setup DOCTL
+        uses: digitalocean/action-doctl@v2
+        with: { token: "${{ secrets.DIGITALOCEAN_TOKEN }}" }
+      - name: Setup Docker
+        run: docker login registry.digitalocean.com -u "${{ secrets.DIGITALOCEAN_USERNAME }}" -p "${{ secrets.DIGITALOCEAN_TOKEN }}"
+      - name: Restore
         run: pnpm install --frozen-lockfile
       - name: Build
-        run: |
-          set -e
-          npx lerna --scope="$APP_NAME" run build
-          npx lerna --scope="$APP_NAME" run build:docker -- -t "registry.digitalocean.com/seahax/${APP_NAME}:latest"
+        run: npx lerna --scope="$APP_NAME" run build
+      - name: Build Image
+        run: npx lerna --scope="$APP_NAME" run build:image -- -t "registry.digitalocean.com/seahax/${APP_NAME}:latest"
       - name: Check
         run: npx lerna --scope="$APP_NAME" run check
       - name: Push
-        run: |
-          set -e
-          docker login registry.digitalocean.com -u "${{ secrets.DIGITALOCEAN_USERNAME }}" -p "${{ secrets.DIGITALOCEAN_TOKEN }}"
-          docker push "registry.digitalocean.com/seahax/${APP_NAME}:latest"
+        run: docker push "registry.digitalocean.com/seahax/${APP_NAME}:latest"
       - name: Deploy
-        uses: digitalocean/app_action/deploy@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
-          project_id: ${{ secrets.DIGITALOCEAN_PROJECT }}
-          app_spec_location: apps/planner/app.yaml
+        run: doctl apps create --spec "${APP_PATH}/app.yaml" --project-id "${{ secrets.DIGITALOCEAN_PROJECT }}" --upsert --wait

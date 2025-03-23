@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "build": "vite-batch",
-    "build:docker": "docker build . -t \"$npm_package_name\"",
+    "build:image": "docker build . -t \"$npm_package_name\"",
     "check": "pnpm lint --max-warnings=0",
     "clean": "rm -rf dist",
     "lint": "eslint src",
@@ -24,14 +24,14 @@
     "start:docker": "docker run -it --rm -p 8080:8080 \"$npm_package_name\""
   },
   "dependencies": {
-    "@types/express": "^5.0.1",
     "express": "^5.0.1",
     "helmet": "^8.1.0"
   },
   "devDependencies": {
     "@seahax/eslint": "workspace:*",
     "@seahax/vite-batch": "workspace:*",
-    "@seahax/vite-plugin-lib": "workspace:*"
+    "@seahax/vite-plugin-lib": "workspace:*",
+    "@types/express": "^5.0.1"
   },
   "publishConfig": {
     "access": "public"
