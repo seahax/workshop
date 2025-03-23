@@ -1,15 +1,15 @@
-name: Deploy Planner
+name: Deploy Seahax
 
 on:
   workflow_dispatch: {}
   push:
     branches: [main]
     paths:
-      - apps/planner/**
+      - apps/seahax/**
 
 env:
-  APP_NAME: "seahax-planner"
-  APP_PATH: "apps/planner"
+  APP_NAME: "seahax"
+  APP_PATH: "apps/seahax"
 
 concurrency:
   group: ${{ github.workflow }}
