@@ -47,4 +47,4 @@ jobs:
       - name: Push
         run: docker push "registry.digitalocean.com/seahax/${APP_NAME}:latest"
       - name: Deploy
-        run: doctl apps create --spec "${APP_PATH}/app.yaml" --project-id "${{ secrets.DIGITALOCEAN_PROJECT }}" --upsert --wait
+        run: doctl apps create --spec "${APP_PATH}/app.yaml" --project-id "${{ secrets.DIGITALOCEAN_PROJECT }}" --upsert --update-sources
