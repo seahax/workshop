@@ -1,6 +1,6 @@
 FROM ubuntu:24.04
 
-LABEL org.opencontainers.image.source=https://github.com/seahax/workshop
+LABEL org.opencontainers.image.source=https://github.com/seahax/
 
 RUN apt-get update
 RUN apt-get install -y curl
@@ -9,9 +9,9 @@ RUN apt-get install -y nodejs
 RUN adduser --system --no-create-home app
 
 COPY dist /app
-
-USER app
 WORKDIR /app/backend
+USER app
+
 CMD ["node", "index.mjs"]
 
 EXPOSE 8080
