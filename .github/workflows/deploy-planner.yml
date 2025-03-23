@@ -1,3 +1,5 @@
+name: Deploy Planner
+
 on:
   workflow_dispatch: {}
   push:
@@ -8,10 +10,6 @@ on:
 env:
   APP_NAME: "seahax-planner"
   APP_PATH: "apps/planner"
-
-permissions:
-  contents: read
-  packages: write
 
 concurrency:
   group: ${{ github.workflow }}

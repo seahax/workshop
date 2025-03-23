@@ -1,16 +1,21 @@
+name: Publish
+
 on:
   workflow_dispatch: {}
   push:
     branches: [main]
     paths-ignore:
       - ".devcontainer/**"
+      - "apps/**"
       - "templates/**"
       - "unreleased/**"
+
+env:
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
 concurrency:
   group: ${{ github.workflow }}
-env:
-  NODE_OPTIONS: --no-deprecation
-  NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+
 jobs:
   build:
     runs-on: ubuntu-latest
