@@ -27,6 +27,13 @@ services:
       - key: CA_CERT
         scope: RUN_TIME
         value: ${seahax-data.CA_CERT}
+    health_check:
+      http_path: /health
+      initial_delay_seconds: 10
+      period_seconds: 10
+      timeout_seconds: 3
+      success_threshold: 1
+      failure_threshold: 3
 
 ingress:
   rules:
