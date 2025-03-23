@@ -35,3 +35,8 @@ ingress:
       match:
         path:
           prefix: /
+
+domains:
+  - domain: seahax.com
+    type: PRIMARY
+    wildcard: true
