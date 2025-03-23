@@ -25,7 +25,7 @@
 				"yzhang.markdown-all-in-one",
 				"ziyasal.vscode-open-in-github",
 				"zxh404.vscode-proto3",
-				"42Crunch.vscode-openapi"
+				"Redocly.openapi-vs-code"
 			],
 			"settings": {
 				"editor.codeActionsOnSave": [
