@@ -57,9 +57,6 @@ importers:
 
   apps/planner:
     dependencies:
-      '@types/express':
-        specifier: ^5.0.1
-        version: 5.0.1
       express:
         specifier: ^5.0.1
         version: 5.0.1
@@ -76,6 +73,9 @@ importers:
       '@seahax/vite-plugin-lib':
         specifier: workspace:*
         version: link:../../packages/vite-plugin-lib
+      '@types/express':
+        specifier: ^5.0.1
+        version: 5.0.1
 
   packages/args:
     dependencies:
