@@ -12,9 +12,9 @@ app.use(helmet());
 app.use(morgan('tiny'));
 
 // Health check
-app.all('/health', async (req, res) => {
+app.get('/health', async (req, res) => {
   res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.write(JSON.stringify({ message: 'Hello, World!' }));
+  res.write(JSON.stringify({}));
   res.end();
 });
 
