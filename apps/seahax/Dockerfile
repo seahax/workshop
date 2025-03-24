@@ -9,9 +9,8 @@ RUN apt-get install -y nodejs
 RUN adduser --system --no-create-home app
 
 COPY dist /app
-WORKDIR /app/backend
-USER app
 
-CMD ["node", "index.mjs"]
+USER app
+CMD ["node", "/app/backend/index.mjs"]
 
 EXPOSE 8080

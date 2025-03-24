@@ -5,6 +5,8 @@ process.chdir(import.meta.dirname);
 export default defineConfig({
   build: {
     emptyOutDir: true,
-    outDir: '../../dist/frontend',
+    sourcemap: true,
+    target: 'es2023',
+    outDir: 'dist/frontend',
   },
 });

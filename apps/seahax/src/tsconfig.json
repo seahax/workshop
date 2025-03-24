@@ -3,15 +3,13 @@
   "compilerOptions": {
     "outDir": "../dist",
     "types": [
+      "node",
       "vite/client"
+    ],
+    "lib": [
+      "ES2023",
+      "DOM",
+      "DOM.Iterable"
     ]
-  },
-  "references": [
-    {
-      "path": "./backend/tsconfig.build.json"
-    },
-    {
-      "path": "./frontend/tsconfig.build.json"
-    }
-  ]
+  }
 }

@@ -1,40 +1,26 @@
 import type { AddressInfo } from 'node:net';
-import path from 'node:path';
 
+import compression from 'compression';
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 
-const STATIC_ROOT = path.resolve(import.meta.dirname, '../frontend');
+import { authRouter } from './routers/auth.ts';
+import { healthRouter } from './routers/health.ts';
+import { staticRouter } from './routers/static.ts';
+
 const app = express();
 
-app.use(helmet());
 app.use(morgan('tiny'));
+app.use(helmet());
+app.use(express.json());
+app.use(compression());
+app.use(healthRouter);
+app.use(authRouter);
+app.use(staticRouter); // Must be last.
 
-// Health check
-app.get('/health', async (req, res) => {
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.write(JSON.stringify({}));
-  res.end();
-});
-
-// Immutable static assets (hashed)
-app.use('/assets/', express.static(`${STATIC_ROOT}/assets`, {
-  redirect: false,
-  fallthrough: true,
-  cacheControl: false,
-  setHeaders: (res) => res.setHeader('Cache-Control', 'public, max-age=31536000, immutable'),
-}));
-
-// Other static assets (un-hashed)
-app.use(express.static(STATIC_ROOT, {
-  redirect: false,
-  cacheControl: false,
-  setHeaders: (res) => res.setHeader('Cache-Control', 'public, max-age=86400, must-revalidate'),
-}));
-
-const server = app.listen(8080, () => {
-  console.log(`Server is listening on port ${(server.address() as AddressInfo).port}`);
+const http = app.listen(8080, () => {
+  console.log(`Server is listening on port ${(http.address() as AddressInfo).port}`);
 });
 
 process.on('SIGINT', close);
@@ -42,5 +28,5 @@ process.on('SIGTERM', close);
 
 function close(): void {
   console.log('\nServer is shutting down');
-  server.close();
+  http.close();
 }

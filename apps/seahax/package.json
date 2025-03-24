@@ -16,31 +16,32 @@
   ],
   "scripts": {
     "build": "run-all build.",
-    "build.0-openapi": "openapi-typescript openapi.yaml --output src/__generated__/openapi.d.ts",
-    "build.1-frontend": "vite build -c src/frontend/vite.config.ts",
-    "build.2-backend": "vite build -c src/backend/vite.config.ts",
+    "build.0-frontend": "vite build -c vite-frontend.config.ts",
+    "build.1-backend": "vite build -c vite-backend.config.ts",
     "clean": "rm -rf dist",
     "docker.build": "docker build . -t \"$npm_package_name\"",
-    "docker.run": "docker run -it --rm -p 8080:8080 \"$npm_package_name\"",
-    "postinstall": "test \"$npm_command\" != install || pnpm build.0-openapi",
+    "docker.start": "pnpm build && pnpm docker.build && docker run -it --rm -p 8080:8080 \"$npm_package_name\"",
     "lint": "eslint src",
-    "start": "node dist/backend/index.mjs",
+    "start": "pnpm build && node dist/backend/index.mjs",
     "test": "run-all test.",
-    "test.0-lint": "pnpm lint --max-warnings=0",
-    "test.1-openapi": "pnpm build.0-openapi --validate"
+    "test.0-lint": "pnpm lint --max-warnings=0"
   },
   "dependencies": {
+    "@ts-rest/core": "^3.52.1",
+    "@ts-rest/express": "^3.52.1",
+    "compression": "^1.8.0",
     "express": "^5.0.1",
     "helmet": "^8.1.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@seahax/eslint": "workspace:*",
     "@seahax/run-all": "workspace:*",
     "@seahax/vite-plugin-lib": "workspace:*",
+    "@types/compression": "^1.7.5",
     "@types/express": "^5.0.1",
-    "@types/morgan": "^1.9.9",
-    "openapi-typescript": "^7.6.1"
+    "@types/morgan": "^1.9.9"
   },
   "publishConfig": {
     "access": "public"
