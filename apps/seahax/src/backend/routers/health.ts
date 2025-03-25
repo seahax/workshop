@@ -1,7 +1,8 @@
-import { healthApi } from '../../apis/health.ts';
-import { initExpressRouter } from './router.ts';
+import { initExpressRouter } from '@seahax/ts-rest/express';
 
-export const healthRouter = initExpressRouter(healthApi, {
+import { healthRouterSpec } from '../../common/routers/health.ts';
+
+export const healthRouter = initExpressRouter(healthRouterSpec, {
   health: async () => {
     return { status: 200, body: undefined };
   },

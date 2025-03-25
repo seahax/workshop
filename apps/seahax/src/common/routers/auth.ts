@@ -1,17 +1,16 @@
+import { initRouterSpec, schema } from '@seahax/ts-rest';
 import { z } from 'zod';
 
-import { initApi, model } from './api.ts';
-
-export const authSuccessModel = model<{
+export const $AuthSuccess = schema<{
   accessToken: string;
   refreshToken: string;
 }>();
 
-export const authErrorModel = model<{
+export const $AuthError = schema<{
   error: string;
 }>();
 
-export const authApi = initApi({
+export const authRouterSpec = initRouterSpec({
   login: {
     summary: 'Login with email and password.',
     method: 'POST',
@@ -21,8 +20,7 @@ export const authApi = initApi({
       password: z.string(),
     }),
     responses: {
-      200: authSuccessModel,
-      401: authErrorModel,
+      200: $AuthSuccess,
     },
   },
 
@@ -34,10 +32,12 @@ export const authApi = initApi({
       refreshToken: z.string(),
     }),
     responses: {
-      200: authSuccessModel,
-      401: authErrorModel,
+      200: $AuthSuccess,
     },
   },
 }, {
+  commonResponses: {
+    401: $AuthError,
+  },
   strictStatusCodes: true,
 });
