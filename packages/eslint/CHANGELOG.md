@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.13 - 2025-03-25
+
+- __chore:__ disable unicorn prefer globalThis (e42958c)
+- __chore:__ add more default ignores (3daa512)
+
 ## 0.2.12 - 2025-03-04
 
 - __chore:__ releasing the store package (64cf65d)

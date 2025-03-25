@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.2 - 2025-03-25
+
+- __fix:__ tsc log message shouldn't clear screen (7e1919a)
+- __chore:__ improve package.json discovery and externalization (6e816a7)
+
 ## 0.4.1 - 2025-03-04
 
 - __chore:__ update deps (ae1e38c)
