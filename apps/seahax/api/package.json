@@ -1,12 +1,12 @@
 {
-  "name": "app-seahax-common",
+  "name": "app-seahax-api",
   "version": "0.1.0",
   "private": true,
   "description": "",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
-    "directory": "apps/seahax/common"
+    "directory": "apps/seahax/api"
   },
   "license": "Unlicense",
   "type": "module",

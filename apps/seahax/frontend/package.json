@@ -24,7 +24,7 @@
   "dependencies": {
     "@seahax/ts-rest": "workspace:*",
     "@ts-rest/core": "^3.52.1",
-    "app-seahax-common": "workspace:*",
+    "app-seahax-api": "workspace:*",
     "zod": "^3.24.2"
   },
   "devDependencies": {

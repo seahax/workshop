@@ -58,6 +58,28 @@ importers:
         specifier: ^3.0.7
         version: 3.0.7(@types/node@22.13.9)(jiti@2.4.2)(jsdom@26.0.0)(tsx@4.19.3)(yaml@2.7.0)
 
+  apps/seahax/api:
+    dependencies:
+      '@seahax/ts-rest':
+        specifier: workspace:*
+        version: link:../../../packages/ts-rest
+      '@ts-rest/core':
+        specifier: ^3.52.1
+        version: 3.52.1(@types/node@22.13.9)(zod@3.24.2)
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
+    devDependencies:
+      '@seahax/eslint':
+        specifier: workspace:*
+        version: link:../../../packages/eslint
+      '@seahax/run-all':
+        specifier: workspace:*
+        version: link:../../../packages/run-all
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../../../packages/vite-plugin-lib
+
   apps/seahax/backend:
     dependencies:
       '@seahax/ts-rest':
@@ -69,9 +91,9 @@ importers:
       '@ts-rest/express':
         specifier: ^3.52.1
         version: 3.52.1(@ts-rest/core@3.52.1(@types/node@22.13.9)(zod@3.24.2))(express@5.0.1)(zod@3.24.2)
-      app-seahax-common:
+      app-seahax-api:
         specifier: workspace:*
-        version: link:../common
+        version: link:../api
       compression:
         specifier: ^1.8.0
         version: 1.8.0
@@ -110,28 +132,6 @@ importers:
         specifier: workspace:*
         version: link:../frontend
 
-  apps/seahax/common:
-    dependencies:
-      '@seahax/ts-rest':
-        specifier: workspace:*
-        version: link:../../../packages/ts-rest
-      '@ts-rest/core':
-        specifier: ^3.52.1
-        version: 3.52.1(@types/node@22.13.9)(zod@3.24.2)
-      zod:
-        specifier: ^3.24.2
-        version: 3.24.2
-    devDependencies:
-      '@seahax/eslint':
-        specifier: workspace:*
-        version: link:../../../packages/eslint
-      '@seahax/run-all':
-        specifier: workspace:*
-        version: link:../../../packages/run-all
-      '@seahax/vite-plugin-lib':
-        specifier: workspace:*
-        version: link:../../../packages/vite-plugin-lib
-
   apps/seahax/frontend:
     dependencies:
       '@seahax/ts-rest':
@@ -140,9 +140,9 @@ importers:
       '@ts-rest/core':
         specifier: ^3.52.1
         version: 3.52.1(@types/node@22.13.9)(zod@3.24.2)
-      app-seahax-common:
+      app-seahax-api:
         specifier: workspace:*
-        version: link:../common
+        version: link:../api
       zod:
         specifier: ^3.24.2
         version: 3.24.2

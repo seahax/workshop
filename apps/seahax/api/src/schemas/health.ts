@@ -1,17 +1,17 @@
-import { $Empty, initRouterSpec } from '@seahax/ts-rest';
+import { initRouterSchema, NoBody } from '@seahax/ts-rest';
 
-export const healthRouterSpec = initRouterSpec({
+export const healthRouterSpec = initRouterSchema({
   health: {
     summary: 'Health check.',
     method: 'GET',
     path: '/health',
     responses: {
-      200: $Empty,
+      200: NoBody,
     },
   },
 }, {
   commonResponses: {
-    500: $Empty,
+    500: NoBody,
   },
   strictStatusCodes: true,
 });

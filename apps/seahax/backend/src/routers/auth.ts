@@ -1,5 +1,5 @@
 import { initExpressRouter } from '@seahax/ts-rest/express';
-import { authRouterSpec } from 'app-seahax-common';
+import { authRouterSpec } from 'app-seahax-api';
 
 export const authRouter = initExpressRouter(authRouterSpec, {
   login: async ({ body }) => {
