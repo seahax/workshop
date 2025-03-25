@@ -58,6 +58,11 @@ interface Config {
   readonly packageJsonPath?: string;
 
   /**
+   * Additional dependency IDs that should be considered external.
+   */
+  readonly extraExternals?: string[];
+
+  /**
    * The path of the TypeScript configuration file used for type-checking and
    * (optionally) generating declaration files.
    *
@@ -112,6 +117,7 @@ export default function plugin({
   format = 'es',
   bundle = false,
   packageJsonPath: maybePackageJsonPath,
+  extraExternals = [],
   tsconfigPath,
   tsc = 'tsc',
 }: Config = {}): Plugin {
@@ -212,7 +218,9 @@ export default function plugin({
       if (/^[a-z]+:/iu.test(source)) return true;
       if (isBuiltin(source)) return true;
 
-      return false;
+      const id = source.match(/^(?:@[^/]+\/)?[^/]+/u)?.[0];
+
+      return Boolean(id && extraExternals.includes(id));
     };
   }
 
@@ -230,7 +238,7 @@ export default function plugin({
 
       const id = source.match(/^(?:@[^/]+\/)?[^/]+/u)?.[0];
 
-      return Boolean(id && deps.includes(id));
+      return Boolean(id && (deps.includes(id) || extraExternals.includes(id)));
     };
   }
 
