@@ -1,6 +1,5 @@
 import { initExpressRouter } from '@seahax/ts-rest/express';
-
-import { healthRouterSpec } from '../../common/routers/health.ts';
+import { healthRouterSpec } from 'app-seahax-common';
 
 export const healthRouter = initExpressRouter(healthRouterSpec, {
   health: async () => {

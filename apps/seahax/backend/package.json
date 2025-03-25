@@ -1,12 +1,12 @@
 {
-  "name": "seahax",
+  "name": "app-seahax-backend",
   "version": "0.1.0",
   "private": true,
   "description": "",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
-    "directory": "apps/seahax"
+    "directory": "apps/seahax/backend"
   },
   "license": "Unlicense",
   "type": "module",
@@ -15,14 +15,12 @@
     "!dist/*.tsbuildinfo"
   ],
   "scripts": {
-    "build": "run-all build.",
-    "build.0-frontend": "vite build -c vite-frontend.config.ts",
-    "build.1-backend": "vite build -c vite-backend.config.ts",
+    "build": "vite build",
     "clean": "rm -rf dist",
-    "docker.build": "docker build . -t \"$npm_package_name\"",
-    "docker.start": "pnpm build && pnpm docker.build && docker run -it --rm -p 8080:8080 \"$npm_package_name\"",
+    "docker.build": "docker build ../ -t \"$npm_package_name\"",
+    "docker.start": "docker run -it --rm -p 8080:8080 \"$npm_package_name\"",
     "lint": "eslint src",
-    "start": "pnpm build && node dist/backend/index.mjs",
+    "start": "node dist/index.mjs",
     "test": "run-all test.",
     "test.0-lint": "pnpm lint --max-warnings=0"
   },
@@ -30,6 +28,7 @@
     "@seahax/ts-rest": "workspace:*",
     "@ts-rest/core": "^3.52.1",
     "@ts-rest/express": "^3.52.1",
+    "app-seahax-common": "workspace:*",
     "compression": "^1.8.0",
     "express": "^5.0.1",
     "helmet": "^8.1.0",
@@ -42,7 +41,8 @@
     "@seahax/vite-plugin-lib": "workspace:*",
     "@types/compression": "^1.7.5",
     "@types/express": "^5.0.1",
-    "@types/morgan": "^1.9.9"
+    "@types/morgan": "^1.9.9",
+    "app-seahax-frontend": "workspace:*"
   },
   "publishConfig": {
     "access": "public"

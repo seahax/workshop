@@ -5,6 +5,27 @@
       "dependsOn": [
         "^build"
       ]
+    },
+    "test": {
+      "dependsOn": [
+        "build",
+        "^test"
+      ]
+    },
+    "start": {
+      "dependsOn": [
+        "build"
+      ]
+    },
+    "docker.build": {
+      "dependsOn": [
+        "build"
+      ]
+    },
+    "docker.start": {
+      "dependsOn": [
+        "docker.build"
+      ]
     }
   }
 }

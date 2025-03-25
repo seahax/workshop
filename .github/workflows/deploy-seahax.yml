@@ -8,8 +8,8 @@ on:
       - apps/seahax/**
 
 env:
-  APP_NAME: "seahax"
-  APP_PATH: "apps/seahax"
+  APP_BACKEND_NAME: "app-seahax-backend"
+  APP_SPEC: "apps/seahax/app.yaml"
 
 concurrency:
   group: ${{ github.workflow }}
@@ -42,16 +42,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: npx lerna --scope="$APP_NAME" run build
-
-      - name: Docker Build
-        run: npx lerna --scope="$APP_NAME" run docker.build -- -t "registry.digitalocean.com/seahax/${APP_NAME}:latest"
+        run: npx lerna --scope="$APP_BACKEND_NAME" run docker.build -- -t "registry.digitalocean.com/seahax/${APP_BACKEND_NAME}:latest"
 
       - name: Test
-        run: npx lerna --scope="$APP_NAME" run test
+        run: npx lerna --scope="$APP_BACKEND_NAME" run test
 
       - name: Docker Push
-        run: docker push "registry.digitalocean.com/seahax/${APP_NAME}:latest"
+        run: docker push "registry.digitalocean.com/seahax/${APP_BACKEND_NAME}:latest"
 
       - name: Deploy
-        run: doctl apps create --spec "${APP_PATH}/app.yaml" --project-id "${{ secrets.DIGITALOCEAN_PROJECT }}" --upsert --update-sources --format ID,DefaultIngress,Created
+        run: doctl apps create --spec "${APP_SPEC}" --project-id "${{ secrets.DIGITALOCEAN_PROJECT }}" --upsert --update-sources --format ID,DefaultIngress,Created

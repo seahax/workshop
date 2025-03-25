@@ -2,4 +2,4 @@ packages:
   - packages/*
   - unreleased/*
   - templates/*
-  - apps/*
+  - apps/*/*

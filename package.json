@@ -9,6 +9,8 @@
     "lint": "eslint .",
     "modernize": "npx npm-check-updates@latest -i --root --workspaces --dep dev,prod,peer,optional,packageManager --peer --format group",
     "rev": "lerna --no-private --no-stream exec rev",
+    "seahax.docker.start": "lerna --no-stream --scope app-seahax-backend run docker.start",
+    "seahax.start": "lerna --no-stream --scope app-seahax-backend run start",
     "test": "run-all test.",
     "test.0-build": "pnpm build",
     "test.1-lint": "pnpm lint --max-warnings=0",

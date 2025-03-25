@@ -5,5 +5,5 @@ export interface Config {
 }
 
 export const config: Config = {
-  staticPath: path.resolve(import.meta.dirname, '../frontend'),
+  staticPath: process.env.FRONTEND_PATH || path.resolve(import.meta.dirname, '../../frontend/dist'),
 };

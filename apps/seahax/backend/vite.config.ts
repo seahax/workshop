@@ -5,10 +5,6 @@ process.chdir(import.meta.dirname);
 
 export default defineConfig({
   plugins: [
-    lib({ entry: 'src/backend/index.ts', target: 'node', bundle: true }),
+    lib({ entry: 'src/index.ts', target: 'node', bundle: true }),
   ],
-  build: {
-    emptyOutDir: true,
-    outDir: 'dist/backend',
-  },
 });

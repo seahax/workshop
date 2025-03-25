@@ -58,17 +58,20 @@ importers:
         specifier: ^3.0.7
         version: 3.0.7(@types/node@22.13.9)(jiti@2.4.2)(jsdom@26.0.0)(tsx@4.19.3)(yaml@2.7.0)
 
-  apps/seahax:
+  apps/seahax/backend:
     dependencies:
       '@seahax/ts-rest':
         specifier: workspace:*
-        version: link:../../packages/ts-rest
+        version: link:../../../packages/ts-rest
       '@ts-rest/core':
         specifier: ^3.52.1
         version: 3.52.1(@types/node@22.13.9)(zod@3.24.2)
       '@ts-rest/express':
         specifier: ^3.52.1
         version: 3.52.1(@ts-rest/core@3.52.1(@types/node@22.13.9)(zod@3.24.2))(express@5.0.1)(zod@3.24.2)
+      app-seahax-common:
+        specifier: workspace:*
+        version: link:../common
       compression:
         specifier: ^1.8.0
         version: 1.8.0
@@ -87,13 +90,13 @@ importers:
     devDependencies:
       '@seahax/eslint':
         specifier: workspace:*
-        version: link:../../packages/eslint
+        version: link:../../../packages/eslint
       '@seahax/run-all':
         specifier: workspace:*
-        version: link:../../packages/run-all
+        version: link:../../../packages/run-all
       '@seahax/vite-plugin-lib':
         specifier: workspace:*
-        version: link:../../packages/vite-plugin-lib
+        version: link:../../../packages/vite-plugin-lib
       '@types/compression':
         specifier: ^1.7.5
         version: 1.7.5
@@ -103,6 +106,56 @@ importers:
       '@types/morgan':
         specifier: ^1.9.9
         version: 1.9.9
+      app-seahax-frontend:
+        specifier: workspace:*
+        version: link:../frontend
+
+  apps/seahax/common:
+    dependencies:
+      '@seahax/ts-rest':
+        specifier: workspace:*
+        version: link:../../../packages/ts-rest
+      '@ts-rest/core':
+        specifier: ^3.52.1
+        version: 3.52.1(@types/node@22.13.9)(zod@3.24.2)
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
+    devDependencies:
+      '@seahax/eslint':
+        specifier: workspace:*
+        version: link:../../../packages/eslint
+      '@seahax/run-all':
+        specifier: workspace:*
+        version: link:../../../packages/run-all
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../../../packages/vite-plugin-lib
+
+  apps/seahax/frontend:
+    dependencies:
+      '@seahax/ts-rest':
+        specifier: workspace:*
+        version: link:../../../packages/ts-rest
+      '@ts-rest/core':
+        specifier: ^3.52.1
+        version: 3.52.1(@types/node@22.13.9)(zod@3.24.2)
+      app-seahax-common:
+        specifier: workspace:*
+        version: link:../common
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
+    devDependencies:
+      '@seahax/eslint':
+        specifier: workspace:*
+        version: link:../../../packages/eslint
+      '@seahax/run-all':
+        specifier: workspace:*
+        version: link:../../../packages/run-all
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../../../packages/vite-plugin-lib
 
   packages/args:
     dependencies:
