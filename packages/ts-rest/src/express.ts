@@ -22,29 +22,29 @@ export interface ExpressRouterOptions<TAppRouter extends AppRouter> extends TsRe
 }
 
 /**
- * Create an Express Router implementation of the Router spec.
+ * Create an Express Router implementation of the Router schema.
  *
  * Example:
  * ```ts
- * const router = initExpressRouter(routerSpec, {
- *   // Implementation of the router spec...
+ * const router = initExpressRouter(routerSchema, {
+ *   // Implementation of the router schema...
  * }, options);
  * ```
  *
  * This is equivalent to the following `@ts-rest/express` code:
  * ```ts
  * const router = express.Router();
- * createExpressEndpoints(routerSpec, {
- *   // Implementation of the router spec...
+ * createExpressEndpoints(routerSchema, {
+ *   // Implementation of the router schema...
  * }, router, options);
  * ```
  */
 export function initExpressRouter<TAppRouter extends AppRouter>(
-  spec: TAppRouter,
+  schema: TAppRouter,
   implementation: RouterImplementation<TAppRouter>,
   { baseRouter = express.Router(), ...options }: ExpressRouterOptions<TAppRouter> = {},
 ): Router {
-  createExpressEndpoints(spec, implementation, baseRouter, {
+  createExpressEndpoints(schema, implementation, baseRouter, {
     logInitialization: false,
     requestValidationErrorHandler: (err, req, res) => {
       res.status(400).json({ error: 'Bad Request' });
