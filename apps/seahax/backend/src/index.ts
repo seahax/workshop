@@ -3,30 +3,33 @@ import type { AddressInfo } from 'node:net';
 import compression from 'compression';
 import express from 'express';
 import helmet from 'helmet';
+import { ConnectionStates } from 'mongoose';
 import morgan from 'morgan';
 
-import { authRouter } from './routers/auth.ts';
-import { healthRouter } from './routers/health.ts';
-import { staticRouter } from './routers/static.ts';
+import { initDbAuth } from './database/auth.ts';
+import { createAuthRouter } from './routers/auth.ts';
+import { createHealthRouter } from './routers/health.ts';
+import { createStaticRouter } from './routers/static.ts';
 
-const app = express();
+process.on('SIGINT', () => process.exit(0));
+process.on('SIGTERM', () => process.exit(0));
 
-app.use(morgan('tiny'));
-app.use(helmet());
-app.use(express.json());
-app.use(compression());
-app.use(healthRouter);
-app.use(authRouter);
-app.use(staticRouter); // Must be last.
+const dbAuth = await initDbAuth();
 
-const http = app.listen(8080, () => {
-  console.log(`Server is listening on port ${(http.address() as AddressInfo).port}`);
+const app = express().use(
+  morgan('tiny'),
+  helmet(),
+  express.json(),
+  compression(),
+  createHealthRouter({
+    dbAuth: () => dbAuth.connection.readyState === ConnectionStates.connected,
+  }),
+  createAuthRouter({ db: dbAuth }),
+  createStaticRouter(), // Must be last.
+);
+
+const server = app.listen(8080, () => {
+  console.log(`Server is listening on port ${(server.address() as AddressInfo).port}`);
+}).on('close', () => {
+  console.log('Server is closed');
 });
-
-process.on('SIGINT', close);
-process.on('SIGTERM', close);
-
-function close(): void {
-  console.log('\nServer is shutting down');
-  http.close();
-}

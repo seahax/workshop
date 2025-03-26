@@ -1,9 +1,20 @@
-import path from 'node:path';
+import assert from 'node:assert';
 
-export interface Config {
-  staticPath: string;
+const AUTH_DB_NAME = 'auth';
+
+export const config = {
+  staticPath: requireEnv('STATIC_PATH'),
+  authDbCaCert: process.env.DB_CA_CERT,
+  authDbUrl: getAuthDbUrl(),
+} as const;
+
+function requireEnv(name: string): string {
+  assert.ok(process.env[name], `Missing "${name}" environment variable.`);
+  return process.env[name];
 }
 
-export const config: Config = {
-  staticPath: process.env.FRONTEND_PATH || path.resolve(import.meta.dirname, '../../frontend/dist'),
-};
+function getAuthDbUrl(): string {
+  const url = new URL(requireEnv('DB_URL'));
+  url.pathname = `/${AUTH_DB_NAME}`;
+  return url.href;
+}

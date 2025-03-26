@@ -8,7 +8,7 @@ import { config } from '../config.ts';
 const CACHE_CONTROL_IMMUTABLE = 'public, max-age=31536000, immutable';
 const CACHE_CONTROL_MUTABLE = 'public, max-age=86400, must-revalidate';
 
-export const staticRouter: Router = express.Router()
+export const createStaticRouter = (): Router => express.Router()
   // Immutable static assets (hashed)
   .use('/assets/', express.static(`${config.staticPath}/assets`, {
     redirect: false,

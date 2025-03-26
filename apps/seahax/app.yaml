@@ -21,14 +21,14 @@ services:
     instance_count: 1
     instance_size_slug: apps-s-1vcpu-0.5gb
     envs:
-      - key: DATABASE_URL
+      - key: DB_URL
         scope: RUN_TIME
         value: ${seahax-data.DATABASE_URL}
-      - key: CA_CERT
+      - key: DB_CA_CERT
         scope: RUN_TIME
         value: ${seahax-data.CA_CERT}
     health_check:
-      http_path: /health
+      http_path: /_health
       initial_delay_seconds: 10
       period_seconds: 10
       timeout_seconds: 3

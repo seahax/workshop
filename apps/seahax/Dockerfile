@@ -10,7 +10,7 @@ COPY backend/dist /app/backend
 COPY frontend/dist /app/frontend
 
 USER app
-ENV FRONTEND_PATH=/app/frontend
+ENV STATIC_PATH=/app/frontend
 CMD ["node", "/app/backend/index.mjs"]
 
 EXPOSE 8080
