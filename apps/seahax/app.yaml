@@ -6,7 +6,7 @@ alerts:
 
 databases:
   - name: db
-    cluster_name: seahax-data
+    cluster_name: seahax-db
     engine: MONGODB
     version: "8"
     production: true
