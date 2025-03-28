@@ -4,12 +4,12 @@ alerts:
   - rule: DEPLOYMENT_FAILED
   - rule: DOMAIN_FAILED
 
-# databases:
-#   - name: seahax-data
-#     cluster_name: seahax-data
-#     engine: MONGODB
-#     version: "8"
-#     production: true
+databases:
+  - name: db
+    cluster_name: seahax-data
+    engine: MONGODB
+    version: "8"
+    production: true
 
 services:
   - name: seahax
@@ -20,13 +20,13 @@ services:
     http_port: 8080
     instance_count: 1
     instance_size_slug: apps-s-1vcpu-0.5gb
-    # envs:
-    #   - key: DB_URL
-    #     scope: RUN_TIME
-    #     value: ${seahax-data.DATABASE_URL}
-    #   - key: CA_CERT
-    #     scope: RUN_TIME
-    #     value: ${seahax-data.CA_CERT}
+    envs:
+      - key: DATABASE_URL
+        scope: RUN_AND_BUILD_TIME
+        value: ${db.DATABASE_URL}
+      - key: CA_CERT
+        scope: RUN_AND_BUILD_TIME
+        value: ${db.CA_CERT}
     health_check:
       http_path: /_health
       initial_delay_seconds: 10
