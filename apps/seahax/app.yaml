@@ -12,7 +12,7 @@ databases:
     production: true
 
 services:
-  - name: seahax
+  - name: app
     image:
       registry_type: DOCR
       repository: app-seahax-backend

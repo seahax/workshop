@@ -1,10 +1,11 @@
 import { initExpressRouter } from '@seahax/ts-rest/express';
 import { authRouterSpec } from 'app-seahax-api';
 import type { Router } from 'express';
-import type { Mongoose } from 'mongoose';
+
+import type { Database } from '../database.ts';
 
 interface Config {
-  db: Mongoose;
+  db: Database;
 }
 
 export const createAuthRouter = ({ db }: Config): Router => {
