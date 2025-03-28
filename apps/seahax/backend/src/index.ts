@@ -15,6 +15,7 @@ process.on('SIGINT', () => process.exit(0));
 process.on('SIGTERM', () => process.exit(0));
 
 // const dbAuth = await initDbAuth();
+console.log(JSON.stringify(process.env, null, 2));
 
 const app = express().use(
   morgan('tiny'),

@@ -22,10 +22,10 @@ services:
     instance_size_slug: apps-s-1vcpu-0.5gb
     envs:
       - key: DATABASE_URL
-        scope: RUN_AND_BUILD_TIME
+        scope: RUN_TIME
         value: ${db.DATABASE_URL}
       - key: CA_CERT
-        scope: RUN_AND_BUILD_TIME
+        scope: RUN_TIME
         value: ${db.CA_CERT}
     health_check:
       http_path: /_health
