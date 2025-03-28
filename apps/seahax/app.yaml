@@ -38,7 +38,7 @@ services:
 ingress:
   rules:
     - component:
-        name: seahax
+        name: app
       match:
         path:
           prefix: /
