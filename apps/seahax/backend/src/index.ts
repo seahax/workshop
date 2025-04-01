@@ -19,8 +19,8 @@ app.use(helmet());
 app.use(json());
 app.use(compression());
 app.get('/_info', info({
-  startTime: new Date(config.startTimestamp).toLocaleString(),
-  buildTime: new Date(config.buildTimestamp).toLocaleString(),
+  startTime: new Date(config.startTimestamp).toISOString(),
+  buildTime: new Date(config.buildTimestamp).toISOString(),
   commit: config.commit,
 }));
 app.get('/_health', health({ mongo }));
