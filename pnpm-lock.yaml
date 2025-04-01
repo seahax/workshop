@@ -27,9 +27,6 @@ importers:
       '@seahax/vitest':
         specifier: workspace:*
         version: link:packages/vitest
-      '@seahax/yaml-vars':
-        specifier: workspace:*
-        version: link:packages/yaml-vars
       '@types/node':
         specifier: ^22.13.9
         version: 22.13.9
@@ -137,6 +134,9 @@ importers:
       '@seahax/vite-plugin-lib':
         specifier: workspace:*
         version: link:../../../packages/vite-plugin-lib
+      '@seahax/yaml-vars':
+        specifier: workspace:*
+        version: link:../../../packages/yaml-vars
       '@types/compression':
         specifier: ^1.7.5
         version: 1.7.5

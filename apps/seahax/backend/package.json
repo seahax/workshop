@@ -44,6 +44,7 @@
     "@seahax/eslint": "workspace:*",
     "@seahax/run-all": "workspace:*",
     "@seahax/vite-plugin-lib": "workspace:*",
+    "@seahax/yaml-vars": "workspace:*",
     "@types/compression": "^1.7.5",
     "@types/express": "^5.0.1",
     "@types/morgan": "^1.9.9",
