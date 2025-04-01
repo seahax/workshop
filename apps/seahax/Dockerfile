@@ -10,7 +10,8 @@ COPY backend/dist /app/backend
 COPY frontend/dist /app/frontend
 
 USER app
-ENV STATIC_PATH=/app/frontend
+ENV NODE_OPTIONS=--enable-source-maps
+ENV APP_STATIC_PATH=/app/frontend
 CMD ["node", "/app/backend/index.mjs"]
 
 EXPOSE 8080

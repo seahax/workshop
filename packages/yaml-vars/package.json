@@ -1,0 +1,32 @@
+{
+  "name": "@seahax/yaml-vars",
+  "version": "0.1.0",
+  "private": false,
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/yaml-vars"
+  },
+  "license": "Unlicense",
+  "type": "module",
+  "bin": "./bin.mjs",
+  "files": [
+    "dist",
+    "!dist/*.tsbuildinfo"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "yaml": "^2.7.0"
+  },
+  "devDependencies": {
+    "@seahax/vite-plugin-lib": "workspace:*",
+    "@types/js-yaml": "^4.0.9"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

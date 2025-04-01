@@ -1,0 +1,38 @@
+{
+  "name": "@seahax/express-health",
+  "version": "0.1.0",
+  "private": false,
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/express-health"
+  },
+  "license": "Unlicense",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "!dist/*.tsbuildinfo"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@seahax/vite-plugin-lib": "workspace:*",
+    "@types/express": "^5.0.1"
+  },
+  "peerDependencies": {
+    "express": "^5.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

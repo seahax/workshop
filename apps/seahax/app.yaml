@@ -1,3 +1,7 @@
+${{vars}}:
+  - key: app-pepper
+    type: string
+
 name: seahax
 region: sfo
 alerts:
@@ -21,12 +25,15 @@ services:
     instance_count: 1
     instance_size_slug: apps-s-1vcpu-0.5gb
     envs:
-      - key: DATABASE_URL
+      - key: APP_ORIGIN
+        scope: RUN_TIME
+        value: https://seahax.com
+      - key: APP_DATABASE_URL
         scope: RUN_TIME
         value: ${db.DATABASE_URL}
-      - key: CA_CERT
+      - key: APP_PEPPER
         scope: RUN_TIME
-        value: ${db.CA_CERT}
+        value: ${{vars.app-pepper}}
     health_check:
       http_path: /_health
       initial_delay_seconds: 10

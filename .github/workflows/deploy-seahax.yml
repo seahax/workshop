@@ -51,4 +51,13 @@ jobs:
         run: docker push "registry.digitalocean.com/seahax/${APP_BACKEND_NAME}:latest"
 
       - name: Deploy
-        run: doctl apps create --spec "${APP_SPEC}" --project-id "${{ secrets.DIGITALOCEAN_PROJECT }}" --upsert --update-sources --format ID,DefaultIngress,Created
+        run: |
+          set -e
+          npx @seahax/yaml-vars "${APP_SPEC}" \
+            app-pepper="${{ secrets.SEAHAX_APP_PEPPER }}" \
+          | doctl apps create \
+            --spec - \
+            --project-id "${{ secrets.DIGITALOCEAN_PROJECT }}" \
+            --upsert \
+            --update-sources \
+            --format ID,DefaultIngress,Created

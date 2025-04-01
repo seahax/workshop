@@ -1,0 +1,13 @@
+${{vars}}:
+  - key: foo
+    type: number
+object:
+  value: ${{vars.foo}}
+array:
+  - ${{vars.foo}}
+---
+${{vars}}:
+  - key: bar
+    type: number
+    default: baz
+value0: ${{vars.bar}}

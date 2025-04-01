@@ -1,0 +1,18 @@
+{
+  "extends": "@seahax/tsconfig",
+  "compilerOptions": {
+    "outDir": "../dist",
+    "lib": [
+      "ES2023",
+    ],
+    "types": [
+      "vite/client",
+      "node"
+    ]
+  },
+  "references": [
+    {
+      "path": "./tsconfig.build.json"
+    }
+  ]
+}

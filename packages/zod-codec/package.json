@@ -1,0 +1,37 @@
+{
+  "name": "@seahax/zod-codec",
+  "version": "0.1.0",
+  "private": false,
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/zod-codec"
+  },
+  "license": "Unlicense",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "!dist/*.tsbuildinfo"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@seahax/vite-plugin-lib": "workspace:*"
+  },
+  "peerDependencies": {
+    "zod": "^3.24.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

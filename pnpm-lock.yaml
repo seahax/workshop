@@ -27,6 +27,9 @@ importers:
       '@seahax/vitest':
         specifier: workspace:*
         version: link:packages/vitest
+      '@seahax/yaml-vars':
+        specifier: workspace:*
+        version: link:packages/yaml-vars
       '@types/node':
         specifier: ^22.13.9
         version: 22.13.9
@@ -82,9 +85,18 @@ importers:
 
   apps/seahax/backend:
     dependencies:
+      '@seahax/express-health':
+        specifier: workspace:*
+        version: link:../../../packages/express-health
+      '@seahax/express-spa':
+        specifier: workspace:*
+        version: link:../../../packages/express-spa
       '@seahax/ts-rest':
         specifier: workspace:*
         version: link:../../../packages/ts-rest
+      '@seahax/zod-codec':
+        specifier: workspace:*
+        version: link:../../../packages/zod-codec
       '@ts-rest/core':
         specifier: ^3.52.1
         version: 3.52.1(@types/node@22.13.9)(zod@3.24.2)
@@ -100,6 +112,9 @@ importers:
       express:
         specifier: ^5.0.1
         version: 5.0.1
+      hash-wasm:
+        specifier: ^4.12.0
+        version: 4.12.0
       helmet:
         specifier: ^8.1.0
         version: 8.1.0
@@ -257,6 +272,32 @@ importers:
       eslint:
         specifier: ^9.21.0
         version: 9.21.0(jiti@2.4.2)
+
+  packages/express-health:
+    dependencies:
+      express:
+        specifier: ^5.0.1
+        version: 5.0.1
+    devDependencies:
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+      '@types/express':
+        specifier: ^5.0.1
+        version: 5.0.1
+
+  packages/express-spa:
+    dependencies:
+      express:
+        specifier: ^5.0.1
+        version: 5.0.1
+    devDependencies:
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+      '@types/express':
+        specifier: ^5.0.1
+        version: 5.0.1
 
   packages/main:
     dependencies:
@@ -496,6 +537,29 @@ importers:
       yaml:
         specifier: ^2.7.0
         version: 2.7.0
+    devDependencies:
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+
+  packages/yaml-vars:
+    dependencies:
+      yaml:
+        specifier: ^2.7.0
+        version: 2.7.0
+    devDependencies:
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+      '@types/js-yaml':
+        specifier: ^4.0.9
+        version: 4.0.9
+
+  packages/zod-codec:
+    dependencies:
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
     devDependencies:
       '@seahax/vite-plugin-lib':
         specifier: workspace:*
@@ -1232,6 +1296,9 @@ packages:
 
   '@types/http-errors@2.0.4':
     resolution: {integrity: sha512-D0CFMMtydbJAegzOyHjtiKPLlvnm3iTZyZRSZoLq2mRhDdmLfIWOCYPfQJ4cu2erKghU++QvjcUjp/5h7hESpA==}
+
+  '@types/js-yaml@4.0.9':
+    resolution: {integrity: sha512-k4MGaQl5TGo/iipqb2UDG2UwjXziSWkh0uysQelTlJpX1qGlpUZYm8PnO4DxG1qBomtJUdYJ6qR6xdIah10JLg==}
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -2649,6 +2716,9 @@ packages:
 
   has-unicode@2.0.1:
     resolution: {integrity: sha512-8Rf9Y83NBReMnx0gFzA8JImQACstCYWUplepDa9xprwwtmgEZUF0h/i5xSA625zB/I37EtrswSST6OXxwaaIJQ==}
+
+  hash-wasm@4.12.0:
+    resolution: {integrity: sha512-+/2B2rYLb48I/evdOIhP+K/DD2ca2fgBjp6O+GBEnCDk2e4rpeXIK8GvIyRPjTezgmWn9gmKwkQjjx6BtqDHVQ==}
 
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
@@ -5654,6 +5724,8 @@ snapshots:
 
   '@types/http-errors@2.0.4': {}
 
+  '@types/js-yaml@4.0.9': {}
+
   '@types/json-schema@7.0.15': {}
 
   '@types/json5@0.0.29': {}
@@ -7354,6 +7426,8 @@ snapshots:
       has-symbols: 1.1.0
 
   has-unicode@2.0.1: {}
+
+  hash-wasm@4.12.0: {}
 
   hasown@2.0.2:
     dependencies:
