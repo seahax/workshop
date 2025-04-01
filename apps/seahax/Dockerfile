@@ -12,7 +12,9 @@ COPY frontend/dist /app/frontend
 
 USER app
 ARG APP_COMMIT
+ARG APP_BUILD_TIMESTAMP
 ENV APP_COMMIT=${APP_COMMIT}
+ENV APP_BUILD_TIMESTAMP=${APP_BUILD_TIMESTAMP}
 ENV APP_STATIC_PATH=/app/frontend
 ENV NODE_OPTIONS=--enable-source-maps
 CMD ["node", "/app/backend/index.mjs"]

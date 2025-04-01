@@ -1,12 +1,12 @@
 {
-  "name": "@seahax/express-health",
+  "name": "@seahax/express-info",
   "version": "0.1.0",
   "private": false,
   "description": "",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
-    "directory": "packages/express-health"
+    "directory": "packages/express-info"
   },
   "license": "Unlicense",
   "type": "module",

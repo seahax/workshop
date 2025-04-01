@@ -17,7 +17,7 @@
   "scripts": {
     "build": "vite build",
     "clean": "rm -rf dist",
-    "docker.build": "docker build ../ -t \"$npm_package_name\" --build-arg APP_COMMIT=\"$(git rev-parse --short HEAD)\"",
+    "docker.build": "docker build ../ -t \"$npm_package_name\" --build-arg APP_COMMIT=\"$(git rev-parse --short HEAD)\" --build-arg APP_BUILD_TIMESTAMP=\"$(date +%s)\"",
     "docker.start": "./scripts/start-docker.sh",
     "lint": "eslint src",
     "start": "./scripts/start.sh",
@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@seahax/express-health": "workspace:*",
+    "@seahax/express-info": "workspace:*",
     "@seahax/express-spa": "workspace:*",
     "@seahax/ts-rest": "workspace:*",
     "@seahax/zod-codec": "workspace:*",

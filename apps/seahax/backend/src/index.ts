@@ -1,6 +1,7 @@
 import type { AddressInfo } from 'node:net';
 
 import health from '@seahax/express-health';
+import info from '@seahax/express-info';
 import spa from '@seahax/express-spa';
 import compression from 'compression';
 import express, { json } from 'express';
@@ -17,7 +18,11 @@ app.use(morgan('tiny'));
 app.use(helmet());
 app.use(json());
 app.use(compression());
-app.get('/_info', (req, res) => void res.json({ commit: config.commit }));
+app.get('/_info', info({
+  startTime: new Date(config.startTimestamp).toLocaleString(),
+  buildTime: new Date(config.buildTimestamp).toLocaleString(),
+  commit: config.commit,
+}));
 app.get('/_health', health({ mongo }));
 app.use('/auth/', auth());
 app.use(spa(config.staticPath)); // Must be last.

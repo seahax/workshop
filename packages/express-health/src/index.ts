@@ -36,7 +36,7 @@ export interface HealthOptions {
   readonly onCheckEnd?: ((name: string, result: boolean, error: unknown) => void);
 }
 
-export default function createHealthRouter(checkCallbacks: Record<string, () => Promise<boolean> | boolean>, {
+export default function createHealthHandler(checkCallbacks: Record<string, () => Promise<boolean> | boolean>, {
   initialDelaySeconds = 0,
   intervalSeconds = 30,
   onCheckStart,

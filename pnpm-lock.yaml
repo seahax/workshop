@@ -85,6 +85,9 @@ importers:
       '@seahax/express-health':
         specifier: workspace:*
         version: link:../../../packages/express-health
+      '@seahax/express-info':
+        specifier: workspace:*
+        version: link:../../../packages/express-info
       '@seahax/express-spa':
         specifier: workspace:*
         version: link:../../../packages/express-spa
@@ -274,10 +277,15 @@ importers:
         version: 9.21.0(jiti@2.4.2)
 
   packages/express-health:
-    dependencies:
-      express:
+    devDependencies:
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+      '@types/express':
         specifier: ^5.0.1
         version: 5.0.1
+
+  packages/express-info:
     devDependencies:
       '@seahax/vite-plugin-lib':
         specifier: workspace:*
