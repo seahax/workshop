@@ -3,6 +3,7 @@ import assert from 'node:assert';
 import { MongoClient } from 'mongodb';
 
 export const config = {
+  commit: process.env.APP_COMMIT ?? 'development',
   origin: requireEnv('APP_ORIGIN'),
   staticPath: requireEnv('APP_STATIC_PATH'),
   pepper: requireEnv('APP_PEPPER'),

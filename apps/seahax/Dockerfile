@@ -1,5 +1,6 @@
 FROM ubuntu:24.04
 
+
 RUN apt-get update
 RUN apt-get install -y curl
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -s
@@ -10,8 +11,10 @@ COPY backend/dist /app/backend
 COPY frontend/dist /app/frontend
 
 USER app
-ENV NODE_OPTIONS=--enable-source-maps
+ARG APP_COMMIT
+ENV APP_COMMIT=${APP_COMMIT}
 ENV APP_STATIC_PATH=/app/frontend
+ENV NODE_OPTIONS=--enable-source-maps
 CMD ["node", "/app/backend/index.mjs"]
 
 EXPOSE 8080

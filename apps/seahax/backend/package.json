@@ -17,7 +17,7 @@
   "scripts": {
     "build": "vite build",
     "clean": "rm -rf dist",
-    "docker.build": "docker build ../ -t \"$npm_package_name\"",
+    "docker.build": "docker build ../ -t \"$npm_package_name\" --build-arg APP_COMMIT=\"$(git rev-parse --short HEAD)\"",
     "docker.start": "./scripts/start-docker.sh",
     "lint": "eslint src",
     "start": "./scripts/start.sh",

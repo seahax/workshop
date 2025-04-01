@@ -17,6 +17,7 @@ app.use(morgan('tiny'));
 app.use(helmet());
 app.use(json());
 app.use(compression());
+app.get('/_info', (req, res) => void res.json({ commit: config.commit }));
 app.get('/_health', health({ mongo }));
 app.use('/auth/', auth());
 app.use(spa(config.staticPath)); // Must be last.
