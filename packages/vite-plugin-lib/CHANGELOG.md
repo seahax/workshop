@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.3 - 2025-04-01
+
+- __chore:__ add extraExternals option (9e15cdd)
+
 ## 0.4.2 - 2025-03-25
 
 - __fix:__ tsc log message shouldn't clear screen (7e1919a)
