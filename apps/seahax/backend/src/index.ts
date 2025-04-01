@@ -21,7 +21,7 @@ app.get('/_health', health({ mongo }));
 app.use('/auth/', auth());
 app.use(spa(config.staticPath)); // Must be last.
 
-const server = app.listen(8080, '127.0.0.1', () => {
+const server = app.listen(8080, () => {
   console.log(`Server is listening on port ${(server.address() as AddressInfo).port}`);
 }).on('close', () => {
   console.log('Server is closed');
