@@ -5,28 +5,26 @@ import { getPasswordHash, HASH_PARAMS } from './util/get-password-hash.ts';
 import { isPasswordMatch } from './util/is-password-match.ts';
 import { isRehashRequired } from './util/is-rehash-required.ts';
 
-export interface AuthResponseTokens {
+interface Tokens {
   accessToken: string;
   refreshToken: string;
 }
 
-export interface AuthResponseJwks {
-  keys: {
-    alg: 'ES256';
-    kty: 'EC';
-    use: 'sig';
-    key_ops: ['verify'];
-    crv: 'P-256';
-    kid: string;
-    x: string;
-    y: string;
-  }[];
+interface Jwk {
+  alg: 'ES256';
+  kty: 'EC';
+  use: 'sig';
+  key_ops: ['verify'];
+  crv: 'P-256';
+  kid: string;
+  x: string;
+  y: string;
 }
 
-export interface AuthService {
-  login(email: string, password: string): Promise<AuthResponseTokens | null>;
-  refresh(refreshToken: string): Promise<AuthResponseTokens | null>;
-  jwks(): Promise<AuthResponseJwks>;
+interface AuthService {
+  login(email: string, password: string): Promise<Tokens | null>;
+  refresh(refreshToken: string): Promise<Tokens | null>;
+  jwks(): Promise<Jwk[]>;
 }
 
 export function createAuthService(): AuthService {
@@ -64,7 +62,7 @@ export function createAuthService(): AuthService {
     },
 
     async jwks() {
-      return { keys: [] };
+      return [];
     },
   };
 }

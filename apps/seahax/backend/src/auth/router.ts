@@ -25,7 +25,7 @@ export default function createAuthRouter(): Router {
     },
 
     jwks: async () => {
-      return { status: 200, body: await service.jwks() };
+      return { status: 200, body: { keys: await service.jwks() } };
     },
   });
 };

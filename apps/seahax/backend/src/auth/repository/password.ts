@@ -4,9 +4,9 @@ import { z } from 'zod';
 
 import { config } from '../../config.ts';
 
-export type Password = z.infer<typeof $password>;
+type Password = z.infer<typeof $password>;
 
-export interface PasswordRepository {
+interface PasswordRepository {
   findOne(id: string): Promise<Password | null>;
   upsert(password: Password): Promise<void>;
 }
