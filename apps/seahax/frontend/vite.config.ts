@@ -1,18 +1,23 @@
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 
 process.chdir(import.meta.dirname);
+
+const sentry: Plugin | undefined = process.env.SENTRY_AUTH_TOKEN
+  ? sentryVitePlugin({
+      org: 'seahax',
+      project: 'seahax-frontend',
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    })
+  : undefined;
+
+console.log(`Sentry Vite Plugin: ${sentry ? 'enabled' : 'disabled'}`);
 
 export default defineConfig({
   plugins: [
     react(),
-    sentryVitePlugin({
-      org: 'seahax',
-      project: 'seahax-frontend',
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      disable: !process.env.SENTRY_AUTH_TOKEN,
-    }),
+    sentry,
   ],
   build: {
     target: 'es2023',

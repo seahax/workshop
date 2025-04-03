@@ -1,17 +1,22 @@
 import lib from '@seahax/vite-plugin-lib';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 
 process.chdir(import.meta.dirname);
+
+const sentry: Plugin | undefined = process.env.SENTRY_AUTH_TOKEN
+  ? sentryVitePlugin({
+      org: 'seahax',
+      project: 'seahax-backend',
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    })
+  : undefined;
+
+console.log(`Sentry Vite Plugin: ${sentry ? 'enabled' : 'disabled'}`);
 
 export default defineConfig({
   plugins: [
     lib({ entry: 'src/index.ts', target: 'node', bundle: true, extraExternals: ['mongodb-memory-server'] }),
-    sentryVitePlugin({
-      org: 'seahax',
-      project: 'seahax-backend',
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      disable: !process.env.SENTRY_AUTH_TOKEN,
-    }),
+    sentry,
   ],
 });
