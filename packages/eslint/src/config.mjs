@@ -101,7 +101,7 @@ export default function config({ ignores = DEFAULT_IGNORES } = {}) {
         'valid-typeof': 'off',
         '@stylistic/indent-binary-ops': ['off'],
         '@stylistic/max-len': ['warn', { code: 120, tabWidth: 2, ignoreComments: true, ignoreTemplateLiterals: true }],
-        '@stylistic/quotes': ['warn', 'single', { avoidEscape: true }],
+        '@stylistic/quotes': ['warn', 'single', { avoidEscape: true, allowTemplateLiterals: 'always' }],
       },
     },
 
