@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.14 - 2025-04-03
+
+- __chore:__ update deps (bf79548)
+- __chore:__ allow alternate quotes to avoid escaping (34b7696)
+
 ## 0.2.13 - 2025-03-25
 
 - __chore:__ disable unicorn prefer globalThis (e42958c)

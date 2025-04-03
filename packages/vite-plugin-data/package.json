@@ -1,6 +1,6 @@
 {
   "name": "@seahax/vite-plugin-data",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "private": false,
   "description": "Compile time data modules.",
   "repository": {

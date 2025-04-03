@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.8 - 2025-04-03
+
+- __chore:__ update deps (bf79548)
+
 ## 0.1.7 - 2025-03-08
 
 - __chore:__ refactor terminal (0b36a9f)

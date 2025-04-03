@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4 - 2025-04-03
+
+- __chore:__ update deps (bf79548)
+
 ## 0.1.3 - 2025-03-04
 
 - __chore:__ update deps (ae1e38c)

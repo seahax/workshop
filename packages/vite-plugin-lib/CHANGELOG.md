@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.4 - 2025-04-03
+
+- __chore:__ update deps (bf79548)
+
 ## 0.4.3 - 2025-04-01
 
 - __chore:__ add extraExternals option (9e15cdd)
