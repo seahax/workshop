@@ -28,13 +28,13 @@
   "dependencies": {
     "callsites": "^4.2.0",
     "glob": "^11.0.1",
-    "yaml": "^2.7.0"
+    "yaml": "^2.7.1"
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "peerDependencies": {
-    "vitest": "^3.0.7"
+    "vitest": "^3.1.1"
   },
   "publishConfig": {
     "access": "public"

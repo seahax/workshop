@@ -22,16 +22,16 @@
     "@seahax/run-all": "workspace:*",
     "@seahax/tsconfig": "workspace:*",
     "@seahax/vitest": "workspace:*",
-    "@types/node": "^22.13.9",
-    "@vitest/coverage-v8": "^3.0.7",
-    "eslint": "^9.21.0",
+    "@types/node": "^22.14.0",
+    "@vitest/coverage-v8": "^3.1.1",
+    "eslint": "^9.23.0",
     "eslint-plugin-functional": "^9.0.1",
     "jsdom": "^26.0.0",
     "lerna": "^8.2.1",
-    "nx": "^20.4.6",
+    "nx": "^20.7.1",
     "typescript": "^5.8.2",
-    "vite": "^6.2.0",
-    "vitest": "^3.0.7"
+    "vite": "^6.2.4",
+    "vitest": "^3.1.1"
   },
   "engines": {
     "node": "22.13.1",
