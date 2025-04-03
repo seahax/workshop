@@ -30,6 +30,8 @@ interface AuthService {
 export function createAuthService(): AuthService {
   const passwordRepo = createPasswordRepository();
 
+  void init();
+
   return {
     async login(email, password) {
       // TODO: Get user ID by email.
@@ -65,4 +67,9 @@ export function createAuthService(): AuthService {
       return [];
     },
   };
+
+  async function init(): Promise<void> {
+    // TODO: Create JWK key if missing.
+    // TODO: Create admin user if missing.
+  }
 }

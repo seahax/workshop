@@ -1,8 +1,11 @@
+import './sentry.ts';
+
 import type { AddressInfo } from 'node:net';
 
 import health from '@seahax/express-health';
 import info from '@seahax/express-info';
 import spa from '@seahax/express-spa';
+import * as sentry from '@sentry/node';
 import compression from 'compression';
 import express, { json } from 'express';
 import helmet from 'helmet';
@@ -14,10 +17,13 @@ import { mongo } from './health/mongo.ts';
 
 const app = express();
 
+// Middleware
 app.use(morgan('tiny'));
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: { directives: { 'connect-src': ["'self'", 'https://*.sentry.io'] } } }));
 app.use(json());
 app.use(compression());
+
+// Routes
 app.get('/_info', info({
   startTime: new Date(config.startTimestamp).toISOString(),
   buildTime: new Date(config.buildTimestamp).toISOString(),
@@ -25,7 +31,10 @@ app.get('/_info', info({
 }));
 app.get('/_health', health({ mongo }));
 app.use('/auth/', auth());
-app.use(spa(config.staticPath)); // Must be last.
+app.use(spa(config.staticPath)); // Must be the last router.
+
+// Error handling
+sentry.setupExpressErrorHandler(app);
 
 const server = app.listen(8080, () => {
   console.log(`Server is listening on port ${(server.address() as AddressInfo).port}`);
