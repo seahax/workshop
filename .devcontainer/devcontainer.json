@@ -25,7 +25,8 @@
 				"yzhang.markdown-all-in-one",
 				"ziyasal.vscode-open-in-github",
 				"zxh404.vscode-proto3",
-				"Redocly.openapi-vs-code"
+				"Redocly.openapi-vs-code",
+				"maattdd.gitless"
 			],
 			"settings": {
 				"editor.codeActionsOnSave": [
