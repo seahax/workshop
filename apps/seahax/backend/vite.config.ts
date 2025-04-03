@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
     lib({ entry: 'src/index.ts', target: 'node', bundle: true, extraExternals: ['mongodb-memory-server'] }),
     sentryVitePlugin({
-      org: 'personal-4a3',
+      org: 'seahax',
       project: 'seahax-backend',
       authToken: process.env.SENTRY_AUTH_TOKEN,
       disable: !process.env.SENTRY_AUTH_TOKEN,

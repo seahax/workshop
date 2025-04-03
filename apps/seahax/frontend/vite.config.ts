@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
     react(),
     sentryVitePlugin({
-      org: 'personal-4a3',
+      org: 'seahax',
       project: 'seahax-frontend',
       authToken: process.env.SENTRY_AUTH_TOKEN,
       disable: !process.env.SENTRY_AUTH_TOKEN,
