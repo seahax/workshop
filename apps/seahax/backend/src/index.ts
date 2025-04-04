@@ -12,8 +12,12 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 
 import auth from './auth/router.ts';
+import { background } from './background.ts';
 import { config } from './config.ts';
 import { mongo } from './health/mongo.ts';
+
+process.on('SIGINT', () => process.exit(0));
+process.on('SIGTERM', () => process.exit(0));
 
 const app = express();
 
@@ -42,12 +46,9 @@ const server = app.listen(8080, () => {
   console.log('Server is closed');
 });
 
-// Connect to the MongoDB preemptively to detect problems early and avoid
-// delaying the first request. If this fails, it may not be fatal, because the
-// mongo client will try to connect when used.
-config.mongo.connect().catch((error: unknown) => {
-  console.error('Failed to connect to mongo:', error);
-});
-
-process.on('SIGINT', () => process.exit(0));
-process.on('SIGTERM', () => process.exit(0));
+background(async () => {
+  // Connect to the MongoDB preemptively to detect problems early and avoid
+  // delaying the first request. If this fails, it may not be fatal, because
+  // the mongo client will try to connect when used.
+  await config.mongo.connect();
+}, { task: 'mongo-connect', failureSeverity: 'warning' });

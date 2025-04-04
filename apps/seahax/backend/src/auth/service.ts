@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
+import { background } from '../background.ts';
 import { createPasswordRepository } from './repository/password.ts';
 import { getPasswordHash, HASH_PARAMS } from './util/get-password-hash.ts';
 import { isPasswordMatch } from './util/is-password-match.ts';
@@ -29,10 +30,7 @@ interface AuthService {
 
 export function createAuthService(): AuthService {
   const passwordRepo = createPasswordRepository();
-
-  void init();
-
-  return {
+  const service: AuthService = {
     async login(email, password) {
       // TODO: Get user ID by email.
       const userId = randomUUID();
@@ -68,8 +66,14 @@ export function createAuthService(): AuthService {
     },
   };
 
-  async function init(): Promise<void> {
+  background(async () => {
     // TODO: Create JWK key if missing.
-    // TODO: Create admin user if missing.
-  }
+  }, { task: 'setup-jwk', failureSeverity: 'warning' });
+
+  background(async () => {
+    // TODO: Add the admin user if missing and the APP_ADMIN_USER environment
+    // variable is set.
+  }, { task: 'setup-admin-user', failureSeverity: 'warning' });
+
+  return service;
 }

@@ -25,6 +25,7 @@
     "test.0-lint": "pnpm lint --max-warnings=0"
   },
   "dependencies": {
+    "@seahax/background": "workspace:*",
     "@seahax/express-health": "workspace:*",
     "@seahax/express-info": "workspace:*",
     "@seahax/express-spa": "workspace:*",
