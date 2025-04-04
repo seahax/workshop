@@ -82,6 +82,9 @@ importers:
 
   apps/seahax/backend:
     dependencies:
+      '@seahax/background':
+        specifier: workspace:*
+        version: link:../../../packages/background
       '@seahax/express-health':
         specifier: workspace:*
         version: link:../../../packages/express-health
@@ -213,6 +216,12 @@ importers:
       wrap-ansi:
         specifier: ^9.0.0
         version: 9.0.0
+    devDependencies:
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+
+  packages/background:
     devDependencies:
       '@seahax/vite-plugin-lib':
         specifier: workspace:*
