@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 - 2025-04-09
+
+- __chore:__ remove dom from tsconfig libs (d8c14cb)
+
 ## 0.3.0 - 2025-04-09
 
 - __feat:__ remove (moved) express support and export a complete singleton contract instance, instead of a few utility functions (701a32e)
