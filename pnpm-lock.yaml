@@ -63,9 +63,6 @@ importers:
       '@seahax/ts-rest':
         specifier: workspace:*
         version: link:../../../packages/ts-rest
-      '@ts-rest/core':
-        specifier: ^3.52.1
-        version: 3.52.1(@types/node@22.14.0)(zod@3.24.2)
       zod:
         specifier: ^3.24.2
         version: 3.24.2
@@ -109,9 +106,6 @@ importers:
       '@ts-rest/core':
         specifier: ^3.52.1
         version: 3.52.1(@types/node@22.14.0)(zod@3.24.2)
-      '@ts-rest/express':
-        specifier: ^3.52.1
-        version: 3.52.1(@ts-rest/core@3.52.1(@types/node@22.14.0)(zod@3.24.2))(express@5.1.0)(zod@3.24.2)
       app-seahax-api:
         specifier: workspace:*
         version: link:../api
@@ -463,16 +457,10 @@ importers:
       '@ts-rest/core':
         specifier: ^3.52.1
         version: 3.52.1(@types/node@22.14.0)(zod@3.24.2)
-      zod:
-        specifier: ^3.24.2
-        version: 3.24.2
     devDependencies:
       '@seahax/vite-plugin-lib':
         specifier: workspace:*
         version: link:../vite-plugin-lib
-      '@types/express':
-        specifier: ^5.0.1
-        version: 5.0.1
 
   packages/ts-rest-express:
     dependencies:
@@ -1670,16 +1658,6 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
-      zod:
-        optional: true
-
-  '@ts-rest/express@3.52.1':
-    resolution: {integrity: sha512-ttVynyJSWYnVzn7FazSFvShD5j3Lq1JsIhSKereV2Z51zxWEQwo35CpCO3Q8rELzkfD9CYoT6eNSBJRlJLogIw==}
-    peerDependencies:
-      '@ts-rest/core': ~3.52.0
-      express: ^4.0.0
-      zod: ^3.22.3
-    peerDependenciesMeta:
       zod:
         optional: true
 
@@ -6766,13 +6744,6 @@ snapshots:
   '@ts-rest/core@3.52.1(@types/node@22.14.0)(zod@3.24.2)':
     optionalDependencies:
       '@types/node': 22.14.0
-      zod: 3.24.2
-
-  '@ts-rest/express@3.52.1(@ts-rest/core@3.52.1(@types/node@22.14.0)(zod@3.24.2))(express@5.1.0)(zod@3.24.2)':
-    dependencies:
-      '@ts-rest/core': 3.52.1(@types/node@22.14.0)(zod@3.24.2)
-      express: 5.1.0
-    optionalDependencies:
       zod: 3.24.2
 
   '@tufjs/canonical-json@2.0.0': {}
