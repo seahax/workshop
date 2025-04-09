@@ -32,7 +32,8 @@
     "zod": "^3.24.2"
   },
   "peerDependencies": {
-    "@ts-rest/core": "^3.52.1"
+    "@ts-rest/core": "^3.52.1",
+    "express": "^5.0.0"
   },
   "publishConfig": {
     "access": "public"
