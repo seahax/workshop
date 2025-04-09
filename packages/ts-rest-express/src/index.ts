@@ -3,23 +3,24 @@ import { type IncomingHttpHeaders } from 'node:http';
 import {
   type AppRoute,
   type AppRouter as AppRouterContract,
-  checkZodSchema,
   isAppRoute,
   isAppRouteNoBody,
   isAppRouteOtherResponse,
-  ResponseValidationError,
+  isZodType,
+  type ParamsFromUrl,
+  type ResolveResponseType,
   type ZodInferOrType,
   type ZodInputOrType,
 } from '@ts-rest/core';
 import type { NextFunction, Request, RequestHandler, Response, Router } from 'express';
-import type { ZodError } from 'zod';
+import type { SafeParseReturnType, ZodError } from 'zod';
 
 type WithDefault<A, B> = unknown extends A ? B : A;
 
 export type TsRestResponseType<
   TStatus extends number,
   TRoute extends AppRoute,
-> = ZodInputOrType<TRoute['responses'][TStatus]>;
+> = ZodInputOrType<ResolveResponseType<TRoute['responses'][TStatus]>>;
 
 export type TsRestResponse<
   TStatus extends number,
@@ -50,7 +51,7 @@ export interface TsRestRequest<TRoute extends AppRoute>
     | 'body'
   > {
   headers: WithDefault<ZodInferOrType<TRoute['headers']>, IncomingHttpHeaders>;
-  params: WithDefault<ZodInferOrType<TRoute['pathParams']>, TsRestExpressDefaultParams>;
+  params: WithDefault<ZodInferOrType<TRoute['pathParams']>, ParamsFromUrl<TRoute['path']>>;
   query: WithDefault<ZodInferOrType<TRoute['query']>, TsRestExpressDefaultQuery>;
   body: TRoute extends { body: infer TBodyType } ? ZodInferOrType<TBodyType> : unknown;
 };
@@ -73,12 +74,18 @@ export type TsRestRequestHandlers<TContract extends AppRouterContract> = {
 };
 
 export interface TsRestExpressOptions {
-  readonly onRequestValidationError?: (
-    err: TsRestExpressValidationError,
+  readonly onRequestValidationError?: 'next' | ((
+    err: TsRestExpressRequestValidationError,
     req: Request,
     res: Response,
     next: NextFunction
-  ) => void;
+  ) => void | Promise<void>);
+  readonly onResponseValidationError?: 'next' | ((
+    err: TsRestExpressResponseValidationError,
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => void | Promise<void>);
 }
 
 export function addExpressRoutes<TRouter extends Router, TContract extends AppRouterContract>(
@@ -91,7 +98,35 @@ export function addExpressRoutes<TRouter extends Router, TContract extends AppRo
   return router;
 }
 
-export class TsRestExpressValidationError extends Error {
+export function tsRestExpressErrorHandler(
+  err: TsRestExpressRequestValidationError | TsRestExpressResponseValidationError,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  if (!res.headersSent) {
+    if (err instanceof TsRestExpressRequestValidationError) {
+      res.status(400).json({
+        error: err.message,
+        errors: {
+          headers: err.headers?.issues ?? [],
+          params: err.params?.issues ?? [],
+          query: err.query?.issues ?? [],
+          body: err.body?.issues ?? [],
+        },
+      });
+    }
+    else if (err instanceof TsRestExpressResponseValidationError) {
+      res.status(500).json({
+        error: 'Internal server error',
+      });
+    }
+  }
+
+  next(err);
+}
+
+export class TsRestExpressRequestValidationError extends Error {
   constructor(
     public readonly headers: ZodError | null,
     public readonly params: ZodError | null,
@@ -99,6 +134,14 @@ export class TsRestExpressValidationError extends Error {
     public readonly body: ZodError | null,
   ) {
     super('Request validation failed');
+  }
+}
+
+export class TsRestExpressResponseValidationError extends Error {
+  constructor(
+    public readonly body: ZodError | null,
+  ) {
+    super('Response validation failed');
   }
 }
 
@@ -154,23 +197,31 @@ function getExpressPath(path: string): string {
 function getExpressHandler(
   route: AppRoute,
   handler: TsRestRequestHandler<AppRoute>,
-  { onRequestValidationError = onRequestValidationErrorDefault }: TsRestExpressOptions,
+  {
+    onRequestValidationError = tsRestExpressErrorHandler,
+    onResponseValidationError = tsRestExpressErrorHandler,
+  }: TsRestExpressOptions,
 ): RequestHandler {
   return async (req, res, next) => {
-    const headersResult = checkZodSchema(req.headers, route.headers, { passThroughExtraKeys: true });
-    const paramsResult = checkZodSchema(req.params, route.pathParams, { passThroughExtraKeys: true });
-    const queryResult = checkZodSchema(req.query, route.query);
-    const bodyResult = checkZodSchema(req.body, (route as { body?: unknown }).body);
+    const headersResult = validate(route.headers, req.headers);
+    const paramsResult = validate(route.pathParams, req.params);
+    const queryResult = validate(route.query, req.query);
+    const bodyResult = validate((route as { body?: unknown }).body, req.body);
 
     if (!headersResult.success || !paramsResult.success || !queryResult.success || !bodyResult.success) {
-      const error = new TsRestExpressValidationError(
+      const error = new TsRestExpressRequestValidationError(
         headersResult.success ? null : headersResult.error,
         paramsResult.success ? null : paramsResult.error,
         queryResult.success ? null : queryResult.error,
         bodyResult.success ? null : bodyResult.error,
       );
 
-      onRequestValidationError(error, req, res, next);
+      if (onRequestValidationError === 'next') {
+        next(error);
+        return;
+      }
+
+      await onRequestValidationError(error, req, res, next);
       return;
     }
 
@@ -185,10 +236,20 @@ function getExpressHandler(
     const responseType = route.responses[response.status];
 
     if (responseType) {
-      const responseBodyResult = checkZodSchema(response.body, route.responses[response.status]);
+      const responseBodyResult = validate(route.responses[response.status], response.body);
 
       if (!responseBodyResult.success) {
-        throw new ResponseValidationError(route, responseBodyResult.error);
+        const error = new TsRestExpressResponseValidationError(
+          responseBodyResult.error,
+        );
+
+        if (onResponseValidationError === 'next') {
+          next(error);
+          return;
+        }
+
+        await onResponseValidationError(error, req, res, next);
+        return;
       }
 
       response.body = responseBodyResult.data;
@@ -209,21 +270,8 @@ function getExpressHandler(
   };
 }
 
-function onRequestValidationErrorDefault(
-  err: TsRestExpressValidationError,
-  req: Request,
-  res: Response,
-  _next: NextFunction,
-): void {
-  res.status(400).json({
-    error: err.message,
-    errors: {
-      headers: err.headers?.issues ?? [],
-      params: err.params?.issues ?? [],
-      query: err.query?.issues ?? [],
-      body: err.body?.issues ?? [],
-    },
-  });
+function validate(type: unknown, data: unknown): SafeParseReturnType<any, any> {
+  return isZodType(type) ? type.safeParse(data) : { success: true, data };
 }
 
 const HTTP_TO_EXPRESS_METHOD = {
