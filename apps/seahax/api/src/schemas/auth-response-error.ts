@@ -1,5 +1,5 @@
 import { z } from 'zod';
 
-export const AuthResponseError = z.object({
+export const AuthResponseErrorSchema = z.object({
   error: z.string(),
 });

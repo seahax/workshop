@@ -29,9 +29,9 @@ app.use(compression());
 
 // Routes
 app.get('/_info', info({
-  startTime: new Date(config.startTimestamp).toISOString(),
-  buildTime: new Date(config.buildTimestamp).toISOString(),
   commit: config.commit,
+  buildTime: new Date(config.buildTimestamp).toISOString(),
+  startTime: new Date(config.startTimestamp).toISOString(),
 }));
 app.get('/_health', health({ mongo }));
 app.use('/auth/', auth());

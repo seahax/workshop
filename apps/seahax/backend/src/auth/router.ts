@@ -1,13 +1,14 @@
-import { initExpressRouter } from '@seahax/ts-rest/express';
-import { authRouterSpec } from 'app-seahax-api';
-import type { Router } from 'express';
+import { addExpressRoutes } from '@seahax/ts-rest-express';
+import { authApiContract } from 'app-seahax-api';
+import express from 'express';
 
 import { createAuthService } from './service.ts';
 
-export default function createAuthRouter(): Router {
+export default function createAuthRouter(): express.Router {
   const service = createAuthService();
+  const router = express.Router();
 
-  return initExpressRouter(authRouterSpec, {
+  return addExpressRoutes(router, authApiContract, {
     login: async ({ body }) => {
       const result = await service.login(body.email, body.password);
 

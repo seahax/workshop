@@ -1,5 +1,5 @@
 import { z } from 'zod';
 
-export const AuthRefreshRequest = z.object({
+export const AuthRefreshRequestSchema = z.object({
   refreshToken: z.string(),
 });

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const ES256 = z.object({
+const ES256Schema = z.object({
   alg: z.literal('ES256'),
   kty: z.literal('EC'),
   use: z.literal('sig'),
@@ -11,6 +11,6 @@ const ES256 = z.object({
   y: z.string(),
 });
 
-export const AuthResponseJwks = z.object({
-  keys: z.array(ES256),
+export const AuthResponseJwksSchema = z.object({
+  keys: z.array(ES256Schema),
 });
