@@ -12,12 +12,8 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/router.d.ts",
-      "import": "./dist/router.mjs"
-    },
-    "./express": {
-      "types": "./dist/express.d.ts",
-      "import": "./dist/express.mjs"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs"
     }
   },
   "types": "dist/index.d.ts",
@@ -30,13 +26,10 @@
     "clean": "rm -rf dist"
   },
   "devDependencies": {
-    "@seahax/vite-plugin-lib": "workspace:*",
-    "@types/express": "^5.0.1"
+    "@seahax/vite-plugin-lib": "workspace:*"
   },
   "peerDependencies": {
-    "@ts-rest/core": "^3.52.1",
-    "@ts-rest/express": "^3.52.1",
-    "express": "^5.0.1"
+    "@ts-rest/core": "^3.52.1"
   },
   "publishConfig": {
     "access": "public"
