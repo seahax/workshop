@@ -1,48 +1,41 @@
-# @seahax/ts-rest
+# @seahax/ts-rest-express
 
-A wrapper for the [ts-rest](https://ts-rest.com/) API that improves the developer experience.
+An Express v5 alternative to [@ts-rest/express](https://www.npmjs.com/package/@ts-rest/express). 
 
-## Create A Router Schema
+- Type improvements.
+- Fewer options for things that can be done using Zod types.
+- Better error handling.
+- Better support for per-route middleware.
 
-A router schema is similar to an an OpenAPI (Swagger) schema, but written in typescript. It outlines set of API endpoints in the abstract. The schema is then used when implementing the server API (eg. as an Express Router instance), and when creating the client (ie. SDK). It providing type safety in both cases, and also runtime validation on the server for request payloads.
+## Usage
 
 ```ts
-import { initRouterSchema, NoBody } from '@seahax/ts-rest';
+import { addExpressRoutes } from '@seahax/ts-rest-express';
+import { initContract } from '@ts-rest/core';
+import express from 'express';
 import { z } from 'zod';
 
-export const routerSchema = initRouterSchema({
-  getUsers: {
-    summary: 'Get a list of users.',
+const app = express();
+const contract = initContract();
+const router = contract.router({
+  foo: {
     method: 'GET',
-    path: '/users',
+    path: '/foo/:name?',
+    pathParams: z.object({
+      name: z.string().optional(),
+    }),
     responses: {
-      200: z.object({ ... }),
+      200: z.object({ message: z.string() }),
     },
   },
-}, {
-  commonResponses: {
-    // Forbidden response without a body.
-    403: NoBody,
-  }
 });
-```
 
-## Create An ExpressJS Router
-
-Define an ExpressJS Router that implements the router schema.
-
-```ts
-import { initExpressRouter } from '@seahax/ts-rest';
-import { routerSchema } from './my/router/schema';
-
-export const router = initExpressRouter(routerSchema, {
-  getUsers: async () => {
-    const users = await getUsers();
-
+addExpressRoutes(app, router, {
+  foo: ({ params }) => {
     return {
       status: 200,
-      body: users,
-    }
+      body: { message: `Hello, ${params.name ?? 'World'}!` },
+    };
   },
 });
 ```
