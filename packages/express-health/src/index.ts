@@ -1,8 +1,16 @@
 import { type RequestHandler } from 'express';
 
-type Status = boolean | 'starting';
+type Status = 'starting' | 'healthy' | 'unhealthy';
 
 export interface HealthOptions {
+  /**
+   * False to disable the `checks` property in the response which contains the
+   * individual status of each health check.
+   *
+   * Defaults to `true`.
+   */
+  readonly includeCheckStatusInResponse?: boolean;
+
   /**
    * The amount of time to wait after the plugin is created (ie. when
    * `createHealthRouter` is called) to delay before running the first
@@ -11,6 +19,7 @@ export interface HealthOptions {
    * Defaults to `0`.
    */
   readonly initialDelaySeconds?: number;
+
   /**
    * Minimum number of seconds between updates of any individual health check.
    * Each health check function will be invoked on this cadence, unless a
@@ -37,6 +46,7 @@ export interface HealthOptions {
 }
 
 export default function createHealthHandler(checkCallbacks: Record<string, () => Promise<boolean> | boolean>, {
+  includeCheckStatusInResponse = true,
   initialDelaySeconds = 0,
   intervalSeconds = 30,
   onCheckStart,
@@ -46,7 +56,7 @@ export default function createHealthHandler(checkCallbacks: Record<string, () =>
 }: HealthOptions = {}): RequestHandler {
   const initialDelayMs = initialDelaySeconds * 1000;
   const intervalMs = intervalSeconds * 1000;
-  const checks: Record<string, Status> = {};
+  const checks = new Map<string, Status>();
   const handler: RequestHandler = async (req, res, next) => {
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       next();
@@ -54,20 +64,23 @@ export default function createHealthHandler(checkCallbacks: Record<string, () =>
     }
 
     const status: Status = (() => {
-      let isStarting = false;
-
-      for (const checkStatus of Object.values(checks)) {
-        if (!checkStatus) return false;
-        if (checkStatus === 'starting') isStarting = true;
-      }
-
-      return isStarting ? 'starting' : true;
+      const statuses = new Set(checks.values());
+      if (statuses.has('unhealthy')) return 'unhealthy';
+      if (statuses.has('starting')) return 'starting';
+      return 'healthy';
     })();
 
     res
-      .status(status ? 200 : 503)
+      .status(status === 'healthy' ? 200 : 503)
       .setHeader('Cache-Control', 'max-age=0, no-store')
-      .json({ status, checks });
+      .json({
+        status,
+        ...(
+          includeCheckStatusInResponse
+            ? { checks: Object.fromEntries(checks.entries()) }
+            : {}
+        ),
+      });
   };
 
   // Start all the health checks.
@@ -76,7 +89,7 @@ export default function createHealthHandler(checkCallbacks: Record<string, () =>
   return handler;
 
   function addCheck(name: string, check: () => Promise<boolean> | boolean): void {
-    checks[name] = 'starting';
+    checks.set(name, 'starting');
 
     let lastUpdateMs = 0;
 
@@ -97,15 +110,15 @@ export default function createHealthHandler(checkCallbacks: Record<string, () =>
           result = false;
         }
 
-        checks[name] = result;
+        checks.set(name, result ? 'healthy' : 'unhealthy');
         onCheckEnd(name, result, error);
       }
       catch (error) {
         // The start or end callback threw an error.
         console.error(error);
 
-        if (typeof checks[name] !== 'boolean') {
-          checks[name] = false;
+        if (!checks.has(name) || checks.get(name) === 'starting') {
+          checks.set(name, 'unhealthy');
         }
       }
 
