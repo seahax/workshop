@@ -3,9 +3,7 @@
   "compilerOptions": {
     "outDir": "../dist",
     "lib": [
-      "ES2023",
-      // Required for AbortController and AbortSignal.
-      "DOM"
+      "ES2023"
     ],
     "types": [
       "vite/client"
