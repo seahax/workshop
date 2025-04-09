@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3 - 2025-04-09
+
+- __chore:__ fix readme (b60703f)
+
 ## 0.1.2 - 2025-04-09
 
 - __chore:__ statuses are now strings instead of booleans (ab6cde2)
