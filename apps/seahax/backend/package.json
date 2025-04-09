@@ -34,7 +34,6 @@
     "@seahax/zod-codec": "workspace:*",
     "@sentry/node": "^9.10.1",
     "@ts-rest/core": "^3.52.1",
-    "@ts-rest/express": "^3.52.1",
     "app-seahax-api": "workspace:*",
     "compression": "^1.8.0",
     "express": "^5.0.1",
