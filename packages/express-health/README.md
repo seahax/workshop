@@ -30,24 +30,24 @@ const app = express();
 app.get('/_health', health({ pingMongo }));
 ```
 
-When a request is made to the handler return the most recent status of all the health check functions.
+When a request is made to the handler, the most recent status of all the health check functions is returned. The response status will be 200 if no health checks are unhealthy, or 503 if any health checks are unhealthy.
 
 ```json
 {
-  "status": true,
+  "status": "healthy",
   "checks": {
-    "pingMongo": true
+    "pingMongo": "healthy"
   }
 }
 ```
 
-The status and checks values may also be `"starting"` if any health checks have not yet run for the first time.
+Status values can be `starting`, `healthy`, or `unhealthy`.
 
 ## Check Frequency
 
 Health check functions are _NOT_ run when the handler is invoked. If they were, it would potentially create an effective way to DoS your server.
 
-Instead, each health check functions are scheduled on an interval. The handler only returns the result of the most recent invocation of each check function.
+Instead, each health check function is scheduled on an interval. The request handler only returns the result of the most recent invocation of each check function.
 
 By default, the interval is 30 seconds, and each health check is run the first time as soon as the handler is created (no initial delay). You can change this by passing options.
 
