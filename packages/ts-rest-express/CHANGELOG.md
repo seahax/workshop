@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2 - 2025-04-09
+
+- __chore:__ add express peer dependency (7e00870)
+
 ## 0.2.1 - 2025-04-09
 
 - __chore:__ fix readme (27956b2)
