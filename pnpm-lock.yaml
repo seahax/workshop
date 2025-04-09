@@ -97,6 +97,9 @@ importers:
       '@seahax/ts-rest':
         specifier: workspace:*
         version: link:../../../packages/ts-rest
+      '@seahax/ts-rest-express':
+        specifier: workspace:*
+        version: link:../../../packages/ts-rest-express
       '@seahax/zod-codec':
         specifier: workspace:*
         version: link:../../../packages/zod-codec
@@ -460,12 +463,9 @@ importers:
       '@ts-rest/core':
         specifier: ^3.52.1
         version: 3.52.1(@types/node@22.14.0)(zod@3.24.2)
-      '@ts-rest/express':
-        specifier: ^3.52.1
-        version: 3.52.1(@ts-rest/core@3.52.1(@types/node@22.14.0)(zod@3.24.2))(express@5.1.0)(zod@3.24.2)
-      express:
-        specifier: ^5.0.1
-        version: 5.1.0
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
     devDependencies:
       '@seahax/vite-plugin-lib':
         specifier: workspace:*
@@ -473,6 +473,25 @@ importers:
       '@types/express':
         specifier: ^5.0.1
         version: 5.0.1
+
+  packages/ts-rest-express:
+    dependencies:
+      '@ts-rest/core':
+        specifier: ^3.52.1
+        version: 3.52.1(@types/node@22.14.0)(zod@3.24.2)
+    devDependencies:
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+      '@types/express':
+        specifier: ^5.0.1
+        version: 5.0.1
+      express:
+        specifier: ^5.1.0
+        version: 5.1.0
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
 
   packages/tsconfig: {}
 
