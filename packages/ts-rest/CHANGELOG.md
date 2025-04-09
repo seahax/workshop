@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0 - 2025-04-09
+
+- __feat:__ remove (moved) express support and export a complete singleton contract instance, instead of a few utility functions (701a32e)
+
 ## 0.2.0 - 2025-03-25
 
 - __refactor:__ use the word "schema" instead of "spec" (ac40938)
