@@ -28,16 +28,20 @@ export interface TsRestFetchResult {
 }
 
 export interface TsRestClientOptions extends Omit<InitClientArgs, 'baseUrl'> {
-  baseUrl?: string | URL;
+  baseUrl: string | URL;
 }
 
-export function initClient<TRouter extends AppRouter, TOptions extends TsRestClientOptions | string | URL = {}>(
+export function initTsRestClient<TRouter extends AppRouter, TOptions extends
+  | TsRestClientOptions
+  | string
+  | URL,
+>(
   router: TRouter,
-  optionsOrBaseUrl?: TOptions,
+  optionsOrBaseUrl: TOptions,
 ): TsRestClient<TRouter, TOptions> {
   return Object.fromEntries(Object.entries(router).map(([key, value]) => [key, isAppRoute(value)
     ? getRouteQuery(value, getClientArgs(optionsOrBaseUrl, value))
-    : initClient(value, optionsOrBaseUrl),
+    : initTsRestClient(value, optionsOrBaseUrl),
   ])) as TsRestClient<TRouter, TOptions>;
 };
 
@@ -60,11 +64,11 @@ export async function tsRestFetchApi(options: ApiFetcherArgs): Promise<TsRestFet
 }
 
 function getClientArgs(
-  optionsOrBaseUrl: TsRestClientOptions | string | URL | undefined,
+  optionsOrBaseUrl: TsRestClientOptions | string | URL,
   route: AppRoute,
 ): InitClientArgs {
-  const { baseUrl = '/', api, throwOnUnknownStatus, ...otherArgs } = (
-    optionsOrBaseUrl == null || typeof optionsOrBaseUrl === 'string' || optionsOrBaseUrl instanceof URL
+  const { baseUrl, throwOnUnknownStatus, api, ...otherArgs } = (
+    typeof optionsOrBaseUrl === 'string' || optionsOrBaseUrl instanceof URL
       ? { baseUrl: optionsOrBaseUrl }
       : optionsOrBaseUrl
   );
@@ -72,15 +76,14 @@ function getClientArgs(
   return {
     ...otherArgs,
     baseUrl: getNormalizedBaseUrl(baseUrl),
-    api: api ?? tsRestFetchApi,
     throwOnUnknownStatus: throwOnUnknownStatus ?? route.strictStatusCodes ?? true,
+    api: api ?? tsRestFetchApi,
   };
 }
 
 function getNormalizedBaseUrl(url: string | URL): string {
-  if (typeof url !== 'string') return url.href;
-  if (typeof window !== 'undefined') return new URL(url, window.location.href).href;
-  return url;
+  if (typeof url === 'string') url = new URL(url);
+  return `${url.origin}${url.pathname === '/' ? '' : url.pathname}`;
 }
 
 async function getResponseBody(response: Response): Promise<unknown> {
@@ -107,7 +110,7 @@ function validateResponseContentType(
   const contentType = expectedContentType.includes(';')
     ? rawContentType?.trim().toLowerCase()
     : rawContentType?.split(';')[0]?.trim().toLowerCase();
-  if (contentType !== expectedContentType) throw new InvalidContentTypeError(result, expectedContentType);
+  if (contentType !== expectedContentType) throw new TsRestInvalidResponseContentTypeError(result, expectedContentType);
 }
 
 function validateResponseBody(response: TsRestFetchResult, routeResponse: AppRouteResponse | undefined): void {
@@ -115,11 +118,11 @@ function validateResponseBody(response: TsRestFetchResult, routeResponse: AppRou
   const body = isAppRouteOtherResponse(routeResponse) ? routeResponse.body : routeResponse;
   if (!isZodType(body)) return;
   const result = body.safeParse(response.body);
-  if (!result.success) throw new InvalidResponseBodyError(response, result.error);
+  if (!result.success) throw new TsRestInvalidResponseBodyError(response, result.error);
   response.body = result.data;
 }
 
-export class InvalidContentTypeError extends Error {
+export class TsRestInvalidResponseContentTypeError extends Error {
   readonly response: TsRestFetchResult;
 
   constructor(response: TsRestFetchResult, expectedContentType: string) {
@@ -129,7 +132,7 @@ export class InvalidContentTypeError extends Error {
   }
 }
 
-export class InvalidResponseBodyError extends Error {
+export class TsRestInvalidResponseBodyError extends Error {
   readonly response: TsRestFetchResult;
 
   constructor(response: TsRestFetchResult, error: ZodError) {
