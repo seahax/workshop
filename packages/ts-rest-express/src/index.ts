@@ -88,7 +88,7 @@ export interface TsRestExpressOptions {
   ) => void | Promise<void>);
 }
 
-export function addExpressRoutes<TRouter extends Router, TContract extends AppRouterContract>(
+export function addTsRestExpressRoutes<TRouter extends Router, TContract extends AppRouterContract>(
   router: TRouter,
   contract: TContract,
   handlers: TsRestRequestHandlers<TContract>,
