@@ -1,14 +1,14 @@
 # @seahax/ts-rest
 
-Exposes a singleton ts-rest `ContractInstance`, rather than requiring `initContract()` to be called to create them.
+An improved API over the TsRest `ContractInstance` returned by `initContract()`.
 
-## Create A Router Contract
+## Define Routes
 
 ```ts
-import { contract } from '@seahax/ts-rest';
+import TsRest from '@seahax/ts-rest';
 import { z } from 'zod';
 
-export const apiContract = contract.router({
+export const apiContract = TsRest.routes({
   getUsers: {
     summary: 'Get a list of users.',
     method: 'GET',
@@ -24,3 +24,12 @@ export const apiContract = contract.router({
   }
 });
 ```
+
+## API
+
+- `TsRest.routes()`: Define routes.
+- `TsRest.route()`: Define a single route.
+- `TsRest.responses()`: Define responses with statuses and schemas.
+- `TsRest.response()`: Define a single response with a content type and body schema.
+- `TsRest.type()`: Define a simple type schema without parsing (validation).
+- `TsRest.noBody()`: Special body type for responses and requests without a body.
