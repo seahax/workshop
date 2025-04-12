@@ -1,1 +1,1 @@
-export * from './contracts/auth-api.ts';
+export * from './routes/auth.ts';

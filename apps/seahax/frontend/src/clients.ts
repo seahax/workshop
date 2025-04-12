@@ -1,4 +1,4 @@
-import { initClient } from '@seahax/ts-rest-client';
-import { authApiContract } from 'app-seahax-api';
+import { initTsRestClient } from '@seahax/ts-rest-client';
+import { authRoutes } from 'app-seahax-api';
 
-export const authClient = initClient(authApiContract, '/auth');
+export const authClient = initTsRestClient(authRoutes, window.location.origin);

@@ -34,7 +34,7 @@ app.get('/_info', info({
   startTime: new Date(config.startTimestamp).toISOString(),
 }));
 app.get('/_health', health({ mongo }));
-app.use('/auth', auth());
+app.use(auth());
 app.use(spa(config.staticPath)); // Must be the last router.
 
 // Error handling
