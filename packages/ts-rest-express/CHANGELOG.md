@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0 - 2025-04-12
+
+- __feat:__ rename addExpressRoutes to addTsRestExpressRoutes (9d0d26c)
+
 ## 0.2.2 - 2025-04-09
 
 - __chore:__ add express peer dependency (7e00870)

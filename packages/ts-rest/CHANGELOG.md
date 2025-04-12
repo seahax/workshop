@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0 - 2025-04-12
+
+- __feat:__ better API than the default TsRest ContractInstance (f662391)
+
 ## 0.3.1 - 2025-04-09
 
 - __chore:__ remove dom from tsconfig libs (d8c14cb)
