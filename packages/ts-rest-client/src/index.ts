@@ -14,10 +14,10 @@ import {
 import type { ZodError } from 'zod';
 
 export type TsRestClient<
-  TRouter extends AppRouter,
+  TRoutes extends AppRouter,
   TOptions extends TsRestClientOptions | string | URL,
 > = ReturnType<typeof initClientSuper<
-  TRouter,
+  TRoutes,
   { baseUrl: string } & (TOptions extends string | URL ? InitClientArgs : Omit<TOptions, 'baseUrl'>)
 >>;
 
@@ -31,18 +31,18 @@ export interface TsRestClientOptions extends Omit<InitClientArgs, 'baseUrl'> {
   baseUrl: string | URL;
 }
 
-export function initTsRestClient<TRouter extends AppRouter, TOptions extends
+export function initTsRestClient<TRoutes extends AppRouter, TOptions extends
   | TsRestClientOptions
   | string
   | URL,
 >(
-  router: TRouter,
+  routes: TRoutes,
   optionsOrBaseUrl: TOptions,
-): TsRestClient<TRouter, TOptions> {
-  return Object.fromEntries(Object.entries(router).map(([key, value]) => [key, isAppRoute(value)
+): TsRestClient<TRoutes, TOptions> {
+  return Object.fromEntries(Object.entries(routes).map(([key, value]) => [key, isAppRoute(value)
     ? getRouteQuery(value, getClientArgs(optionsOrBaseUrl, value))
     : initTsRestClient(value, optionsOrBaseUrl),
-  ])) as TsRestClient<TRouter, TOptions>;
+  ])) as TsRestClient<TRoutes, TOptions>;
 };
 
 export async function tsRestFetchApi(options: ApiFetcherArgs): Promise<TsRestFetchResult> {
