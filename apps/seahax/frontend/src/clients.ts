@@ -1,8 +1,4 @@
-import { initClient } from '@ts-rest/core';
+import { initClient } from '@seahax/ts-rest-client';
 import { authApiContract } from 'app-seahax-api';
 
-export const authClient = initClient(authApiContract, {
-  baseUrl: new URL('/auth', window.location.origin).href,
-  throwOnUnknownStatus: true,
-  validateResponse: true,
-});
+export const authClient = initClient(authApiContract, '/auth');
