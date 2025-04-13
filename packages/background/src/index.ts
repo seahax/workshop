@@ -1,18 +1,13 @@
-declare const console: {
-  error(...data: unknown[]): void;
-} | undefined;
+declare const console: { error(...data: unknown[]): void } | undefined;
 
-type Background<TErrorOptions extends object> = (
-  task: () => Promise<void>,
-  ...args: {} extends TErrorOptions ? [options?: TErrorOptions] : [options: TErrorOptions]
-) => void;
+type Background<TArgs extends unknown[]> = (task: () => Promise<void>, ...args: TArgs) => void;
 
-export function createBackground<TErrorOptions extends object = {}>(
-  errorHandler: (error: unknown, options: TErrorOptions) => void | Promise<void>,
-): Background<TErrorOptions> {
-  return (task, options: TErrorOptions = {} as TErrorOptions) => {
+export function createBackground<TArgs extends unknown[]>(
+  errorHandler: (error: unknown, ...args: TArgs) => void | Promise<void>,
+): Background<TArgs> {
+  return (task, ...args) => {
     task()
-      .catch((error: unknown) => errorHandler(error, options))
+      .catch((error: unknown) => errorHandler(error, ...args))
       .catch((error: unknown) => console?.error('Error handling background error:', error));
   };
 }
