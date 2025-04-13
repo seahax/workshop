@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 - 2025-04-13
+
+- __chore:__ better support for response headers and cookies (b02c3c2)
+
 ## 0.3.0 - 2025-04-12
 
 - __feat:__ rename addExpressRoutes to addTsRestExpressRoutes (9d0d26c)
