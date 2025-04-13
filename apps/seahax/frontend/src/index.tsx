@@ -13,4 +13,8 @@ root.render(
   </StrictMode>,
 );
 
-void authClient.login({ body: { email: 'admin@example.com', password: 'password123' } });
+const response = await authClient.getToken({
+  body: { type: 'login', email: 'admin@example.com', password: 'password123' },
+});
+
+console.log(response);

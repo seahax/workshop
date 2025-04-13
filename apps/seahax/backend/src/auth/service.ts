@@ -8,14 +8,15 @@ import { isPasswordMatch } from './util/is-password-match.ts';
 import { isRehashRequired } from './util/is-rehash-required.ts';
 
 export interface Tokens {
+  idToken: string;
   accessToken: string;
   refreshToken: string;
 }
 
 interface AuthService {
   login(email: string, password: string): Promise<Tokens | null>;
+  refresh(token: string | undefined): Promise<Tokens | null>;
   setPassword(email: string, password: string, newPassword: string): Promise<boolean>;
-  refresh(refreshToken: string): Promise<Tokens | null>;
   jwks(): Promise<Jwk[]>;
 }
 
@@ -42,6 +43,14 @@ export function createAuthService(): AuthService {
       return null;
     },
 
+    async refresh(token) {
+      if (!token) return null;
+
+      // TODO: Verify token.
+      // TODO: Generate tokens.
+      return null;
+    },
+
     async setPassword(email, password, newPassword) {
       const user = await userRepo.getUser({ email });
 
@@ -54,10 +63,6 @@ export function createAuthService(): AuthService {
       await setPassword(user.id, newPassword);
 
       return true;
-    },
-
-    async refresh() {
-      return null;
     },
 
     async jwks() {

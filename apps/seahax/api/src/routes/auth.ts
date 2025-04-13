@@ -1,52 +1,30 @@
 import TsRest from '@seahax/ts-rest';
 
-import { AuthLoginRequestSchema } from '../schemas/auth-login-request.ts';
-import { AuthRefreshRequestSchema } from '../schemas/auth-refresh-request.ts';
-import { AuthResponseErrorSchema } from '../schemas/auth-response-error.ts';
-import { AuthResponseJwksSchema } from '../schemas/auth-response-jwks.ts';
-import { AuthResponseTokensSchema } from '../schemas/auth-response-tokens.ts';
-import { AuthSetPasswordRequestSchema } from '../schemas/auth-set-password-request.ts';
+import { AuthErrorResponseSchema } from '../schemas/auth-error-response.ts';
+import { AuthPostPasswordRequestSchema } from '../schemas/auth-post-password-request.ts';
+import { AuthPostTokenRequestSchema } from '../schemas/auth-post-token-request.ts';
+import { AuthPostTokenResponseSchema } from '../schemas/auth-post-token-response.ts';
 
 export const authRoutes = TsRest.routes({
-  login: {
-    summary: 'Login with email and password.',
+  getToken: {
+    summary: 'Login with email+password and get an ID token on success.',
     method: 'POST',
-    path: '/auth/login',
-    body: AuthLoginRequestSchema,
+    path: '/auth/token',
+    body: AuthPostTokenRequestSchema,
     responses: {
-      200: AuthResponseTokensSchema,
-      401: AuthResponseErrorSchema,
+      200: AuthPostTokenResponseSchema,
+      401: AuthErrorResponseSchema,
     },
   },
 
   setPassword: {
     summary: 'Set the password for an email address after verifying the current password.',
     method: 'POST',
-    path: '/auth/set-password',
-    body: AuthSetPasswordRequestSchema,
+    path: '/auth/password',
+    body: AuthPostPasswordRequestSchema,
     responses: {
       200: TsRest.noBody(),
-      401: AuthResponseErrorSchema,
-    },
-  },
-
-  refresh: {
-    summary: 'Refresh an access token.',
-    method: 'POST',
-    path: '/auth/refresh',
-    body: AuthRefreshRequestSchema,
-    responses: {
-      200: AuthResponseTokensSchema,
-      401: AuthResponseErrorSchema,
-    },
-  },
-
-  jwks: {
-    summary: 'Get well-known public JWKS json.',
-    method: 'GET',
-    path: '/auth/.well-known/jwks.json',
-    responses: {
-      200: AuthResponseJwksSchema,
+      401: AuthErrorResponseSchema,
     },
   },
 }, {
