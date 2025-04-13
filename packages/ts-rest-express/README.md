@@ -6,6 +6,7 @@ An Express v5 alternative to [@ts-rest/express](https://www.npmjs.com/package/@t
 - Fewer options for things that can be done using Zod types.
 - Better error handling.
 - Better support for per-route middleware.
+- Return response headers and cookies.
 
 ## Usage
 
@@ -34,6 +35,12 @@ addExpressRoutes(app, router, {
   foo: ({ params }) => {
     return {
       status: 200,
+      headers: {
+        'X-Foo': 'bar',
+      },
+      cookies: {
+        'foo': { value: 'bar', httpOnly: true, sameSite: 'strict' },
+      },
       body: { message: `Hello, ${params.name ?? 'World'}!` },
     };
   },

@@ -12,7 +12,7 @@ import {
   type ZodInferOrType,
   type ZodInputOrType,
 } from '@ts-rest/core';
-import type { NextFunction, Request, RequestHandler, Response, Router } from 'express';
+import type { CookieOptions, NextFunction, Request, RequestHandler, Response, Router } from 'express';
 import type { SafeParseReturnType, ZodError } from 'zod';
 
 type WithDefault<A, B> = unknown extends A ? B : A;
@@ -22,12 +22,34 @@ export type TsRestResponseType<
   TRoute extends AppRoute,
 > = ZodInputOrType<ResolveResponseType<TRoute['responses'][TStatus]>>;
 
+export interface TsRestCookieOptions extends CookieOptions {
+  value: string;
+}
+
+export interface TsRestResponseHeaders {
+  [key: string]: number | string | string[];
+}
+
+export interface TsRestResponseCookies {
+  [key: string]: string | TsRestCookieOptions;
+}
+
 export type TsRestResponse<
   TStatus extends number,
   TRoute extends AppRoute,
 > = TsRestResponseType<TStatus, TRoute> extends undefined
-  ? { status: TStatus; body?: TsRestResponseType<TStatus, TRoute> }
-  : { status: TStatus; body: TsRestResponseType<TStatus, TRoute> };
+  ? {
+      status: TStatus;
+      headers?: TsRestResponseHeaders;
+      cookies?: TsRestResponseCookies;
+      body?: TsRestResponseType<TStatus, TRoute>;
+    }
+  : {
+      status: TStatus;
+      headers?: TsRestResponseHeaders;
+      cookies?: TsRestResponseCookies;
+      body: TsRestResponseType<TStatus, TRoute>;
+    };
 
 export type TsRestResponses<TRoute extends AppRoute> = {
   [TStatus in keyof TRoute['responses']]: TStatus extends number ? TsRestResponse<TStatus, TRoute> : never;
@@ -54,6 +76,7 @@ export interface TsRestRequest<TRoute extends AppRoute>
   params: WithDefault<ZodInferOrType<TRoute['pathParams']>, ParamsFromUrl<TRoute['path']>>;
   query: WithDefault<ZodInferOrType<TRoute['query']>, TsRestExpressDefaultQuery>;
   body: TRoute extends { body: infer TBodyType } ? ZodInferOrType<TBodyType> : unknown;
+  res: Response;
 };
 
 export type TsRestRequestHandler<TRoute extends AppRoute> = (
@@ -230,6 +253,7 @@ function getExpressHandler(
       params: { value: paramsResult.data, writable: true, enumerable: true, configurable: true },
       query: { value: queryResult.data, writable: true, enumerable: true, configurable: true },
       body: { value: bodyResult.data, writable: true, enumerable: true, configurable: true },
+      res: { value: res, writable: true, enumerable: true, configurable: true },
     });
 
     const response = await handler(request);
@@ -253,6 +277,22 @@ function getExpressHandler(
       }
 
       response.body = responseBodyResult.data;
+
+      if (response.headers) {
+        Object.entries(response.headers).forEach(([key, value]) => res.setHeader(key, value));
+      }
+
+      if (response.cookies) {
+        Object.entries(response.cookies).forEach(([key, value]) => {
+          if (typeof value === 'string') {
+            res.cookie(key, value);
+          }
+          else {
+            const { value: cookieValue, ...options } = value;
+            res.cookie(key, cookieValue, options);
+          }
+        });
+      }
 
       if (isAppRouteNoBody(responseType)) {
         res.status(response.status).end();
