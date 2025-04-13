@@ -5,7 +5,7 @@
     "types": [
       "node",
       "vite/client"
-    ]
+    ],
   },
   "references": [
     {

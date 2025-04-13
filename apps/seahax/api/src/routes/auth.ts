@@ -5,6 +5,7 @@ import { AuthRefreshRequestSchema } from '../schemas/auth-refresh-request.ts';
 import { AuthResponseErrorSchema } from '../schemas/auth-response-error.ts';
 import { AuthResponseJwksSchema } from '../schemas/auth-response-jwks.ts';
 import { AuthResponseTokensSchema } from '../schemas/auth-response-tokens.ts';
+import { AuthSetPasswordRequestSchema } from '../schemas/auth-set-password-request.ts';
 
 export const authRoutes = TsRest.routes({
   login: {
@@ -14,6 +15,17 @@ export const authRoutes = TsRest.routes({
     body: AuthLoginRequestSchema,
     responses: {
       200: AuthResponseTokensSchema,
+      401: AuthResponseErrorSchema,
+    },
+  },
+
+  setPassword: {
+    summary: 'Set the password for an email address after verifying the current password.',
+    method: 'POST',
+    path: '/auth/set-password',
+    body: AuthSetPasswordRequestSchema,
+    responses: {
+      200: TsRest.noBody(),
       401: AuthResponseErrorSchema,
     },
   },

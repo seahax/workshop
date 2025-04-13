@@ -51,4 +51,4 @@ background(async () => {
   // delaying the first request. If this fails, it may not be fatal, because
   // the mongo client will try to connect when used.
   await config.mongo.connect();
-}, { task: 'mongo-connect', failureSeverity: 'warning' });
+}, 'mongo-connect');

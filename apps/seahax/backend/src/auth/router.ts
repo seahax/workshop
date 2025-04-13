@@ -10,11 +10,20 @@ export default function createAuthRouter(): express.Router {
 
   return addTsRestExpressRoutes(router, authRoutes, {
     login: async ({ body }) => {
-      const result = await service.login(body.email, body.password);
+      const tokens = await service.login(body.email, body.password);
 
-      return result
-        ? { status: 200, body: result }
-        : { status: 401, body: { error: 'Invalid credentials' } };
+      return tokens
+        ? { status: 200, body: tokens }
+        : INVALID_CREDENTIALS;
+    },
+
+    setPassword: async ({ body }) => {
+      const { email, password, newPassword } = body;
+      const success = await service.setPassword(email, password, newPassword);
+
+      return success
+        ? { status: 200 }
+        : INVALID_CREDENTIALS;
     },
 
     refresh: async ({ body }) => {
@@ -22,7 +31,7 @@ export default function createAuthRouter(): express.Router {
 
       return result
         ? { status: 200, body: result }
-        : { status: 401, body: { error: 'Invalid refresh token' } };
+        : INVALID_CREDENTIALS;
     },
 
     jwks: async () => {
@@ -30,3 +39,5 @@ export default function createAuthRouter(): express.Router {
     },
   });
 };
+
+const INVALID_CREDENTIALS = { status: 401, body: { error: 'Invalid credentials' } } as const;

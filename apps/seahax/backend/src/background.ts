@@ -1,11 +1,7 @@
 import { createBackground } from '@seahax/background';
-import * as sentry from '@sentry/node';
 
-interface BackgroundOptions {
-  readonly task: string;
-  readonly failureSeverity?: sentry.SeverityLevel;
-}
+import { captureException } from './sentry.ts';
 
-export const background = createBackground((error, { task, failureSeverity }: BackgroundOptions) => {
-  sentry.captureException(error, { tags: { background_task: task }, level: failureSeverity });
+export const background = createBackground((error, task: string) => {
+  captureException(error, { tags: { background_task: task }, level: 'warning' });
 });
