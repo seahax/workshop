@@ -1,5 +1,5 @@
 name: Deploy Seahax
-run-name: "${{ github.workflow }} #${{ github.run_number }}"
+run-name: ${{ github.workflow }}
 
 on:
   workflow_dispatch: {}
