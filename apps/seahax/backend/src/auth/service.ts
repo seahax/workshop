@@ -1,5 +1,3 @@
-import Cache from 'quick-lru';
-
 import { background } from '../background.ts';
 import { createJwkRepository, type Jwk } from './repository/jwk.ts';
 import { createPasswordRepository } from './repository/password.ts';
@@ -26,7 +24,9 @@ export function createAuthService(): AuthService {
   const passwordRepo = createPasswordRepository();
   const jwkRepo = createJwkRepository();
   const tokenRepo = createTokenRepository();
-  const userCache = new Cache<string, string>({ maxSize: 1000 });
+
+  void jwkRepo;
+  void tokenRepo;
 
   const service: AuthService = {
     async login(email, password) {
