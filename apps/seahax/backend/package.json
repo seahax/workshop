@@ -29,7 +29,6 @@
     "@seahax/express-health": "workspace:*",
     "@seahax/express-info": "workspace:*",
     "@seahax/express-spa": "workspace:*",
-    "@seahax/ts-rest": "workspace:*",
     "@seahax/ts-rest-express": "workspace:*",
     "@seahax/zod-codec": "workspace:*",
     "@sentry/node": "^9.10.1",

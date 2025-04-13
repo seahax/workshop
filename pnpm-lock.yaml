@@ -94,9 +94,6 @@ importers:
       '@seahax/express-spa':
         specifier: workspace:*
         version: link:../../../packages/express-spa
-      '@seahax/ts-rest':
-        specifier: workspace:*
-        version: link:../../../packages/ts-rest
       '@seahax/ts-rest-express':
         specifier: workspace:*
         version: link:../../../packages/ts-rest-express
@@ -167,9 +164,6 @@ importers:
 
   apps/seahax/frontend:
     dependencies:
-      '@seahax/ts-rest':
-        specifier: workspace:*
-        version: link:../../../packages/ts-rest
       '@seahax/ts-rest-client':
         specifier: workspace:*
         version: link:../../../packages/ts-rest-client
