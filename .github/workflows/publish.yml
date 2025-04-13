@@ -1,5 +1,5 @@
 name: Publish
-run-name: ${{ github.workflow }}
+run-name: \#${{ github.run_number }} ${{ github.workflow }}
 
 on:
   workflow_dispatch: {}
