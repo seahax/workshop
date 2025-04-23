@@ -116,6 +116,7 @@ export function createAuthServiceFactory(): () => AuthService {
 
     function createJwtToken(): string {
       // TODO: Create JWT token.
+      void jwks;
       return '';
     }
   };
