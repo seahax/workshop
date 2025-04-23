@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0 - 2025-04-23
+
+- __chore:__ refactor all the things (3211a53)
+
 ## 0.3.1 - 2025-04-13
 
 - __chore:__ better support for response headers and cookies (b02c3c2)

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 - 2025-04-23
+
+- __chore:__ refactor all the things (3211a53)
+
 ## 0.3.0 - 2025-03-08
 
 - __feat:__ Accept an abort signal instead of the semaphore being an AbortController (7e368f9)

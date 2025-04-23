@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.3 - 2025-04-23
+
+- __chore:__ refactor all the things (3211a53)
+
 ## 0.3.2 - 2025-02-06
 
 - __chore:__ sort package.json files (7e2658f)

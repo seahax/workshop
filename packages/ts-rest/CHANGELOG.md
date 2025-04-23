@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0 - 2025-04-23
+
+- __chore:__ refactor all the things (3211a53)
+
 ## 0.4.0 - 2025-04-12
 
 - __feat:__ better API than the default TsRest ContractInstance (f662391)
