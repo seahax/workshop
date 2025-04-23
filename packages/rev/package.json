@@ -17,7 +17,7 @@
     "!dist/*.tsbuildinfo"
   ],
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && tsc -b -f src/tsconfig.json",
     "clean": "rm -rf dist"
   },
   "dependencies": {

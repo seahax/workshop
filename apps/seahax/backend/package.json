@@ -15,7 +15,7 @@
     "!dist/*.tsbuildinfo"
   ],
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && tsc -b -f src/tsconfig.json",
     "clean": "rm -rf dist",
     "docker.build": "docker build ../ -t \"$npm_package_name\" --build-arg APP_COMMIT=\"$(git rev-parse --short HEAD)\" --build-arg APP_BUILD_TIMESTAMP=\"$(date +%s)\"",
     "docker.start": "./scripts/start-docker.sh",
@@ -29,6 +29,7 @@
     "@seahax/express-health": "workspace:*",
     "@seahax/express-info": "workspace:*",
     "@seahax/express-spa": "workspace:*",
+    "@seahax/lazy": "workspace:*",
     "@seahax/ts-rest-express": "workspace:*",
     "@seahax/zod-codec": "workspace:*",
     "@sentry/node": "^9.10.1",
@@ -39,9 +40,11 @@
     "express": "^5.0.1",
     "hash-wasm": "^4.12.0",
     "helmet": "^8.1.0",
+    "jose": "^6.0.10",
     "mongodb": "^6.15.0",
     "morgan": "^1.10.0",
     "quick-lru": "^7.0.1",
+    "uuid": "^11.1.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {

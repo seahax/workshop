@@ -16,7 +16,7 @@ console.log(`Sentry Vite Plugin: ${sentry ? 'enabled' : 'disabled'}`);
 
 export default defineConfig({
   plugins: [
-    lib({ entry: 'src/index.ts', target: 'node', bundle: true, extraExternals: ['mongodb-memory-server'] }),
+    lib({ runtime: 'node', bundle: true }),
     sentry,
   ],
 });

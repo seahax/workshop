@@ -5,6 +5,6 @@ process.chdir(import.meta.dirname);
 
 export default defineConfig({
   plugins: [
-    lib({ target: 'node', entry: 'src/bin.ts' }),
+    lib({ runtime: 'node', entry: 'src/bin.ts' }),
   ],
 });

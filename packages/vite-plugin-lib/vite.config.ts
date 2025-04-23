@@ -7,6 +7,6 @@ process.chdir(import.meta.dirname);
 export default defineConfig({
   plugins: [
     // Uses itself to build itself.
-    lib({ target: 'node' }),
+    lib({ runtime: 'node' }),
   ],
 });

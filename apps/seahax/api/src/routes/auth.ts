@@ -7,7 +7,7 @@ import { AuthPostTokenResponseSchema } from '../schemas/auth-post-token-response
 
 export const authRoutes = TsRest.routes({
   getToken: {
-    summary: 'Login with email+password and get an ID token on success.',
+    summary: 'Get ID and access tokens.',
     method: 'POST',
     path: '/auth/token',
     body: AuthPostTokenRequestSchema,
@@ -17,7 +17,7 @@ export const authRoutes = TsRest.routes({
     },
   },
 
-  setPassword: {
+  updatePassword: {
     summary: 'Set the password for an email address after verifying the current password.',
     method: 'POST',
     path: '/auth/password',

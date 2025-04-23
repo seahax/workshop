@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
 export const AuthPostTokenResponseSchema = z.object({
-  idToken: z.string(),
+  user: z.object({
+    id: z.string(),
+    email: z.string(),
+  }).strict(),
   accessToken: z.string(),
 });

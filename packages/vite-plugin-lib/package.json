@@ -22,12 +22,8 @@
     "!dist/*.tsbuildinfo"
   ],
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && tsc -b -f src/tsconfig.json",
     "clean": "rm -rf dist"
-  },
-  "dependencies": {
-    "execa": "^9.5.2",
-    "json5": "^2.2.3"
   },
   "peerDependencies": {
     "vite": "^6.2.4"

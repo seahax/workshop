@@ -68,11 +68,13 @@ export interface TsRestRequest<TRoute extends AppRoute>
     | 'res'
     | 'next'
     | 'headers'
+    | 'cookies'
     | 'params'
     | 'query'
     | 'body'
   > {
   headers: WithDefault<ZodInferOrType<TRoute['headers']>, IncomingHttpHeaders>;
+  cookies: Record<string, string | undefined>;
   params: WithDefault<ZodInferOrType<TRoute['pathParams']>, ParamsFromUrl<TRoute['path']>>;
   query: WithDefault<ZodInferOrType<TRoute['query']>, TsRestExpressDefaultQuery>;
   body: TRoute extends { body: infer TBodyType } ? ZodInferOrType<TBodyType> : unknown;
@@ -250,6 +252,7 @@ function getExpressHandler(
 
     const request = Object.create(req, {
       headers: { value: headersResult.data, writable: true, enumerable: true, configurable: true },
+      cookies: { value: req.cookies ?? {}, writable: true, enumerable: true, configurable: true },
       params: { value: paramsResult.data, writable: true, enumerable: true, configurable: true },
       query: { value: queryResult.data, writable: true, enumerable: true, configurable: true },
       body: { value: bodyResult.data, writable: true, enumerable: true, configurable: true },
