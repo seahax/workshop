@@ -26,7 +26,8 @@
 				"ziyasal.vscode-open-in-github",
 				"zxh404.vscode-proto3",
 				"Redocly.openapi-vs-code",
-				"maattdd.gitless"
+				"maattdd.gitless",
+				"Gruntfuggly.todo-tree"
 			],
 			"settings": {
 				"editor.codeActionsOnSave": [
