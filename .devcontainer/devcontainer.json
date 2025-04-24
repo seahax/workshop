@@ -42,7 +42,7 @@
 				"typescript.suggest.completeJSDocs": false,
 				"typescript.suggest.jsdoc.generateReturns": false,
 				"typescript.tsdk": "node_modules/typescript/lib",
-				"window.confirmBeforeClose": "keyboardOnly",
+				"window.confirmBeforeClose": "always",
 				"workbench.view.showQuietly": {
 					"workbench.panel.output": true
 				}

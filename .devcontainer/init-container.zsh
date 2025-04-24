@@ -6,14 +6,14 @@ cd ~ && source .zprofile
 
 (
   # Install asdf (from binary).
-  wget "https://github.com/asdf-vm/asdf/releases/download/v0.16.0/asdf-v0.16.0-linux-$ARCH.tar.gz"
-  tar -xvf "asdf-v0.16.0-linux-$ARCH.tar.gz" -C bin
-  rm "asdf-v0.16.0-linux-$ARCH.tar.gz"
+  ASDF_VERSION=0.16.7
+  wget "https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/asdf-v${ASDF_VERSION}-linux-$ARCH.tar.gz"
+  tar -xvf "asdf-v${ASDF_VERSION}-linux-$ARCH.tar.gz" -C bin
+  rm "asdf-v${ASDF_VERSION}-linux-$ARCH.tar.gz"
 
   # Install asdf plugins.
   asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
   asdf plugin add pnpm https://github.com/jonathanmorley/asdf-pnpm.git
-  asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
 
   # Install asdf managed tools.
   # ---
