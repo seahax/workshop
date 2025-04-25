@@ -16,6 +16,51 @@ type DeepReadonly<T> = T extends Function
 
 type Runtime = 'any' | 'node' | 'browser';
 
+type BundleDependencyType =
+  | 'devDependency'
+  | 'dependency'
+  | 'peerDependency'
+  | 'optionalDependency';
+
+interface BundleDependency {
+  /**
+   * The dependency type.
+   */
+  readonly type: BundleDependencyType;
+
+  /**
+   * The dependency name.
+   */
+  readonly name: string;
+
+  /**
+   * The dependency export path.
+   */
+  readonly path: string;
+}
+
+interface BundleConfig {
+  /**
+   * Whether or not to minify the output. Defaults to `true`.
+   */
+  readonly minify?: boolean;
+
+  /**
+   * Whether or not to treeshake the output. Defaults to `true`.
+   */
+  readonly treeshake?: boolean;
+
+  /**
+   * Custom external dependency filter. If it returns `true`, the dependency is
+   * excluded from the bundle (external). If it returns `false`, the dependency
+   * is included in the bundle (not external).
+   *
+   * The default behavior is to include all dependencies in the bundle (no
+   * externals).
+   */
+  readonly external?: (dependency: BundleDependency) => boolean;
+}
+
 interface Config extends Partial<DeepReadonly<LibraryOptions>> {
   /**
    * The intended runtime of the library.
@@ -38,7 +83,7 @@ interface Config extends Partial<DeepReadonly<LibraryOptions>> {
    *
    * Default: `false`
    */
-  readonly bundle?: boolean;
+  readonly bundle?: boolean | BundleConfig;
 }
 
 export default function plugin({
@@ -47,6 +92,9 @@ export default function plugin({
   bundle = false,
   ...libConfig
 }: Config = {}): Plugin {
+  const minify = bundle === true || (typeof bundle === 'object' && bundle.minify !== false);
+  const treeshake = bundle === true || (typeof bundle === 'object' && bundle.treeshake !== false);
+
   return {
     name: 'lib',
     config: {
@@ -65,8 +113,8 @@ export default function plugin({
 
         config.build.target ??= 'es2023';
         config.build.sourcemap ??= true;
-        config.build.minify ??= bundle;
-        config.build.rollupOptions.treeshake ??= bundle;
+        config.build.minify ??= minify;
+        config.build.rollupOptions.treeshake ??= treeshake;
         config.build.rollupOptions.external ??= await getExternal({ root: config.root, bundle });
 
         if (!Array.isArray(config.build.rollupOptions.output)) {
@@ -98,60 +146,69 @@ export default function plugin({
 
   async function getExternal({ root, bundle }: {
     root: string;
-    bundle: boolean;
+    bundle: boolean | Pick<BundleConfig, 'external'>;
   }): Promise<(source: string) => boolean> {
     const packageJsonPath = await getPackageJsonPath(root);
     const text = await fs.readFile(path.resolve(root, packageJsonPath), 'utf8');
     const json = JSON.parse(text);
-    const prodDeps = Object.keys({ ...json.dependencies, ...json.peerDependencies, ...json.optionalDependencies });
-    const devDeps = Object.keys({ ...json.devDependencies });
+    const devDependencies = Object.keys({ ...json.devDependencies });
+    const dependencies = Object.keys({ ...json.dependencies });
+    const peerDependencies = Object.keys({ ...json.peerDependencies });
+    const optionalDependencies = Object.keys({ ...json.optionalDependencies });
+    const external = bundle
+      ? (
+          typeof bundle === 'object' && bundle.external
+            ? bundle.external
+            : () => false
+        )
+      : ({ type }: BundleDependency) => {
+          assert.ok(
+            type !== 'devDependency',
+            'Development dependencies should not be imported unless the package is bundled.',
+          );
+          return true;
+        };
 
-    return (source) => {
-      switch (getType(source)) {
+    return (name) => {
+      const moduleInfo = getModuleInfo(name);
+
+      switch (moduleInfo.type) {
         case 'source': {
-          // Source files are never external.
           return false;
         }
-        case 'dev': {
-          // Development dependencies are never external, and can only be
-          // imported when bundling.
-          assert.ok(bundle, 'Development dependencies can only be imported when bundling.');
-          return false;
-        }
-        case 'prod': {
-          // Production dependencies are external when not bundling, and
-          // not external when bundling.
-          return !bundle;
+        case 'url': {
+          return true;
         }
         case 'node': {
-          // NodeJS built-ins are always external, and can only be imported
-          // when the runtime is "node".
           assert.ok(runtime === 'node', 'NodeJS built-ins can only be imported when the runtime is "node".');
           return true;
         }
-        case 'protocol': {
-          // Protocol (eg. "http:") imports are always external.
-          return true;
+        default: {
+          return external(moduleInfo);
         }
       }
     };
 
-    function getType(source: string): 'node' | 'protocol' | 'prod' | 'dev' | 'source' {
-      if (source.startsWith('node:')) return 'node';
-      if (/^[a-z]+:/iu.test(source)) return 'protocol';
+    function getModuleInfo(name: string): BundleDependency | { type: 'source' | 'node' | 'url' } {
+      if (name.startsWith('node:')) return { type: 'node' };
+      if (/^[a-z]+:/iu.test(name)) return { type: 'url' };
 
-      const name = source.match(/^(?:@[^/]+\/)?[^/]+/u)?.[0];
+      const dependencyMatch = name.match(/^((?:@[^/]+\/)?[^/]+)(\/.*)?$/u);
 
-      if (name) {
-        if (prodDeps.includes(name)) return 'prod';
-        if (devDeps.includes(name)) return 'dev';
+      if (dependencyMatch) {
+        const [, name = '', path = ''] = dependencyMatch;
+
+        if (devDependencies.includes(name)) return { type: 'devDependency', name, path };
+        if (dependencies.includes(name)) return { type: 'dependency', name, path };
+        if (peerDependencies.includes(name)) return { type: 'peerDependency', name, path };
+        if (optionalDependencies.includes(name)) return { type: 'optionalDependency', name, path };
       }
 
-      // It's not a prod or dev dependency, and it matches a node built-in
-      // module, so it's a node built-in even without the "node:" prefix.
-      if (isBuiltin(source)) return 'node';
+      // It's not a package dependency, and it matches a node built-in module,
+      // so it's a node built-in even without the "node:" prefix.
+      if (isBuiltin(name)) return { type: 'node' };
 
-      return 'source';
+      return { type: 'source' };
     }
   }
 
