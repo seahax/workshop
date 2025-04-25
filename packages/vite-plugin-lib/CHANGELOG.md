@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0 - 2025-04-25
+
+- __feat:__ bundle options (dc4031b)
+
 ## 0.5.0 - 2025-04-23
 
 - __chore:__ refactor all the things (3211a53)
