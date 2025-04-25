@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0 - 2025-04-25
+
+- __feat:__ refactored bundle config (8642d8e)
+
 ## 0.6.0 - 2025-04-25
 
 - __feat:__ bundle options (dc4031b)
