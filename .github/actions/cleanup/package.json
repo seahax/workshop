@@ -1,0 +1,17 @@
+{
+  "name": "@seahax/github-workflow-cleanup",
+  "version": "0.0.1",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/lazy"
+  },
+  "license": "Unlicense",
+  "type": "module",
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@octokit/plugin-throttling": "^10.0.0",
+    "@octokit/rest": "^21.1.1"
+  }
+}

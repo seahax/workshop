@@ -1,0 +1,16 @@
+name: Delete workflow runs
+description: Delete workflow runs which are older than 7 days
+
+inputs:
+  token:
+    description: "Authentication token"
+    required: true
+    default: ${{ github.token }}
+
+runs:
+  using: node20
+  main: index.js
+
+branding:
+  icon: "delete"
+  color: "red"

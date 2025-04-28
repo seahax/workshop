@@ -65,3 +65,19 @@ jobs:
             --upsert \
             --update-sources \
             --format ID,DefaultIngress,Created
+
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Restore
+        working-directory: ./.github/actions/cleanup
+        run: npm ci
+      - name: Cleanup
+        uses: ./.github/actions/cleanup

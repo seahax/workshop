@@ -17,7 +17,7 @@ source $ZSH/oh-my-zsh.sh
 alias g=git
 alias p=pnpm
 
-npm() { echo "Use pnpm instead of npm."; return 1; }
+#npm() { echo "Use pnpm instead of npm."; return 1; }
 
 for file in "$HOME/.zshrc.d/*.zsh"(N); do
   source "$file"
