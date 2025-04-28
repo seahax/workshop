@@ -8,11 +8,17 @@ import { Octokit } from '@octokit/rest';
 assert.ok(process.env.GITHUB_REPOSITORY, 'Missing GITHUB_REPOSITORY environment variable.');
 assert.ok(process.env.GITHUB_WORKFLOW_REF, 'Missing GITHUB_WORKFLOW_REF environment variable.');
 
-const EXPIRE_DAYS = 7;
-const EXPIRE_DAYS_IN_MS = EXPIRE_DAYS * 24 * 60 * 60 * 1000;
+const workflow = path.basename(process.env.GITHUB_WORKFLOW_REF.split('@', 1)[0]!);
+const [owner = '', repo = ''] = process.env.GITHUB_REPOSITORY.split('/', 2);
+const dryRun = actions.getBooleanInput('dry_run', { trimWhitespace: true });
+const token = actions.getInput('github_token');
+const expireDays = Number.parseInt(actions.getInput('expire_days', { trimWhitespace: true }), 10) || 0;
+const expireMilliseconds = expireDays * 24 * 60 * 60 * 1000;
+
+assert.ok(!Number.isNaN(expireDays), 'Invalid expire_days input. Must be a number.');
 
 const octokit = new (Octokit.plugin(throttling))({
-  auth: actions.getInput('github_token'),
+  auth: token,
   baseUrl: process.env.GITHUB_API_URL,
   throttle: {
     onRateLimit: (retryAfter, options, octokit, retryCount) => {
@@ -30,25 +36,29 @@ const octokit = new (Octokit.plugin(throttling))({
   },
 });
 
-const [repoOwner = '', repoName = ''] = process.env.GITHUB_REPOSITORY.split('/', 2);
-const workflowFilename = path.basename(process.env.GITHUB_WORKFLOW_REF.split('@', 1)[0] ?? '');
+/**
+ * The workflow filename, not the ID. Turns out, the filename will work in
+ * place of the ID for workflow API calls.
+ */
+// const workflow = path.basename(process.env.GITHUB_WORKFLOW_REF.split('@', 1)[0] ?? '');
+// const [owner = '', repo = ''] = process.env.GITHUB_REPOSITORY.split('/', 2);
 const runs = await octokit.paginate(
-  'GET /repos/:owner/:repo/actions/workflows/:workflow/runs',
-  { owner: repoOwner, repo: repoName, workflow: workflowFilename },
+  octokit.actions.listWorkflowRuns,
+  { workflow_id: workflow, owner, repo },
 );
 
 runs.sort((a, b) => b.run_number - a.run_number);
 
 for (const run of runs) {
   const { id, run_number, created_at, status, pull_requests } = run;
-  const expiration = new Date(created_at).getTime() + EXPIRE_DAYS_IN_MS;
+  const expiration = new Date(created_at).getTime() + expireMilliseconds;
   const now = Date.now();
 
   // Never delete the current run.
   if (process.env.GITHUB_RUN_ID === String(id)) continue;
 
   if (expiration >= now) {
-    console.log(`Skipped run #${run_number} (${id}) with an age of less than ${EXPIRE_DAYS} days.`);
+    console.log(`Skipped run #${run_number} (${id}) with an age of less than ${expireDays} days.`);
     continue;
   }
 
@@ -57,10 +67,14 @@ for (const run of runs) {
     continue;
   }
 
-  if (pull_requests.length > 0) {
+  if (pull_requests?.length) {
     console.log(`Skipped run #${run_number} (${id}) with attached PRs.`);
     continue;
   }
 
-  console.log(`Delete run #${run_number} (${id}).`);
+  console.log(`Delete run #${run_number} (${id}).${dryRun ? ' (dry run)' : ''}`);
+
+  if (dryRun) continue;
+
+  await octokit.actions.deleteWorkflowRun({ owner, repo, run_id: id });
 }

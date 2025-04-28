@@ -1,15 +1,32 @@
-name: Delete workflow runs
-description: Delete workflow runs which are older than 7 days
+name: Delete Workflow Runs
+description: Delete old workflow runs as an action in the workflow.
 
 inputs:
-  token:
-    description: "Authentication token"
-    required: true
+  expire_days:
+    description: "Number of days to keep workflow runs."
+    required: false
+    default: "7"
+  github_token:
+    description: "Authentication token."
+    required: false
     default: ${{ github.token }}
+  dry_run:
+    description: "Dry run mode."
+    required: false
+    default: "false"
 
 runs:
-  using: node20
-  main: index.js
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+    - shell: bash
+      run: npm ci
+      working-directory: ${{ github.action_path }}
+    - shell: bash
+      run: npx tsx src/index.ts
+      working-directory: ${{ github.action_path }}
 
 branding:
   icon: "delete"
