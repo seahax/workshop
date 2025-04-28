@@ -5,10 +5,9 @@
   "license": "Unlicense",
   "type": "module",
   "scripts": {
-    "start": "INPUT_DRY_RUN=true INPUT_EXPIRE_DAYS=7 GITHUB_REPOSITORY=seahax/workshop GITHUB_WORKFLOW_REF='seahax/workshop/.github/workflows/publish.yml@main' npx tsx src/index.ts"
+    "start": "DRY_RUN=true EXPIRE_DAYS=7 GITHUB_REPOSITORY=seahax/workshop GITHUB_WORKFLOW_REF='seahax/workshop/.github/workflows/publish.yml@main' npx tsx src/index.ts"
   },
   "dependencies": {
-    "@actions/core": "^1.11.1",
     "@octokit/plugin-throttling": "^10.0.0",
     "@octokit/rest": "^21.1.1",
     "tsx": "^4.19.3"

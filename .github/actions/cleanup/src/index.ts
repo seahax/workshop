@@ -1,19 +1,18 @@
 import assert from 'node:assert';
 import path from 'node:path';
 
-import actions from '@actions/core';
 import { throttling } from '@octokit/plugin-throttling';
 import { Octokit } from '@octokit/rest';
 
-assert.ok(process.env.GITHUB_REPOSITORY, 'Missing GITHUB_REPOSITORY environment variable.');
 assert.ok(process.env.GITHUB_WORKFLOW_REF, 'Missing GITHUB_WORKFLOW_REF environment variable.');
+assert.ok(process.env.GITHUB_REPOSITORY, 'Missing GITHUB_REPOSITORY environment variable.');
 
 const workflow = path.basename(process.env.GITHUB_WORKFLOW_REF.split('@', 1)[0]!);
 const [owner = '', repo = ''] = process.env.GITHUB_REPOSITORY.split('/', 2);
-const dryRun = actions.getBooleanInput('dry_run', { trimWhitespace: true });
-const token = actions.getInput('github_token');
-const expireDays = Number.parseInt(actions.getInput('expire_days', { trimWhitespace: true }), 10) || 0;
+const expireDays = Number.parseInt(process.env.EXPIRE_DAYS ?? '', 10) || 0;
 const expireMilliseconds = expireDays * 24 * 60 * 60 * 1000;
+const token = process.env.GITHUB_TOKEN;
+const dryRun = /^true$/u.test(process.env.DRY_RUN ?? '');
 
 assert.ok(!Number.isNaN(expireDays), 'Invalid expire_days input. Must be a number.');
 
