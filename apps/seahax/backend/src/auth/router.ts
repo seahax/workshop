@@ -1,19 +1,19 @@
-import { addTsRestExpressRoutes } from '@seahax/ts-rest-express';
+import { addExpressRoutes } from '@seahax/ts-rest-express';
 import { authRoutes } from 'app-seahax-api';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 
-import { createAuthServiceFactory } from './service.ts';
+import { getAuthServiceFactory } from './service.ts';
 
 export default function createAuthRouter(): express.Router {
   const router = express.Router();
-  const createAuthService = createAuthServiceFactory();
+  const getAuthService = getAuthServiceFactory();
 
-  return addTsRestExpressRoutes(router, authRoutes, {
+  return addExpressRoutes(router, authRoutes, {
     getToken: {
       middleware: [cookieParser()],
       handler: async ({ body, cookies }) => {
-        const auth = createAuthService();
+        const auth = getAuthService();
         const result = body.type === 'refresh'
           ? await auth.refresh({ token: cookies.refreshToken })
           : await auth.login({ email: body.email, password: body.password });
@@ -40,7 +40,7 @@ export default function createAuthRouter(): express.Router {
     },
 
     updatePassword: async ({ body }) => {
-      const auth = createAuthService();
+      const auth = getAuthService();
       const { email, password, newPassword } = body;
       const success = await auth.updatePassword({ email, password, newPassword });
 

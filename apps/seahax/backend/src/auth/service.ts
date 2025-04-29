@@ -21,7 +21,7 @@ interface AuthService {
   updatePassword(params: { email: string; password: string; newPassword: string }): Promise<boolean>;
 }
 
-export function createAuthServiceFactory(): () => AuthService {
+export function getAuthServiceFactory(): () => AuthService {
   const createJwksRepository = createJwksRepositoryFactory();
 
   return () => {
