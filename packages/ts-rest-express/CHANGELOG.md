@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0 - 2025-04-29
+
+- __feat:__ refactor (57fc679)
+
 ## 0.4.0 - 2025-04-23
 
 - __chore:__ refactor all the things (3211a53)
