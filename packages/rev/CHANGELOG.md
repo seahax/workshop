@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0 - 2025-05-01
+
+- __feat:__ Add monorepo support (ec8ca75)
+
 ## 0.1.7 - 2025-04-23
 
 - __chore:__ refactor all the things (3211a53)
