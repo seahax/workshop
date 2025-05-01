@@ -6,20 +6,20 @@ import { z } from 'zod';
 import { config } from '../../config.ts';
 
 interface UserRepository {
-  get(query: Pick<User, 'id'> | Pick<User, 'email'>): Promise<User | null>;
-  put(user: User): Promise<boolean>;
+  findUser(query: Pick<User, 'id'> | Pick<User, 'email'>): Promise<User | null>;
+  upsertUser(user: User): Promise<boolean>;
 }
 
 type UserDoc = z.input<typeof $USER_DOC>;
 export type User = z.input<typeof $USER>;
 
-export function createUsersRepository(): UserRepository {
+export function getUserRepository(): UserRepository {
   const emailToId = new Cache<string, string>(CACHE_CONFIG);
   const idToUser = new Cache<string, User>(CACHE_CONFIG);
   const collection = config.mongo.db('auth').collection<UserDoc>('users');
 
   return {
-    async get(query) {
+    async findUser(query) {
       const id = 'id' in query ? query.id : emailToId.get(query.email);
       let user = (id && idToUser.get(id)) || null;
 
@@ -37,7 +37,7 @@ export function createUsersRepository(): UserRepository {
       return user;
     },
 
-    async put(user) {
+    async upsertUser(user) {
       const { _id, ...doc } = $USER.parse(user);
       const result = await collection.updateOne({ _id }, { $set: doc }, { upsert: true });
 

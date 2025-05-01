@@ -9,26 +9,15 @@ type SessionDoc = z.infer<typeof $SESSION_DOC.input>;
 type Session = z.infer<typeof $SESSION.input>;
 
 interface SessionRepository {
-  create(params: Pick<Session, 'userId'>): Promise<Session>;
-  get(params: Pick<Session, 'refreshToken'>): Promise<Session | null>;
+  findSession(params: Pick<Session, 'refreshToken'>): Promise<Session | null>;
+  insertSession(params: Pick<Session, 'userId'>): Promise<Session>;
 }
 
-export function createSessionRepository(): SessionRepository {
+export function getSessionRepository(): SessionRepository {
   const collection = config.mongo.db('auth').collection<SessionDoc>('sessions');
 
   return {
-    async create({ userId }) {
-      const refreshToken = uuid();
-      const expiresAt = Math.floor(Date.now() / 1000) + SEVEN_DAYS_IN_SECONDS;
-      const session: Session = { refreshToken, expiresAt, userId };
-      const doc = $SESSION.parse(session);
-
-      await collection.insertOne(doc);
-
-      return session;
-    },
-
-    async get({ refreshToken }) {
+    async findSession({ refreshToken }) {
       const filter = { _id: BSON.UUID.createFromHexString(refreshToken) };
       const doc = await collection.findOne(filter);
       const value = doc && $SESSION_DOC.parse(doc);
@@ -38,6 +27,17 @@ export function createSessionRepository(): SessionRepository {
       const now = Math.floor(Date.now() / 1000);
 
       return value.expiresAt <= now ? null : value;
+    },
+
+    async insertSession({ userId }) {
+      const refreshToken = uuid();
+      const expiresAt = Math.floor(Date.now() / 1000) + SEVEN_DAYS_IN_SECONDS;
+      const session: Session = { refreshToken, expiresAt, userId };
+      const doc = $SESSION.parse(session);
+
+      await collection.insertOne(doc);
+
+      return session;
     },
   };
 }

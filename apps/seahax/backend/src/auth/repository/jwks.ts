@@ -19,30 +19,30 @@ type JwksDoc = z.infer<typeof $JWKS_DOC.input>;
 type Jwks = z.infer<typeof $JWKS.input>;
 
 interface JwkRepository {
-  getPublicKey(query: Pick<JWK, 'kid'> & { name?: string }): Promise<JWK | null>;
-  getPrivateKey(query?: { name?: string }): Promise<JWK | null>;
-  rotate(options?: { name?: string; force?: boolean }): Promise<boolean>;
+  findPublicKey(query: Pick<JWK, 'kid'> & { name?: string }): Promise<JWK | null>;
+  findPrivateKey(query?: { name?: string }): Promise<JWK | null>;
+  rotateKeys(options?: { name?: string; force?: boolean }): Promise<boolean>;
 }
 
-export function createJwksRepositoryFactory(): () => JwkRepository {
+export function getJwkRepositoryFactory(): () => JwkRepository {
   const jwksCache = new Cache<string, Jwks>({ maxSize: 1000, maxAge: FIVE_MINUTES_IN_MS });
   const invalidKidCache = new Cache<`${string}:${string}`, true>({ maxSize: 1_000_000, maxAge: HOUR_IN_MS });
   const collection = config.mongo.db('auth').collection<JwksDoc>('jwks');
   const factory = (): JwkRepository => {
     return {
-      async getPublicKey({ kid, name = DEFAULT_JWKS_NAME }) {
+      async findPublicKey({ kid, name = DEFAULT_JWKS_NAME }) {
         await init.finished();
-        return await getPublicKey({ name, kid });
+        return await findPublicKey({ name, kid });
       },
 
-      async getPrivateKey({ name = DEFAULT_JWKS_NAME } = {}) {
+      async findPrivateKey({ name = DEFAULT_JWKS_NAME } = {}) {
         await init.finished();
-        const [jwks] = await getJwks({ name, allowCache: false });
+        const [jwks] = await findJwks({ name, allowCache: false });
         return jwks?.privateKey ?? null;
       },
 
-      async rotate({ name = DEFAULT_JWKS_NAME, force = false } = {}) {
-        const [current] = await getJwks({ name, allowCache: force });
+      async rotateKeys({ name = DEFAULT_JWKS_NAME, force = false } = {}) {
+        const [current] = await findJwks({ name, allowCache: force });
         const kid = uuid();
         const iat = Date.now() % 1000;
         const pair = await generateKeyPair('ES256');
@@ -107,24 +107,24 @@ export function createJwksRepositoryFactory(): () => JwkRepository {
   // Try an initial rotation when the service starts. This should also ensure
   // that the JWKS doc is created if it doesn't exist.
   const init = background(async () => {
-    await factory().rotate();
+    await factory().rotateKeys();
   }, 'init-jwks');
 
   // Try a rotation every day. No-op if the rotation is unnecessary.
   setInterval(() => {
     background(async () => {
-      await factory().rotate();
+      await factory().rotateKeys();
     }, 'rotate-jwks');
   }, DAY_IN_MS).unref();
 
   return factory;
 
-  async function getPublicKey({ name, kid, allowCache = true }: {
+  async function findPublicKey({ name, kid, allowCache = true }: {
     name: string;
     kid: string;
     allowCache?: boolean;
   }): Promise<JWK | null> {
-    const [jwks, cached] = await getJwks({ name, allowCache });
+    const [jwks, cached] = await findJwks({ name, allowCache });
 
     if (!jwks) return null;
 
@@ -135,7 +135,7 @@ export function createJwksRepositoryFactory(): () => JwkRepository {
       // If the cached result didn't contain a public JWK with the required
       // kid, and the kid was not previously marked as invalid, then try again
       // without caching.
-      return getPublicKey({ name, kid, allowCache: false });
+      return findPublicKey({ name, kid, allowCache: false });
     }
 
     invalidKidCache.set(`${name}:${kid}`, true);
@@ -143,7 +143,7 @@ export function createJwksRepositoryFactory(): () => JwkRepository {
     return null;
   }
 
-  async function getJwks(
+  async function findJwks(
     { name, allowCache }: { name: string; allowCache: boolean },
   ): Promise<[value: Jwks, cached: boolean] | [value: null, cached: false]> {
     const cached = (allowCache && jwksCache.get(name)) || null;

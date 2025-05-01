@@ -8,15 +8,15 @@ type PasswordDoc = z.infer<typeof $PASSWORD_DOC.input>;
 type Password = z.infer<typeof $PASSWORD.input>;
 
 export interface PasswordRepository {
-  get(query: Pick<Password, 'userId'>): Promise<Password | null>;
-  put(password: Password): Promise<boolean>;
+  findPassword(query: Pick<Password, 'userId'>): Promise<Password | null>;
+  upsertPassword(password: Password): Promise<boolean>;
 }
 
-export function createPasswordsRepository(): PasswordRepository {
+export function getPasswordRepository(): PasswordRepository {
   const collection = config.mongo.db('auth').collection<PasswordDoc>('passwords');
 
   return {
-    async get({ userId }) {
+    async findPassword({ userId }) {
       const filter = { _id: BSON.UUID.createFromHexString(userId) };
       const doc = await collection.findOne(filter);
       const value = doc && $PASSWORD_DOC.parse(doc);
@@ -24,7 +24,7 @@ export function createPasswordsRepository(): PasswordRepository {
       return value;
     },
 
-    async put(value: Password) {
+    async upsertPassword(value: Password) {
       const { _id, ...doc } = $PASSWORD.parse(value);
       const result = await collection.updateOne({ _id }, { $set: doc }, { upsert: true });
 
