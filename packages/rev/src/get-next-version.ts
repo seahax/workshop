@@ -1,8 +1,6 @@
 import semver, { type ReleaseType } from 'semver';
 
 import { type GitLog } from './get-git-logs.ts';
-import { type NpmMetadata } from './get-npm-metadata.ts';
-import { type PackageJson } from './get-package-json.ts';
 
 type ProdReleaseType = 'patch' | 'minor' | 'major';
 
@@ -12,15 +10,15 @@ const RELEASE_TYPE_PRIORITY = {
   major: 3,
 } as const satisfies Record<ProdReleaseType, number>;
 
-export function getNextVersion(
-  packageJson: Pick<PackageJson, 'version'>,
-  npmMetadata: NpmMetadata | undefined,
-  logs: readonly GitLog[],
-): string {
-  const isPreRelease = semver.prerelease(packageJson.version) != null;
+export function getNextVersion({
+  packageVersion,
+  npmVersion,
+  logs,
+}: { packageVersion: string; npmVersion?: string; logs: readonly GitLog[] }): string {
+  const isPreRelease = semver.prerelease(packageVersion) != null;
 
-  if (isPreRelease) return semver.inc(packageJson.version, 'prerelease')!;
-  if (!npmMetadata) return semver.inc(packageJson.version, 'patch')!;
+  if (isPreRelease) return semver.inc(packageVersion, 'prerelease')!;
+  if (!npmVersion) return semver.inc(packageVersion, 'patch')!;
 
   let releaseTypeRecommended: ReleaseType = 'patch';
 
@@ -35,7 +33,7 @@ export function getNextVersion(
     }
   }
 
-  const releaseTypeCurrent = semver.diff(npmMetadata.version, packageJson.version) ?? 'patch';
+  const releaseTypeCurrent = semver.diff(npmVersion, packageVersion) ?? 'patch';
 
   if (
     isProdReleaseType(releaseTypeCurrent)
@@ -46,7 +44,7 @@ export function getNextVersion(
     releaseTypeRecommended = 'patch';
   }
 
-  return semver.inc(packageJson.version, releaseTypeRecommended)!;
+  return semver.inc(packageVersion, releaseTypeRecommended)!;
 }
 
 function isProdReleaseType(type: ReleaseType): type is ProdReleaseType {

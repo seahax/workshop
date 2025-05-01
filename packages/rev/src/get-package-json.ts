@@ -1,5 +1,6 @@
 import { assert } from 'node:console';
-import fs from 'node:fs/promises';
+import * as fs from 'node:fs/promises';
+import path from 'node:path';
 
 import semver from 'semver';
 
@@ -9,8 +10,8 @@ export interface PackageJson {
   readonly private?: boolean;
 }
 
-export async function getPackageJson(): Promise<PackageJson> {
-  const text = await fs.readFile('package.json', 'utf8');
+export async function getPackageJson({ dir }: { dir: string }): Promise<PackageJson> {
+  const text = await fs.readFile(path.join(dir, 'package.json'), 'utf8');
   const data: unknown = JSON.parse(text);
 
   assertValidPackageJson(data);

@@ -1,9 +1,15 @@
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
 import { type GitLog } from './get-git-logs.ts';
 
-export async function updateChangelog(version: string, logs: readonly Pick<GitLog, 'fullText'>[]): Promise<void> {
-  const text = await fs.readFile('CHANGELOG.md', 'utf8').catch((error: unknown) => {
+export async function updateChangelog({
+  dir,
+  version,
+  logs,
+}: { dir: string; version: string; logs: readonly Pick<GitLog, 'fullText'>[] }): Promise<void> {
+  const filename = path.join(dir, 'CHANGELOG.md');
+  const text = await fs.readFile(filename, 'utf8').catch((error: unknown) => {
     if ((error as any)?.code === 'ENOENT') return;
     throw error;
   });
@@ -17,5 +23,5 @@ export async function updateChangelog(version: string, logs: readonly Pick<GitLo
     ? text.slice(0, index) + entry + '\n' + text.slice(index)
     : (text || '# Changelog\n') + '\n' + entry;
 
-  await fs.writeFile('CHANGELOG.md', newText);
+  await fs.writeFile(filename, newText);
 }

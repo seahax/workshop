@@ -1,8 +1,5 @@
 import { $ } from 'execa';
 
-import { type NpmMetadata } from './get-npm-metadata.ts';
-import { type PackageJson } from './get-package-json.ts';
-
 export interface GitLog {
   readonly hash: string;
   readonly message: string;
@@ -23,12 +20,14 @@ const TYPE_ORDER: Readonly<Record<string, number>> = {
   docs: 7,
 };
 
-export async function getGitLogs(
-  { name }: Pick<PackageJson, 'name'>,
-  { gitHead }: Pick<NpmMetadata, 'gitHead'>,
-): Promise<readonly GitLog[]> {
+export async function getGitLogs({
+  dir,
+  name,
+  gitHead,
+}: { dir: string; name: string; gitHead: string }): Promise<readonly GitLog[]> {
   const { stdout } = await $({
     stdout: 'pipe',
+    cwd: dir,
   })`git log ${'--pretty=format:%h %s'} ${gitHead}..HEAD -- .`;
 
   return stdout

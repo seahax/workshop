@@ -10,7 +10,7 @@
     "clean": "lerna run clean && nx reset",
     "lint": "eslint .",
     "modernize": "npx npm-check-updates@latest -i --root --workspaces --dep dev,prod,peer,optional,packageManager --peer --format group",
-    "rev": "lerna --no-private --no-stream exec rev",
+    "rev": "rev",
     "test": "run-all test.",
     "test.0-build": "pnpm build",
     "test.1-lint": "pnpm lint --max-warnings=0",
