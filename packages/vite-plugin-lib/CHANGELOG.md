@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.0 - 2025-05-01
+
+- __feat:__ normalize includeDependency callback type parameter to the dependencies key in package.json (4212725)
+
 ## 0.7.0 - 2025-04-25
 
 - __feat:__ refactored bundle config (8642d8e)
