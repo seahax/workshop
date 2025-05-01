@@ -16,20 +16,19 @@ type DeepReadonly<T> = T extends Function
 
 type Runtime = 'any' | 'node' | 'browser';
 
-type BundleDependencyType = 'dependency' | 'peerDependency' | 'optionalDependency';
+type DependencyType = 'dependencies' | 'peerDependencies' | 'optionalDependencies';
 
-interface BundleDependency {
+interface DependencyInfo {
   /**
-   * The dependency type.
+   * The dependency type, which is the key under which the dependency is found
+   * in the `package.json` file.
    */
-  readonly type: BundleDependencyType;
+  readonly type: DependencyType;
 
   /**
-   * The dependency source as passed ot the Rollup Options `external` callback.
-   * This may include an exports path in addition to the base module name (eg.
-   * `react-dom/client`)
+   * The dependency name, as found in the `package.json` file.
    */
-  readonly source: string;
+  readonly name: string;
 }
 
 interface BundleConfig {
@@ -52,7 +51,7 @@ interface BundleConfig {
    * dependencies are the packages referenced by `package.json` file
    * `dependencies`, `peerDependencies`, and `optionalDependencies`.
    */
-  readonly includeDependencies?: boolean | ((dependency: BundleDependency) => boolean);
+  readonly includeDependencies?: boolean | ((info: DependencyInfo) => boolean);
 }
 
 interface Config extends Partial<DeepReadonly<LibraryOptions>> {
@@ -151,63 +150,63 @@ export default function plugin({
     const includeDependency = getIncludeDependency();
 
     return (source) => {
-      const type = getSourceType(source);
+      const info = getSourceInfo(source);
 
-      switch (type) {
-        case 'other':
+      switch (info.type) {
         case 'source': {
           return false;
         }
-        case 'url': {
-          return true;
+        case 'dependencies':
+        case 'peerDependencies':
+        case 'optionalDependencies': {
+          return !includeDependency(info);
+        }
+        case 'devDependencies': {
+          assert.ok(bundle, 'Development dependencies should not be imported unless the package is bundled.');
+          return false;
         }
         case 'node': {
           assert.ok(runtime === 'node', 'NodeJS built-ins should not be imported unless the runtime is "node".');
           return true;
         }
-        case 'devDependency': {
-          assert.ok(bundle, 'Development dependencies should not be imported unless the package is bundled.');
-          return false;
-        }
-        case 'dependency':
-        case 'peerDependency':
-        case 'optionalDependency': {
-          const external = !includeDependency({ type, source });
-          return external;
+        case 'url': {
+          return true;
         }
       }
     };
 
-    function getIncludeDependency(): ((dependency: BundleDependency) => boolean) {
-      if (typeof bundle === 'boolean') return () => bundle;
-      if (typeof bundle.includeDependencies === 'function') return bundle.includeDependencies;
-      if (bundle.includeDependencies === false) return () => false;
-      return () => true;
+    function getIncludeDependency(): ((info: DependencyInfo) => boolean) {
+      const includeDependencies = typeof bundle === 'object'
+        ? bundle.includeDependencies ?? true
+        : bundle;
+
+      return typeof includeDependencies === 'boolean'
+        ? () => includeDependencies
+        : includeDependencies;
     }
 
-    function getSourceType(
+    function getSourceInfo(
       source: string,
-    ): 'source' | 'node' | 'url' | 'other' | 'devDependency' | BundleDependencyType {
-      if (/^\.{1,2}\//u.test(source) || path.isAbsolute(source)) return 'source';
-      if (source.startsWith('node:')) return 'node';
-      if (/^[a-z]+:/iu.test(source)) return 'url';
+    ): { type: 'source' | 'node' | 'url' | 'devDependencies'; name?: undefined } | DependencyInfo {
+      if (source.startsWith('node:')) return { type: 'node' };
+      if (/^[a-z]+:/iu.test(source)) return { type: 'url' };
 
       const name = source.match(/^(?:@[^/]+\/)?[^/]+/u)?.[0];
 
       if (name) {
         // This ordering matters, because a package name may exist in more than
         // one package.json dependencies object.
-        if (dependencies.includes(name)) return 'dependency';
-        if (peerDependencies.includes(name)) return 'peerDependency';
-        if (optionalDependencies.includes(name)) return 'optionalDependency';
-        if (devDependencies.includes(name)) return 'devDependency';
+        if (dependencies.includes(name)) return { type: 'dependencies', name };
+        if (peerDependencies.includes(name)) return { type: 'peerDependencies', name };
+        if (optionalDependencies.includes(name)) return { type: 'optionalDependencies', name };
+        if (devDependencies.includes(name)) return { type: 'devDependencies' };
       }
 
       // It's not a package dependency, and it matches a node built-in module,
       // so it's a node built-in even without the "node:" prefix.
-      if (isBuiltin(source)) return 'node';
+      if (isBuiltin(source)) return { type: 'node' };
 
-      return 'other';
+      return { type: 'source' };
     }
   }
 
