@@ -16,7 +16,7 @@
     "@seahax/vite-plugin-lib": "workspace:*",
     "@types/express": "^5.0.1",
     "@types/morgan": "^1.9.9",
-    "tsx": "^4.19.3"
+    "tsx": "^4.19.4"
   },
   "publishConfig": {
     "access": "public"
