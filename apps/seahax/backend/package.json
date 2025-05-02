@@ -17,8 +17,8 @@
   "scripts": {
     "build": "vite build && tsc -b -f src/tsconfig.json",
     "clean": "rm -rf dist",
-    "docker.build": "docker build ../ -t \"$npm_package_name\" --build-arg APP_COMMIT=\"$(git rev-parse --short HEAD)\" --build-arg APP_BUILD_TIMESTAMP=\"$(date +%s)\"",
-    "docker.start": "./scripts/start-docker.sh",
+    "docker.build": "./scripts/docker-build.sh",
+    "docker.start": "./scripts/docker-start.sh",
     "lint": "eslint src",
     "start": "./scripts/start.sh",
     "test": "run-all test.",
