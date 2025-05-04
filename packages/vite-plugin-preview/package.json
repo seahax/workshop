@@ -40,7 +40,7 @@
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "peerDependencies": {
-    "vite": "^6.2.4"
+    "vite": "^6.3.4"
   },
   "publishConfig": {
     "access": "public"

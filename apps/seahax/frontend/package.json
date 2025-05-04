@@ -28,13 +28,13 @@
     "app-seahax-api": "workspace:*",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "zod": "^3.24.2"
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "@seahax/eslint": "workspace:*",
     "@seahax/run-all": "workspace:*",
     "@seahax/vite-plugin-lib": "workspace:*",
-    "@sentry/vite-plugin": "^3.2.4",
+    "@sentry/vite-plugin": "^3.3.1",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.3",
     "@vitejs/plugin-react": "^4.4.1"

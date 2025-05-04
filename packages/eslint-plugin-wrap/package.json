@@ -54,9 +54,9 @@
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "peerDependencies": {
-    "@typescript-eslint/parser": "^8.29.0",
-    "eslint": "^9.23.0",
-    "typescript": "^5.8.2"
+    "@typescript-eslint/parser": "^8.31.1",
+    "eslint": "^9.25.1",
+    "typescript": "^5.8.3"
   },
   "publishConfig": {
     "access": "public"
