@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.1 - 2025-05-04
+
+- __chore:__ update deps (efb8c42)
+
 ## 0.8.0 - 2025-05-01
 
 - __feat:__ normalize includeDependency callback type parameter to the dependencies key in package.json (4212725)

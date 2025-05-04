@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.11 - 2025-05-04
+
+- __chore:__ update deps (efb8c42)
+
 ## 1.0.10 - 2025-04-23
 
 - __chore:__ refactor all the things (3211a53)

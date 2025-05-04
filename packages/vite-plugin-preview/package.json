@@ -1,6 +1,6 @@
 {
   "name": "@seahax/vite-plugin-preview",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "private": false,
   "description": "Start a preview server when Vite build watching.",
   "repository": {

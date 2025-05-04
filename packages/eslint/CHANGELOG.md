@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.16 - 2025-05-04
+
+- __chore:__ update deps (ee28379)
+- __chore:__ update deps (efb8c42)
+
 ## 0.2.15 - 2025-04-09
 
 - __chore:__ allow underscore to bypass unused args (50e6de4)
