@@ -84,6 +84,7 @@ export default function config({ ignores = DEFAULT_IGNORES } = {}) {
         'unicorn/consistent-function-scoping': 'off',
         'unicorn/no-array-reduce': 'off',
         'unicorn/no-array-for-each': 'off',
+        'unicorn/no-for-loop': 'off',
         'unicorn/no-null': 'off',
         'unicorn/no-object-as-default-parameter': 'off',
         'unicorn/no-useless-undefined': 'off',
@@ -135,6 +136,7 @@ export default function config({ ignores = DEFAULT_IGNORES } = {}) {
         '@typescript-eslint/prefer-literal-enum-member': 'off',
         '@typescript-eslint/prefer-namespace-keyword': 'off',
         '@typescript-eslint/prefer-nullish-coalescing': 'off',
+        '@typescript-eslint/prefer-for-of': 'off',
         '@typescript-eslint/prefer-regexp-exec': 'off',
         '@typescript-eslint/require-await': 'off',
         '@typescript-eslint/restrict-template-expressions': [
