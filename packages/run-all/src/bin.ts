@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import fs from 'node:fs/promises';
 
-import { createCommand } from '@seahax/args';
+import { alias, createHelp, cue, option, parseOptions } from '@seahax/args';
 import { main } from '@seahax/main';
 import { execa } from 'execa';
 
@@ -9,38 +9,43 @@ export interface PackageJson {
   readonly scripts: Record<string, unknown>;
 }
 
-await main(async () => {
-  await createCommand()
-    .usage('run-all <prefixes...>')
-    .info('Run all package scripts with a prefix.')
-    .variadic('prefixes', {
-      info: 'Prefixes to run.',
-      required: true,
-    })
-    .action(async ({ options }) => {
-      if (!options) return;
+main(async () => {
+  const options = await parseOptions(process.argv.slice(2), {
+    '--help': cue('help'),
+    '-h': alias('--help'),
+    positional: option({ required: true, multiple: true }),
+  });
 
-      const { prefixes } = options;
-      const allScripts = await getScriptNames();
-      const packageManager = getPackageManager();
-      const scripts = new Set<string>();
+  if (options.value === 'help') {
+    help();
+    return;
+  }
 
-      for (const prefix of prefixes) {
-        for (const script of allScripts) {
-          if (script.startsWith(prefix) && !prefixes.includes(script)) {
-            scripts.add(script);
-          }
-        }
+  if (options.issues) {
+    help.toStderr`{red ${options.issues[0]}}`;
+    process.exitCode ||= 1;
+    return;
+  }
+
+  const { positional: prefixes } = options.value;
+  const allScripts = await getScriptNames();
+  const packageManager = getPackageManager();
+  const scripts = new Set<string>();
+
+  for (const prefix of prefixes) {
+    for (const script of allScripts) {
+      if (script.startsWith(prefix) && !prefixes.includes(script)) {
+        scripts.add(script);
       }
+    }
+  }
 
-      assert.ok(scripts.size > 0, 'No matching scripts found.');
-      console.log(`Running Scripts: ${[...scripts].map((script) => `\n- ${script}`).join('')}`);
+  assert.ok(scripts.size > 0, 'No matching scripts found.');
+  console.log(`Running Scripts: ${[...scripts].map((script) => `\n- ${script}`).join('')}`);
 
-      for (const script of scripts) {
-        await execa(packageManager, ['run', script], { stdio: 'inherit', preferLocal: true });
-      }
-    })
-    .parse(process.argv.slice(2));
+  for (const script of scripts) {
+    await execa(packageManager, ['run', script], { stdio: 'inherit', preferLocal: true });
+  }
 });
 
 function getPackageManager(): 'npm' | 'pnpm' | 'yarn' {
@@ -63,3 +68,13 @@ export async function getScriptNames(): Promise<string[]> {
     return [];
   }
 }
+
+const help = createHelp`
+{bold Usage:} run-all <prefixes...>
+
+Run all package.json scripts with a prefix.
+
+{bold Options:}
+  -h, --help      Show this help message.
+  <prefixes...>   Prefixes of package.json scripts to run.
+`;
