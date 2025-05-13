@@ -37,5 +37,5 @@ export const help = createHelp`
 A text-based fantasy adventure game!
 
 {bold Options:}
-  -h, --help   Show this help message.
+  --help, -h   Show this help message.
 `;

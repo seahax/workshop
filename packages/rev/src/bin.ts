@@ -56,5 +56,5 @@ https://github.com/seahax/workshop/blob/main/packages/rev/README.md
   --force         Bump the version even if there are no new commits.
   --allow-dirty   Allow the Git working directory to be dirty.
   --dry-run       Do not write any files.
-  -h, --help      Show this help message.
+  --help, -h      Show this help message.
 `;

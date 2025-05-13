@@ -75,6 +75,6 @@ const help = createHelp`
 Run all package.json scripts with a prefix.
 
 {bold Options:}
-  -h, --help      Show this help message.
+  --help, -h      Show this help message.
   <prefixes...>   Prefixes of package.json scripts to run.
 `;
