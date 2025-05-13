@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.17 - 2025-05-13
+
+- __chore:__ eslint allow for loops (fffd918)
+
 ## 0.2.16 - 2025-05-04
 
 - __chore:__ update deps (ee28379)

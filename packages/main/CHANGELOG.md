@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0 - 2025-05-13
+
+- __feat:__ main does not return a promise (8df6913)
+
 ## 0.3.3 - 2025-04-23
 
 - __chore:__ refactor all the things (3211a53)

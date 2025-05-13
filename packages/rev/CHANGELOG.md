@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1 - 2025-05-13
+
+- __fix:__ incorrect recommended version (3d0e934)
+- __chore:__ update to new args (54de415)
+- __chore:__ print long options first in help text (cd180d1)
+
 ## 0.2.0 - 2025-05-01
 
 - __feat:__ Add monorepo support (ec8ca75)
