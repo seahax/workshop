@@ -1,14 +1,15 @@
-import semver, { type ReleaseType } from 'semver';
+import semver from 'semver';
 
 import { type GitLog } from './get-git-logs.ts';
 
-type ProdReleaseType = 'patch' | 'minor' | 'major';
+type ReleaseType = keyof typeof RELEASE;
+type Release = typeof RELEASE[ReleaseType];
 
-const RELEASE_TYPE_PRIORITY = {
-  patch: 1,
-  minor: 2,
-  major: 3,
-} as const satisfies Record<ProdReleaseType, number>;
+const RELEASE = {
+  patch: { type: 'patch', priority: 1 },
+  minor: { type: 'minor', priority: 2 },
+  major: { type: 'major', priority: 3 },
+} as const satisfies { [P in string]: { type: P; priority: number } };
 
 export function getNextVersion({
   packageVersion,
@@ -20,33 +21,31 @@ export function getNextVersion({
   if (isPreRelease) return semver.inc(packageVersion, 'prerelease')!;
   if (!npmVersion) return semver.inc(packageVersion, 'patch')!;
 
-  let releaseTypeRecommended: ReleaseType = 'patch';
+  let recommended: Release = RELEASE.patch;
 
   for (const log of logs) {
-    if (log.breaking) {
-      releaseTypeRecommended = 'major';
+    if (log.breaking && recommended.priority < RELEASE.major.priority) {
+      recommended = RELEASE.major;
       break;
     }
 
-    if (log.type === 'feat') {
-      releaseTypeRecommended = 'minor';
+    if (log.type === 'feat' && recommended.priority < RELEASE.minor.priority) {
+      recommended = RELEASE.minor;
     }
   }
 
-  const releaseTypeCurrent = semver.diff(npmVersion, packageVersion) ?? 'patch';
+  const currentType = semver.diff(npmVersion, packageVersion) ?? 'patch';
+  const current = isReleaseType(currentType) ? RELEASE[currentType] : undefined;
 
-  if (
-    isProdReleaseType(releaseTypeCurrent)
-    && RELEASE_TYPE_PRIORITY[releaseTypeCurrent] >= RELEASE_TYPE_PRIORITY[releaseTypeRecommended]
-  ) {
+  if (current && current.priority >= recommended.priority) {
     // The current package version is already high enough to satisfy the
     // recommended release type. Only a patch bump is necessary.
-    releaseTypeRecommended = 'patch';
+    recommended = RELEASE.patch;
   }
 
-  return semver.inc(packageVersion, releaseTypeRecommended)!;
+  return semver.inc(packageVersion, recommended.type)!;
 }
 
-function isProdReleaseType(type: ReleaseType): type is ProdReleaseType {
-  return type === 'patch' || type === 'minor' || type === 'major';
+function isReleaseType(type: string): type is ReleaseType {
+  return type in RELEASE;
 }
