@@ -1,6 +1,6 @@
 {
   "name": "@seahax/args",
-  "version": "0.3.7",
+  "version": "0.4.0",
   "private": false,
   "description": "",
   "repository": {
@@ -26,11 +26,13 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "ora": "^8.2.0",
+    "@standard-schema/spec": "^1.0.0",
+    "chalk-template": "^1.1.0",
     "wrap-ansi": "^9.0.0"
   },
   "devDependencies": {
-    "@seahax/vite-plugin-lib": "workspace:*"
+    "@seahax/vite-plugin-lib": "workspace:*",
+    "zod": "^3.24.3"
   },
   "publishConfig": {
     "access": "public"

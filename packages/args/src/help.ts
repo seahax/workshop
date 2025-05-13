@@ -1,90 +1,79 @@
-import wrap from 'wrap-ansi';
+import type { StandardSchemaV1 } from '@standard-schema/spec';
+import * as chalkTemplate from 'chalk-template';
+import wrapAnsi from 'wrap-ansi';
 
-import { type MetaType } from './meta.ts';
+type PrintArgs = [strings?: TemplateStringsArray | undefined, ...values: unknown[]];
 
-export interface HelpOption {
-  readonly type: MetaType;
-  readonly usage: string;
-  readonly info: string;
+export interface Help {
+  (...args: PrintArgs): void;
+  toStderr(...args: PrintArgs): void;
+};
+
+export function createHelp(...args: PrintArgs): Help {
+  const prefix = stringify(...args) + '\n';
+
+  return Object.assign(printInternal(chalkTemplate.template, process.stdout, prefix), {
+    toStderr: printInternal(chalkTemplate.templateStderr, process.stderr, prefix),
+  });
 }
 
-export interface HelpSubcommand {
-  readonly usage: string;
-  readonly info: string;
+export function createHelpSnippet(...args: PrintArgs): string {
+  return stringify(...args);
 }
 
-export interface HelpConfig {
-  readonly usage: readonly string[];
-  readonly info: readonly string[];
-  readonly options: readonly HelpOption[];
-  readonly subcommands: readonly HelpSubcommand[];
-  readonly columns: number;
-}
+function stringify(...[strings, ...values]: PrintArgs): string {
+  if (strings == null) return '';
 
-const USAGE_PREFIX = 'Usage: ';
-
-export function renderHelp({
-  usage,
-  info,
-  options,
-  subcommands,
-  columns,
-}: HelpConfig): string {
-  let text = '';
-
-  if (usage.length > 0) {
-    text += usage.map((line) => item(USAGE_PREFIX, line)).join('');
-  }
-
-  if (info.length > 0) {
-    if (text) text += '\n';
-    text += paragraphs(info);
-  }
-
-  const named: HelpOption[] = [];
-  const positional: HelpOption[] = [];
-
-  for (const option of options) {
-    if (option.type === 'positional' || option.type === 'variadic') {
-      positional.push(option);
+  values = values.map((value) => {
+    if (isIssue(value)) return stringifyIssue(value);
+    if (Array.isArray(value) && value.every((v) => isIssue(v))) {
+      return value.map((issue) => stringifyIssue(issue)).join('\n');
     }
-    else {
-      named.push(option);
-    }
-  }
 
-  if (named.length > 0) {
-    if (text) text += '\n';
-    text += 'Options:\n';
-    text += list(named.map(({ usage, info }) => [`  ${usage}  `, info]));
-  }
+    return value;
+  });
 
-  if (positional.length > 0) {
-    if (text) text += '\n';
-    text += 'Arguments:\n';
-    text += list(positional.map(({ usage, info }) => [`  ${usage}  `, info]));
-  }
+  return String.raw(strings, ...values).replaceAll(/^(?:\r?\n)+|(?:\r?\n)+$/gu, '');
+}
 
-  if (subcommands.length > 0) {
-    if (text) text += '\n';
-    text += 'Commands:\n';
-    text += list(subcommands.map(({ usage, info }) => [`  ${usage}  `, info]));
-  }
+function stringifyIssue(value: StandardSchemaV1.Issue): string {
+  const path = value.path
+    ?.map((part) => typeof part === 'object' ? part.key : part)
+    .map((part) => typeof part === 'symbol' ? '?' : part)
+    .join(', ');
 
-  return text;
+  return `Error${path ? ` (${path})` : ''}: ${value.message}`;
+}
 
-  function paragraphs(entries: readonly string[]): string {
-    return entries.map((entry) => `${wrap(entry, columns)}\n`).join('\n');
-  }
+function isIssue(value: unknown): value is StandardSchemaV1.Issue {
+  return (
+    typeof value === 'object'
+    && value !== null
+    && 'message' in value
+    && typeof value.message === 'string'
+    && (!('path' in value) || value.path === undefined || Array.isArray(value.path))
+  );
+}
 
-  function list(entries: readonly [prefix: string, text: string][]): string {
-    const pad = entries.reduce((acc, [prefix]) => Math.max(acc, prefix.length), 0);
-    return entries.map(([prefix, text]) => item(prefix.padEnd(pad, ' '), text)).join('');
-  }
+function printInternal(
+  style: typeof chalkTemplate.template,
+  writeStream: { write: (text: string) => void },
+  prefix?: string,
+): (...[strings, ...values]: PrintArgs) => void {
+  return (strings, ...values) => {
+    const text = stringify(strings, ...values);
+    const styledText = style([prefix, text].filter(Boolean).join('\n'));
+    const wrappedText = wrap(styledText);
 
-  function item(prefix: string, text: string): string {
-    text = wrap(text, columns - prefix.length).replaceAll('\n', `\n${''.padEnd(prefix.length, ' ')}`);
+    writeStream.write(wrappedText + '\n');
+  };
+}
 
-    return `${prefix}${text}\n`;
-  }
+function wrap(text: string): string {
+  return text
+    .replaceAll(/(?<=(?:\r?\n){2}|^)\S+(?:\s\S+)+(?=(?:\r?\n){2}|$)/gu, (match) => wrapAnsi(
+      match.replaceAll(/[^\S ]/gu, ' '),
+      Math.max(20, Math.min(80, process.stdout.columns)),
+    ))
+    .replaceAll(/[^\S\r\n]+$/gmu, '');
 }

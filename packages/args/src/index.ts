@@ -1,5 +1,3 @@
-export * from './command.ts';
-export * from './error.ts';
+export * from './commands.ts';
 export * from './help.ts';
-export * from './plugin.ts';
-export * from './utils.ts';
+export * from './options.ts';
