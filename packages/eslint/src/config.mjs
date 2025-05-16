@@ -156,6 +156,7 @@ export default function config({ ignores = DEFAULT_IGNORES } = {}) {
       rules: {
         'max-lines': 'off',
         'import/no-extraneous-dependencies': ['off'],
+        '@typescript-eslint/explicit-function-return-type': 'off',
       },
     },
   ].flat();
