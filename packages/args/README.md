@@ -3,18 +3,11 @@
 Type safe command line argument parsing with [Standard Schemas](https://standardschema.dev/) support.
 
 - [Options](#options)
-  - [Flags](#flags)
-  - [Counts](#counts)
-  - [Aliases](#aliases)
-  - [Cues](#cues)
-  - [Unknown Options](#unknown-options)
-  - [Short and Long Options](#short-and-long-options)
-  - [Values for Options](#values-for-options)
-  - [Positional Values](#positional-values)
-  - [Extra Arguments](#extra-arguments)
+  - [Named](#named)
+  - [Positional](#positional)
+  - [Built-in Schemas](#built-in-schemas)
+  - [Validate Function Schemas](#validate-function-schemas)
 - [Commands](#commands)
-  - [Subcommands](#subcommands)
-- [Parse Callbacks](#parse-callbacks)
 - [Help](#help)
 - [Create Print Functions](#create-print-functions)
   - [Prevent Paragraph Wrapping](#prevent-paragraph-wrapping)
@@ -23,196 +16,184 @@ Type safe command line argument parsing with [Standard Schemas](https://standard
 
 ## Options
 
-Use the built-in `option` schema, or any Standard Schema compatible library (eg. [Zod](https://zod.dev)) to define options.
+Parse command line arguments given option definitions. The arguments to be parsed must always be passed in explicitly (eg. `process.argv.slice(2)`), and should not include the first two arguments of [process.argv](https://nodejs.org/api/process.html#process_process_argv), which are not part of the command line arguments.
 
 ```ts
-import { createOptions, option } from '@seahax/args';
-import { z } from 'zod'; // Zod is standard schema compatible.
+import { parseOptions, option, flag, negate, alias, count, cue } from '@seahax/args';
 
-const options = createOptions({
-  // Optional emails. Keep the last one.
-  '--email': z.string().email().array().transform((emails) => emails.at(-1)),
-  // Required numbers. Keep all.
-  '--numbers': z.number({ coerce: true }).array().nonempty(),
-  // Positional strings: Keep all.
-  positional: option({ required: false, multiple: true }),
+const result = await parseOptions(process.argv.slice(2), {
+  // When parsed, all parsing stops (before validation) and the cue option name
+  // is returned as the parse result value.
+  '--help', cue(),
+
+  // Parse a named option that does not accept a value. The result value will
+  // be true if the option is present (and not negated), and false otherwise.
+  '--flag': flag(),
+
+  // Counts the number of occurrences.
+  '--count': count(),
+
+  // Parse a named option that requires a value.
+  '--option': option({
+    // A Standard Schema (eg. Zod) for parsing and validating the value. If
+    // the `multiple` option is true, the schema will be applied to each value.
+    // Default: If no schema is provided, values will be strings.
+    schema: z.string().email()
+
+    // If true, parsing will fail if the option is not used. Default: false.
+    required: false,
+
+    // If true, repeating the option will collect all values into an array,
+    // instead of using only the last value. Default: false.
+    multiple: false,
+  }),
+
+  // Using the alias is the same as using the target option. Only cues, flags,
+  // counts, and non-positional options can be aliased.
+  '-f': alias('--flag'),
+
+  // Resets the target option to it's initial value, as if if was never used
+  // Only flags, counts, and non-positional options can be reset.
+  '--no-flag': reset('--flag'),
+
+  // Standard Schemas for parsing positional option values. Each schema is used
+  // only once, in order. If there are not enough arguments to match all
+  // schemas, the remaining schemas will still be used with an `undefined`
+  // input.
+  positionals: [
+    z.string().optional(),
+  ],
+
+  // Parse the rest of the positional option values after matching individual
+  // positional options defined in the `positionals` array. The schema will be
+  // applied to each value.
+  extraPositionals: z.string(),
 });
 ```
 
-> NOTE: When using Standard Schemas, the schema input is always an array of strings. If an option is not used, the option schema is still invoked with an empty array, so that it can enforce a required option or provide a default value.
+The returned result is a Standard Schema `Result` object.
 
-Use the options instance to parse command line arguments. Arguments must be passed in explicitly and should not include the first two arguments of [process.argv](https://nodejs.org/api/process.html#process_process_argv), which are not part of the command line arguments.
-
-```ts
-const result = await options.parse(process.argv.slice(2));
-```
-
-Alternatively, you can use the `parseOptions(args, config, callback?)` function as a shorthand for `createOptions(config).parse(args, callback?)`.
-
-Consume the parsed result, which is a Standard Schema `Result` object.
+If parsing fails, the result `value` will be undefined, and the `issues` array will contain information about why parsing failed.
 
 ```ts
-if (result.issues) {
-  result.issues.forEach((issues) => console.error(issues));
-  process.exit(1);
-} else {
-  console.log('Email:', result.value['--email']);
-  console.log('Numbers:', result.value['--numbers']);
-  console.log('Positional:', result.value.positional);
+{
+  value: undefined,
+  issues: [
+    {
+      message: 'Unknown option "--foo"',
+      path: [0],
+    },
+  ],
 }
 ```
 
-The defined options instance is itself a Standard Schema, and the `parse` return value is a Standard Schema `Result` object.
-
-### Flags
-
-Flags are boolean or counter options that do not take a value. The result value is `true` if the flag is present and not negated, and `false` if the flag is not present or is negated.
+If parsing succeeds, the result `value` will be an object parsed option values, unless a `cue` is matched.
 
 ```ts
-import { flag, negate } from '@seahax/args';
+{
+  value: {
+    '--flag': true,
+    '--count': 2,
+    '--option': 'email@example.com',
+    positionals: [
+      'foo',
+      'bar',
+    ],
+  },
+  issues: undefined,
+}
+```
 
-createOptions({
-  // True if present.
-  '--condition': flag(),
-  // Reset the --condition option to false.
-  '--not-condition': negate('--flag'),
+If a `cue` is matched, the result `value` will be the cue option name.
+
+```ts
+{
+  value: '--help',
+  issues: undefined,
+}
+```
+
+### Named
+
+Named option names must start with a hyphen (`-`). If an argument with a leading hyphen does not match any defined option names, parsing will fail and the corresponding Standard Schema issue will not have a `path`.
+
+Named options which require values can be parsed from a single argument that includes an equals sign (eg. `--foo=bar`), or from two arguments where the first argument is the option name and the second argument is the value (`--foo bar`).
+
+The double dash (`--`) option is reserved. When a double dash (`--`) argument is parsed, the parser will stop matching named options, and treat all remaining arguments as positional options, even if those that start with a hyphen.
+
+Parsed named option values are available in the result at `value[<option-name>]` where `<option-name>` is the name of the option.
+
+### Positional
+
+Positional options match any argument that is not part of a named option. They are matched in the order they are defined.
+
+Parsed positional values (including `extraPositionals`) are available in the result at `value.positionals` array.
+
+### Built-in Schemas
+
+You can use any Standard Schema compatible library to parse and validate option values. But, this library does provide a few basic schemas for convenience.
+
+- `string(options?)`: Validate a string value.
+- `number(options?)`: Validate a number-like value.
+- `bigint(options?)`: Validate a bigint-like value.
+- `regexp(options?)`: Validate a regular expression-like value.
+- `anyOf(schemas, options?)`: Validate a value that matches any of the provided schemas.
+
+```ts
+parseOptions(process.argv.slice(2), {
+  '--string': string(),
+  '--regexp': regexp(),
+  '--number': number(),
+  '--bigint': bigint(),
+  '--number-or-string': anyOf(
+    [number(), string()],
+    { message: 'Must be a number or string' }
+  ),
+  positional: [
+    string({ optional: true }),
+  ],
+  extraPositionals: string(),
 });
 ```
 
-### Counts
+The `optional` option defaults to `false`. Setting it to `true` is only useful when validating positional values, where the schema is used to parse an `undefined` value if no argument is provided for that position.
 
-Counts are flags that count the number of times they are used. The count is always a number, and the default value is `0`. The count can be negative if the option is negated.
+The `message` option allows you to replace the default issue message. The `anyOf` schema will return all sub-schema issues when validation fails, unless the `message` option is provided.
 
-```ts
-import { count } from '@seahax/args';
+### Validate Function Schemas
 
-createOptions({
-  // Counts the number of uses.
-  '--increment': count(),
-});
-```
-
-### Aliases
-
-Alias one option to another. An alias works exactly like the original option. The alias name is not added to the parsed result value.
+A function can also be used as a schema. The function must match the `StandardSchemaV1.Props['validate']` type.
 
 ```ts
-import { alias } from '@seahax/args';
-
-createOptions({
-  '--foo': flag(),
-  // Alias -f to --foo.
-  '-f': alias('--foo'),
+parseOptions(process.argv.slice(2), {
+  '--email': (value) => {
+    return isValidEmail(value)
+      ? { value }
+      : { issues: [{ message: 'Invalid email address' }] };
+  }
 });
 ```
-
-### Cues
-
-Cues are used to short circuit parsing. When a cue option is parsed, parsing immediately stops and the cue value is returned.
-
-```ts
-import { cue } from '@seahax/args';
-
-const options = createOptions({
-  '--help': cue('help'),
-});
-
-const { value } = await options.parse(['--help']);
-// value = 'help'
-```
-
-### Unknown Options
-
-Any argument that starts with a hyphen (`-`) is considered an option name. If it does not match any defined option names, parsing will fai. The Standard Schema issue will not have a `path`.
-
-If option-like arguments must be treated as positional values, use the `--` separator argument to tell the parser to stop parsing options and treat all remaining arguments as positional arguments.
-
-### Short and Long Options
-
-There is no functional difference between options with a single leading hyphen (`-a`) and options with two (or more) leading hyphens (`--abc`). A single hyphen option can have a multi-character suffix (`-abc`), and a double hyphen option can have a single character suffix (`--a`). The parser matches them literally and recognizes any argument that starts with at least one hyphen as an option name.
-
-### Values for Options
-
-Options that accept a value (non-flags) can be parsed from a single argument that includes equals sign (`--foo=bar`), or from two arguments where the first argument is the option name and the second argument is the value (`--foo bar`).
-
-If the option accepts a value, but no value is provided, parsing will fail. The Standard Schema issue `path` will include the option name as the first element.
-
-### Positional Values
-
-Arguments which do not start with a hyphen (`-`) and are not used as option values, are parsed as positional values which must match the special `positional` option schema.
-
-```ts
-createOptions({
-  // Require between 1 and 3 positional values.
-  positional: z.string().array().min(1).max(3),
-});
-```
-
-### Extra Arguments
-
-Any argument that does not match an option name, an option value, or a positional argument, will cause parsing to fail.
 
 ## Commands
 
-
-Define commands.
+Match one or more leading arguments against a known set of command names. The arguments must be passed in explicitly and should not include the first two arguments of [process.argv](https://nodejs.org/api/process.html#process_process_argv), which are not part of the command line arguments.
 
 ```ts
-import { createCommands } from '@seahax/args';
+import { parseCommands } from '@seahax/args';
 
-const commands = createCommands([
-  'my-command',
-  'another-command',
+const result = await parseCommands([
+  // Matches the first argument.
+  'command',
+  // Matches the first two arguments.
+  'another command',
 ]);
 ```
 
-Use the commands instance to parse command line arguments. Arguments must be passed in explicitly and should not include the first two arguments of [process.argv](https://nodejs.org/api/process.html#process_process_argv), which are not part of the command line arguments.
+The returned result is a Standard Schema `SuccessResult` object.
 
-```ts
-const { value } = await commands.parse(['my-command', '--foo', 'bar']);
-// value = { command: 'my-command', args: ['--foo', 'bar'] }
-```
+If no command is matched, the result `value.command` will be `undefined`, and the result `value.args` will contain the same arguments that were passed to the parser.
 
-Alternatively, you can use the `parseCommands(args, config, callback?)` function as a shorthand for `createCommands(config).parse(args, callback?)`.
-
-Command parsing matches the first argument against a list of known commands. If a command is matched, then a success result is returned with the command name that was matched and an array of the remaining arguments. If no command is matched, parsing will still succeed, but the result value `command` property will be `undefined`, and the result value `args` property will contain the same arguments that were passed to the parser.
-
-Consume the parsed result, which is a Standard Schema `SuccessResult` object.
-
-```ts
-if (value.command === 'my-command') {
-  // Example: Parse the leftover arguments as command options.
-  const result = options.parse(value.args);
-
-  // Do command stuff...
-}
-```
-
-### Subcommands
-
-Subcommands can be defined by space separating words in a command name. Each word will match one argument.
-
-```ts
-const commands = createCommands([
-  'list images',
-  'list containers',
-]);
-
-const { value } = await commands.parse(['list', 'images', '--foo', 'bar']);
-// value = { command: 'list images', args: ['--foo', 'bar'] }
-```
-
-## Parse Callbacks
-
-The `.parse()` method (for both options and commands) accepts a callback as a second argument. The callback is passed the parsed result, and the callback return value is returned from the parse method (replacing the normally returned result).
-
-```ts
-const options = createOptions({ ... });
-const value = await options.parse(
-  process.argv.slice(2),
-  (result) => result.issues ?? result.value,
-);
-```
+If a command is matched, the result `value.command` will be the command name that was matched (not the individual arguments if a multi-word command is matched), and the result `value.args` will contain the remaining arguments.
 
 ## Help
 
@@ -226,7 +207,7 @@ Create a help print function, pre-configured with your help text.
 import { createHelp } from '@seahax/args';
 
 const help = createHelp`
-{bold Usage:} my-cli {green <command>} {blue [options]}
+{bold Usage:} my-cli {cyan <command>} {blue [options]}
 
 Printed help text can be styled using curly-bracketed style tags, which are
 translated into ANSI escape codes using the "chalk-template" library.
@@ -239,9 +220,9 @@ end. The extra space will be removed, but the paragraph line breaks will be
 preserved.
 
 {bold Commands:}
-  {green help}        Show this help message.
-  {green version}     Show the version number.
-  {green run}         Run the command.
+  {cyan help}        Show this help message.
+  {cyan version}     Show the version number.
+  {cyan run}         Run the command.
 
 {bold Options:}
   {blue --help}      Show this help message.
@@ -271,7 +252,7 @@ If you don't want a paragraph to be wrapped, then either indent it, or add a tra
 
 ### Reusable Snippets
 
-If you have a lot of help text or multiple commands that share help text, it might be useful to define parts of the help text without immediately printing it.
+If you have a lot of help text or multiple commands that share help text, snippets can be defined that are not immediately printed.
 
 ```ts
 import { createHelpSnippet } from '@seahax/args';
@@ -281,7 +262,11 @@ Leading and trailing blank lines are removed from this text, but otherwise this
 text is left unchanged. All style tags are preserved, and will be translated
 to ANSI codes when the snippet is printed by a (createHelp) help function.
 `;
+```
 
+Snippets have leading and trailing blank lines removed, but are otherwise unmodified. This makes them simple to use as template values in help text.
+
+```ts
 const help = createHelp`
 Just use the snippet as a template value to included it in printed help text.
 
@@ -302,15 +287,10 @@ help.toStderr`${issue}`;
 
 Example: An unknown option issue.
 ```
-Error: Unknown option "--foo"
+Error (argument #1): Unknown option "--foo"
 ```
 
 Example: A missing option value issue.
 ```
-Error (--foo): Missing option value
-```
-
-Example: An option validation issue.
-```
-Error (--foo, <issue-path...>): <issue-message>
+Error (option "--foo"): Missing option value
 ```
