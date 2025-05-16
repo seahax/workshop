@@ -1,52 +1,60 @@
+#!/usr/bin/env node
+import '@seahax/main';
+
 import assert from 'node:assert';
 import fs from 'node:fs/promises';
 
-import { alias, createHelp, cue, option, parseOptions } from '@seahax/args';
-import { main } from '@seahax/main';
+import { alias, createHelp, cue, parseOptions, string } from '@seahax/args';
 import { execa } from 'execa';
 
-export interface PackageJson {
-  readonly scripts: Record<string, unknown>;
+const help = createHelp`
+{bold Usage:} run-all {green <prefixes...>} 
+{bold Usage:} run-all {blue --help|-h} 
+
+Run all package.json scripts that begin with one of the {blue prefixes}.
+
+{bold Arguments:}
+  {green <prefixes...>}   Prefixes of package.json scripts to run.
+
+{bold Options:}
+  {blue --help, -h}   Show this help message.
+`;
+
+const options = await parseOptions(process.argv.slice(2), {
+  '--help': cue(),
+  '-h': alias('--help'),
+  extraPositional: string(),
+});
+
+if (options.value === '--help') {
+  help();
+  process.exit();
 }
 
-main(async () => {
-  const options = await parseOptions(process.argv.slice(2), {
-    '--help': cue('help'),
-    '-h': alias('--help'),
-    positional: option({ required: true, multiple: true }),
-  });
+if (options.issues) {
+  help.toStderr`{red ${options.issues[0]}}`;
+  process.exit(1);
+}
 
-  if (options.value === 'help') {
-    help();
-    return;
-  }
+const { positional: prefixes } = options.value;
+const allScripts = await getScriptNames();
+const packageManager = getPackageManager();
+const scripts = new Set<string>();
 
-  if (options.issues) {
-    help.toStderr`{red ${options.issues[0]}}`;
-    process.exitCode ||= 1;
-    return;
-  }
-
-  const { positional: prefixes } = options.value;
-  const allScripts = await getScriptNames();
-  const packageManager = getPackageManager();
-  const scripts = new Set<string>();
-
-  for (const prefix of prefixes) {
-    for (const script of allScripts) {
-      if (script.startsWith(prefix) && !prefixes.includes(script)) {
-        scripts.add(script);
-      }
+for (const prefix of prefixes) {
+  for (const script of allScripts) {
+    if (script.startsWith(prefix) && !prefixes.includes(script)) {
+      scripts.add(script);
     }
   }
+}
 
-  assert.ok(scripts.size > 0, 'No matching scripts found.');
-  console.log(`Running Scripts: ${[...scripts].map((script) => `\n- ${script}`).join('')}`);
+assert.ok(scripts.size > 0, 'No matching scripts found.');
+console.log(`Running Scripts: ${[...scripts].map((script) => `\n- ${script}`).join('')}`);
 
-  for (const script of scripts) {
-    await execa(packageManager, ['run', script], { stdio: 'inherit', preferLocal: true });
-  }
-});
+for (const script of scripts) {
+  await execa(packageManager, ['run', script], { stdio: 'inherit', preferLocal: true });
+}
 
 function getPackageManager(): 'npm' | 'pnpm' | 'yarn' {
   const execPath = process.env.npm_execpath?.toLowerCase();
@@ -68,13 +76,3 @@ export async function getScriptNames(): Promise<string[]> {
     return [];
   }
 }
-
-const help = createHelp`
-{bold Usage:} run-all <prefixes...>
-
-Run all package.json scripts with a prefix.
-
-{bold Options:}
-  --help, -h      Show this help message.
-  <prefixes...>   Prefixes of package.json scripts to run.
-`;
