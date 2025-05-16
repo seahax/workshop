@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2 - 2025-05-16
+
+- __chore:__ update for main and args library refactors (95c05f7)
+
 ## 0.2.1 - 2025-05-13
 
 - __fix:__ incorrect recommended version (3d0e934)

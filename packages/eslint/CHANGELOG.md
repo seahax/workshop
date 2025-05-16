@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.18 - 2025-05-16
+
+- __chore:__ disable explicit return type in test files (07290e8)
+
 ## 0.2.17 - 2025-05-13
 
 - __chore:__ eslint allow for loops (fffd918)

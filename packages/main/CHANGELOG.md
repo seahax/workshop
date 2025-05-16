@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0 - 2025-05-16
+
+- __feat:__ simplify and remove the `main` function wrapper (cc65e81)
+
 ## 0.4.0 - 2025-05-13
 
 - __feat:__ main does not return a promise (8df6913)

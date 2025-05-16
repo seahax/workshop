@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.11 - 2025-05-16
+
+- __chore:__ update for main and args library refactors (95c05f7)
+
 ## 0.1.10 - 2025-05-13
 
 - __chore:__ update to new args (54de415)
