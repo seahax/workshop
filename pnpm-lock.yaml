@@ -687,19 +687,6 @@ importers:
         specifier: workspace:*
         version: link:../vite-plugin-lib
 
-  unreleased/ts-api:
-    dependencies:
-      '@standard-schema/spec':
-        specifier: ^1.0.0
-        version: 1.0.0
-      zod:
-        specifier: ^3.24.3
-        version: 3.24.3
-    devDependencies:
-      '@seahax/vite-plugin-lib':
-        specifier: workspace:*
-        version: link:../../packages/vite-plugin-lib
-
 packages:
 
   '@ampproject/remapping@2.3.0':
