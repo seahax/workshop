@@ -16,16 +16,16 @@ export interface Entity {
   readonly sides?: Readonly<Partial<Record<Direction, EntityRef>>>;
 }
 
-export type EntityType =
+export type EntityType = (
   | 'room'
   | 'side'
   | 'weapon'
   | 'tool'
   | 'consumable'
   | 'creature'
-;
+);
 
-export type EntityDamage =
+export type EntityDamage = (
   | 'slashing'
   | 'piercing'
   | 'bludgeoning'
@@ -34,7 +34,7 @@ export type EntityDamage =
   | 'lightning'
   | 'poison'
   | 'acid'
-;
+);
 
 /**
  * Entity t-shirt sizes. Numeric values roughly translate to cubic centimeters

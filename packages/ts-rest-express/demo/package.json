@@ -10,13 +10,13 @@
     "@seahax/ts-rest-express": "workspace:*",
     "express": "^5.1.0",
     "morgan": "^1.10.0",
-    "zod": "^3.24.3"
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*",
-    "@types/express": "^5.0.1",
-    "@types/morgan": "^1.9.9",
-    "tsx": "^4.19.4"
+    "@types/express": "^5.0.3",
+    "@types/morgan": "^1.9.10",
+    "tsx": "^4.20.3"
   },
   "publishConfig": {
     "access": "public"

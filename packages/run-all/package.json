@@ -23,7 +23,7 @@
   "dependencies": {
     "@seahax/args": "workspace:^",
     "@seahax/main": "workspace:^",
-    "execa": "^9.5.2"
+    "execa": "^9.6.0"
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*"

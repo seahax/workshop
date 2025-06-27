@@ -29,13 +29,13 @@
     "@types/archiver": "^6.0.3",
     "archiver": "^7.0.1",
     "fast-glob": "^3.3.3",
-    "minimatch": "^10.0.1"
+    "minimatch": "^10.0.3"
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "peerDependencies": {
-    "vite": "^6.3.4"
+    "vite": "^7.0.0"
   },
   "publishConfig": {
     "access": "public"

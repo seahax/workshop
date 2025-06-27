@@ -8,14 +8,15 @@ import { detectIndentString } from '../utils/detect-indent-string.ts';
 import { getLeadingWhitespace } from '../utils/get-leading-whitespace.ts';
 import { getLine } from '../utils/get-line.ts';
 
-type FunctionNode =
+type FunctionNode = (
   | TSESTree.FunctionDeclaration
   | TSESTree.FunctionExpression
   | TSESTree.ArrowFunctionExpression
   | TSESTree.TSFunctionType
   | TSESTree.TSMethodSignature
   | TSESTree.CallExpression
-  | TSESTree.NewExpression;
+  | TSESTree.NewExpression
+);
 
 export default createRule('function', 'Wrap function arguments on long lines.', (context, report) => {
   const { maxLen, tabWidth, autoFix } = getOptions(context);

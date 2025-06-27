@@ -11,5 +11,10 @@ export default defineConfig({
       include: ['packages/*/src/**/*'],
       exclude: ['**/index.*', '**/types/**/*', '**/constants/**/*'],
     },
+    projects: [
+      'packages/*/vitest.config.ts',
+      'unreleased/*/vitest.config.ts',
+      'apps/*/*/vitest.config.ts',
+    ],
   },
 });

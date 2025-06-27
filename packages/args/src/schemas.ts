@@ -10,9 +10,10 @@ export type InferSchemaType<TSchema> = TSchema extends Schema<infer TValue> | Sc
 
 export type SchemaIssue = StandardSchemaV1.Issue;
 
-export type SchemaResult<TValue = unknown> =
+export type SchemaResult<TValue = unknown> = (
   | StandardSchemaV1.SuccessResult<TValue>
-  | StandardSchemaV1.FailureResult & { readonly value?: undefined };
+  | StandardSchemaV1.FailureResult & { readonly value?: undefined }
+);
 
 export interface SchemaOptions<TOptional extends boolean> {
   /**

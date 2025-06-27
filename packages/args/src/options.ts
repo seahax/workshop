@@ -62,13 +62,14 @@ export type ValidatedOptionConfigs<TConfigs extends OptionConfigs> = {
       | (K extends `-${string}`
         ? TConfigs[K] extends CueOptionConfig | FlagOptionConfig | CountOptionConfig | ValueOptionConfig
           ? TConfigs[K]
-          :
+          : (
             | CueOptionConfig
             | FlagOptionConfig
             | CountOptionConfig
             | ValueOptionConfig
             | AliasOptionConfig<AliasTargets<TConfigs>>
             | ResetOptionConfig<ResetTargets<TConfigs>>
+            )
         : never
       )
 

@@ -33,14 +33,14 @@ export interface AliasOptionConfig<TName extends `-${string}` = `-${string}`> {
   readonly name: TName;
 };
 
-export type OptionConfig =
+export type OptionConfig = (
   | CueOptionConfig
   | FlagOptionConfig
   | CountOptionConfig
   | ValueOptionConfig
   | ResetOptionConfig
   | AliasOptionConfig
-;
+);
 
 /**
  * When this option is parsed, the options parser will immediately stop parsing

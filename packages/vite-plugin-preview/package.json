@@ -27,20 +27,20 @@
   },
   "dependencies": {
     "@types/ansi-html": "^0.0.0",
-    "@types/negotiator": "^0.6.3",
+    "@types/negotiator": "^0.6.4",
     "@types/ws": "^8.18.1",
     "ansi-html": "^0.0.9",
     "chalk": "^5.4.1",
     "escape-goat": "^4.0.0",
     "negotiator": "^1.0.0",
     "stream-replace-string": "^2.0.0",
-    "ws": "^8.18.1"
+    "ws": "^8.18.2"
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "peerDependencies": {
-    "vite": "^6.3.4"
+    "vite": "^7.0.0"
   },
   "publishConfig": {
     "access": "public"

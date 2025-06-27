@@ -18,7 +18,7 @@
   },
   "types": "src/plugin.d.ts",
   "dependencies": {
-    "eslint": "^9.25.1"
+    "eslint": "^9.29.0"
   },
   "publishConfig": {
     "access": "public"

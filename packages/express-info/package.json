@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*",
-    "@types/express": "^5.0.1"
+    "@types/express": "^5.0.3"
   },
   "publishConfig": {
     "access": "public"
