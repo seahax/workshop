@@ -16,7 +16,7 @@ type DeepReadonly<T> = T extends Function
 
 type Runtime = 'any' | 'node' | 'browser';
 
-type DependencyType = 'dependencies' | 'peerDependencies' | 'optionalDependencies';
+type DependencyType = 'dependencies' | 'peerDependencies' | 'optionalDependencies' | 'devDependencies';
 
 interface DependencyInfo {
   /**
@@ -162,11 +162,17 @@ export default function plugin({
           return !includeDependency(info);
         }
         case 'devDependencies': {
-          assert.ok(bundle, 'Development dependencies should not be imported unless the package is bundled.');
+          assert.ok(
+            bundle,
+            `Development dependency "${info.name}" should not be imported unless the package is bundled.`,
+          );
           return false;
         }
         case 'node': {
-          assert.ok(runtime === 'node', 'NodeJS built-ins should not be imported unless the runtime is "node".');
+          assert.ok(
+            runtime === 'node',
+            `NodeJS built-in "${source}" should not be imported unless the runtime is "node".`,
+          );
           return true;
         }
         case 'url': {
@@ -187,7 +193,7 @@ export default function plugin({
 
     function getSourceInfo(
       source: string,
-    ): { type: 'source' | 'node' | 'url' | 'devDependencies'; name?: undefined } | DependencyInfo {
+    ): { type: 'source' | 'node' | 'url'; name?: undefined } | DependencyInfo {
       if (source.startsWith('node:')) return { type: 'node' };
       if (/^[a-z]+:/iu.test(source)) return { type: 'url' };
 
@@ -199,7 +205,7 @@ export default function plugin({
         if (dependencies.includes(name)) return { type: 'dependencies', name };
         if (peerDependencies.includes(name)) return { type: 'peerDependencies', name };
         if (optionalDependencies.includes(name)) return { type: 'optionalDependencies', name };
-        if (devDependencies.includes(name)) return { type: 'devDependencies' };
+        if (devDependencies.includes(name)) return { type: 'devDependencies', name };
       }
 
       // It's not a package dependency, and it matches a node built-in module,

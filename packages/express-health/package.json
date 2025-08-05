@@ -25,9 +25,11 @@
     "build": "vite build && tsc -b -f src/tsconfig.json",
     "clean": "rm -rf dist"
   },
-  "devDependencies": {
-    "@seahax/vite-plugin-lib": "workspace:*",
+  "dependencies": {
     "@types/express": "^5.0.3"
+  },
+  "devDependencies": {
+    "@seahax/vite-plugin-lib": "workspace:*"
   },
   "publishConfig": {
     "access": "public"

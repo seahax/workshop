@@ -1,4 +1,4 @@
-import { type RequestHandler } from 'express';
+import type { RequestHandler } from 'express';
 
 export default function createInfoHandler(
   data: Record<string, string | number | bigint | boolean | null | undefined>,
