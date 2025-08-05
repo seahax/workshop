@@ -1,0 +1,75 @@
+{
+  "image": "ghcr.io/seahax/devcontainer:latest",
+  // Pull an updated image before (re-)building the dev container.
+  "initializeCommand": "docker pull ghcr.io/seahax/devcontainer:latest",
+  // Required for Mise auto-install and config file linking (image features).
+  "onCreateCommand": "$HOME/.devcontainer-on-create.zsh",
+  "mounts": [
+    // Mount the host's home directory to the container. Required for config
+    // file linking (image feature).
+    "source=${localEnv:HOME}${localEnv:USERPROFILE},target=/home/vscode/.remote,type=bind"
+  ],
+  "features": {
+    // Allow the dev container to access the host's Docker daemon.
+    "ghcr.io/devcontainers/features/docker-in-docker:2": { }
+  },
+  "customizations": {
+    "vscode": {
+      // Shared VSCode extensions.
+      "extensions": [
+        "bierner.markdown-preview-github-styles",
+        "byi8220.indented-block-highlighting",
+        "chrisbibby.hide-git-ignored",
+        "codezombiech.gitignore",
+        "dbaeumer.vscode-eslint",
+        "donjayamanne.githistory",
+        "ecmel.vscode-html-css",
+        "github.copilot-chat",
+        "github.copilot",
+        "golang.go",
+        "nhoizey.gremlins",
+        "pflannery.vscode-versionlens",
+        "pkief.material-icon-theme",
+        "premparihar.gotestexplorer",
+        "redhat.vscode-yaml",
+        "stkb.rewrap",
+        "streetsidesoftware.code-spell-checker-scientific-terms",
+        "streetsidesoftware.code-spell-checker",
+        "unional.vscode-sort-package-json",
+        "yzhang.markdown-all-in-one",
+        "ziyasal.vscode-open-in-github",
+        "zxh404.vscode-proto3",
+        "Redocly.openapi-vs-code",
+        "maattdd.gitless",
+        "Gruntfuggly.todo-tree",
+        "vitest.explorer",
+        "ms-python.python",
+        "tamasfe.even-better-toml"
+      ],
+      // Shared VSCode settings.
+      "settings": {
+        "remote.autoForwardPorts": true,
+        "remote.autoForwardPortsSource": "process",
+        "remote.autoForwardPortsFallback": 0,
+        "remote.restoreForwardedPorts": false,
+        "editor.codeActionsOnSave": [
+          "source.sortPackageJson"
+        ],
+        "editor.tabSize": 2,
+        "explorer.excludeGitIgnore": true,
+        "files.eol": "\n",
+        "markdown.extension.toc.levels": "2..4",
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "typescript.preferences.importModuleSpecifierEnding": "js",
+        "typescript.preferences.quoteStyle": "single",
+        "typescript.suggest.completeJSDocs": false,
+        "typescript.suggest.jsdoc.generateReturns": false,
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "window.confirmBeforeClose": "always",
+        "workbench.view.showQuietly": {
+          "workbench.panel.output": true
+        }
+      }
+    }
+  }
+}
