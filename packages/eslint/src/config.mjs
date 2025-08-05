@@ -81,6 +81,7 @@ export default function config({ ignores = DEFAULT_IGNORES } = {}) {
         'no-implicit-coercion': 'warn',
         'no-undef': 'off',
         'no-useless-rename': 'warn',
+        'prefer-const': 'warn',
         'unicorn/consistent-function-scoping': 'off',
         'unicorn/no-array-reduce': 'off',
         'unicorn/no-array-for-each': 'off',
