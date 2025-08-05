@@ -8,21 +8,23 @@
     "lib": [
       "ES2023"
     ],
-    "types": [],
+    "types": [ ],
     "jsx": "preserve",
+    "rewriteRelativeImportExtensions": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
     "strict": true,
     "strictNullChecks": true,
-    "skipLibCheck": true,
-    "isolatedModules": true,
-    "forceConsistentCasingInFileNames": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "allowJs": true,
     "checkJs": true,
     "declaration": true,
     "emitDeclarationOnly": true,
     "noEmit": true,
-    "rewriteRelativeImportExtensions": true
   },
 }

@@ -5,6 +5,8 @@
     "types": [
       "vite/client",
       "node"
-    ]
+    ],
+    // TODO: Remove enums and re-enable erasableSyntaxOnly.
+    "erasableSyntaxOnly": false,
   }
 }
