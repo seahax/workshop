@@ -334,22 +334,24 @@ importers:
         version: 9.29.0
 
   packages/express-health:
+    dependencies:
+      '@types/express':
+        specifier: ^5.0.3
+        version: 5.0.3
     devDependencies:
       '@seahax/vite-plugin-lib':
         specifier: workspace:*
         version: link:../vite-plugin-lib
-      '@types/express':
-        specifier: ^5.0.3
-        version: 5.0.3
 
   packages/express-info:
+    dependencies:
+      '@types/express':
+        specifier: ^5.0.3
+        version: 5.0.3
     devDependencies:
       '@seahax/vite-plugin-lib':
         specifier: workspace:*
         version: link:../vite-plugin-lib
-      '@types/express':
-        specifier: ^5.0.3
-        version: 5.0.3
 
   packages/express-spa:
     dependencies:
@@ -686,6 +688,22 @@ importers:
       '@seahax/vite-plugin-lib':
         specifier: workspace:*
         version: link:../vite-plugin-lib
+
+  unreleased/http:
+    dependencies:
+      '@standard-schema/spec':
+        specifier: ^1.0.0
+        version: 1.0.0
+      mime:
+        specifier: ^4.0.7
+        version: 4.0.7
+    devDependencies:
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-lib
+      zod:
+        specifier: ^3.25.67
+        version: 3.25.67
 
 packages:
 
@@ -4117,6 +4135,11 @@ packages:
   mime-types@3.0.1:
     resolution: {integrity: sha512-xRc4oEhT6eaBpU1XF7AjpOFD+xQmXNB5OVKwp4tqCuBpHLS/ZbBDrc07mYTDqVMg6PfxUjjNp85O6Cd2Z/5HWA==}
     engines: {node: '>= 0.6'}
+
+  mime@4.0.7:
+    resolution: {integrity: sha512-2OfDPL+e03E0LrXaGYOtTFIYhiuzep94NSsuhrNULq+stylcJedcHdzHtz0atMUuGwJfFYs0YL5xeC/Ca2x0eQ==}
+    engines: {node: '>=16'}
+    hasBin: true
 
   mimic-fn@2.1.0:
     resolution: {integrity: sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==}
@@ -9763,6 +9786,8 @@ snapshots:
   mime-types@3.0.1:
     dependencies:
       mime-db: 1.54.0
+
+  mime@4.0.7: {}
 
   mimic-fn@2.1.0: {}
 

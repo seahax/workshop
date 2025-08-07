@@ -1,0 +1,39 @@
+{
+  "name": "@seahax/http",
+  "version": "0.0.1",
+  "private": false,
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/http"
+  },
+  "license": "Unlicense",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "!dist/*.tsbuildinfo"
+  ],
+  "scripts": {
+    "build": "vite build && tsc -b -f src/tsconfig.json",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@standard-schema/spec": "^1.0.0",
+    "mime": "^4.0.7"
+  },
+  "devDependencies": {
+    "@seahax/vite-plugin-lib": "workspace:*",
+    "zod": "^3.25.67"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
