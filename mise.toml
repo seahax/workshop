@@ -1,3 +1,21 @@
 [tools]
+npm = "latest"
 pnpm = "latest"
-nodejs = "lts"
+node = "lts"
+doctl = "latest"
+aws = "latest"
+
+[env]
+AWS_PROFILE = "seahax"
+AWS_REGION = "us-east-1"
+AWS_PAGER = ""
+
+[tasks.devcontainer_init]
+hide = true
+run = [
+  "ln -s -t ~ /mnt/home/.aws",
+  "ln -s -t ~/.config '/mnt/home/Library/Application Support/doctl'",
+  "ln -s -t ~ /mnt/home/.npmrc",
+  "pnpm install",
+  "pnpm build || true"
+]
