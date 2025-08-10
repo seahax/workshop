@@ -1,9 +1,10 @@
 {
   "image": "ghcr.io/seahax/devcontainer:latest",
+  "runArgs": ["--name=devcontainer-${devcontainerId}"],
   // Pull an updated image before (re-)building the dev container.
   "initializeCommand": "docker pull ghcr.io/seahax/devcontainer:latest || true",
   // Run the built-in bootstrap script.
-  "onCreateCommand": "~/.bootstrap",
+  "onCreateCommand": "~/.bootstrap.zsh",
   "mounts": [
     // Mount the host's home directory in the dev container.
     "source=${localEnv:HOME}${localEnv:USERPROFILE},target=/mnt/home,type=bind"
