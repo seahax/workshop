@@ -10,8 +10,10 @@ on:
       - apps/seahax/**
 
 env:
-  APP_NAME: "seahax"
-  APP_DIR: "apps/seahax"
+  PACKAGE: app-seahax
+  PACKAGE_DIR: "apps/seahax"
+  IMAGE_REGISTRY: registry.digitalocean.com/seahax
+  IMAGE_NAME: app
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
 concurrency:
@@ -44,7 +46,7 @@ jobs:
       - name: Setup Docker
         uses: docker/login-action@v3
         with:
-          registry: registry.digitalocean.com
+          registry: ${{ env.IMAGE_REGISTRY }}
           username: ${{ secrets.DIGITALOCEAN_USERNAME }}
           password: ${{ secrets.DIGITALOCEAN_TOKEN }}
 
@@ -52,18 +54,18 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: npx lerna --scope="$APP_NAME" run docker.build -- -t "registry.digitalocean.com/seahax/${APP_NAME}:latest"
+        run: npx lerna --scope=${PACKAGE} run docker.build -- -t "${IMAGE_REGISTRY}/${IMAGE_NAME}:latest"
 
       - name: Test
-        run: npx lerna --scope="$APP_NAME" run test
+        run: npx lerna --scope=${PACKAGE} run test
 
       - name: Docker Push
-        run: docker push "registry.digitalocean.com/seahax/${APP_NAME}:latest"
+        run: docker push "${IMAGE_REGISTRY}/${IMAGE_NAME}:latest"
 
       - name: Deploy
         run: |
           set -e
-          cd "$APP_DIR"
+          cd "$PACKAGE_DIR"
           npx @seahax/yaml-vars app.yaml \
             app-pepper="${{ secrets.SEAHAX_APP_PEPPER }}" \
           | doctl apps create \
