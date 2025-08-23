@@ -13,6 +13,7 @@ env:
   APP_NAME: "seahax"
   APP_DIR: "apps/seahax"
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+  sdf
 
 concurrency:
   group: ${{ github.workflow }}
