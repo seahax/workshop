@@ -37,6 +37,7 @@ services:
       - key: APP_PEPPER
         scope: RUN_TIME
         value: ${{vars.app-pepper}}
+        type: SECRET
     health_check:
       http_path: /_health
       initial_delay_seconds: 10
