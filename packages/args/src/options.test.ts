@@ -5,13 +5,13 @@ import { parseOptions } from './options.ts';
 import { alias, count, cue, flag, option, reset } from './options-config.ts';
 
 test('schema option success', async () => {
-  const parse = (args: string[]) => parseOptions(args, { '-a': option(z.number({ coerce: true })) });
+  const parse = (args: string[]) => parseOptions(args, { '-a': option(z.coerce.number()) });
   await expect(parse([])).resolves.toEqual({ value: { '-a': undefined, positional: [] } });
   await expect(parse(['-a', '1', '-a', '2'])).resolves.toEqual({ value: { '-a': 2, positional: [] } });
 });
 
 test('schema option failure', async () => {
-  const parse = (args: string[]) => parseOptions(args, { '-a': option(z.number({ coerce: true })) });
+  const parse = (args: string[]) => parseOptions(args, { '-a': option(z.coerce.number()) });
 
   await expect(parse(['-a', '1', '-a', 'foo'])).resolves.toEqual({
     issues: [{ message: 'Expected number, received nan', path: [expect.objectContaining({ key: '-a' })] }],

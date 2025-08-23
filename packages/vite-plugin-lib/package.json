@@ -26,7 +26,7 @@
     "clean": "rm -rf dist"
   },
   "peerDependencies": {
-    "vite": "^7.0.0"
+    "vite": "^7.1.3"
   },
   "publishConfig": {
     "access": "public"

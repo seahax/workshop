@@ -28,7 +28,7 @@
   "dependencies": {
     "callsites": "^4.2.0",
     "glob": "^11.0.3",
-    "yaml": "^2.8.0"
+    "yaml": "^2.8.1"
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*"

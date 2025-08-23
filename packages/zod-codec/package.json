@@ -29,7 +29,7 @@
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "peerDependencies": {
-    "zod": "^3.25.67"
+    "zod": "^4.0.17"
   },
   "publishConfig": {
     "access": "public"
