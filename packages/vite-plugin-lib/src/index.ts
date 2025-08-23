@@ -45,7 +45,7 @@ interface BundleConfig {
   /**
    * Whether to include _production_ dependencies in the bundle, or leave them
    * external. Also accepts a callback function that can return `true` or
-   * `false` per dependency. Defaults to `false`.
+   * `false` per dependency. Defaults to `true`.
    *
    * **NOTE:** This only affects production dependencies. Production
    * dependencies are the packages referenced by `package.json` file
