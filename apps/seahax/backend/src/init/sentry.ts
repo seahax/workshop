@@ -1,0 +1,8 @@
+import * as Sentry from '@sentry/node';
+
+import { config } from '../services/config.ts';
+
+Sentry.init({
+  dsn: 'https://8bccefc6c967115a3f7f41cb478fa2fd@o4509086879973376.ingest.us.sentry.io/4509086892949504',
+  environment: config.environment,
+});

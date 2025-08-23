@@ -3,7 +3,7 @@ import { BSON } from 'mongodb';
 import Cache from 'quick-lru';
 import { z } from 'zod';
 
-import { config } from '../../config.ts';
+import { config } from '../../services/config.ts';
 
 interface UserRepository {
   findUser(query: Pick<User, 'id'> | Pick<User, 'email'>): Promise<User | null>;

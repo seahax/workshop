@@ -2,7 +2,7 @@ import { webcrypto } from 'node:crypto';
 
 import { argon2id } from 'hash-wasm';
 
-import { config } from '../../config.ts';
+import { config } from '../../services/config.ts';
 
 const SALT_LENGTH_BYTES = 32;
 

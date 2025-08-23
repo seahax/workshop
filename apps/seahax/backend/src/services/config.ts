@@ -5,6 +5,7 @@ import { MongoClient } from 'mongodb';
 const now = Date.now();
 
 export const config = {
+  environment: process.env.APP_ENVIRONMENT ?? 'development',
   commit: process.env.APP_COMMIT ?? 'development',
   buildTimestamp: process.env.APP_BUILD_TIMESTAMP
     ? Number.parseInt(process.env.APP_BUILD_TIMESTAMP, 10) * 1000

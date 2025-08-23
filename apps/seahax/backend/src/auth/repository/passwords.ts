@@ -2,7 +2,7 @@ import { zodCodec } from '@seahax/zod-codec';
 import { BSON } from 'mongodb';
 import { z } from 'zod';
 
-import { config } from '../../config.ts';
+import { config } from '../../services/config.ts';
 
 type PasswordDoc = z.infer<typeof $PASSWORD_DOC.input>;
 type Password = z.infer<typeof $PASSWORD.input>;

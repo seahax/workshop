@@ -15,12 +15,5 @@ const sentry: Plugin | undefined = process.env.SENTRY_AUTH_TOKEN
 console.log(`Sentry Vite Plugin: ${sentry ? 'enabled' : 'disabled'}`);
 
 export default defineConfig({
-  plugins: [
-    react(),
-    sentry,
-  ],
-  build: {
-    target: 'es2023',
-    sourcemap: true,
-  },
+  plugins: [react(), sentry],
 });

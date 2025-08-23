@@ -3,7 +3,7 @@ import { BSON } from 'mongodb';
 import { v7 as uuid } from 'uuid';
 import { z } from 'zod';
 
-import { config } from '../../config.ts';
+import { config } from '../../services/config.ts';
 
 type SessionDoc = z.infer<typeof $SESSION_DOC.input>;
 type Session = z.infer<typeof $SESSION.input>;

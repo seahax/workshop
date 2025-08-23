@@ -1,6 +1,6 @@
 import { lazy } from '@seahax/lazy';
 
-import { background } from '../background.ts';
+import { background } from '../services/background.ts';
 import { getJwkRepositoryFactory } from './repository/jwks.ts';
 import { getPasswordRepository } from './repository/passwords.ts';
 import { getSessionRepository } from './repository/sessions.ts';

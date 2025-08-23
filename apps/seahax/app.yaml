@@ -25,6 +25,9 @@ services:
     instance_count: 1
     instance_size_slug: apps-s-1vcpu-0.5gb
     envs:
+      - key: APP_ENVIRONMENT
+        scope: RUN_TIME
+        value: production
       - key: APP_ORIGIN
         scope: RUN_TIME
         value: https://seahax.com
@@ -37,7 +40,7 @@ services:
     health_check:
       http_path: /_health
       initial_delay_seconds: 10
-      period_seconds: 10
+      period_seconds: 30
       timeout_seconds: 3
       success_threshold: 1
       failure_threshold: 3

@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "outDir": "./out"
+  },
+  "include": [],
+  "references": [
+    { "path": "./frontend/src/tsconfig.json" },
+    { "path": "./backend/src/tsconfig.json" }
+  ]
+}

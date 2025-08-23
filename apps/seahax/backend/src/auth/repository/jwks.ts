@@ -1,12 +1,12 @@
 import { zodCodec } from '@seahax/zod-codec';
+import { captureMessage } from '@sentry/node';
 import { exportJWK, generateKeyPair, type JWK } from 'jose';
 import Cache from 'quick-lru';
 import { v7 as uuid } from 'uuid';
 import { z } from 'zod';
 
-import { background } from '../../background.ts';
-import { config } from '../../config.ts';
-import { captureMessage } from '../../sentry.ts';
+import { background } from '../../services/background.ts';
+import { config } from '../../services/config.ts';
 
 declare module 'jose' {
   export interface JWK {

@@ -1,49 +1,33 @@
 {
-  "name": "app-seahax-backend",
+  "name": "app-seahax",
   "version": "0.1.0",
   "private": true,
-  "description": "",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/seahax/workshop.git",
-    "directory": "apps/seahax/backend"
-  },
-  "license": "Unlicense",
   "type": "module",
-  "files": [
-    "dist",
-    "!dist/*.tsbuildinfo"
-  ],
   "scripts": {
-    "build": "vite build && tsc -b -f src/tsconfig.json",
-    "clean": "rm -rf dist",
+    "build": "vite build -c frontend/vite.config.ts && vite build -c backend/vite.config.ts && tsc -b -f tsconfig.build.json",
+    "clean": "rm -rf backend/dist frontend/dist",
     "docker.build": "./scripts/docker-build.sh",
     "docker.start": "./scripts/docker-start.sh",
-    "lint": "eslint src",
+    "lint": "eslint */src",
     "start": "./scripts/start.sh",
     "test": "run-all test.",
     "test.0-lint": "pnpm lint --max-warnings=0"
   },
   "dependencies": {
     "@seahax/background": "workspace:*",
-    "@seahax/express-health": "workspace:*",
-    "@seahax/express-info": "workspace:*",
-    "@seahax/express-spa": "workspace:*",
+    "@seahax/espresso": "workspace:*",
     "@seahax/lazy": "workspace:*",
-    "@seahax/ts-rest-express": "workspace:*",
     "@seahax/zod-codec": "workspace:*",
     "@sentry/node": "^9.32.0",
-    "@ts-rest/core": "^3.52.1",
-    "app-seahax-api": "workspace:*",
-    "compression": "^1.8.0",
-    "cookie-parser": "^1.4.7",
-    "express": "^5.1.0",
+    "@sentry/react": "^9.32.0",
     "hash-wasm": "^4.12.0",
     "helmet": "^8.1.0",
     "jose": "^6.0.11",
     "mongodb": "^6.17.0",
     "morgan": "^1.10.0",
     "quick-lru": "^7.0.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "uuid": "^11.1.0",
     "zod": "^3.25.67"
   },
@@ -53,13 +37,10 @@
     "@seahax/vite-plugin-lib": "workspace:*",
     "@seahax/yaml-vars": "workspace:*",
     "@sentry/vite-plugin": "^3.5.0",
-    "@types/compression": "^1.8.1",
-    "@types/cookie-parser": "^1.4.9",
-    "@types/express": "^5.0.3",
     "@types/morgan": "^1.9.10",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.6.0",
     "app-seahax-frontend": "workspace:*"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

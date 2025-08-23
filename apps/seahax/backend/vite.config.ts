@@ -16,7 +16,7 @@ console.log(`Sentry Vite Plugin: ${sentry ? 'enabled' : 'disabled'}`);
 
 export default defineConfig({
   plugins: [
-    lib({ runtime: 'node', bundle: true }),
+    lib({ runtime: 'node', bundle: { minify: false } }),
     sentry,
   ],
 });
