@@ -10,7 +10,7 @@ on:
       - apps/seahax/**
 
 env:
-  APP_NAME: "app-seahax-backend"
+  APP_NAME: "app-seahax"
   APP_DIR: "apps/seahax/backend"
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 

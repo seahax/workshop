@@ -4,8 +4,8 @@
   "license": "Unlicense",
   "type": "module",
   "scripts": {
-    "app.seahax.docker.start": "lerna --no-stream --scope app-seahax-backend run docker.start",
-    "app.seahax.start": "lerna --no-stream --scope app-seahax-backend run start",
+    "app.seahax.docker.start": "lerna --no-stream --scope app-seahax run docker.start",
+    "app.seahax.start": "lerna --no-stream --scope app-seahax run start",
     "build": "lerna run build",
     "clean": "lerna run clean && nx reset",
     "lint": "eslint . --ignore-pattern='unreleased'",
