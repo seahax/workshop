@@ -4,7 +4,6 @@ import eslint from '@eslint/js';
 import wrap from '@seahax/eslint-plugin-wrap';
 import progress from '@seahax/eslint-progress';
 import stylistic from '@stylistic/eslint-plugin';
-import importPlugin from 'eslint-plugin-import';
 import react from 'eslint-plugin-react';
 import regexp from 'eslint-plugin-regexp';
 import importSort from 'eslint-plugin-simple-import-sort';
@@ -37,7 +36,6 @@ export default function config({ ignores = DEFAULT_IGNORES } = {}) {
     compat.config({ extends: ['plugin:react-hooks/recommended'] }),
     regexp.configs['flat/recommended'],
     unicorn.configs['flat/recommended'],
-    { plugins: { import: importPlugin } },
     { plugins: { 'import-sort': importSort } },
     [
       typescript.configs.recommendedTypeChecked,
@@ -53,13 +51,6 @@ export default function config({ ignores = DEFAULT_IGNORES } = {}) {
         parserOptions: { projectService: true },
       },
       settings: {
-        'import/parsers': {
-          '@typescript-eslint/parser': tsExt.map((ext) => `.${ext}`),
-        },
-        'import/resolver': {
-          node: true,
-          typescript: true,
-        },
         react: {
           version: '18',
         },
@@ -74,8 +65,6 @@ export default function config({ ignores = DEFAULT_IGNORES } = {}) {
       rules: {
         'import-sort/exports': 'warn',
         'import-sort/imports': 'warn',
-        'import/extensions': ['error', 'always', { ignorePackages: true, checkTypeImports: true }],
-        'import/no-extraneous-dependencies': ['error', { devDependencies: false }],
         'max-lines': ['warn', { max: 300, skipBlankLines: true, skipComments: true }],
         'no-empty': 'off',
         'no-implicit-coercion': 'warn',
@@ -127,6 +116,7 @@ export default function config({ ignores = DEFAULT_IGNORES } = {}) {
         '@typescript-eslint/no-namespace': 'off',
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/no-this-alias': 'off',
+        '@typescript-eslint/no-unnecessary-condition': 'off',
         '@typescript-eslint/no-unsafe-argument': 'off',
         '@typescript-eslint/no-unsafe-assignment': 'off',
         '@typescript-eslint/no-unsafe-call': 'off',
@@ -148,6 +138,7 @@ export default function config({ ignores = DEFAULT_IGNORES } = {}) {
           'warn',
           { considerDefaultExhaustiveForUnions: true, requireDefaultForNonUnion: true },
         ],
+        '@typescript-eslint/unified-signatures': 'off',
       },
     },
 
