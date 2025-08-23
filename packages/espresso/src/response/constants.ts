@@ -1,0 +1,9 @@
+export const HEADER_CONTENT_TYPE = 'content-type';
+export const HEADER_CONTENT_LENGTH = 'content-length';
+export const HEADER_ACCEPT_ENCODING = 'accept-encoding';
+export const HEADER_CACHE_CONTROL = 'cache-control';
+export const HEADER_CONTENT_ENCODING = 'content-encoding';
+export const HEADER_LAST_MODIFIED = 'last-modified';
+export const HEADER_ETAG = 'etag';
+export const HEADER_IF_NONE_MATCH = 'if-none-match';
+export const HEADER_IF_MODIFIED_SINCE = 'if-modified-since';

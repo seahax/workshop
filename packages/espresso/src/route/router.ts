@@ -1,40 +1,37 @@
-import { parsePath, parsePathSegment, PathParameterKey, type PathParameterToken } from './path.ts';
-import { memo } from './utils/memo.ts';
+import {
+  parsePath,
+  parsePathTemplate,
+  PathParameterMultiSegment,
+  PathParameterSingleSegment,
+  type PathParameterToken,
+} from './path.ts';
 
-interface Node<TRoute extends RouteRequired> {
-  readonly key: string | PathParameterKey;
-  readonly children: Map<string | PathParameterKey, Node<TRoute>>;
-  readonly methods: Map<string, MethodValue<TRoute>>;
-}
-
-interface MethodValue<TRoute extends RouteRequired> {
-  readonly route: TRoute;
-  readonly parameterNames: readonly string[];
-}
-
-interface RouteRequired {
-  readonly pathTemplates: readonly string[];
-  readonly method: string;
+interface Node<TValue> {
+  readonly key: string | typeof PathParameterSingleSegment | typeof PathParameterMultiSegment;
+  readonly children: Map<string | typeof PathParameterSingleSegment | typeof PathParameterMultiSegment, Node<TValue>>;
+  readonly methods: Map<string, {
+    readonly value: TValue;
+    readonly parameterNames: readonly string[];
+  }>;
 }
 
 /**
- * Collection of routes which can be matched against HTTP methods and paths.
+ * A collection of routes for handling HTTP requests.
  */
-export interface Router<TRoute extends RouteRequired> {
+export interface Router<TValue> {
   /**
    * Add a route.
+   *
+   * The single most specific route that matches a request is applied. If no
+   * route matches and no fallbacks have been added, then no filters will be
+   * invoked and a 404 response will be sent.
    */
-  add(route: TRoute): this;
+  addRoute(method: string, pathTemplate: string, value: TValue): void;
 
   /**
    * Get the route that matches the HTTP method and path.
-   *
-   * NOTE: The method and path arguments accept `undefined` values, because
-   * Node's `IncomingMessage` allows `undefined` for both properties. If either
-   * one is not defined, then the router will just return a "not found" result
-   * immediately.
    */
-  match(method: string | undefined, path: string | undefined): RouterResult<TRoute>;
+  match(method: string, path: string): RouterResult<TValue>;
 }
 
 /**
@@ -46,13 +43,13 @@ export interface Router<TRoute extends RouteRequired> {
  * - `path-found`: No route was found that matches the method and path, but
  *   there are other routes that match just the path.
  */
-export type RouterResult<TRoute extends RouteRequired> = {
+export type RouterResult<TValue> = {
   readonly type: 'found';
-  readonly route: TRoute;
+  readonly value: TValue;
   readonly pathParameters: Readonly<Record<string, string>>;
 } | {
   readonly type: 'not-found' | 'path-found';
-  readonly route?: undefined;
+  readonly value?: undefined;
   readonly pathParameters?: undefined;
 };
 
@@ -63,54 +60,21 @@ export type RouterResult<TRoute extends RouteRequired> = {
  * Behavior:
  * - Path leading slashes are added if missing.
  * - Implemented as a path-wise radix trie.
- * - Duplicate routes are not allowed.
+ * - Duplicate routes overwrite previous routes.
  * - Routes that only differ by parameter names are considered duplicates.
- * - Adding the same route twice is a no-op (not a duplicate).
  * - Single segment parameters must match an entire segment.
  * - A multi-segment parameter must be the last segment in the path.
  * - Parameters are always required, and cannot match an empty string,
  * - The most specific route is returned when multiple routes match a path.
  */
-export function createRouter<TRoute extends RouteRequired>(): Router<TRoute> {
-  const root = createNode<TRoute>('');
-  const self: Router<TRoute> = {
-    add(route) {
-      route.pathTemplates.forEach((pathTemplate) => {
-        const tokens = parsePath(pathTemplate, (segment) => parsePathSegment(segment, (error) => {
-          switch (error) {
-            case 'invalid_parameter': { throw new Error(
-              `Route path template "${pathTemplate}" is invalid (reserved character in parameter name)`,
-            ); }
-            case 'invalid_literal': { throw new Error(
-              `Route path template "${pathTemplate}" is invalid (reserved character in literal segment)`,
-            ); }
-          }
-        }));
-
-        const method = route.method.toUpperCase();
-
-        addRecursive(route, tokens, method, root, [], (error) => {
-          switch (error.type) {
-            case 'duplicate_route': { throw new Error(
-              `Route "${error.method}${pathTemplate}" is a duplicate`,
-            ); }
-            case 'duplicate_param': { throw new Error(
-              `Route path template "${pathTemplate}" is invalid (duplicate parameter)`,
-            ); }
-            case 'invalid_multi_segment': { throw new Error(
-              `Route path template "${pathTemplate}" is invalid (multi-segment parameter is not last)`,
-            ); }
-          }
-        });
-      });
-
-      return self;
+export function createRouter<TValue>(): Router<TValue> {
+  const root = createNode<TValue>('');
+  const self: Router<TValue> = {
+    addRoute(method, pathTemplate, value) {
+      const tokens = parsePathTemplate(pathTemplate);
+      addRecursive(value, tokens, method.toUpperCase(), root, []);
     },
     match(method, path) {
-      if (method == null || path == null) {
-        return { type: 'not-found' };
-      }
-
       const tokens = parsePath(path);
       const result = findRecursive(tokens, method, root, []);
       return result;
@@ -123,52 +87,31 @@ export function createRouter<TRoute extends RouteRequired>(): Router<TRoute> {
 /**
  * Recursively add a route to the router's radix trie.
  */
-function addRecursive<TRoute extends RouteRequired>(
-  route: TRoute,
+function addRecursive<TValue>(
+  value: TValue,
   [token, ...tokens]: readonly (string | PathParameterToken)[],
   method: string,
-  currentNode: Node<TRoute>,
+  currentNode: Node<TValue>,
   parameterNames: readonly string[],
-  onError: (error: (
-    | { type: 'duplicate_route'; method: string }
-    | { type: 'duplicate_param' | 'invalid_multi_segment' }
-  )) => never,
 ): void {
   if (token == null) {
     // No more tokens. Therefore, the current node is the terminal node of the
     // route path template.
-
-    const existingRoute = currentNode.methods.get(method)?.route;
-
-    if (existingRoute && existingRoute !== route) {
-      return onError({ type: 'duplicate_route', method });
-    }
-
-    // The route is not a duplicate. Add it and its associated parameter names
-    // to the current node.
-    currentNode.methods.set(method, { route, parameterNames: parameterNames });
+    currentNode.methods.set(method, { value, parameterNames });
     return;
-  }
-
-  if (currentNode.key === PathParameterKey.MultiSegment) {
-    return onError({ type: 'invalid_multi_segment' });
   }
 
   const { key, parameterName } = typeof token === 'string' ? { key: token } : token;
   const [nextNode, isNewNode] = (() => {
     const nextNode = currentNode.children.get(key);
-    return nextNode ? [nextNode, false] : [createNode<TRoute>(key), true];
+    return nextNode ? [nextNode, false] : [createNode<TValue>(key), true];
   })();
-
-  if (typeof key !== 'string' && parameterNames.includes(parameterName)) {
-    return onError({ type: 'duplicate_param' });
-  }
 
   const nextParameterName = typeof key === 'string'
     ? parameterNames
     : [...parameterNames, parameterName];
 
-  addRecursive(route, tokens, method, nextNode, nextParameterName, onError);
+  addRecursive(value, tokens, method, nextNode, nextParameterName);
 
   // Commit delayed change when we know there are no conflicts.
   if (isNewNode) {
@@ -179,12 +122,12 @@ function addRecursive<TRoute extends RouteRequired>(
 /**
  * Recursively find a route in the router's radix trie.
  */
-function findRecursive<TRoute extends RouteRequired>(
+function findRecursive<TValue>(
   [token, ...tokens]: readonly string[],
   method: string,
-  currentNode: Node<TRoute>,
+  currentNode: Node<TValue>,
   parameterValues: readonly string[],
-): RouterResult<TRoute> {
+): RouterResult<TValue> {
   if (token == null) {
     // No more tokens. Therefore, the search path matches at least the
     // beginning of a route path.
@@ -195,34 +138,24 @@ function findRecursive<TRoute extends RouteRequired>(
       return { type: 'not-found' };
     }
 
-    const value = currentNode.methods.get(method);
+    const entry = currentNode.methods.get(method);
 
-    if (!value) {
+    if (!entry) {
       // The current node is a route terminal node, but the method does not
       // match any of the routes.
       return { type: 'path-found' };
     }
 
-    const { route, parameterNames } = value;
-    const getPathParameters = memo(() => {
-      const pathParameters: Record<string, string> = {};
+    const { value, parameterNames } = entry;
+    const pathParameters: Record<string, string> = {};
 
-      // Combine the collected array of parameter values with the route
-      // parameter names to create a record of path parameters.
-      for (const [i, parameterValue] of parameterValues.entries()) {
-        pathParameters[parameterNames[i]!] = parameterValue;
-      }
+    // Combine the collected array of parameter values with the route
+    // parameter names to create a record of path parameters.
+    for (const [i, parameterValue] of parameterValues.entries()) {
+      pathParameters[parameterNames[i]!] = decodeURIComponent(parameterValue);
+    }
 
-      return pathParameters;
-    });
-
-    return {
-      type: 'found',
-      route,
-      get pathParameters() {
-        return getPathParameters();
-      },
-    };
+    return { type: 'found', value, pathParameters };
   }
 
   if (currentNode.children.size === 0) {
@@ -236,7 +169,7 @@ function findRecursive<TRoute extends RouteRequired>(
   // 1. Literally match the token.
   // 2. Match a single segment parameter.
   // 3. Match all remaining tokens as a multi-segment parameter.
-  for (const key of [token, PathParameterKey.SingleSegment, PathParameterKey.MultiSegment]) {
+  for (const key of [token, PathParameterSingleSegment, PathParameterMultiSegment] as const) {
     const nextNode = currentNode.children.get(key);
 
     if (!nextNode) {
@@ -245,7 +178,7 @@ function findRecursive<TRoute extends RouteRequired>(
     }
 
     const { nextParameterValues, nextTokens } = (() => {
-      if (key === PathParameterKey.SingleSegment) {
+      if (key === PathParameterSingleSegment) {
         // Matched a single parameter.
         return {
           // Append the token as a parameter value for the next recursion.
@@ -255,7 +188,7 @@ function findRecursive<TRoute extends RouteRequired>(
         };
       }
 
-      if (key === PathParameterKey.MultiSegment) {
+      if (key === PathParameterMultiSegment) {
         // Matched a multi-segment parameter.
         return {
           // Concatenate the current token and all remaining tokens, and add
@@ -292,6 +225,8 @@ function findRecursive<TRoute extends RouteRequired>(
 /**
  * Create a new node for the radix trie.
  */
-function createNode<TRoute extends RouteRequired>(key: string | PathParameterKey): Node<TRoute> {
+function createNode<TValue>(
+  key: string | typeof PathParameterSingleSegment | typeof PathParameterMultiSegment,
+): Node<TValue> {
   return { key, children: new Map(), methods: new Map() };
 }
