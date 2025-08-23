@@ -69,6 +69,7 @@ jobs:
           npx @seahax/yaml-vars app.yaml \
             app-pepper="${{ secrets.SEAHAX_APP_PEPPER }}" \
           | doctl apps create \
+            --verbose \
             --spec - \
             --project-id "${{ secrets.DIGITALOCEAN_PROJECT }}" \
             --upsert \
