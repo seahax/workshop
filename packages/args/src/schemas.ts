@@ -44,8 +44,8 @@ function createSchemaEnvelop<TValue>(
 function createSchema<TValue>(
   validate: (value: unknown, ctx: { optional: boolean }) => StandardSchemaV1.SuccessResult<TValue> | string,
 ): <TOptional extends boolean = false>(
-    options?: SchemaOptions<TOptional>
-  ) => Schema<TValue | (TOptional extends true ? undefined : never)> {
+  options?: SchemaOptions<TOptional>
+) => Schema<TValue | (TOptional extends true ? undefined : never)> {
   return ({ optional = false, message } = {}) => {
     return createSchemaEnvelop((value) => {
       if (value == null && optional) return { value: undefined as TValue };

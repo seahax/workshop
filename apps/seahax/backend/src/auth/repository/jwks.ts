@@ -165,9 +165,9 @@ const DAY_IN_MS = HOUR_IN_MS * 24;
 const MONTH_IN_SECONDS = DAY_IN_MS * 30;
 
 const $JWK = z.object({
-  kid: z.string().uuid(),
+  kid: z.uuid(),
   iat: z.number().int().positive(),
-}).passthrough().transform<JWK>((v) => v);
+}).loose().transform<JWK>((v) => v);
 
 const $JWKS_COMMON = z.object({
   /** Updated time in seconds since the epoch. */

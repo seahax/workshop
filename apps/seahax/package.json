@@ -18,29 +18,28 @@
     "@seahax/espresso": "workspace:*",
     "@seahax/lazy": "workspace:*",
     "@seahax/zod-codec": "workspace:*",
-    "@sentry/node": "^9.32.0",
-    "@sentry/react": "^9.32.0",
+    "@sentry/node": "^10.5.0",
+    "@sentry/react": "^10.5.0",
     "hash-wasm": "^4.12.0",
     "helmet": "^8.1.0",
-    "jose": "^6.0.11",
-    "mongodb": "^6.17.0",
-    "morgan": "^1.10.0",
-    "quick-lru": "^7.0.1",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "jose": "^6.0.13",
+    "mongodb": "^6.18.0",
+    "morgan": "^1.10.1",
+    "quick-lru": "^7.1.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "uuid": "^11.1.0",
-    "zod": "^3.25.67"
+    "zod": "^4.1.0"
   },
   "devDependencies": {
     "@seahax/eslint": "workspace:*",
     "@seahax/run-all": "workspace:*",
     "@seahax/vite-plugin-lib": "workspace:*",
     "@seahax/yaml-vars": "workspace:*",
-    "@sentry/vite-plugin": "^3.5.0",
+    "@sentry/vite-plugin": "^4.1.1",
     "@types/morgan": "^1.9.10",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
-    "@vitejs/plugin-react": "^4.6.0",
-    "app-seahax-frontend": "workspace:*"
+    "@types/react": "^19.1.11",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^5.0.1"
   }
 }

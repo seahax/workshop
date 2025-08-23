@@ -47,10 +47,10 @@ const SEVEN_DAYS_IN_SECONDS = 7 * 24 * 60 * 60;
 const [$SESSION, $SESSION_DOC] = zodCodec(
   {
     input: z.object({
-      refreshToken: z.string().uuid(),
+      refreshToken: z.uuid(),
       /** Expiration time in seconds since the epoch. */
       expiresAt: z.number().positive().int(),
-      userId: z.string().uuid(),
+      userId: z.uuid(),
     }),
     transform: ({ refreshToken, userId, expiresAt }) => ({
       _id: BSON.UUID.createFromHexString(refreshToken),
@@ -62,7 +62,7 @@ const [$SESSION, $SESSION_DOC] = zodCodec(
     input: z.object({
       _id: z.instanceof(BSON.UUID),
       expiresAt: z.instanceof(Date),
-      userId: z.string().uuid(),
+      userId: z.uuid(),
     }),
     transform: ({ _id, userId, expiresAt }) => ({
       refreshToken: _id.toHexString(),

@@ -36,7 +36,7 @@ export function getPasswordRepository(): PasswordRepository {
 const [$PASSWORD, $PASSWORD_DOC] = zodCodec(
   {
     input: z.object({
-      userId: z.string().uuid(),
+      userId: z.uuid(),
       hash: z.string(),
       params: z.object({
         algorithm: z.literal('argon2id'),

@@ -56,8 +56,8 @@ const CACHE_CONFIG = { maxSize: 1000 } as const;
 const [$USER, $USER_DOC] = zodCodec(
   {
     input: z.object({
-      id: z.string().uuid(),
-      email: z.string().email(),
+      id: z.uuid(),
+      email: z.email(),
     }),
     transform: (user) => ({
       _id: BSON.UUID.createFromHexString(user.id),
@@ -67,7 +67,7 @@ const [$USER, $USER_DOC] = zodCodec(
   {
     input: z.object({
       _id: z.instanceof(BSON.UUID),
-      email: z.string().email(),
+      email: z.email(),
     }),
     transform: (doc) => ({
       id: doc._id.toHexString(true),

@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*",
-    "zod": "^4.0.17"
+    "zod": "^4.1.0"
   },
   "publishConfig": {
     "access": "public"

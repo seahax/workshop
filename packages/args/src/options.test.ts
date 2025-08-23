@@ -14,7 +14,12 @@ test('schema option failure', async () => {
   const parse = (args: string[]) => parseOptions(args, { '-a': option(z.coerce.number()) });
 
   await expect(parse(['-a', '1', '-a', 'foo'])).resolves.toEqual({
-    issues: [{ message: 'Expected number, received nan', path: [expect.objectContaining({ key: '-a' })] }],
+    issues: [
+      {
+        message: 'Invalid input: expected number, received NaN',
+        path: [expect.objectContaining({ key: '-a' })],
+      },
+    ],
   });
 });
 
@@ -83,9 +88,9 @@ test('unknown positional', async () => {
 });
 
 test('invalid positional', async () => {
-  const parse = (args: string[]) => parseOptions(args, { positional: [z.string().email()] });
+  const parse = (args: string[]) => parseOptions(args, { positional: [z.email()] });
   await expect(parse(['foo'])).resolves.toEqual({
-    issues: [{ message: 'Invalid email', path: [expect.objectContaining({ key: 0 })] }],
+    issues: [{ message: 'Invalid email address', path: [expect.objectContaining({ key: 0 })] }],
   });
 });
 
