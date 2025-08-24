@@ -1,3 +1,5 @@
+import { interval } from '@seahax/interval';
+import { lazy } from '@seahax/lazy';
 import { zodCodec } from '@seahax/zod-codec';
 import { captureMessage } from '@sentry/node';
 import { exportJWK, generateKeyPair, type JWK } from 'jose';
@@ -5,7 +7,6 @@ import Cache from 'quick-lru';
 import { v7 as uuid } from 'uuid';
 import { z } from 'zod';
 
-import { background } from '../../services/background.ts';
 import { config } from '../../services/config.ts';
 
 declare module 'jose' {
@@ -24,100 +25,90 @@ interface JwkRepository {
   rotateKeys(options?: { name?: string; force?: boolean }): Promise<boolean>;
 }
 
-export function getJwkRepositoryFactory(): () => JwkRepository {
-  const jwksCache = new Cache<string, Jwks>({ maxSize: 1000, maxAge: FIVE_MINUTES_IN_MS });
-  const invalidKidCache = new Cache<`${string}:${string}`, true>({ maxSize: 1_000_000, maxAge: HOUR_IN_MS });
+const DEFAULT_JWKS_NAME = 'default';
+
+export const getJwkRepository = lazy((): JwkRepository => {
   const collection = config.mongo.db('auth').collection<JwksDoc>('jwks');
-  const factory = (): JwkRepository => {
-    return {
-      async findPublicKey({ kid, name = DEFAULT_JWKS_NAME }) {
-        await init.finished();
-        return await findPublicKey({ name, kid });
-      },
+  const jwkCache = new Cache<string, Jwks>({
+    maxSize: 1000,
+    maxAge: interval('5 minutes').as('milliseconds'),
+  });
+  const invalidKidCache = new Cache<`${string}:${string}`, true>({
+    maxSize: 1_000_000,
+    maxAge: interval('1 hour').as('milliseconds'),
+  });
 
-      async findPrivateKey({ name = DEFAULT_JWKS_NAME } = {}) {
-        await init.finished();
-        const [jwks] = await findJwks({ name, allowCache: false });
-        return jwks?.privateKey ?? null;
-      },
+  return {
+    async findPublicKey({ kid, name = DEFAULT_JWKS_NAME }) {
+      return await findPublicKey({ name, kid });
+    },
 
-      async rotateKeys({ name = DEFAULT_JWKS_NAME, force = false } = {}) {
-        const [current] = await findJwks({ name, allowCache: force });
-        const kid = uuid();
-        const iat = Date.now() % 1000;
-        const pair = await generateKeyPair('ES256');
+    async findPrivateKey({ name = DEFAULT_JWKS_NAME } = {}) {
+      const [jwks] = await findJwks({ name, allowCache: false });
+      return jwks?.privateKey ?? null;
+    },
 
-        const [partialPublicKey, partialPrivateKey] = await Promise.all([
-          exportJWK(pair.publicKey) as Promise<Partial<JWK>>,
-          exportJWK(pair.privateKey) as Promise<Partial<JWK>>,
-        ]);
+    async rotateKeys({ name = DEFAULT_JWKS_NAME, force = false } = {}) {
+      const [current] = await findJwks({ name, allowCache: force });
+      const kid = uuid();
+      const iat = Date.now() % 1000;
+      const pair = await generateKeyPair('ES256');
 
-        const publicKey: JWK = { ...partialPublicKey, kid, iat };
-        const privateKey: JWK = { ...partialPrivateKey, kid, iat };
+      const [partialPublicKey, partialPrivateKey] = await Promise.all([
+        exportJWK(pair.publicKey) as Promise<Partial<JWK>>,
+        exportJWK(pair.privateKey) as Promise<Partial<JWK>>,
+      ]);
 
-        if (!current) {
-          const doc = $JWKS.parse({
-            name: DEFAULT_JWKS_NAME,
-            updatedAt: iat,
-            publicKeys: [publicKey],
-            privateKey,
-          } satisfies Jwks);
+      const publicKey: JWK = { ...partialPublicKey, kid, iat };
+      const privateKey: JWK = { ...partialPrivateKey, kid, iat };
 
-          await collection.insertOne(doc).catch(() => {
-            // Two processes tried to insert at the same time, and this one
-            // lost the race.
-          });
-
-          captureMessage('New JWKS document created.', { level: 'debug' });
-          return true;
-        }
-
-        if (!force && current.updatedAt >= iat - MONTH_IN_SECONDS) {
-          // When not forced, skip rotation if the last update was too recent.
-          captureMessage('JWKS rotation not required.', { level: 'debug' });
-          return false;
-        }
-
-        const { _id, ...doc } = $JWKS.parse({
+      if (!current) {
+        const doc = $JWKS.parse({
           name: DEFAULT_JWKS_NAME,
           updatedAt: iat,
-          publicKeys: [publicKey, ...(current.publicKeys.slice(0, 3))],
+          publicKeys: [publicKey],
           privateKey,
         } satisfies Jwks);
 
-        const { modifiedCount } = await collection.updateOne({
-          _id,
-          // Update only if the document hasn't change since it was read. If it
-          // has changed, then two processes tried to update at the same time,
-          // and this one lost the race.
-          updatedAt: current.updatedAt,
-        }, doc);
+        await collection.insertOne(doc).catch(() => {
+          // Two processes tried to insert at the same time, and this one lost
+          // the race.
+        });
 
-        if (modifiedCount === 0) {
-          captureMessage('JWKS rotation deduplicated.', { level: 'debug' });
-          return false;
-        }
-
-        captureMessage('JWKS rotated.', { level: 'debug' });
+        captureMessage('New JWKS document created.', { level: 'debug' });
         return true;
-      },
-    };
+      }
+
+      if (!force && current.updatedAt >= iat - interval('28 days').as('seconds')) {
+        // When not forced, skip rotation if the last update was too recent.
+        captureMessage('JWKS rotation not required.', { level: 'debug' });
+        return false;
+      }
+
+      const { _id, ...doc } = $JWKS.parse({
+        name: DEFAULT_JWKS_NAME,
+        updatedAt: iat,
+        publicKeys: [publicKey, ...(current.publicKeys.slice(0, 3))],
+        privateKey,
+      } satisfies Jwks);
+
+      const { modifiedCount } = await collection.updateOne({
+        _id,
+        // Update only if the document hasn't change since it was read. If it
+        // has changed, then two processes tried to update at the same time,
+        // and this one lost the race.
+        updatedAt: current.updatedAt,
+      }, doc);
+
+      if (modifiedCount === 0) {
+        captureMessage('JWKS rotation deduplicated.', { level: 'debug' });
+        return false;
+      }
+
+      captureMessage('JWKS rotated.', { level: 'debug' });
+      return true;
+    },
   };
-
-  // Try an initial rotation when the service starts. This should also ensure
-  // that the JWKS doc is created if it doesn't exist.
-  const init = background(async () => {
-    await factory().rotateKeys();
-  }, 'init-jwks');
-
-  // Try a rotation every day. No-op if the rotation is unnecessary.
-  setInterval(() => {
-    background(async () => {
-      await factory().rotateKeys();
-    }, 'rotate-jwks');
-  }, DAY_IN_MS).unref();
-
-  return factory;
 
   async function findPublicKey({ name, kid, allowCache = true }: {
     name: string;
@@ -132,9 +123,9 @@ export function getJwkRepositoryFactory(): () => JwkRepository {
 
     if (jwk) return jwk;
     if (cached && !invalidKidCache.has(`${name}:${kid}`)) {
-      // If the cached result didn't contain a public JWK with the required
-      // kid, and the kid was not previously marked as invalid, then try again
-      // without caching.
+    // If the cached result didn't contain a public JWK with the required
+    // kid, and the kid was not previously marked as invalid, then try again
+    // without caching.
       return findPublicKey({ name, kid, allowCache: false });
     }
 
@@ -146,7 +137,7 @@ export function getJwkRepositoryFactory(): () => JwkRepository {
   async function findJwks(
     { name, allowCache }: { name: string; allowCache: boolean },
   ): Promise<[value: Jwks, cached: boolean] | [value: null, cached: false]> {
-    const cached = (allowCache && jwksCache.get(name)) || null;
+    const cached = (allowCache && jwkCache.get(name)) || null;
 
     if (cached) return [cached, true];
 
@@ -155,14 +146,7 @@ export function getJwkRepositoryFactory(): () => JwkRepository {
 
     return [value, false];
   }
-}
-
-const DEFAULT_JWKS_NAME = 'default';
-
-const FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
-const HOUR_IN_MS = 60 * 60 * 1000;
-const DAY_IN_MS = HOUR_IN_MS * 24;
-const MONTH_IN_SECONDS = DAY_IN_MS * 30;
+});
 
 const $JWK = z.object({
   kid: z.uuid(),

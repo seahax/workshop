@@ -1,3 +1,4 @@
+import { lazy } from '@seahax/lazy';
 import { zodCodec } from '@seahax/zod-codec';
 import { BSON } from 'mongodb';
 import { z } from 'zod';
@@ -12,7 +13,7 @@ export interface PasswordRepository {
   upsertPassword(password: Password): Promise<boolean>;
 }
 
-export function getPasswordRepository(): PasswordRepository {
+export const getPasswordRepository = lazy((): PasswordRepository => {
   const collection = config.mongo.db('auth').collection<PasswordDoc>('passwords');
 
   return {
@@ -31,7 +32,7 @@ export function getPasswordRepository(): PasswordRepository {
       return result.upsertedCount > 0;
     },
   };
-}
+});
 
 const [$PASSWORD, $PASSWORD_DOC] = zodCodec(
   {

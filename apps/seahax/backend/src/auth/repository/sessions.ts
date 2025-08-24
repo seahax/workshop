@@ -1,3 +1,5 @@
+import { interval } from '@seahax/interval';
+import { lazy } from '@seahax/lazy';
 import { zodCodec } from '@seahax/zod-codec';
 import { BSON } from 'mongodb';
 import { v7 as uuid } from 'uuid';
@@ -13,7 +15,7 @@ interface SessionRepository {
   insertSession(params: Pick<Session, 'userId'>): Promise<Session>;
 }
 
-export function getSessionRepository(): SessionRepository {
+export const createSessionRepository = lazy((): SessionRepository => {
   const collection = config.mongo.db('auth').collection<SessionDoc>('sessions');
 
   return {
@@ -24,14 +26,14 @@ export function getSessionRepository(): SessionRepository {
 
       if (!value) return null;
 
-      const now = Math.floor(Date.now() / 1000);
+      const now = interval(Date.now()).as('seconds', 'floor');
 
       return value.expiresAt <= now ? null : value;
     },
 
     async insertSession({ userId }) {
       const refreshToken = uuid();
-      const expiresAt = Math.floor(Date.now() / 1000) + SEVEN_DAYS_IN_SECONDS;
+      const expiresAt = interval(Date.now(), '+7 days').as('seconds', 'floor');
       const session: Session = { refreshToken, expiresAt, userId };
       const doc = $SESSION.parse(session);
 
@@ -40,9 +42,7 @@ export function getSessionRepository(): SessionRepository {
       return session;
     },
   };
-}
-
-const SEVEN_DAYS_IN_SECONDS = 7 * 24 * 60 * 60;
+});
 
 const [$SESSION, $SESSION_DOC] = zodCodec(
   {
@@ -54,7 +54,7 @@ const [$SESSION, $SESSION_DOC] = zodCodec(
     }),
     transform: ({ refreshToken, userId, expiresAt }) => ({
       _id: BSON.UUID.createFromHexString(refreshToken),
-      expiresAt: new Date(expiresAt * 1000),
+      expiresAt: new Date(interval([expiresAt, 'seconds']).as('milliseconds')),
       userId,
     }),
   },
@@ -66,7 +66,7 @@ const [$SESSION, $SESSION_DOC] = zodCodec(
     }),
     transform: ({ _id, userId, expiresAt }) => ({
       refreshToken: _id.toHexString(),
-      expiresAt: Math.floor(expiresAt.valueOf() / 1000),
+      expiresAt: interval(expiresAt.valueOf()).as('seconds', 'floor'),
       userId,
     }),
   },

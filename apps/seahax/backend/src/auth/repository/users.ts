@@ -1,3 +1,4 @@
+import { lazy } from '@seahax/lazy';
 import { zodCodec } from '@seahax/zod-codec';
 import { BSON } from 'mongodb';
 import Cache from 'quick-lru';
@@ -13,15 +14,15 @@ interface UserRepository {
 type UserDoc = z.input<typeof $USER_DOC>;
 export type User = z.input<typeof $USER>;
 
-export function getUserRepository(): UserRepository {
-  const emailToId = new Cache<string, string>(CACHE_CONFIG);
-  const idToUser = new Cache<string, User>(CACHE_CONFIG);
+export const createUserRepository = lazy((): UserRepository => {
   const collection = config.mongo.db('auth').collection<UserDoc>('users');
+  const emailToIdCache = new Cache<string, string>({ maxSize: 1000 });
+  const idToUserCache = new Cache<string, User>({ maxSize: 1000 });
 
   return {
     async findUser(query) {
-      const id = 'id' in query ? query.id : emailToId.get(query.email);
-      let user = (id && idToUser.get(id)) || null;
+      const id = 'id' in query ? query.id : emailToIdCache.get(query.email);
+      let user = (id && idToUserCache.get(id)) || null;
 
       if (!user) {
         const filter = 'id' in query ? { _id: BSON.UUID.createFromHexString(query.id) } : { email: query.email };
@@ -30,8 +31,8 @@ export function getUserRepository(): UserRepository {
       }
 
       if (user) {
-        emailToId.set(user.email, user.id);
-        idToUser.set(user.id, user);
+        emailToIdCache.set(user.email, user.id);
+        idToUserCache.set(user.id, user);
       }
 
       return user;
@@ -43,15 +44,13 @@ export function getUserRepository(): UserRepository {
 
       if (result.matchedCount <= 0) return false;
 
-      emailToId.set(doc.email, user.id);
-      idToUser.set(user.id, user);
+      emailToIdCache.set(doc.email, user.id);
+      idToUserCache.set(user.id, user);
 
       return true;
     },
   };
-}
-
-const CACHE_CONFIG = { maxSize: 1000 } as const;
+});
 
 const [$USER, $USER_DOC] = zodCodec(
   {

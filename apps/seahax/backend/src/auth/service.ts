@@ -1,10 +1,10 @@
 import { lazy } from '@seahax/lazy';
 
 import { background } from '../services/background.ts';
-import { getJwkRepositoryFactory } from './repository/jwks.ts';
+import { getJwkRepository } from './repository/jwks.ts';
 import { getPasswordRepository } from './repository/passwords.ts';
-import { getSessionRepository } from './repository/sessions.ts';
-import { getUserRepository, type User } from './repository/users.ts';
+import { createSessionRepository } from './repository/sessions.ts';
+import { createUserRepository, type User } from './repository/users.ts';
 import { getPasswordHash, HASH_PARAMS } from './util/get-password-hash.ts';
 import { isPasswordMatch } from './util/is-password-match.ts';
 import { isRehashRequired } from './util/is-rehash-required.ts';
@@ -22,13 +22,12 @@ interface AuthService {
 }
 
 export function getAuthServiceFactory(): () => AuthService {
-  const getJwkRepository = getJwkRepositoryFactory();
+  const jwks = getJwkRepository();
 
   return () => {
-    const users = lazy(getUserRepository);
+    const users = lazy(createUserRepository);
     const passwords = lazy(getPasswordRepository);
-    const jwks = lazy(getJwkRepository);
-    const sessions = lazy(() => getSessionRepository());
+    const sessions = lazy(() => createSessionRepository());
 
     return {
       async login({ email, password }) {

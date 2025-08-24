@@ -1,5 +1,6 @@
 import './init/sentry.ts';
 import './init/mongo.ts';
+import './init/jwks.ts';
 
 import { createApplication, createHealthRoute, createInfoRoute, createSpaRoute } from '@seahax/espresso';
 import { captureException, captureMessage } from '@sentry/node';
