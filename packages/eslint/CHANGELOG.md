@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.19 - 2025-08-24
+
+- __chore:__ update deps (f4eff46)
+- __chore:__ set eslint prefer-const to warn (a39e260)
+- __chore:__ update esilnt config (d072c14)
+- __chore:__ update dependencies (2144234)
+
 ## 0.2.18 - 2025-05-16
 
 - __chore:__ disable explicit return type in test files (07290e8)

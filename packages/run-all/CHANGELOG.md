@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4 - 2025-08-24
+
+- __chore:__ update deps (f4eff46)
+
 ## 0.1.3 - 2025-05-16
 
 - __chore:__ update for main and args library refactors (95c05f7)

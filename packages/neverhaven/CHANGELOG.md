@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.12 - 2025-08-24
+
+- __chore:__ update deps (f4eff46)
+- __chore:__ enable TS erasableSyntaxOnly option (427f9e9)
+- __chore:__ update dependencies (2144234)
+
 ## 0.1.11 - 2025-05-16
 
 - __chore:__ update for main and args library refactors (95c05f7)

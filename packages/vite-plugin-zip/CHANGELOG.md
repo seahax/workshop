@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.7 - 2025-08-24
+
+- __chore:__ update deps (f4eff46)
+- __chore:__ update dependencies (2144234)
+
 ## 0.1.6 - 2025-05-04
 
 - __chore:__ update deps (efb8c42)

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1 - 2025-08-24
+
+- __chore:__ update dependencies (2144234)
+
 ## 0.5.0 - 2025-05-16
 
 - __feat:__ simplify and remove the `main` function wrapper (cc65e81)
