@@ -32,7 +32,7 @@ const spa = createSpaRoute(config.staticPath, {
 });
 
 const application = createApplication()
-  .addMiddleware(morgan('tiny'))
+  .addMiddleware(morgan('combined'))
   .addMiddleware(helmet({
     contentSecurityPolicy: { directives: { 'connect-src': ["'self'", 'https://*.sentry.io'] } },
   }))
