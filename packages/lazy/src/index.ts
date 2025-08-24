@@ -1,7 +1,9 @@
 export interface Lazy<T> {
   (key?: WeakKey): T;
-  isCalled(key?: WeakKey): boolean;
-  reset(key?: WeakKey): void;
+  readonly lazy: {
+    called(key?: WeakKey): boolean;
+    reset(key?: WeakKey): void;
+  };
 }
 
 const DEFAULT_KEY = Symbol();
@@ -19,7 +21,9 @@ export function lazy<T>(init: (key?: WeakKey) => T): Lazy<T> {
 
     return entry.value;
   }, {
-    isCalled: (key = DEFAULT_KEY) => cache.has(key),
-    reset: (key = DEFAULT_KEY) => cache.delete(key),
+    lazy: {
+      called: (key = DEFAULT_KEY) => cache.has(key),
+      reset: (key = DEFAULT_KEY) => cache.delete(key),
+    },
   });
 }
