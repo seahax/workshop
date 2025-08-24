@@ -4,6 +4,7 @@ pnpm = "latest"
 node = "lts"
 doctl = "latest"
 aws = "latest"
+'npm:@anthropic-ai/claude-code' = "latest"
 
 [env]
 AWS_PROFILE = "seahax"
@@ -17,5 +18,5 @@ run = [
   "ln -s -t ~/.config '/mnt/home/Library/Application Support/doctl'",
   "ln -s -t ~ /mnt/home/.npmrc",
   "pnpm install",
-  "pnpm build || true"
+  "pnpm build || true",
 ]

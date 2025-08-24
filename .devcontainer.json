@@ -34,7 +34,8 @@
         "vitest.explorer",
         "yzhang.markdown-all-in-one",
         "ms-azuretools.vscode-containers",
-        "qezhu.gitlink"
+        "qezhu.gitlink",
+        "Anthropic.claude-code"
       ],
       "settings": {
         "remote.autoForwardPorts": true,
