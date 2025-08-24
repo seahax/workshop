@@ -71,9 +71,9 @@ importers:
       '@seahax/interval':
         specifier: workspace:*
         version: link:../../packages/interval
-      '@seahax/lazy':
+      '@seahax/service':
         specifier: workspace:*
-        version: link:../../packages/lazy
+        version: link:../../packages/service
       '@seahax/zod-codec':
         specifier: workspace:*
         version: link:../../packages/zod-codec
@@ -286,12 +286,6 @@ importers:
         specifier: workspace:*
         version: link:../vite-plugin-lib
 
-  packages/lazy:
-    devDependencies:
-      '@seahax/vite-plugin-lib':
-        specifier: workspace:*
-        version: link:../vite-plugin-lib
-
   packages/main:
     dependencies:
       '@types/source-map-support':
@@ -396,6 +390,12 @@ importers:
         version: link:../vite-plugin-lib
 
   packages/semaphore:
+    devDependencies:
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+
+  packages/service:
     devDependencies:
       '@seahax/vite-plugin-lib':
         specifier: workspace:*
