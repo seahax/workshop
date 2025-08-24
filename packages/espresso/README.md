@@ -88,7 +88,7 @@ app.addRoute(['GET', 'POST'], ['/api/users/{id}', '/users/{id}'], (request, resp
 });
 
 // Multi-segment route parameter
-app.addRoute('GET', '/files/{path*}', async (request, response) => {
+app.addRoute('GET', '/files/{path+}', async (request, response) => {
   const { path } = await request.pathParameters();
   response.sendJson({ filePath: path });
 });
