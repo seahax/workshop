@@ -48,8 +48,8 @@ application
   .once('closing', () => void config.mongo.close().then(() => console.log('Database closed')))
   .once('close', () => console.log('Application closed'))
   .listen({
-    hostname: '127.0.0.1',
-    port: 8080,
+    hostname: config.hostname,
+    port: config.port,
     onListening: (url) => console.log(`Server listening on ${url}`),
   });
 

@@ -19,7 +19,8 @@ services:
   - name: app
     image:
       registry_type: DOCR
-      repository: seahax
+      registry: seahax
+      repository: app
       tag: latest
     http_port: 8080
     instance_count: 1
@@ -31,13 +32,13 @@ services:
       - key: APP_ORIGIN
         scope: RUN_TIME
         value: https://seahax.com
-      - key: APP_DATABASE_URL
-        scope: RUN_TIME
-        value: ${db.DATABASE_URL}
       - key: APP_PEPPER
         scope: RUN_TIME
         value: ${{vars.app-pepper}}
         type: SECRET
+      - key: APP_DATABASE_URL
+        scope: RUN_TIME
+        value: ${db.DATABASE_URL}
     health_check:
       http_path: /_health
       initial_delay_seconds: 10
