@@ -4,6 +4,7 @@
 .vscode
 .terraform
 .pnpm-store
+.claude
 node_modules
 dist
 lib
