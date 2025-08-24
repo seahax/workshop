@@ -69,22 +69,28 @@ Define how HTTP requests are handled based on method and path patterns.
 import { createRoute } from '@seahax/espresso';
 
 // Inline route definition
-app.addRoute('GET', '/users/:id', async (request, response) => {
+app.addRoute('GET', '/users/{id}', async (request, response) => {
   const { id } = await request.pathParameters();
   response.sendJson({ userId: id });
 });
 
 // Pre-defined route
-const userRoute = createRoute('GET', '/users/:id', async (request, response) => {
+const userRoute = createRoute('GET', '/users/{id}', async (request, response) => {
   const { id } = await request.pathParameters();
   response.sendJson({ userId: id });
 });
 app.addRoute(userRoute);
 
 // Multiple methods and paths
-app.addRoute(['GET', 'POST'], ['/api/users/:id', '/users/:id'], (request, response) => {
+app.addRoute(['GET', 'POST'], ['/api/users/{id}', '/users/{id}'], (request, response) => {
   const { id } = await request.pathParameters();
   response.sendJson({ userId: id });
+});
+
+// Multi-segment route parameter
+app.addRoute('GET', '/files/{path*}', async (request, response) => {
+  const { path } = await request.pathParameters();
+  response.sendJson({ filePath: path });
 });
 ```
 
@@ -115,8 +121,8 @@ app.addController(apiController);
 Access request data with built-in validation support.
 
 ```typescript
-app.addRoute('POST', '/users/:id', async (request, response) => {
-  // Path parameters (from route like /users/:id)
+app.addRoute('POST', '/users/{id}', async (request, response) => {
+  // Path parameters (from route like /users/{id})
   const pathParams = await request.pathParameters();
   // With schema validation (requires @standard-schema compatible schema)
   // const validatedPathParams = await request.pathParameters(pathParamsSchema);
