@@ -8,11 +8,18 @@ import { createRoute, type Route } from '../route.ts';
 const etag = randomUUID();
 const lastModified = new Date();
 
+export interface InfoOptions extends Pick<SendJsonOptions, 'headers' | 'replacer'> {
+  /**
+   * Route path(s). Defaults to `/_info`.
+   */
+  readonly path?: string;
+}
+
 export function createInfoRoute(
   info: object,
-  options?: Pick<SendJsonOptions, 'headers' | 'replacer'>,
+  { path = '/_info', ...options }: InfoOptions = {},
 ): Route {
-  return createRoute('GET', '_info', async (request, response) => {
+  return createRoute('GET', path, async (request, response) => {
     response.setHeader(HEADER_CACHE_CONTROL, 'max-age=0');
     response.setHeader(HEADER_ETAG, etag);
 
