@@ -7,7 +7,7 @@ import { captureException, captureMessage } from '@sentry/node';
 import helmet from 'helmet';
 import morgan from 'morgan';
 
-import auth from './auth/controller.ts';
+import { getAuthController } from './auth/controller.ts';
 import { mongo } from './health/mongo.ts';
 import { config } from './services/config.ts';
 
@@ -40,7 +40,7 @@ const application = createApplication()
   .addRoute(info)
   .addRoute(health)
   .addRoute(spa)
-  .addController(auth())
+  .addController(getAuthController())
   .addErrorHandler(async ({ error }) => {
     captureException(error, { level: 'error' });
   });

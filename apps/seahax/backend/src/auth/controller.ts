@@ -1,15 +1,15 @@
 import { type Controller, createController } from '@seahax/espresso';
+import { lazy } from '@seahax/lazy';
 import z from 'zod';
 
-import { getAuthServiceFactory } from './service.ts';
+import { getAuthService } from './service.ts';
 
-export default function createAuthController(): Controller {
-  const getAuthService = getAuthServiceFactory();
+export const getAuthController = lazy((key): Controller => {
+  const auth = getAuthService(key);
   const controller = createController('/auth');
 
   // Get a JWT token given a refresh token or an email+password.
   controller.addRoute('POST', '/token', async (request, response) => {
-    const auth = getAuthService();
     const cookies = await request.cookies($PostTokenCookies);
     const body = await request.body($PostTokenBody);
     const result = body.type === 'refresh'
@@ -34,7 +34,6 @@ export default function createAuthController(): Controller {
 
   // Change a user's password given a valid current password.
   controller.addRoute('POST', '/password', async (request, response) => {
-    const auth = getAuthService();
     const { email, password, newPassword } = await request.body($PostPasswordBody);
     const success = await auth.updatePassword({ email, password, newPassword });
 
@@ -47,7 +46,7 @@ export default function createAuthController(): Controller {
   });
 
   return controller;
-}
+});
 
 const $PostTokenCookies = z.object({
   refreshToken: z.string().min(1).max(100).optional(),

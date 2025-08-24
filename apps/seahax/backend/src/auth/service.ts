@@ -3,8 +3,8 @@ import { lazy } from '@seahax/lazy';
 import { background } from '../services/background.ts';
 import { getJwkRepository } from './repository/jwks.ts';
 import { getPasswordRepository } from './repository/passwords.ts';
-import { createSessionRepository } from './repository/sessions.ts';
-import { createUserRepository, type User } from './repository/users.ts';
+import { getSessionRepository } from './repository/sessions.ts';
+import { getUserRepository, type User } from './repository/users.ts';
 import { getPasswordHash, HASH_PARAMS } from './util/get-password-hash.ts';
 import { isPasswordMatch } from './util/is-password-match.ts';
 import { isRehashRequired } from './util/is-rehash-required.ts';
@@ -21,102 +21,99 @@ interface AuthService {
   updatePassword(params: { email: string; password: string; newPassword: string }): Promise<boolean>;
 }
 
-export function getAuthServiceFactory(): () => AuthService {
-  const jwks = getJwkRepository();
+export const getAuthService = lazy((key): AuthService => {
+  const jwks = getJwkRepository(key);
+  const users = getUserRepository(key);
+  const passwords = getPasswordRepository(key);
+  const sessions = getSessionRepository(key);
 
-  return () => {
-    const users = lazy(createUserRepository);
-    const passwords = lazy(getPasswordRepository);
-    const sessions = lazy(() => createSessionRepository());
+  return {
+    async login({ email, password }) {
+      const user = await users.findUser({ email });
 
-    return {
-      async login({ email, password }) {
-        const user = await users().findUser({ email });
+      if (!user) return null;
 
-        if (!user) return null;
+      const isAuthenticated = await verifyPassword({ userId: user.id, password });
 
-        const isAuthenticated = await verifyPassword({ userId: user.id, password });
+      if (!isAuthenticated) return null;
+      if (isAuthenticated === 'rehash') rehashPassword({ userId: user.id, password });
 
-        if (!isAuthenticated) return null;
-        if (isAuthenticated === 'rehash') rehashPassword({ userId: user.id, password });
+      const accessToken = createJwtToken();
+      const refreshToken = await sessions.insertSession({ userId: user.id });
 
-        const accessToken = createJwtToken();
-        const refreshToken = await sessions().insertSession({ userId: user.id });
+      return { user, accessToken, refreshToken: refreshToken.refreshToken };
+    },
 
-        return { user, accessToken, refreshToken: refreshToken.refreshToken };
-      },
+    async refresh({ token }) {
+      if (!token) return null;
 
-      async refresh({ token }) {
-        if (!token) return null;
+      const session = await sessions.findSession({ refreshToken: token });
 
-        const session = await sessions().findSession({ refreshToken: token });
+      if (!session) return null;
 
-        if (!session) return null;
+      const user = await users.findUser({ id: session.userId });
 
-        const user = await users().findUser({ id: session.userId });
+      if (!user) return null;
 
-        if (!user) return null;
+      const accessToken = createJwtToken();
 
-        const accessToken = createJwtToken();
+      return { user, accessToken, refreshToken: session.refreshToken };
+    },
 
-        return { user, accessToken, refreshToken: session.refreshToken };
-      },
+    async updatePassword({ email, password, newPassword }) {
+      const user = await users.findUser({ email });
 
-      async updatePassword({ email, password, newPassword }) {
-        const user = await users().findUser({ email });
+      if (!user) return false;
 
-        if (!user) return false;
+      const isAuthenticated = await verifyPassword({ userId: user.id, password });
 
-        const isAuthenticated = await verifyPassword({ userId: user.id, password });
+      if (!isAuthenticated) return false;
 
-        if (!isAuthenticated) return false;
+      await setPassword({ userId: user.id, password: newPassword });
 
-        await setPassword({ userId: user.id, password: newPassword });
-
-        return true;
-      },
-    };
-
-    async function verifyPassword({ userId, password }: {
-      userId: string;
-      password: string;
-    }): Promise<boolean | 'rehash'> {
-      const passwordData = await passwords().findPassword({ userId });
-
-      if (!passwordData) return false;
-
-      const { hash, params } = passwordData;
-      const isMatch = await isPasswordMatch({ password, hash });
-
-      if (!isMatch) return false;
-
-      return isRehashRequired(params, HASH_PARAMS) ? 'rehash' : true;
-    }
-
-    function rehashPassword(params: {
-      userId: string;
-      password: string;
-    }): void {
-      background(async () => await setPassword(params), 'rehash-password');
-    }
-
-    async function setPassword({ userId, password }: {
-      userId: string;
-      password: string;
-    }): Promise<void> {
-      const hash = await getPasswordHash({ password });
-
-      await passwords().upsertPassword({
-        userId: userId,
-        hash,
-        params: HASH_PARAMS,
-      });
-    }
-
-    function createJwtToken(): string {
-      // TODO: Create JWT token.
-      void jwks;
-      return '';
-    }
+      return true;
+    },
   };
-}
+
+  async function verifyPassword({ userId, password }: {
+    userId: string;
+    password: string;
+  }): Promise<boolean | 'rehash'> {
+    const passwordData = await passwords.findPassword({ userId });
+
+    if (!passwordData) return false;
+
+    const { hash, params } = passwordData;
+    const isMatch = await isPasswordMatch({ password, hash });
+
+    if (!isMatch) return false;
+
+    return isRehashRequired(params, HASH_PARAMS) ? 'rehash' : true;
+  }
+
+  function rehashPassword(params: {
+    userId: string;
+    password: string;
+  }): void {
+    background(async () => await setPassword(params), 'rehash-password');
+  }
+
+  async function setPassword({ userId, password }: {
+    userId: string;
+    password: string;
+  }): Promise<void> {
+    const hash = await getPasswordHash({ password });
+
+    await passwords.upsertPassword({
+      userId: userId,
+      hash,
+      params: HASH_PARAMS,
+    });
+  }
+
+  function createJwtToken(): string {
+    // TODO: Create JWT token.
+    void jwks;
+    return '';
+  }
+});

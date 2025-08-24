@@ -15,7 +15,7 @@ interface SessionRepository {
   insertSession(params: Pick<Session, 'userId'>): Promise<Session>;
 }
 
-export const createSessionRepository = lazy((): SessionRepository => {
+export const getSessionRepository = lazy((): SessionRepository => {
   const collection = config.mongo.db('auth').collection<SessionDoc>('sessions');
 
   return {

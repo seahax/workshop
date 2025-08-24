@@ -14,7 +14,7 @@ interface UserRepository {
 type UserDoc = z.input<typeof $USER_DOC>;
 export type User = z.input<typeof $USER>;
 
-export const createUserRepository = lazy((): UserRepository => {
+export const getUserRepository = lazy((): UserRepository => {
   const collection = config.mongo.db('auth').collection<UserDoc>('users');
   const emailToIdCache = new Cache<string, string>({ maxSize: 1000 });
   const idToUserCache = new Cache<string, User>({ maxSize: 1000 });
