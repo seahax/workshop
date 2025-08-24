@@ -1,5 +1,5 @@
 import { interval } from '@seahax/interval';
-import { lazy } from '@seahax/lazy';
+import { service } from '@seahax/service';
 import { zodCodec } from '@seahax/zod-codec';
 import { captureMessage } from '@sentry/node';
 import { exportJWK, generateKeyPair, type JWK } from 'jose';
@@ -27,7 +27,7 @@ interface JwkRepository {
 
 const DEFAULT_JWKS_NAME = 'default';
 
-export const getJwkRepository = lazy((): JwkRepository => {
+export const jwkRepository = service().build((): JwkRepository => {
   const collection = config.mongo.db('auth').collection<JwksDoc>('jwks');
   const jwkCache = new Cache<string, Jwks>({
     maxSize: 1000,

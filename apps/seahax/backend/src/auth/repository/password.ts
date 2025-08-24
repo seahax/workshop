@@ -1,4 +1,4 @@
-import { lazy } from '@seahax/lazy';
+import { service } from '@seahax/service';
 import { zodCodec } from '@seahax/zod-codec';
 import { BSON } from 'mongodb';
 import { z } from 'zod';
@@ -13,7 +13,7 @@ export interface PasswordRepository {
   upsertPassword(password: Password): Promise<boolean>;
 }
 
-export const getPasswordRepository = lazy((): PasswordRepository => {
+export const passwordRepository = service().build((): PasswordRepository => {
   const collection = config.mongo.db('auth').collection<PasswordDoc>('passwords');
 
   return {

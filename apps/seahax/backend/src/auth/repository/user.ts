@@ -1,4 +1,4 @@
-import { lazy } from '@seahax/lazy';
+import { service } from '@seahax/service';
 import { zodCodec } from '@seahax/zod-codec';
 import { BSON } from 'mongodb';
 import Cache from 'quick-lru';
@@ -14,7 +14,7 @@ interface UserRepository {
 type UserDoc = z.input<typeof $USER_DOC>;
 export type User = z.input<typeof $USER>;
 
-export const getUserRepository = lazy((): UserRepository => {
+export const userRepository = service().build((): UserRepository => {
   const collection = config.mongo.db('auth').collection<UserDoc>('users');
   const emailToIdCache = new Cache<string, string>({ maxSize: 1000 });
   const idToUserCache = new Cache<string, User>({ maxSize: 1000 });

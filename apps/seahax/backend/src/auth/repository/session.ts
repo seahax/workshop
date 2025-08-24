@@ -1,5 +1,5 @@
 import { interval } from '@seahax/interval';
-import { lazy } from '@seahax/lazy';
+import { service } from '@seahax/service';
 import { zodCodec } from '@seahax/zod-codec';
 import { BSON } from 'mongodb';
 import { v7 as uuid } from 'uuid';
@@ -15,7 +15,7 @@ interface SessionRepository {
   insertSession(params: Pick<Session, 'userId'>): Promise<Session>;
 }
 
-export const getSessionRepository = lazy((): SessionRepository => {
+export const sessionRepository = service().build((): SessionRepository => {
   const collection = config.mongo.db('auth').collection<SessionDoc>('sessions');
 
   return {
