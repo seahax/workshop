@@ -329,8 +329,10 @@ Use existing Connect middleware.
 
 ```typescript
 import helmet from 'helmet';
+import morgan from 'morgan';
 
 app.addMiddleware(helmet());
+app.addMiddleware(morgan('combined'));
 ```
 
 ### Server Lifecycle
