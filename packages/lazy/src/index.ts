@@ -1,10 +1,25 @@
-export function lazy<T>(init: () => T): () => T;
-export function lazy<T>(init: (() => T) | { readonly value: T }): () => T {
-  return () => {
-    if (typeof init === 'function') {
-      init = { value: init() };
+export interface Lazy<T> {
+  (key?: WeakKey): T;
+  isCalled(key?: WeakKey): boolean;
+  reset(key?: WeakKey): void;
+}
+
+const DEFAULT_KEY = Symbol();
+
+export function lazy<T>(init: (key?: WeakKey) => T): Lazy<T> {
+  const cache = new WeakMap<WeakKey, { readonly value: T }>();
+
+  return Object.assign((key?: WeakKey) => {
+    let entry = cache.get(key ?? DEFAULT_KEY);
+
+    if (!entry) {
+      entry = { value: init(key) };
+      cache.set(key ?? DEFAULT_KEY, entry);
     }
 
-    return init.value;
-  };
+    return entry.value;
+  }, {
+    isCalled: (key = DEFAULT_KEY) => cache.has(key),
+    reset: (key = DEFAULT_KEY) => cache.delete(key),
+  });
 }
