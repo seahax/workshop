@@ -68,6 +68,9 @@ importers:
       '@seahax/espresso':
         specifier: workspace:*
         version: link:../../packages/espresso
+      '@seahax/interval':
+        specifier: workspace:*
+        version: link:../../packages/interval
       '@seahax/lazy':
         specifier: workspace:*
         version: link:../../packages/lazy
@@ -272,6 +275,12 @@ importers:
       vary:
         specifier: ^1.1.2
         version: 1.1.2
+    devDependencies:
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+
+  packages/interval:
     devDependencies:
       '@seahax/vite-plugin-lib':
         specifier: workspace:*
