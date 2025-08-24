@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.3 - 2025-08-24
+
+- __chore:__ fix zod codec vite target shouldn't be node (190476e)
+
 ## 0.3.2 - 2025-08-24
 
 - __chore:__ update deps (f4eff46)
