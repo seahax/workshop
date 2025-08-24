@@ -1,15 +1,16 @@
-**/src/.**
-**/src/_**
-.nx
 .vscode
+.nx
 .terraform
 .pnpm-store
 .claude
+.local
 node_modules
 dist
 lib
 out
 coverage
+**/src/.**
+**/src/_**
 
 .DS_Store
 *.log
@@ -18,4 +19,5 @@ coverage
 *.tgz
 *.zip
 *.tfstate*
-.env.local
+*.local
+*.local.*
