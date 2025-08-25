@@ -11,11 +11,10 @@ interface UserRepository {
   upsertUser(user: User): Promise<boolean>;
 }
 
-type UserDoc = z.input<typeof $USER_DOC>;
 export type User = z.input<typeof $USER>;
 
-export const userRepository = service().build((): UserRepository => {
-  const collection = config.mongo.db('auth').collection<UserDoc>('users');
+export const userRepository = service().build<UserRepository>(() => {
+  const collection = config.mongo.db('auth').collection<z.input<typeof $USER_DOC>>('users');
   const emailToIdCache = new Cache<string, string>({ maxSize: 1000 });
   const idToUserCache = new Cache<string, User>({ maxSize: 1000 });
 
@@ -40,6 +39,7 @@ export const userRepository = service().build((): UserRepository => {
 
     async upsertUser(user) {
       const { _id, ...doc } = $USER.parse(user);
+      await collection.insertOne({ _id, ...doc });
       const result = await collection.updateOne({ _id }, { $set: doc }, { upsert: true });
 
       if (result.matchedCount <= 0) return false;

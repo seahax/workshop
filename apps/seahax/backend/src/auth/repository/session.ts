@@ -7,16 +7,15 @@ import { z } from 'zod';
 
 import { config } from '../../services/config.ts';
 
-type SessionDoc = z.infer<typeof $SESSION_DOC.input>;
-type Session = z.infer<typeof $SESSION.input>;
-
 interface SessionRepository {
   findSession(params: Pick<Session, 'refreshToken'>): Promise<Session | null>;
   insertSession(params: Pick<Session, 'userId'>): Promise<Session>;
 }
 
-export const sessionRepository = service().build((): SessionRepository => {
-  const collection = config.mongo.db('auth').collection<SessionDoc>('sessions');
+export type Session = z.infer<typeof $SESSION.input>;
+
+export const sessionRepository = service().build<SessionRepository>(() => {
+  const collection = config.mongo.db('auth').collection<z.infer<typeof $SESSION_DOC.input>>('sessions');
 
   return {
     async findSession({ refreshToken }) {

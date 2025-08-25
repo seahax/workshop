@@ -16,19 +16,16 @@ declare module 'jose' {
   }
 }
 
-type JwksDoc = z.infer<typeof $JWKS_DOC.input>;
-type Jwks = z.infer<typeof $JWKS.input>;
-
 interface JwkRepository {
   findPublicKey(query: Pick<JWK, 'kid'> & { name?: string }): Promise<JWK | null>;
   findPrivateKey(query?: { name?: string }): Promise<JWK | null>;
   rotateKeys(options?: { name?: string; force?: boolean }): Promise<boolean>;
 }
 
-const DEFAULT_JWKS_NAME = 'default';
+export type Jwks = z.infer<typeof $JWKS.input>;
 
-export const jwkRepository = service().build((): JwkRepository => {
-  const collection = config.mongo.db('auth').collection<JwksDoc>('jwks');
+export const jwkRepository = service().build<JwkRepository>(() => {
+  const collection = config.mongo.db('auth').collection<z.infer<typeof $JWKS_DOC.input>>('jwks');
   const jwkCache = new Cache<string, Jwks>({
     maxSize: 1000,
     maxAge: interval('5 minutes').as('milliseconds'),
@@ -111,9 +108,9 @@ export const jwkRepository = service().build((): JwkRepository => {
   };
 
   async function findPublicKey({ name, kid, allowCache = true }: {
-    name: string;
-    kid: string;
-    allowCache?: boolean;
+    readonly name: string;
+    readonly kid: string;
+    readonly allowCache?: boolean;
   }): Promise<JWK | null> {
     const [jwks, cached] = await findJwks({ name, allowCache });
 
@@ -134,9 +131,10 @@ export const jwkRepository = service().build((): JwkRepository => {
     return null;
   }
 
-  async function findJwks(
-    { name, allowCache }: { name: string; allowCache: boolean },
-  ): Promise<[value: Jwks, cached: boolean] | [value: null, cached: false]> {
+  async function findJwks({ name, allowCache }: {
+    readonly name: string;
+    readonly allowCache: boolean;
+  }): Promise<[value: Jwks, cached: boolean] | [value: null, cached: false]> {
     const cached = (allowCache && jwkCache.get(name)) || null;
 
     if (cached) return [cached, true];
@@ -147,6 +145,8 @@ export const jwkRepository = service().build((): JwkRepository => {
     return [value, false];
   }
 });
+
+const DEFAULT_JWKS_NAME = 'default';
 
 const $JWK = z.object({
   kid: z.uuid(),

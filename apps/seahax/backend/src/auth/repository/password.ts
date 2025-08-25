@@ -5,16 +5,15 @@ import { z } from 'zod';
 
 import { config } from '../../services/config.ts';
 
-type PasswordDoc = z.infer<typeof $PASSWORD_DOC.input>;
-type Password = z.infer<typeof $PASSWORD.input>;
-
-export interface PasswordRepository {
+interface PasswordRepository {
   findPassword(query: Pick<Password, 'userId'>): Promise<Password | null>;
   upsertPassword(password: Password): Promise<boolean>;
 }
 
-export const passwordRepository = service().build((): PasswordRepository => {
-  const collection = config.mongo.db('auth').collection<PasswordDoc>('passwords');
+export type Password = z.infer<typeof $PASSWORD.input>;
+
+export const passwordRepository = service().build<PasswordRepository>(() => {
+  const collection = config.mongo.db('auth').collection<z.infer<typeof $PASSWORD_DOC.input>>('passwords');
 
   return {
     async findPassword({ userId }) {

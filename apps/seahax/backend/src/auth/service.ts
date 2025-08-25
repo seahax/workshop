@@ -9,16 +9,16 @@ import { getPasswordHash, HASH_PARAMS } from './util/get-password-hash.ts';
 import { isPasswordMatch } from './util/is-password-match.ts';
 import { isRehashRequired } from './util/is-rehash-required.ts';
 
-export interface LoginResult {
-  user: User;
-  accessToken: string;
-  refreshToken: string;
-}
-
 interface AuthService {
   login(params: { email: string; password: string }): Promise<LoginResult | null>;
   refresh(params: { token: string | undefined }): Promise<LoginResult | null>;
   updatePassword(params: { email: string; password: string; newPassword: string }): Promise<boolean>;
+}
+
+interface LoginResult {
+  user: User;
+  accessToken: string;
+  refreshToken: string;
 }
 
 export const authService = service()
