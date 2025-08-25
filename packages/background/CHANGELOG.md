@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0 - 2025-08-25
+
+- __feat:__ add onBegin and onSuccess handlers (caf3b8f)
+
 ## 0.2.0 - 2025-04-23
 
 - __chore:__ refactor all the things (3211a53)
