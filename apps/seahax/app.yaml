@@ -1,7 +1,3 @@
-${{vars}}:
-  - key: app-pepper
-    type: string
-
 name: seahax
 region: sfo
 alerts:
@@ -32,9 +28,6 @@ services:
       - key: APP_ORIGIN
         scope: RUN_TIME
         value: https://seahax.com
-      - key: APP_PEPPER
-        scope: RUN_TIME
-        value: ${{vars.app-pepper}}
         type: SECRET
       - key: APP_DATABASE_URL
         scope: RUN_TIME

@@ -68,11 +68,9 @@ jobs:
         run: |
           set -e
           cd "$PACKAGE_DIR"
-          npx @seahax/yaml-vars app.yaml \
-            app-pepper="${{ secrets.SEAHAX_APP_PEPPER }}" \
-          | doctl apps create \
+          doctl apps create \
             --verbose \
-            --spec - \
+            --spec app.yaml \
             --project-id "${{ secrets.DIGITALOCEAN_PROJECT }}" \
             --upsert \
             --update-sources \

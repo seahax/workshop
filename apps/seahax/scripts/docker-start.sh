@@ -3,7 +3,6 @@
 source .env.local
 docker run -it --rm \
   -e APP_ORIGIN=http://127.0.0.1:8080 \
-  -e APP_PEPPER=LocalPepper \
   -e APP_DATABASE_URL="${APP_DATABASE_URL}" \
   -p 8080:8080 \
   "$npm_package_name" \

@@ -17,7 +17,6 @@ export const config = {
   origin: requireEnv('APP_ORIGIN', z.url({ protocol: /^https?$/u })),
   staticPath: requireEnv('APP_STATIC_PATH'),
   mongo: new MongoClient(requireEnv('APP_DATABASE_URL', z.url({ protocol: /^mongodb\+srv$/u }))),
-  pepper: requireEnv('APP_PEPPER', z.string().min(8)),
 } as const;
 
 function requireEnv<TType = string>(name: string, schema?: ZodType<TType>): TType {
