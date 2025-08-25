@@ -47,22 +47,26 @@ export const jwkRepository = service().build<JwkRepository>(() => {
 
     async rotateKeys({ name = DEFAULT_JWKS_NAME, force = false } = {}) {
       const [current] = await findJwks({ name, allowCache: force });
-      const kid = uuid();
-      const iat = Date.now() % 1000;
-      const pair = await generateKeyPair('ES256');
+      const nowSeconds = interval(Date.now()).as('seconds', 'floor');
 
+      if (!force && current && current.updatedAt > nowSeconds - interval('28 days').as('seconds')) {
+        captureMessage('JWKS rotation not required.', { level: 'debug' });
+        return false;
+      }
+
+      const kid = uuid();
+      const pair = await generateKeyPair('ES256', { extractable: true });
       const [partialPublicKey, partialPrivateKey] = await Promise.all([
         exportJWK(pair.publicKey) as Promise<Partial<JWK>>,
         exportJWK(pair.privateKey) as Promise<Partial<JWK>>,
       ]);
-
-      const publicKey: JWK = { ...partialPublicKey, kid, iat };
-      const privateKey: JWK = { ...partialPrivateKey, kid, iat };
+      const publicKey: JWK = { ...partialPublicKey, kid, iat: nowSeconds };
+      const privateKey: JWK = { ...partialPrivateKey, kid, iat: nowSeconds };
 
       if (!current) {
         const doc = $JWKS.parse({
           name: DEFAULT_JWKS_NAME,
-          updatedAt: iat,
+          updatedAt: nowSeconds,
           publicKeys: [publicKey],
           privateKey,
         } satisfies Jwks);
@@ -76,22 +80,16 @@ export const jwkRepository = service().build<JwkRepository>(() => {
         return true;
       }
 
-      if (!force && current.updatedAt >= iat - interval('28 days').as('seconds')) {
-        // When not forced, skip rotation if the last update was too recent.
-        captureMessage('JWKS rotation not required.', { level: 'debug' });
-        return false;
-      }
-
       const { _id, ...doc } = $JWKS.parse({
         name: DEFAULT_JWKS_NAME,
-        updatedAt: iat,
+        updatedAt: nowSeconds,
         publicKeys: [publicKey, ...(current.publicKeys.slice(0, 3))],
         privateKey,
       } satisfies Jwks);
 
-      const { modifiedCount } = await collection.updateOne({
+      const { modifiedCount } = await collection.replaceOne({
         _id,
-        // Update only if the document hasn't change since it was read. If it
+        // Replace only if the document hasn't change since it was read. If it
         // has changed, then two processes tried to update at the same time,
         // and this one lost the race.
         updatedAt: current.updatedAt,
@@ -150,12 +148,12 @@ const DEFAULT_JWKS_NAME = 'default';
 
 const $JWK = z.object({
   kid: z.uuid(),
-  iat: z.number().int().positive(),
+  iat: z.int().positive(),
 }).loose().transform<JWK>((v) => v);
 
 const $JWKS_COMMON = z.object({
   /** Updated time in seconds since the epoch. */
-  updatedAt: z.number().positive().int(),
+  updatedAt: z.int().positive(),
   publicKeys: z.array($JWK),
   privateKey: $JWK,
 }).strict();
