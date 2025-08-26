@@ -58,18 +58,23 @@ export default function MenuUser(): JSX.Element {
       )}
       <Menu
         id="account-menu"
+        keepMounted
         anchorEl={accountButton.current}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'right',
         }}
-        keepMounted
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'left',
+          horizontal: 'right',
         }}
         open={isMenuOpen}
         onClick={closeMenu}
+        slotProps={{
+          list: {
+            dense: true,
+          },
+        }}
       >
         <MenuItem onClick={logoutClick}>
           <ListItemIcon>
