@@ -23,6 +23,8 @@ const health = createHealthRoute({ mongo }, {
 });
 
 const spa = createSpaRoute(config.staticPath, {
+  // Nothing with an "api" prefix is part of the SPA.
+  exclude: /^api(\/|$)/,
   headers: (filename) => ({
     'cache-control': filename.startsWith('assets/')
       ? 'public, max-age=31536000, immutable'
