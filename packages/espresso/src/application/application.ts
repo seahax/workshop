@@ -5,8 +5,6 @@ import type { AddressInfo } from 'node:net';
 
 import type { ErrorHandler } from '../error/error-handler.ts';
 import { type Filter } from '../filter/filter.ts';
-import { convertMiddleware } from '../middleware/convert-middleware.ts';
-import { type ErrorMiddleware, type NextMiddleware, type SimpleMiddleware } from '../middleware/middleware.ts';
 import { parseJson } from '../parser/parse-json.ts';
 import { parseText } from '../parser/parse-text.ts';
 import { parseUrlEncoded } from '../parser/parse-url-encoded.ts';
@@ -86,18 +84,6 @@ export interface Application extends EventEmitter<Events> {
    * new error.
    */
   addErrorHandler(handler: ErrorHandler): this;
-
-  /**
-   * Add Connect-style middleware.
-   *
-   * NOTE: If an error occurs, _ALL_ error middleware functions will be called,
-   * regardless of the order in which they were added. This is different from
-   * the Express defined behavior, where only the error middleware added after
-   * the middleware that threw the error, is invoked.
-   */
-  addMiddleware(middleware: SimpleMiddleware): this;
-  addMiddleware(middleware: NextMiddleware): this;
-  addMiddleware(middleware: ErrorMiddleware): this;
 
   /**
    * Add a default request handler that will handle all requests that are not
@@ -203,18 +189,6 @@ export function createApplication({ headers, compression = true }: ApplicationOp
       },
       addErrorHandler: (errorHandler) => {
         errorHandlers.push(errorHandler);
-        return self;
-      },
-      addMiddleware: (middleware) => {
-        const [type, handler] = convertMiddleware(middleware);
-
-        if (type === 'filter') {
-          self.addFilter(handler);
-        }
-        else {
-          self.addErrorHandler(handler);
-        }
-
         return self;
       },
       addDefaultHandler: (handler) => {

@@ -328,11 +328,15 @@ app.addRoute(spaRoute);
 Use existing Connect middleware.
 
 ```typescript
+import { createMiddlewareFilter } from '@seahax/espresso';
 import helmet from 'helmet';
 import morgan from 'morgan';
 
-app.addMiddleware(helmet());
-app.addMiddleware(morgan('combined'));
+const helmetFilter = createMiddlewareFilter(helmet());
+const morganFilter = createMiddlewareFilter(morgan('combined'));
+
+app.addFilter(helmetFilter);
+app.addFilter(morganFilter);
 ```
 
 ### Server Lifecycle
@@ -386,7 +390,6 @@ app.on('close', () => {
 - `app.addFilter(filter)` - Add a request filter
 - `app.addErrorHandler(handler)` - Add an error handler
 - `app.addParser(contentType, parser)` - Add a body parser
-- `app.addMiddleware(middleware)` - Add Connect-style middleware
 - `app.addDefaultHandler(handler)` - Add a fallback handler
 - `app.listen(options?)` - Start the server
 - `app.close()` - Stop the server
@@ -398,7 +401,6 @@ app.on('close', () => {
 - `controller.addController(controller)` - Add nested controllers
 - `controller.addFilter(filter)` - Add controller-scoped filters
 - `controller.addErrorHandler(handler)` - Add controller-scoped error handlers
-- `controller.addMiddleware(middleware)` - Add controller-scoped middleware
 
 ### Route
 
@@ -433,7 +435,9 @@ app.on('close', () => {
 ### Utilities
 
 - `createFilter(fn)` - Create a filter function
+- `createMiddlewareFilter(middleware)` - Create a filter function from Connect middleware
 - `createErrorHandler(fn)` - Create an error handler function
+- `createMiddlewareErrorHandler(middleware)` - Create an error handler function from connect middleware
 - `parseJson(body)` - Parse JSON body
 - `parseText(body)` - Parse text body  
 - `parseUrlEncoded(body)` - Parse URL encoded body

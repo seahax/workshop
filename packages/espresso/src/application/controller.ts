@@ -3,8 +3,6 @@ import { ControllerError } from '../error/controller-error.ts';
 import type { ErrorHandler } from '../error/error-handler.ts';
 import { applyFilters } from '../filter/apply-filters.ts';
 import type { Filter } from '../filter/filter.ts';
-import { convertMiddleware } from '../middleware/convert-middleware.ts';
-import { type ErrorMiddleware, type NextMiddleware, type SimpleMiddleware } from '../middleware/middleware.ts';
 import { createRoute, type Route, type RouteHandler } from '../route/route.ts';
 
 /**
@@ -63,18 +61,6 @@ export interface Controller {
    * applied if a controller filter or route handler throws an error.
    */
   addErrorHandler(errorHandler: ErrorHandler): this;
-
-  /**
-     * Add Connect-style middleware.
-     *
-     * NOTE: If an error occurs, _ALL_ error middleware functions will be
-     * called, regardless of the order in which they were added. This is
-     * different from the Express defined behavior, where only the error
-     * middleware added after the middleware that threw the error, is invoked.
-     */
-  addMiddleware(middleware: SimpleMiddleware): this;
-  addMiddleware(middleware: NextMiddleware): this;
-  addMiddleware(middleware: ErrorMiddleware): this;
 }
 
 /**
@@ -134,19 +120,6 @@ export function createController(prefix?: string): Controller {
 
     addErrorHandler(errorHandler) {
       errorHandlers.push(errorHandler);
-      return this;
-    },
-
-    addMiddleware(middleware) {
-      const [type, handler] = convertMiddleware(middleware);
-
-      if (type === 'filter') {
-        this.addFilter(handler);
-      }
-      else {
-        this.addErrorHandler(handler);
-      }
-
       return this;
     },
   };

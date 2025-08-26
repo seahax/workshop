@@ -26,8 +26,3 @@ export type ErrorMiddleware = (
   response: ServerResponse,
   next: (error?: unknown) => void
 ) => void;
-
-/**
- * Connect-style middleware function.
- */
-export type Middleware = SimpleMiddleware | NextMiddleware | ErrorMiddleware;
