@@ -1,17 +1,11 @@
 import './init/sentry.ts';
 import './init/mongo.ts';
 
-import {
-  createApplication,
-  createHealthRoute,
-  createInfoRoute,
-  createSpaRoute,
-  type NextMiddleware,
-} from '@seahax/espresso';
+import { createApplication, createHealthRoute, createInfoRoute, createSpaRoute } from '@seahax/espresso';
 import { captureException, captureMessage } from '@sentry/node';
-import helmet from 'helmet';
-import morgan from 'morgan';
 
+import { helmet } from './filter/helmet.ts';
+import { morgan } from './filter/morgan.ts';
 import { mongo } from './health/mongo.ts';
 import { config } from './services/config.ts';
 
@@ -38,53 +32,14 @@ const spa = createSpaRoute(config.staticPath, {
   }),
 });
 
-const helmetDefault = helmet({
-  contentSecurityPolicy: {
-    directives: {
-      'connect-src': [
-        "'self'",
-        // Required for Auth0 PKCE auth code exchange.
-        'https://auth0.seahax.com',
-        // Required for Sentry reporting.
-        'https://*.sentry.io',
-      ],
-    },
-  },
-});
-
-const helmetShared = helmet({
-  crossOriginResourcePolicy: {
-    policy: 'cross-origin',
-  },
-  contentSecurityPolicy: {
-    directives: {
-      'connect-src': [
-        "'self'",
-        // Required for Auth0 PKCE auth code exchange.
-        'https://auth0.seahax.com',
-        // Required for Sentry reporting.
-        'https://*.sentry.io',
-      ],
-    },
-  },
-});
-
 const application = createApplication()
-  .addMiddleware(morgan('combined'))
-  .addMiddleware(((request, response, next) => {
-    switch (request.url) {
-      case '/seahax.jpg': {
-        return helmetShared(request, response, next);
-      }
-      default: {
-        return helmetDefault(request, response, next);
-      }
-    }
-  }) satisfies NextMiddleware)
+  .addFilter(morgan)
+  .addFilter(helmet)
   .addRoute(info)
   .addRoute(health)
   .addRoute(spa)
   .addErrorHandler(async ({ error }) => {
+    console.warn(`Request failed (${new Date().toUTCString()}):`, error);
     captureException(error, { level: 'error' });
   });
 
