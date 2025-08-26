@@ -62,6 +62,9 @@ importers:
 
   apps/seahax:
     dependencies:
+      '@auth0/auth0-react':
+        specifier: ^2.4.0
+        version: 2.4.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@seahax/background':
         specifier: workspace:*
         version: link:../../packages/background
@@ -541,6 +544,15 @@ packages:
 
   '@asamuzakjp/css-color@3.2.0':
     resolution: {integrity: sha512-K1A6z8tS3XsmCMM86xoWdn7Fkdn9m6RSVtocUrJYIwZnFVkng/PvkEoWtOWmP+Scc6saYWHWZYbndEEXxl24jw==}
+
+  '@auth0/auth0-react@2.4.0':
+    resolution: {integrity: sha512-5bt3sO9FVupNM15IpqyYu/2OPHpLI5El7RgWLQXZOPbnCBbtl+VgdHR+H2NfhNQ4SqQtC/5uKbHWafcVcsxkiw==}
+    peerDependencies:
+      react: ^16.11.0 || ^17 || ^18 || ^19
+      react-dom: ^16.11.0 || ^17 || ^18 || ^19
+
+  '@auth0/auth0-spa-js@2.3.0':
+    resolution: {integrity: sha512-zAW6w79UO+G1+3AxboVQIUIZy05xluSOb1ymGg2dqG0pIi0JxEtZGec05BOf2LJ9SehzW4WeCYUQsYD9BjrVpQ==}
 
   '@babel/code-frame@7.27.1':
     resolution: {integrity: sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==}
@@ -5410,6 +5422,14 @@ snapshots:
       '@csstools/css-parser-algorithms': 3.0.5(@csstools/css-tokenizer@3.0.4)
       '@csstools/css-tokenizer': 3.0.4
       lru-cache: 10.4.3
+
+  '@auth0/auth0-react@2.4.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
+    dependencies:
+      '@auth0/auth0-spa-js': 2.3.0
+      react: 19.1.1
+      react-dom: 19.1.1(react@19.1.1)
+
+  '@auth0/auth0-spa-js@2.3.0': {}
 
   '@babel/code-frame@7.27.1':
     dependencies:

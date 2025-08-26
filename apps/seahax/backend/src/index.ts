@@ -33,7 +33,17 @@ const spa = createSpaRoute(config.staticPath, {
 const application = createApplication()
   .addMiddleware(morgan('combined'))
   .addMiddleware(helmet({
-    contentSecurityPolicy: { directives: { 'connect-src': ["'self'", 'https://*.sentry.io'] } },
+    contentSecurityPolicy: {
+      directives: {
+        'connect-src': [
+          "'self'",
+          // Required for Auth0 PKCE auth code exchange.
+          'https://auth0.seahax.com',
+          // Required for Sentry reporting.
+          'https://*.sentry.io',
+        ],
+      },
+    },
   }))
   .addRoute(info)
   .addRoute(health)
