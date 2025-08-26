@@ -5,37 +5,31 @@ const helmetDefault = helmetMiddleware({
   contentSecurityPolicy: {
     directives: {
       'connect-src': [
-        "'self'",
+        ...helmetMiddleware.contentSecurityPolicy.getDefaultDirectives()['connect-src'] ?? [],
         // Required for Auth0 PKCE auth code exchange.
         'https://auth0.seahax.com',
         // Required for Sentry reporting.
         'https://*.sentry.io',
+      ],
+      'img-src': [
+        ...helmetMiddleware.contentSecurityPolicy.getDefaultDirectives()['img-src'] ?? [],
+        // Required for Auth0 profile pictures.
+        'https://*.gravatar.com',
       ],
     },
   },
 });
 
-const helmetShared = helmetMiddleware({
+const helmetSharedResources = helmetMiddleware({
   crossOriginResourcePolicy: {
     policy: 'cross-origin',
-  },
-  contentSecurityPolicy: {
-    directives: {
-      'connect-src': [
-        "'self'",
-        // Required for Auth0 PKCE auth code exchange.
-        'https://auth0.seahax.com',
-        // Required for Sentry reporting.
-        'https://*.sentry.io',
-      ],
-    },
   },
 });
 
 export const helmet = createMiddlewareFilter((request, response, next) => {
   switch (request.url) {
     case '/seahax.jpg': {
-      return helmetShared(request, response, next);
+      return helmetSharedResources(request, response, next);
     }
     default: {
       return helmetDefault(request, response, next);
