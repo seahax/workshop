@@ -19,7 +19,7 @@ export default function App(): JSX.Element {
           <CssBaseline>
             <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
               <MenuBar />
-              <Container maxWidth="md" sx={{ py: 3 }}>Hello, Seahax!</Container>
+              <Container maxWidth="lg" sx={{ py: 3 }}>Hello, Seahax!</Container>
             </SnackbarProvider>
           </CssBaseline>
         </ThemeProvider>

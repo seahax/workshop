@@ -1,6 +1,16 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { Logout } from '@mui/icons-material';
-import { Avatar, Button, CircularProgress, Fade, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Button,
+  CircularProgress,
+  Fade,
+  IconButton,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+} from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { type JSX, useCallback, useEffect, useRef } from 'react';
 
@@ -9,7 +19,7 @@ import { useDelay } from '../hooks/use-delay.ts';
 
 export default function MenuUser(): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
-  const accountButton = useRef<HTMLButtonElement | null>(null);
+  const menuAnchor = useRef<HTMLElement | null>(null);
   const { value: isMenuOpen, setTrue: openMenu, setFalse: closeMenu } = useBoolean();
   const { isAuthenticated, isLoading, error, loginWithRedirect, logout, user } = useAuth0();
   const showLoading = useDelay(false, isLoading, (value) => value ? 1000 : 0);
@@ -28,38 +38,51 @@ export default function MenuUser(): JSX.Element {
 
   return (
     <>
-      {(isAuthenticated || showLoading) && (
-        <IconButton
-          size="large"
-          aria-label="Current user avatar"
-          aria-controls="account-menu"
-          aria-haspopup="true"
-          color="inherit"
-          ref={accountButton}
-          onClick={showLoading ? undefined : openMenu}
+      {isAuthenticated && !showLoading && (
+        <Box
+          height="100%"
+          display="flex"
+          alignItems="center"
+          ref={menuAnchor}
         >
-          {!showLoading && isAuthenticated && (
+          <IconButton
+            size="medium"
+            aria-label="Current user avatar"
+            aria-controls="account-menu"
+            aria-haspopup="true"
+            onClick={showLoading ? undefined : openMenu}
+          >
             <Avatar
-              alt={user?.name}
               src={user?.picture}
               sx={(theme) => ({
-                width: '1.5rem',
-                height: '1.5rem',
-                color: theme.palette.background.paper,
+                width: '2rem',
+                height: '2rem',
+                alignContent: 'stretch',
+                color: theme.palette.background.default,
                 backgroundColor: theme.palette.text.primary,
+                cursor: 'pointer',
               })}
             />
-          )}
-          {showLoading && <Fade in timeout={1000}><CircularProgress size="1.5rem" /></Fade>}
-        </IconButton>
+          </IconButton>
+        </Box>
+      )}
+      {isAuthenticated && showLoading && (
+        <Fade in timeout={1000}>
+          <CircularProgress
+            size="3rem"
+            sx={{
+              p: '0.5rem',
+            }}
+          />
+        </Fade>
       )}
       {(!isAuthenticated && !isLoading) && (
-        <Button color="inherit" onClick={loginClick}>Login</Button>
+        <Button color="inherit" variant="outlined" onClick={loginClick}>Login</Button>
       )}
       <Menu
         id="account-menu"
         keepMounted
-        anchorEl={accountButton.current}
+        anchorEl={menuAnchor.current}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'right',
@@ -70,9 +93,19 @@ export default function MenuUser(): JSX.Element {
         }}
         open={isMenuOpen}
         onClick={closeMenu}
+        slots={{
+          transition: Fade,
+        }}
         slotProps={{
           list: {
             dense: true,
+          },
+          paper: {
+            elevation: 3,
+            sx: {
+              borderStartStartRadius: 0,
+              borderStartEndRadius: 0,
+            },
           },
         }}
       >
