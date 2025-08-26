@@ -17,7 +17,6 @@ export function useDelay<T>(initialValue: T, currentValue: T, delay: number | ((
     }
 
     const delay = typeof delayRef.current === 'number' ? delayRef.current : delayRef.current(currentValue);
-    console.log(delay, currentValue);
 
     if (delay > 0) {
       timeoutRef.current = setTimeout(() => {

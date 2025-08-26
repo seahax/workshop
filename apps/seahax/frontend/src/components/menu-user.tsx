@@ -20,8 +20,6 @@ export default function MenuUser(): JSX.Element {
     void logout({ logoutParams: { returnTo: window.location.origin } });
   }, [logout]);
 
-  console.log(user);
-
   useEffect(() => {
     if (error) {
       enqueueSnackbar(error.message, { variant: 'error' });
