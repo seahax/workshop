@@ -8,22 +8,12 @@ type Props = PropsWithChildren<{
 
 export default function MenuBarIconButton({ title, href, children }: Props): JSX.Element {
   return (
-    <Tooltip
-      arrow
-      title={title}
-      disableInteractive
-      slotProps={{
-        arrow: { sx: (theme) => ({ color: theme.palette.grey[800] }) },
-        tooltip: { sx: (theme) => ({ backgroundColor: theme.palette.grey[800] }) },
-      }}
-    >
+    <Tooltip title={title}>
       <IconButton
         size="large"
         href={href}
         target="_blank"
-        sx={(theme) => ({
-          color: theme.palette.grey[400],
-        })}
+        color="primary"
       >
         {children}
       </IconButton>

@@ -10,6 +10,7 @@ import {
   ListItemIcon,
   Menu,
   MenuItem,
+  Tooltip,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { type JSX, useCallback, useEffect, useRef } from 'react';
@@ -45,25 +46,37 @@ export default function MenuUser(): JSX.Element {
           alignItems="center"
           ref={menuAnchor}
         >
-          <IconButton
-            size="medium"
-            aria-label="Current user avatar"
-            aria-controls="account-menu"
-            aria-haspopup="true"
-            onClick={showLoading ? undefined : openMenu}
+          <Tooltip
+            open={isMenuOpen || (!user?.name && !user?.email) ? false : undefined}
+            title={(
+              <>
+                {user?.name && <Box>{user.name}</Box>}
+                {user?.email && <Box>{user.email}</Box>}
+              </>
+            )}
           >
-            <Avatar
-              src={user?.picture}
-              sx={(theme) => ({
-                width: '2rem',
-                height: '2rem',
-                alignContent: 'stretch',
-                color: theme.palette.background.default,
-                backgroundColor: theme.palette.text.primary,
-                cursor: 'pointer',
-              })}
-            />
-          </IconButton>
+            <IconButton
+              size="small"
+              aria-label="Current user avatar"
+              aria-controls="account-menu"
+              aria-haspopup="true"
+              color="primary"
+              onClick={openMenu}
+            >
+              <Avatar
+                src={user?.picture}
+                sx={(theme) => ({
+                  width: '2.125rem',
+                  height: '2.125rem',
+                  alignContent: 'stretch',
+                  color: theme.palette.background.default,
+                  backgroundColor: theme.palette.text.primary,
+                  cursor: 'pointer',
+                  border: `1px solid ${theme.palette.primary.dark}`,
+                })}
+              />
+            </IconButton>
+          </Tooltip>
         </Box>
       )}
       {isAuthenticated && showLoading && (
@@ -77,7 +90,7 @@ export default function MenuUser(): JSX.Element {
         </Fade>
       )}
       {(!isAuthenticated && !isLoading) && (
-        <Button color="inherit" variant="outlined" onClick={loginClick}>Login</Button>
+        <Button variant="outlined" onClick={loginClick}>Login</Button>
       )}
       <Menu
         id="account-menu"

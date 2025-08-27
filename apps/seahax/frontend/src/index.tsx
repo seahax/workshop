@@ -1,5 +1,5 @@
 import './init/sentry.ts';
-import './init/mui.ts';
+import './init/fonts.ts';
 
 import { createRoot } from 'react-dom/client';
 
