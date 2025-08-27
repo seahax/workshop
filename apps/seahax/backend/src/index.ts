@@ -28,7 +28,7 @@ const spa = createSpaRoute(config.staticPath, {
   headers: (filename) => ({
     'cache-control': filename.startsWith('assets/')
       ? 'public, max-age=31536000, immutable'
-      : 'public, max-age=300',
+      : 'no-cache',
   }),
 });
 
