@@ -9,7 +9,14 @@ interface Props {
 export function Defined({ text, definition }: Props): JSX.Element {
   return (
     <Tooltip title={definition}>
-      <Box component="span" sx={{ textDecoration: 'underline dotted' }}>{text}</Box>
+      <Box
+        component="span"
+        sx={(theme) => ({
+          textDecoration: `underline 3px dotted ${theme.palette.primary.main}`,
+        })}
+      >
+        {text}
+      </Box>
     </Tooltip>
   );
 }

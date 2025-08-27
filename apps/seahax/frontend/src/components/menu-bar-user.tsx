@@ -69,8 +69,7 @@ export default function MenuUser(): JSX.Element {
                   width: '2.125rem',
                   height: '2.125rem',
                   alignContent: 'stretch',
-                  color: theme.palette.background.default,
-                  backgroundColor: theme.palette.text.primary,
+                  backgroundColor: theme.palette.primary.main,
                   cursor: 'pointer',
                   border: `1px solid ${theme.palette.primary.main}`,
                 })}
