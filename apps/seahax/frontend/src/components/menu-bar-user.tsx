@@ -72,7 +72,7 @@ export default function MenuUser(): JSX.Element {
                   color: theme.palette.background.default,
                   backgroundColor: theme.palette.text.primary,
                   cursor: 'pointer',
-                  border: `1px solid ${theme.palette.primary.dark}`,
+                  border: `1px solid ${theme.palette.primary.main}`,
                 })}
               />
             </IconButton>
