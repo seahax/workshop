@@ -79,6 +79,13 @@ const theme = createTheme({
         dense: true,
       },
     },
+    MuiMenu: {
+      styleOverrides: {
+        paper: ({ theme }) => ({
+          backgroundColor: theme.lighten(theme.palette.background.paper, 0.1),
+        }),
+      },
+    },
   },
 });
 

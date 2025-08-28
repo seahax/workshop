@@ -7,7 +7,7 @@ interface BooleanHook {
   toggle: () => void;
 }
 
-export function useBoolean(initializer: boolean | (() => boolean) = false): BooleanHook {
+export default function useBoolean(initializer: boolean | (() => boolean) = false): BooleanHook {
   const [value, setValue] = useState<boolean>(initializer);
   const setTrue = useCallback(() => setValue(true), []);
   const setFalse = useCallback(() => setValue(false), []);

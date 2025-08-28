@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-export function useDelay<T>(initialValue: T, currentValue: T, delay: number | ((value: T) => number)): T {
+export default function useDelay<T>(initialValue: T, currentValue: T, delay: number | ((value: T) => number)): T {
   const [value, setValue] = useState<T>(initialValue);
   const initialized = useRef(initialValue !== currentValue);
   const timeoutRef = useRef<number | undefined>(undefined);
