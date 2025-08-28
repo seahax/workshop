@@ -119,6 +119,9 @@ importers:
       jose:
         specifier: ^6.0.13
         version: 6.0.13
+      marked-react:
+        specifier: ^3.0.1
+        version: 3.0.1(react@19.1.1)
       mongodb:
         specifier: ^6.18.0
         version: 6.18.0(socks@2.8.7)
@@ -4004,6 +4007,16 @@ packages:
   map-obj@4.3.0:
     resolution: {integrity: sha512-hdN1wVrZbb29eBGiGjJbeP8JbKjq1urkHJ/LIP/NY48MZ1QVXUsQBV1G1zvYFHn1XE06cwjBsOI2K3Ulnj1YXQ==}
     engines: {node: '>=8'}
+
+  marked-react@3.0.1:
+    resolution: {integrity: sha512-jJnXAtEQB/5vYDDIW6TSZprgxKA4UrN9w6L6f0tLZpMDvM2Gt+za3HvdVpqHW74gKOYnIcScNK3kqQWCJlSJ1w==}
+    peerDependencies:
+      react: ^16.8.0 || >=17.0.0
+
+  marked@16.2.1:
+    resolution: {integrity: sha512-r3UrXED9lMlHF97jJByry90cwrZBBvZmjG1L68oYfuPMW+uDTnuMbyJDymCWwbTE+f+3LhpNDKfpR3a3saFyjA==}
+    engines: {node: '>= 20'}
+    hasBin: true
 
   math-intrinsics@1.1.0:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
@@ -9600,6 +9613,13 @@ snapshots:
   map-obj@1.0.1: {}
 
   map-obj@4.3.0: {}
+
+  marked-react@3.0.1(react@19.1.1):
+    dependencies:
+      marked: 16.2.1
+      react: 19.1.1
+
+  marked@16.2.1: {}
 
   math-intrinsics@1.1.0: {}
 

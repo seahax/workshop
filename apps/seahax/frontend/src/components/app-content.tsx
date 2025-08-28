@@ -1,8 +1,10 @@
 import { Box, Container, Link, Typography } from '@mui/material';
 import { IconHandStop } from '@tabler/icons-react';
-import type { JSX } from 'react';
+import { type JSX } from 'react';
 
+import content from './app-content.md?raw';
 import { animation } from './app-theme.tsx';
+import { Markdown } from './markdown.tsx';
 import TextDefinition from './text-definition.tsx';
 
 export default function AppContent(): JSX.Element {
@@ -57,24 +59,19 @@ export default function AppContent(): JSX.Element {
             </Box>
           </Box>
         </Typography>
-        <Typography component="p" sx={{ fontSize: '1.25em' }}>
-          {`I've been a software engineer for over 20 years. Mostly, I do web development. Some frontend, some backend,
-          some design, and a lot of architecture. I consider myself a code `}
-          <TextDefinition
-            text="craftsman"
-            definition={`A person who practices a trade or handicraft, focusing on skillful execution of a technique in
-              order to achieve high quality results.`}
-          />
-          . Slow and steady (and good design) wins the race!
-        </Typography>
-        <Typography component="p" sx={{ fontSize: '1.25em' }}>
-          {`Seahax is my little hack space. So named because I live in Seattle, love the sea, and this is not work.
-          Everything I make here is for fun, and a little bit for my mental health. If it's published, then it's under
-          the `}
-          <Link href="https://unlicense.org" target="_blank">Unlicense</Link>
-          {`. Anything else might make it work! Feel free to use it in anyway you want. Reach out if you have questions
-          or want to discuss something you see here or in the repo.`}
-        </Typography>
+        <Markdown
+          value={content}
+          jsx={{ TextDefinition, Link }}
+          display="flex"
+          flexDirection="column"
+          gap="3rem"
+          sx={{
+            '& p': {
+              fontSize: '1.25rem',
+              margin: 0,
+            },
+          }}
+        />
       </Container>
     </Box>
   );
