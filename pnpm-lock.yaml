@@ -71,6 +71,9 @@ importers:
       '@emotion/styled':
         specifier: ^11.14.1
         version: 11.14.1(@emotion/react@11.14.0(@types/react@19.1.11)(react@19.1.1))(@types/react@19.1.11)(react@19.1.1)
+      '@fontsource-variable/fredoka':
+        specifier: ^5.2.8
+        version: 5.2.8
       '@fontsource/roboto':
         specifier: ^5.2.6
         version: 5.2.6
@@ -953,6 +956,9 @@ packages:
   '@eslint/plugin-kit@0.3.5':
     resolution: {integrity: sha512-Z5kJ+wU3oA7MMIqVR9tyZRtjYPr4OC004Q4Rw7pgOKUOKkJfZ3O24nz3WYfGRpMDNmcOi3TwQOmgm7B7Tpii0w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@fontsource-variable/fredoka@5.2.8':
+    resolution: {integrity: sha512-oIkGpZS+s0eZhoBzALKENP15KDu9031UNIAp2ZNkKzLDg2f6s7Q4lW4atPx9KxLloQCUZMNGkoitXXGyIhRa2Q==}
 
   '@fontsource/roboto@5.2.6':
     resolution: {integrity: sha512-hzarG7yAhMoP418smNgfY4fO7UmuUEm5JUtbxCoCcFHT0hOJB+d/qAEyoNjz7YkPU5OjM2LM8rJnW8hfm0JLaA==}
@@ -6046,6 +6052,8 @@ snapshots:
     dependencies:
       '@eslint/core': 0.15.2
       levn: 0.4.1
+
+  '@fontsource-variable/fredoka@5.2.8': {}
 
   '@fontsource/roboto@5.2.6': {}
 

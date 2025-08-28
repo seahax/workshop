@@ -6,14 +6,13 @@ interface Props {
   readonly definition: string;
 };
 
-export function Defined({ text, definition }: Props): JSX.Element {
+export default function TextDefinition({ text, definition }: Props): JSX.Element {
   return (
     <Tooltip title={definition}>
       <Box
         component="span"
-        sx={(theme) => ({
-          textDecoration: `underline 3px dotted ${theme.palette.primary.main}`,
-        })}
+        tabIndex={0}
+        sx={(theme) => ({ textDecoration: `underline 3px dotted ${theme.palette.primary.main}` })}
       >
         {text}
       </Box>

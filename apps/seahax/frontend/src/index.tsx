@@ -3,6 +3,6 @@ import './init/fonts.ts';
 
 import { createRoot } from 'react-dom/client';
 
-import App from './components/app.tsx';
+import AppRoot from './components/app-root.tsx';
 
-createRoot(document.querySelector('#app')!).render(<App />);
+createRoot(document.querySelector('#app')!).render(<AppRoot />);

@@ -8,9 +8,7 @@ export default function AuthProvider({ children }: PropsWithChildren): JSX.Eleme
       clientId="RGTGlouVBUsLhiPVPfKdCMXUZMd5yS3f"
       cacheLocation="localstorage"
       useRefreshTokens={true}
-      authorizationParams={{
-        redirect_uri: window.location.origin,
-      }}
+      authorizationParams={{ redirect_uri: window.location.origin }}
     >
       {children}
     </Auth0Provider>
