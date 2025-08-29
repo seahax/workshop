@@ -22,10 +22,11 @@ export default function plugin({
         })));
 
         const prefetchCode = `
-          ;setTimeout(()=>{
-            ${JSON.stringify(dynamicImports)}.forEach((id)=>{import(id).catch(()=>{})});
-          },${JSON.stringify(prefetchDelayMilliseconds)});
-        `.trim().replaceAll(/^\s*/gmu, '');
+          ;setTimeout(()=>
+            ${JSON.stringify(dynamicImports)}.forEach((v)=>import(v).catch(()=>{}))
+          ,${JSON.stringify(prefetchDelayMilliseconds)});
+        `.trim().replaceAll(/\r?\n\s*/gu, '');
+        console.log(prefetchCode);
 
         const match = entry.code.match(/^\/\/# *sourceMappingURL/mu);
 
