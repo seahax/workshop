@@ -17,8 +17,8 @@ export default function TextDefinition({ term, definition }: Props): JSX.Element
       <Tooltip
         title={definition}
         open={isFocused || undefined}
+        disableTouchListener={true}
         disableHoverListener={isFocused}
-        disableTouchListener={isFocused}
         disableFocusListener={isFocused}
       >
         <Box
