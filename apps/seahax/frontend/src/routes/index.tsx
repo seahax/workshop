@@ -26,6 +26,7 @@ function Index(): JSX.Element {
         sx={(theme) => ({ textAlign: 'center', color: theme.palette.secondary.main })}
       >
         Hello, I&apos;m&nbsp;Chris.
+        {' '}
         <Box component="span" sx={{ display: 'inline-block', transform: 'translate(0px, 0.5rem)' }}>
           <Box
             component="span"
