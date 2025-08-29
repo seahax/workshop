@@ -20,10 +20,10 @@ export default function TextGradient({ children, slotProps, ...props }: Props): 
         position="absolute"
         zIndex={0}
         sx={[
-          (theme) => ({
-            textShadow: `0 2px 4px ${theme.palette.background.default}`,
+          {
+            textShadow: `rgba(0, 0, 0, 0.75) 0 2px 4px`,
             color: 'transparent',
-          }),
+          },
           ...(Array.isArray(slotProps?.shadow?.sx) ? slotProps.shadow.sx : [slotProps?.shadow?.sx]),
         ]}
       >
