@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.20 - 2025-08-29
+
+- __chore:__ disable eslint @stylistic/jsx-curly-brace-presence (4ea3d4a)
+- __chore:__ remove _* and .* from ignores (fe09d50)
+
 ## 0.2.19 - 2025-08-24
 
 - __chore:__ update deps (f4eff46)
