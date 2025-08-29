@@ -1,5 +1,5 @@
 import { Box, Tooltip } from '@mui/material';
-import { type JSX } from 'react';
+import { type JSX, type TouchEventHandler, useCallback } from 'react';
 
 import useBoolean from '../hooks/use-boolean.ts';
 
@@ -10,6 +10,9 @@ interface Props {
 
 export default function TextDefinition({ term, definition }: Props): JSX.Element {
   const { value: isFocused, setTrue: focus, setFalse: blur } = useBoolean();
+  const onTouchEnd = useCallback<TouchEventHandler<HTMLSpanElement>>((event) => {
+    event.currentTarget.focus();
+  }, []);
 
   return (
     <Tooltip title={definition} open={isFocused || undefined} disableHoverListener={isFocused} disableTouchListener>
@@ -20,6 +23,7 @@ export default function TextDefinition({ term, definition }: Props): JSX.Element
         marginBottom="-4px"
         onFocus={focus}
         onBlur={blur}
+        onTouchEnd={onTouchEnd}
       >
         {term}
       </Box>
