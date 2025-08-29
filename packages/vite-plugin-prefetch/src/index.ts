@@ -26,7 +26,6 @@ export default function plugin({
             ${JSON.stringify(dynamicImports)}.forEach((v)=>import(v).catch(()=>{}))
           ,${JSON.stringify(prefetchDelayMilliseconds)});
         `.trim().replaceAll(/\r?\n\s*/gu, '');
-        console.log(prefetchCode);
 
         const match = entry.code.match(/^\/\/# *sourceMappingURL/mu);
 
