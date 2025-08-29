@@ -9,8 +9,6 @@ dist
 lib
 out
 coverage
-**/src/.**
-**/src/_**
 
 .DS_Store
 *.log

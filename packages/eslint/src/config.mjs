@@ -15,7 +15,7 @@ const jsExt = ['js', 'mjs', 'cjs', 'jsx'];
 const tsExt = ['ts', 'cts', 'mts', 'tsx'];
 const ext = [...jsExt, ...tsExt];
 
-export const DEFAULT_IGNORES = ['**/{.*,_*,node_modules,lib,dist,out,coverage,generated}'];
+export const DEFAULT_IGNORES = ['**/{node_modules,lib,dist,out,coverage,generated}'];
 
 /**
  * @param {Object} options
