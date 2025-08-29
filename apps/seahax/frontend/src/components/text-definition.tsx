@@ -8,7 +8,7 @@ interface Props {
 
 export default function TextDefinition({ term, definition }: Props): JSX.Element {
   return (
-    <Tooltip title={definition} enterTouchDelay={350} leaveTouchDelay={2000}>
+    <Tooltip title={definition} enterTouchDelay={0} leaveTouchDelay={Infinity}>
       <Box
         component="span"
         tabIndex={0}
