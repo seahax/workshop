@@ -10,8 +10,6 @@ import AppTheme from '../components/app-theme.tsx';
 import AuthProvider from '../components/auth-provider.tsx';
 import { ScrollToTop } from '../components/scroll-to-top.tsx';
 
-// export default createRootRoute({ component: Root });
-
 export default function Root({ children }: PropsWithChildren = {}): JSX.Element {
   return (
     <>

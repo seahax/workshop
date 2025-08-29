@@ -64,7 +64,7 @@ export default function AppHeaderUser(): JSX.Element {
           vertical: 'top',
           horizontal: 'right',
         }}
-        sx={(theme) => ({ transform: `translate(0, ${theme.spacing(1)})` })}
+        sx={(theme) => ({ transform: `translate(0, ${theme.spacing(0.75)})` })}
       >
         <UserMenuContent />
       </Menu>

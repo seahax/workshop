@@ -30,7 +30,7 @@ export default function AppHeaderMenuCollapsed(): JSX.Element {
           vertical: 'top',
           horizontal: 'right',
         }}
-        sx={(theme) => ({ transform: `translate(0, ${theme.spacing(1)})` })}
+        sx={(theme) => ({ transform: `translate(0, ${theme.spacing(0.75)})` })}
       >
         <MenuItem
           component={Link}

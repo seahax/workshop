@@ -88,7 +88,7 @@ const theme = createTheme({
     MuiMenu: {
       styleOverrides: {
         paper: ({ theme }) => ({
-          backgroundColor: theme.lighten(theme.palette.background.paper, 0.1),
+          backgroundColor: theme.lighten(theme.palette.background.paper, 0.05),
         }),
       },
     },
