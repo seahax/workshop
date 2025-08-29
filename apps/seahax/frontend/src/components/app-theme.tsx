@@ -38,9 +38,10 @@ const theme = createTheme({
     },
     MuiButton: {
       styleOverrides: {
-        root: {
+        root: ({ theme }) => ({
           borderWidth: '2px',
-        },
+          minWidth: theme.spacing(6),
+        }),
       },
     },
     MuiIconButton: {
