@@ -77,18 +77,36 @@ const theme = createTheme({
     },
     MuiList: {
       styleOverrides: {
-        root: {
+        root: ({ dense, ownerState }) => ({
           paddingBlock: '6px',
-        },
+          minWidth: dense ?? ownerState.dense ? '125px' : '150px',
+        }),
       },
-      defaultProps: {
-        dense: true,
+    },
+    MuiListItem: {
+      styleOverrides: {
+        root: ({ theme, dense, ownerState }) => ({
+          paddingInline: theme.spacing(dense ?? ownerState.dense ? 2.5 : 3),
+          paddingBlock: theme.spacing(0.75),
+          minHeight: theme.spacing(dense ?? ownerState.dense ? '32px' : '44px'),
+          ...theme.typography.body1,
+        }),
       },
     },
     MuiMenu: {
       styleOverrides: {
         paper: ({ theme }) => ({
           backgroundColor: theme.lighten(theme.palette.background.paper, 0.05),
+        }),
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: ({ theme, dense, ownerState }) => ({
+          paddingInline: theme.spacing(dense ?? ownerState.dense ? 2.5 : 3),
+          paddingBlock: theme.spacing(0.75),
+          minHeight: theme.spacing(dense ?? ownerState.dense ? '32px' : '44px'),
+          ...theme.typography.body1,
         }),
       },
     },
