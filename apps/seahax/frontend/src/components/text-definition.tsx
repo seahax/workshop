@@ -1,5 +1,7 @@
 import { Box, Tooltip } from '@mui/material';
-import type { JSX } from 'react';
+import { type JSX } from 'react';
+
+import useBoolean from '../hooks/use-boolean.ts';
 
 interface Props {
   readonly term: string;
@@ -7,12 +9,17 @@ interface Props {
 };
 
 export default function TextDefinition({ term, definition }: Props): JSX.Element {
+  const { value: isFocused, setTrue: focus, setFalse: blur } = useBoolean();
+
   return (
-    <Tooltip title={definition}>
+    <Tooltip title={definition} open={isFocused || undefined} disableHoverListener={isFocused} disableTouchListener>
       <Box
         component="span"
         tabIndex={0}
-        sx={(theme) => ({ textDecoration: `underline 3px dotted ${theme.palette.primary.main}` })}
+        borderBottom={(theme) => `3px dotted ${theme.palette.primary.main}`}
+        marginBottom="-4px"
+        onFocus={focus}
+        onBlur={blur}
       >
         {term}
       </Box>
