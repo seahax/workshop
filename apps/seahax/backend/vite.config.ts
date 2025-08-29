@@ -1,10 +1,10 @@
 import lib from '@seahax/vite-plugin-lib';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
-import { defineConfig, type Plugin } from 'vite';
+import { defineConfig } from 'vite';
 
 process.chdir(import.meta.dirname);
 
-const sentry: Plugin | undefined = process.env.SENTRY_AUTH_TOKEN
+const sentry = process.env.SENTRY_AUTH_TOKEN
   ? sentryVitePlugin({
       org: 'seahax',
       project: 'seahax-backend',

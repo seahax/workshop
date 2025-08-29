@@ -14,7 +14,12 @@ const MarkdownContainer = styled(Box, {
   slot: 'root',
 })();
 
-export function Markdown({ value, jsx, renderer: customRenderer, ...containerProps }: MarkdownProps): JSX.Element {
+export default function Markdown({
+  value,
+  jsx,
+  renderer: customRenderer,
+  ...containerProps
+}: MarkdownProps): JSX.Element {
   const renderer = useMemo<Partial<ReactRenderer>>(() => ({
     ...customRenderer,
     html: (html) => {

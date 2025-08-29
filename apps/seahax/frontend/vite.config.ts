@@ -16,4 +16,7 @@ console.log(`Sentry Vite Plugin: ${sentry ? 'enabled' : 'disabled'}`);
 
 export default defineConfig({
   plugins: [react(), sentry],
+  build: {
+    sourcemap: true,
+  },
 });

@@ -19,6 +19,11 @@ const theme = createTheme({
     fontFamily: '"Fredoka Variable", "Helvetica", "Arial", sans-serif',
   },
   components: {
+    MuiContainer: {
+      defaultProps: {
+        maxWidth: 'md',
+      },
+    },
     MuiAppBar: {
       defaultProps: {
         position: 'static',
