@@ -18,16 +18,7 @@ export default defineRoute({
 
 function Index(): JSX.Element {
   return (
-    <Container
-      sx={{
-        pt: 10,
-        pb: 16,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        gap: '3rem',
-      }}
-    >
+    <Container sx={{ pt: 10, pb: 16, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '3rem' }}>
       <Typography
         variant="h2"
         component="h1"

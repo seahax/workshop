@@ -25,15 +25,7 @@ export default function RouteError(): JSX.Element {
 function RouteErrorView(props: { heading: string; detail: string }): JSX.Element {
   return (
     <Root>
-      <Container
-        sx={(theme) => ({
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: theme.spacing(10, 0, 16, 0),
-        })}
-      >
+      <Container sx={{ pt: 10, pb: 16, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <Typography variant="h1" color={'error'}>
           {props.heading}
         </Typography>
