@@ -13,14 +13,14 @@ export default function TextDefinition({ term, definition }: Props): JSX.Element
   const onTouchStart = useCallback(() => focus(), [focus]);
 
   return (
-    <Tooltip
-      title={definition}
-      open={isFocused || undefined}
-      disableHoverListener={isFocused}
-      disableTouchListener={isFocused}
-      disableFocusListener={isFocused}
-    >
-      <ClickAwayListener onClickAway={blur}>
+    <ClickAwayListener onClickAway={blur}>
+      <Tooltip
+        title={definition}
+        open={isFocused || undefined}
+        disableHoverListener={isFocused}
+        disableTouchListener={isFocused}
+        disableFocusListener={isFocused}
+      >
         <Box
           component="span"
           tabIndex={0}
@@ -30,7 +30,7 @@ export default function TextDefinition({ term, definition }: Props): JSX.Element
         >
           {term}
         </Box>
-      </ClickAwayListener>
-    </Tooltip>
+      </Tooltip>
+    </ClickAwayListener>
   );
 }
