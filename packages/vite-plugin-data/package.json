@@ -2,7 +2,7 @@
   "name": "@seahax/vite-plugin-data",
   "version": "1.0.12",
   "private": false,
-  "description": "Compile time data modules.",
+  "description": "Vite plugin that enables compile time data modules. Compile time is best time.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",

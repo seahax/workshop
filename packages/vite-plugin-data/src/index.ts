@@ -64,7 +64,7 @@ export default function plugin({ match = DEFAULT_MATCH }: DataOptions = {}): Plu
 
 async function loadDateFromFile(root: string, filename: string): Promise<Loaded> {
   const filenameAbs = path.resolve(root, filename);
-  const filenameTmp = `${tmpdir()}/vite-date-loader-${randomUUID()}.js`;
+  const filenameTmp = `${tmpdir()}/vite-date-loader-${randomUUID()}.mjs`;
 
   await writeFile(filenameTmp, `export default () => import(${JSON.stringify(filenameAbs)});`, 'utf8');
 
