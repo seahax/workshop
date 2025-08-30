@@ -2,7 +2,7 @@
   "name": "@seahax/main",
   "version": "0.5.1",
   "private": false,
-  "description": "",
+  "description": "Modify the NodeJS global context to better support CLI applications.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",

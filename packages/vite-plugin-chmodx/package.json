@@ -2,7 +2,7 @@
   "name": "@seahax/vite-plugin-chmodx",
   "version": "0.1.13",
   "private": false,
-  "description": "Set executable bits on chunks that contain shebangs.",
+  "description": "Vite plugin that sets executable bits on chunks that contain shebangs.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",

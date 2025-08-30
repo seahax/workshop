@@ -2,7 +2,7 @@
   "name": "@seahax/eslint-progress",
   "version": "0.1.14",
   "private": false,
-  "description": "List filenames as they are linted.",
+  "description": "ESLint plugin that prints filenames as they are linted.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",

@@ -2,7 +2,7 @@
   "name": "@seahax/store",
   "version": "0.2.1",
   "private": false,
-  "description": "",
+  "description": "Really simple Redux-like store.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",

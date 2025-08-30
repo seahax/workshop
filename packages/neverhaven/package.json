@@ -2,6 +2,7 @@
   "name": "neverhaven",
   "version": "0.1.12",
   "private": false,
+  "description": "A text-based fantasy adventure game! (incomplete)",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",

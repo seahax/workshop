@@ -2,7 +2,7 @@
   "name": "@seahax/tsconfig",
   "version": "0.1.1",
   "private": false,
-  "description": "",
+  "description": "What I think the TSConfig defaults should be.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",

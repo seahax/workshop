@@ -2,7 +2,7 @@
   "name": "@seahax/interval",
   "version": "0.1.0",
   "private": false,
-  "description": "",
+  "description": "Convert units of time to other units of time.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",

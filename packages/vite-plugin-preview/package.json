@@ -2,7 +2,7 @@
   "name": "@seahax/vite-plugin-preview",
   "version": "0.1.14",
   "private": false,
-  "description": "Start a preview server when Vite build watching.",
+  "description": "Vite plugin that starts a preview server when the build command is run with the --watch option.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",

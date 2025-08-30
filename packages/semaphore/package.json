@@ -2,7 +2,7 @@
   "name": "@seahax/semaphore",
   "version": "0.3.1",
   "private": false,
-  "description": "",
+  "description": "An asynchronous semaphore.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",

@@ -2,7 +2,7 @@
   "name": "@seahax/vite-plugin-zip",
   "version": "0.1.7",
   "private": false,
-  "description": "",
+  "description": "Vite plugin that zips up the build output.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",

@@ -2,7 +2,7 @@
   "name": "@seahax/args",
   "version": "0.5.1",
   "private": false,
-  "description": "",
+  "description": "Type safe command line argument parsing with Standard Schema support.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",

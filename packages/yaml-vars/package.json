@@ -2,7 +2,7 @@
   "name": "@seahax/yaml-vars",
   "version": "0.1.3",
   "private": false,
-  "description": "",
+  "description": "Utility that enables Terraform style input variables in any YAML file.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",

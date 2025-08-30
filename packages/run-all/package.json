@@ -2,7 +2,7 @@
   "name": "@seahax/run-all",
   "version": "0.1.4",
   "private": false,
-  "description": "",
+  "description": "Run all package scripts with a prefix.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",

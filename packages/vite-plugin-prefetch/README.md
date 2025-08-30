@@ -1,6 +1,6 @@
 # @seahax/vite-plugin-prefetch
 
-Prefetch dynamic imports.
+Vite plugin that injects dynamic import prefetching into each chunk.
 
 Appends a small snippet of code to the end of each entry chunk. The snippet prefetches all of the chunk's dynamic imports by calling `import(dynamicImportPath)` early, but with a short delay to prevent blocking resources that are critical for initial rendering. When the real dynamic import is used, it is handled by the module cache.
 

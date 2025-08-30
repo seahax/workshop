@@ -2,7 +2,7 @@
   "name": "@seahax/service",
   "version": "0.1.0",
   "private": false,
-  "description": "",
+  "description": "Service framework with scoping and dependency injection.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
