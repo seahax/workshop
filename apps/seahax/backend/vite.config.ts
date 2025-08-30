@@ -1,3 +1,4 @@
+import data from '@seahax/vite-plugin-data';
 import lib from '@seahax/vite-plugin-lib';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { defineConfig } from 'vite';
@@ -16,7 +17,8 @@ console.log(`Sentry Vite Plugin: ${sentry ? 'enabled' : 'disabled'}`);
 
 export default defineConfig({
   plugins: [
-    lib({ runtime: 'node', bundle: { minify: false } }),
+    lib({ runtime: 'node', formats: ['es'], bundle: { minify: false } }),
+    data(),
     sentry,
   ],
 });

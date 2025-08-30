@@ -1,13 +1,19 @@
 import './init/sentry.ts';
 import './init/mongo.ts';
 
-import { createApplication, createHealthRoute, createInfoRoute, createSpaRoute } from '@seahax/espresso';
+import {
+  createApplication,
+  createController,
+  createHealthRoute,
+  createInfoRoute,
+  createSpaRoute,
+} from '@seahax/espresso';
 import { captureException, captureMessage } from '@sentry/node';
 
 import { helmet } from './filter/helmet.ts';
 import { morgan } from './filter/morgan.ts';
 import { mongo } from './health/mongo.ts';
-import { config } from './services/config.ts';
+import { config } from './service/config.ts';
 
 const info = createInfoRoute({
   commit: config.commit,
@@ -32,12 +38,17 @@ const spa = createSpaRoute(config.staticPath, {
   }),
 });
 
+const api = createController('/api')
+  // .addRoute(projects)
+  ;
+
 const application = createApplication()
   .addFilter(morgan)
   .addFilter(helmet)
   .addRoute(info)
   .addRoute(health)
   .addRoute(spa)
+  .addController(api)
   .addErrorHandler(async ({ error }) => {
     console.warn(`Request failed (${new Date().toUTCString()}):`, error);
     captureException(error, { level: 'error' });

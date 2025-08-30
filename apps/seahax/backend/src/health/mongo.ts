@@ -1,4 +1,4 @@
-import { config } from '../services/config.ts';
+import { config } from '../service/config.ts';
 
 export async function mongo(): Promise<boolean> {
   await config.mongo.db().command({ ping: 1 });

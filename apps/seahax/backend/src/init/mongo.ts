@@ -1,5 +1,5 @@
-import { background } from '../services/background.ts';
-import { config } from '../services/config.ts';
+import { background } from '../service/background.ts';
+import { config } from '../service/config.ts';
 
 background(async () => {
   // Connect to the MongoDB preemptively to detect problems early and avoid
