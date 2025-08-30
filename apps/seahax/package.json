@@ -7,7 +7,7 @@
     "build": "run-all build.",
     "build.0-frontend": "vite build -c frontend/vite.config.ts",
     "build.1-backend": "vite build -c backend/vite.config.ts",
-    "build.2-types": "tsc -b -f tsconfig.build.json",
+    "build.2-types": "tsc -b -f tsconfig.json",
     "clean": "rm -rf backend/dist frontend/dist",
     "docker": "run-all docker.",
     "docker.build": "./scripts/docker-build.sh",

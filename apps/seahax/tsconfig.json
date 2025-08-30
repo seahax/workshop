@@ -1,0 +1,7 @@
+{
+  "include": [ ],
+  "references": [
+    { "path": "./frontend/tsconfig.json" },
+    { "path": "./backend/tsconfig.json" }
+  ]
+}
