@@ -1,6 +1,6 @@
 {
   "name": "@seahax/service",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "description": "Service framework with scoping and dependency injection.",
   "repository": {

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 - 2025-08-30
+
+- __fix:__ controller with undefined prefix adds /undefined to route paths (59d0cac)
+
 ## 0.3.0 - 2025-08-26
 
 - __feat:__ remove addMiddleware methods in favor of adaptor utilities (eg. createMiddlewareFilter) (3450b9b)

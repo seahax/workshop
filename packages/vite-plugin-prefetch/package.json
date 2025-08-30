@@ -1,6 +1,6 @@
 {
   "name": "@seahax/vite-plugin-prefetch",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": false,
   "description": "Vite plugin that injects dynamic import prefetching into each chunk.",
   "repository": {

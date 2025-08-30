@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.2 - 2025-08-30
+
+- __chore:__ add descriptions to packages (000878e)
+
 ## 0.5.1 - 2025-08-24
 
 - __chore:__ update dependencies (2144234)

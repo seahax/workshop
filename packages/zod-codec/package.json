@@ -1,6 +1,6 @@
 {
   "name": "@seahax/zod-codec",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "private": false,
   "description": "Bi-directional transformation between two Zod schemas (ie. encode and decode, codec).",
   "repository": {

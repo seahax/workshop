@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3 - 2025-08-30
+
+- __chore:__ add descriptions to packages (000878e)
+
 ## 0.1.2 - 2025-08-29
 
 - __fix:__ remove debug console log (592d17d)

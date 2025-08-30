@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.4 - 2025-08-30
+
+- __chore:__ add descriptions to packages (000878e)
+
 ## 0.3.3 - 2025-08-24
 
 - __chore:__ fix zod codec vite target shouldn't be node (190476e)

@@ -1,6 +1,6 @@
 {
   "name": "@seahax/background",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": false,
   "description": "Run an async task without waiting for it to return, the responsible way.",
   "repository": {

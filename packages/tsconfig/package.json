@@ -1,6 +1,6 @@
 {
   "name": "@seahax/tsconfig",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": false,
   "description": "What I think the TSConfig defaults should be.",
   "repository": {

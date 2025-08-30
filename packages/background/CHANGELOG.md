@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 - 2025-08-30
+
+- __chore:__ add descriptions to packages (000878e)
+
 ## 0.3.0 - 2025-08-25
 
 - __feat:__ add onBegin and onSuccess handlers (caf3b8f)

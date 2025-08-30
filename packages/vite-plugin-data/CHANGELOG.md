@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.13 - 2025-08-30
+
+- __fix:__ top level imports not working because config file was detected as cjs (not esm) (14aa002)
+
 ## 1.0.12 - 2025-08-24
 
 - __chore:__ update deps (f4eff46)
