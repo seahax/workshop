@@ -2,7 +2,7 @@
   "name": "@seahax/espresso",
   "version": "0.3.0",
   "private": false,
-  "description": "",
+  "description": "A lightweight, type-safe Node.js HTTP server framework with routing, filtering, and error handling.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",

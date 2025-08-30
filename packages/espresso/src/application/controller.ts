@@ -70,8 +70,8 @@ export interface Controller {
  * Unlike applications, the filters and error handlers are only applied when a
  * controller route is matched.
  */
-export function createController(prefix?: string): Controller {
-  if (!prefix?.startsWith('/')) prefix = `/${prefix}`;
+export function createController(prefix = ''): Controller {
+  if (!prefix.startsWith('/')) prefix = `/${prefix}`;
 
   const routes: Route[] = [];
   const filters: Filter[] = [];
