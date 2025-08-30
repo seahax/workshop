@@ -12,7 +12,14 @@ interface MarkdownProps extends Omit<BoxProps, 'children'> {
 const MarkdownContainer = styled(Box, {
   name: 'MarkdownContainer',
   slot: 'root',
-})();
+})({
+  '& > :first-child': {
+    marginBlockStart: 0,
+  },
+  '& > :last-child': {
+    marginBlockEnd: 0,
+  },
+});
 
 export default function Markdown({
   value,
@@ -23,14 +30,17 @@ export default function Markdown({
   const renderer = useMemo<Partial<ReactRenderer>>(() => ({
     ...customRenderer,
     html: (html) => {
-      if (typeof html === 'string' && html.startsWith('<jsx-')) {
-        const el = Object.assign(document.createElement('template'), { innerHTML: `<${html.slice(5)}` });
+      if (typeof html === 'string') {
+        const el = Object.assign(document.createElement('template'), { innerHTML: html });
         const child = el.content.firstElementChild;
 
         if (!child) return html;
 
-        const key = child.tagName.toLowerCase().replaceAll(/(?:^|-)([a-z])/gu, (_, value) => value.toUpperCase());
-        const component = jsx[key];
+        const component = (
+          jsx[child.tagName.toLowerCase()]
+          ?? jsx[getSnakeCase(child.tagName)]
+          ?? jsx[getPascalCase(child.tagName)]
+        );
 
         if (!component) return html;
 
@@ -50,4 +60,12 @@ export default function Markdown({
       <Marked value={value} renderer={renderer} />
     </MarkdownContainer>
   );
+}
+
+function getPascalCase(value: string): string {
+  return value.toLowerCase().replaceAll(/(?:^|-+)([a-z])/gu, (_, value) => value.toUpperCase());
+}
+
+function getSnakeCase(value: string): string {
+  return value.toLowerCase().replaceAll(/-+([a-z])/gu, (_, value) => value.toUpperCase());
 }

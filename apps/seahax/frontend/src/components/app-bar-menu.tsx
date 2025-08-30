@@ -1,9 +1,9 @@
 import { Box, Button } from '@mui/material';
 import type { JSX } from 'react';
 
-import AppHeaderUser from './app-header-user.tsx';
+import AppBarUser from './app-bar-user.tsx';
 
-export default function AppHeaderNav(): JSX.Element {
+export default function AppBarNav(): JSX.Element {
   return (
     <Box
       gap={(theme) => theme.spacing(2)}
@@ -16,7 +16,7 @@ export default function AppHeaderNav(): JSX.Element {
         <Button href="https://seahax.substack.com/" target="_blank">Blog</Button>
         <Button href="https://linkedin.com/in/ackermanchris" target="_blank">Experience</Button>
       </Box>
-      <AppHeaderUser />
+      <AppBarUser />
     </Box>
   );
 }

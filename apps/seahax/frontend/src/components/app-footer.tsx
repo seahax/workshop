@@ -1,41 +1,72 @@
-import { AppBar, Container, IconButton, Tooltip } from '@mui/material';
+import { Box, Container, Divider, IconButton, Tooltip, Typography } from '@mui/material';
 import { IconBrandGithub, IconBrandLinkedin, IconMail } from '@tabler/icons-react';
 import type { JSX } from 'react';
 
+import content from './app-footer.md?raw';
+import { LinkExternal } from './link-external.tsx';
+import Markdown from './markdown.tsx';
+
 export function AppFooter(): JSX.Element {
   return (
-    <AppBar
-      position="relative"
+    <Container
+      maxWidth="md"
       sx={(theme) => ({
-        zIndex: 1,
-        backgroundColor: theme.darken(theme.palette.background.default, 0.4),
         paddingBlock: theme.spacing(8),
+        display: 'flex',
+        flexDirection: { xs: 'column', sm: 'row' },
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        gap: { xs: theme.spacing(3), sm: 0 },
       })}
     >
-      <Container
-        maxWidth="md"
-        sx={(theme) => ({
-          display: 'flex',
-          justifyContent: 'center',
-          gap: theme.spacing(2),
-        })}
+      <Box
+        display={{ xs: 'flex', sm: 'contents' }}
+        flexDirection={'row'}
+        justifyContent={'space-evenly'}
+        alignContent={'center'}
+        width={{ xs: '70%', sm: undefined }}
       >
         <Tooltip title="Send Me An Email" placement="top">
-          <IconButton href="mailto:chris@seahax.com" target="_blank">
+          <IconButton component={LinkExternal} href="mailto:chris@seahax.com">
             <IconMail size={32} />
           </IconButton>
         </Tooltip>
         <Tooltip title="LinkedIn Profile" placement="top">
-          <IconButton href="https://www.linkedin.com/in/ackermanchris/" target="_blank">
+          <IconButton component={LinkExternal} href="https://www.linkedin.com/in/ackermanchris/">
             <IconBrandLinkedin size={32} />
           </IconButton>
         </Tooltip>
         <Tooltip title="GitHub Repository" placement="top">
-          <IconButton href="https://github.com/seahax/workshop/tree/main/apps/seahax" target="_blank">
+          <IconButton component={LinkExternal} href="https://github.com/seahax/workshop/tree/main/apps/seahax">
             <IconBrandGithub size={32} />
           </IconButton>
         </Tooltip>
-      </Container>
-    </AppBar>
+      </Box>
+      <Divider
+        orientation="vertical"
+        flexItem
+        sx={{
+          display: { xs: 'none', sm: 'block' },
+          marginInline: (theme) => theme.spacing(2),
+        }}
+      />
+      <Divider
+        orientation="horizontal"
+        sx={{
+          display: { xs: 'block', sm: 'none' },
+          width: '70%',
+        }}
+      />
+      <Typography
+        variant="body2"
+        flexShrink={1}
+        width={{ xs: '70%', sm: '60%' }}
+        paddingInline={(theme) => ({ xs: undefined, sm: theme.spacing(1) })}
+        paddingBlock={(theme) => ({ xs: theme.spacing(1), sm: 0 })}
+        color="textSecondary"
+      >
+        <Markdown value={content} jsx={{ a: LinkExternal }} />
+      </Typography>
+    </Container>
   );
 }

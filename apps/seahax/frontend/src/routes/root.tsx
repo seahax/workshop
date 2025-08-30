@@ -3,8 +3,8 @@ import { SnackbarProvider } from 'notistack';
 import { type JSX, type PropsWithChildren } from 'react';
 import { Outlet } from 'react-router';
 
+import AppBar from '../components/app-bar.tsx';
 import { AppFooter } from '../components/app-footer.tsx';
-import AppHeader from '../components/app-header.tsx';
 import AppMain from '../components/app-main.tsx';
 import AppTheme from '../components/app-theme.tsx';
 import AuthProvider from '../components/auth-provider.tsx';
@@ -17,9 +17,9 @@ export default function Root({ children }: PropsWithChildren = {}): JSX.Element 
         <AppTheme>
           <CssBaseline>
             <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
-              <Box minHeight="100vh" display="flex" flexDirection="column" position="relative" zIndex={0}>
-                <AppHeader />
+              <Box display="flex" flexDirection="column">
                 <AppMain>
+                  <AppBar />
                   <Outlet />
                   {children}
                 </AppMain>

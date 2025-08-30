@@ -8,7 +8,7 @@ import { useMenuState } from '../hooks/use-menu-state.ts';
 import UserAvatar from './user-avatar.tsx';
 import UserMenuContent from './user-menu-content.tsx';
 
-export default function AppHeaderUser(): JSX.Element {
+export default function AppBarUser(): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const menuAnchor = useRef<HTMLElement | null>(null);
   const menuState = useMenuState();

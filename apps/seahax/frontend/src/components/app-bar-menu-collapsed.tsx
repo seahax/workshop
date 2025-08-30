@@ -6,7 +6,7 @@ import { type JSX, useCallback, useRef } from 'react';
 import { useMenuState } from '../hooks/use-menu-state.ts';
 import UserMenuContent from './user-menu-content.tsx';
 
-export default function AppHeaderMenuCollapsed(): JSX.Element {
+export default function AppBarMenuCollapsed(): JSX.Element {
   const menuAnchor = useRef<HTMLButtonElement | null>(null);
   const menuState = useMenuState();
   const { isAuthenticated, loginWithRedirect } = useAuth0();

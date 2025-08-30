@@ -19,14 +19,16 @@ const theme = createTheme({
     fontFamily: '"Fredoka Variable", "Helvetica", "Arial", sans-serif',
   },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: (theme) => ({
+        body: {
+          backgroundColor: theme.darken(theme.palette.background.default, 0.45),
+        },
+      }),
+    },
     MuiContainer: {
       defaultProps: {
         maxWidth: 'md',
-      },
-    },
-    MuiAppBar: {
-      defaultProps: {
-        position: 'static',
       },
     },
     MuiPaper: {
