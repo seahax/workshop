@@ -23,7 +23,6 @@ function Index(): JSX.Element {
     <AppPage>
       <Container
         sx={(theme) => ({
-          height: '100%',
           pt: 4,
           pb: 18,
           display: 'flex',
