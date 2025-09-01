@@ -1,7 +1,9 @@
 {
   "extends": "@seahax/tsconfig",
   "compilerOptions": {
+    "rootDir": "src",
     "outDir": "dist",
+    "tsBuildInfoFile": "dist/tsconfig.data.tsbuildinfo",
     "lib": [
       "ES2023",
       "DOM",

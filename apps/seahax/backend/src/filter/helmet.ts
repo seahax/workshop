@@ -1,6 +1,8 @@
 import { createMiddlewareFilter } from '@seahax/espresso';
 import helmetMiddleware from 'helmet';
 
+import { config } from '../service/config.ts';
+
 const helmetDefault = helmetMiddleware({
   contentSecurityPolicy: {
     directives: {
@@ -16,6 +18,7 @@ const helmetDefault = helmetMiddleware({
         // Required for Auth0 profile pictures.
         'https://*.gravatar.com',
       ],
+      'upgrade-insecure-requests': config.environment === 'development' ? null : [],
     },
   },
 });
