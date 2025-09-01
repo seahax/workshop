@@ -89,6 +89,8 @@ export default function config({ ignores = DEFAULT_IGNORES } = {}) {
         'unicorn/prefer-type-error': 'off',
         'unicorn/prefer-ternary': 'off',
         'unicorn/prevent-abbreviations': 'off',
+        'unicorn/no-empty-file': 'off',
+        'unicorn/require-module-specifiers': 'off',
         'valid-typeof': 'off',
         '@stylistic/indent-binary-ops': 'off',
         '@stylistic/jsx-curly-brace-presence': 'off',
