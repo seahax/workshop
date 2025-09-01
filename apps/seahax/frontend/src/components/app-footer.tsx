@@ -58,6 +58,7 @@ export function AppFooter(): JSX.Element {
         }}
       />
       <Typography
+        component={'div'}
         variant="body2"
         flexShrink={1}
         width={{ xs: '70%', sm: '60%' }}
