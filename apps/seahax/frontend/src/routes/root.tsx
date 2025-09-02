@@ -25,7 +25,6 @@ export default function Root({ children }: PropsWithChildren = {}): JSX.Element 
   }, []);
 
   useEffect(() => {
-    console.log(glimmer, start);
     if (!glimmer || !start) return;
     glimmer.start();
     return () => glimmer.stop();
