@@ -92,8 +92,6 @@ export function createLoop(
         pixelRatio = newPixelRatio;
       }
 
-      console.log(canvas.width / pixelRatio, window.innerWidth);
-
       if (resizeCanvas && 'style' in canvas && canvas.width / pixelRatio < window.screen.width) {
         const expectedWidth = canvas.offsetWidth * pixelRatio;
         const expectedHeight = canvas.offsetHeight * pixelRatio;
@@ -183,6 +181,7 @@ export function createLoop(
     updateEnd?.();
 
     if (isPixelRatioChanged || isCanvasResized) {
+      context.reset();
       context.scale(pixelRatio, pixelRatio);
     }
 
