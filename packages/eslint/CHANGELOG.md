@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.21 - 2025-09-02
+
+- __fix:__ disable some unicorn rules (bc32398)
+
 ## 0.2.20 - 2025-08-29
 
 - __chore:__ disable eslint @stylistic/jsx-curly-brace-presence (4ea3d4a)
