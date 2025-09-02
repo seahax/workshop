@@ -48,6 +48,13 @@ export interface Options {
   readonly resizeCanvas?: boolean | 'hidpi';
 
   /**
+   * Limit the framerate. Set to zero for unlimited.
+   *
+   * Defaults to `30`
+   */
+  readonly framerate?: number;
+
+  /**
    * A renderer which defines particle and link appearance and behavior.
    */
   readonly renderer?: Renderer<any>;

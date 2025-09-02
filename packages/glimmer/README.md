@@ -54,12 +54,16 @@ const glimmer = createGlimmer(canvas, {
   // The range in pixels for particle links.
   linkDistance: 100,
 
+  // Whether or not to set the canvas rendering size to match the canvas
+  // CSS size. Set this to `"hidpi"` to also adjust the canvas scale to match
+  // the display (requires canvas CSS size constraints).
+  resizeCanvas: true,
+
+  // Limit the framerate. Set to zero for unlimited.
+  framerate: 30,
+
   // A renderer which updates and draws the particles each frame.
   renderer: createDefaultRenderer(),
-
-  // Called when the pixel ratio changes. Consumers are responsible for
-  // managing the canvas rendering and CSS dimensions.
-  onPixelRatioChanged: (pixelRatio: number) => { ... }
 });
 ```
 

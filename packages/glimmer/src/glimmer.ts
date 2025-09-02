@@ -15,6 +15,7 @@ export function createGlimmer(
     clearColor = 'transparent',
     linkDistance = 60,
     resizeCanvas = true,
+    framerate = 30,
     renderer = createDefaultRenderer(),
   }: Options = {},
 ): Glimmer {
@@ -22,7 +23,7 @@ export function createGlimmer(
 
   return {
     start() {
-      loop ??= createLoop(context, { count, spawnTime, clearColor, linkDistance, resizeCanvas, renderer });
+      loop ??= createLoop(context, { count, spawnTime, clearColor, linkDistance, resizeCanvas, framerate, renderer });
     },
     stop() {
       loop?.stop();

@@ -22,6 +22,7 @@ export function createLoop(
     clearColor,
     linkDistance,
     resizeCanvas,
+    framerate,
     renderer,
   } = options;
 
@@ -58,6 +59,8 @@ export function createLoop(
     renderEnd,
   } = renderer.start(state);
 
+  const minElapsedDelta = framerate <= 0 ? 0 : 1000 / (framerate + 0.5);
+
   let createCountRemainder = 0;
   let replaceCount = 0;
   let pixelRatio = 1;
@@ -66,9 +69,14 @@ export function createLoop(
 
     function tick(currentTime: number): void {
       const elapsed = currentTime - startTime;
-      time.delta = elapsed - time.elapsed;
-      time.elapsed = elapsed;
-      onTick();
+      const delta = elapsed - time.elapsed;
+
+      if (delta >= minElapsedDelta) {
+        time.elapsed = elapsed;
+        time.delta = delta;
+        onTick();
+      }
+
       animationFrame = requestAnimationFrame(tick);
     }
   });
