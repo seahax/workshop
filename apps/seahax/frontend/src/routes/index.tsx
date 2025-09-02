@@ -63,6 +63,7 @@ function Index(): JSX.Element {
           sx={{
             '& p': {
               fontSize: '1.25rem',
+              fontWeight: 300,
               margin: 0,
             },
           }}

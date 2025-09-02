@@ -1,0 +1,38 @@
+{
+  "name": "@seahax/glimmer",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Just a fun visual effects project using particles on a canvas.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/particles"
+  },
+  "license": "Unlicense",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "!dist/*.tsbuildinfo"
+  ],
+  "scripts": {
+    "build": "vite build && tsc -b -f tsconfig.json",
+    "clean": "rm -rf dist",
+    "start": "vite"
+  },
+  "dependencies": {
+    "color": "^5.0.0"
+  },
+  "devDependencies": {
+    "@seahax/vite-plugin-lib": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -10,6 +10,7 @@ aws = "latest"
 AWS_PROFILE = "seahax"
 AWS_REGION = "us-east-1"
 AWS_PAGER = ""
+NODE_ENV = "development"
 
 [tasks.devcontainer_init]
 hide = true
