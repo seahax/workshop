@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.6 - 2025-09-03
+
+- __fix:__ canvas resize guard (8d6eb33)
+- __docs:__ add codepen (a5b54d2)
+
 ## 0.1.5 - 2025-09-03
 
 - __fix:__ fade not working if glimmer disabled (1f134b1)
