@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5 - 2025-09-03
+
+- __fix:__ fade not working if glimmer disabled (1f134b1)
+
 ## 0.1.4 - 2025-09-03
 
 - __fix:__ default renderer fade false is blank (9795bf2)
