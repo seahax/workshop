@@ -1,7 +1,7 @@
 import { Box, CssBaseline, Fade, useScrollTrigger } from '@mui/material';
-import { createGlimmer, type Glimmer } from '@seahax/glimmer';
+import { createGlimmer } from '@seahax/glimmer';
 import { SnackbarProvider } from 'notistack';
-import { type JSX, type PropsWithChildren, useEffect, useRef, useState } from 'react';
+import { type JSX, type PropsWithChildren, useEffect, useRef } from 'react';
 import { Outlet } from 'react-router';
 
 import AppBar from '../components/app-bar.tsx';
@@ -16,19 +16,13 @@ export default function Root({ children }: PropsWithChildren = {}): JSX.Element 
   const canvas = useRef<HTMLCanvasElement>(null);
   const showGlimmer = !useScrollTrigger({ disableHysteresis: true, threshold: 100 });
   const start = useDelay(showGlimmer, showGlimmer, (value) => value ? 0 : 1000);
-  const [glimmer, setGlimmer] = useState<Glimmer | undefined>();
 
   useEffect(() => {
-    const context = canvas.current!.getContext('2d')!;
+    if (!canvas.current || !start) return;
+    const context = canvas.current.getContext('2d')!;
     const glimmer = createGlimmer(context, { resizeCanvas: 'hidpi' });
-    setGlimmer(glimmer);
-  }, []);
-
-  useEffect(() => {
-    if (!glimmer || !start) return;
-    glimmer.start();
     return () => glimmer.stop();
-  }, [glimmer, start]);
+  }, [start]);
 
   return (
     <>

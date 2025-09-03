@@ -10,17 +10,20 @@ export default function AppMain({ children }: PropsWithChildren = {}): JSX.Eleme
       display="flex"
       flexDirection="column"
       boxShadow={(theme) => theme.shadows[4]}
-      sx={(theme) => ({
-        backgroundColor: theme.palette.background.default,
-        backgroundImage: `linear-gradient(to bottom, transparent 20%, ${
-          theme.alpha(theme.darken(theme.palette.background.default, 0.475), 0.8)
-        }),radial-gradient(farthest-corner circle at 10% 0%, ${
-          theme.lighten(theme.palette.background.paper, 0.075)
-        }, ${
-          theme.darken(theme.palette.background.default, 0.475)
-        } 95%)`,
-        backgroundAttachment: 'fixed',
-      })}
+      sx={(theme) => {
+        const { background } = theme.palette;
+        const light = theme.lighten(background.paper, 0.075);
+        const dark = theme.darken(background.default, 0.475);
+
+        return ({
+          backgroundColor: dark,
+          backgroundImage: `
+          linear-gradient(to bottom, transparent, 60%, ${dark}),
+          radial-gradient(farthest-corner circle at 10% 0%, ${light}, ${dark} 95%)
+          `,
+          backgroundAttachment: 'fixed',
+        });
+      }}
     >
       {children}
     </Box>
