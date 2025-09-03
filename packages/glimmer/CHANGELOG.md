@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.4 - 2025-09-03
+
+- __fix:__ default renderer fade false is blank (9795bf2)
+- __fix:__ options should be optional (0adc785)
+
 ## 0.1.3 - 2025-09-03
 
 - __fix:__ spacial instead of iterative link detection, and remove the color-string dependency (0367ed4)
