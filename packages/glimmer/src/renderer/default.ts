@@ -9,6 +9,7 @@ export interface DefaultRendererParticle extends Particle {
   age: number;
   alpha: number;
   transition: number;
+  glimmer: number;
   direction: number;
   expired: boolean;
 }
@@ -75,25 +76,26 @@ export function createDefaultRenderer({
         createParticle: () => {
           const particle: DefaultRendererParticle = {
             createdTime: time.elapsed,
-            age: 0,
-            transition: 0,
-            expired: false,
             radius: (radius * 0.5) + (Math.random() * radius * 0.5),
             rgb: hslToRgb(hue + ((Math.random() - 0.5) * 30), saturation, lightness),
-            alpha: 1,
             speed: (speed * 0.333) + (speed * (Math.random() * 0.666)),
+            age: 0,
+            alpha: 1,
+            glimmer: glimmer ? Math.random() : 1,
+            transition: 0,
             direction: Math.random(),
             position: { x: viewport.width * Math.random(), y: viewport.height * Math.random() },
+            expired: false,
             removed: false,
           };
 
-          updateGlimmer(particle);
+          updateAlpha(particle);
 
           return particle;
         },
         updateParticle(particle) {
           particle.age = time.elapsed - particle.createdTime;
-          updateGlimmer(particle);
+          updateAlpha(particle);
           updateDirection(particle);
 
           if (particle.expired) {
@@ -162,21 +164,26 @@ export function createDefaultRenderer({
         },
       };
 
-      function updateGlimmer(particle: DefaultRendererParticle): void {
-        if (!glimmer || !isLowFrequencyUpdate) return;
+      function updateAlpha(particle: DefaultRendererParticle): void {
+        if (!isLowFrequencyUpdate) return;
 
-        let fadeValue = 1;
+        particle.alpha = alpha;
 
-        if (fade === 'down') fadeValue = 1 - (particle.position.y / viewport.height);
-        else if (fade === 'up') fadeValue = particle.position.y / viewport.height;
-        else if (fade === 'right') fadeValue = 1 - (particle.position.x / viewport.width);
-        else if (fade === 'left') fadeValue = particle.position.x / viewport.width;
+        if (fade) {
+          let fadeValue = 1;
 
-        const alphaMax = Math.pow(Math.max(0, Math.min(1, fadeValue)), 1.75) * alpha;
-        const alphaMin = 0.6 * alphaMax;
-        const glimmerValue = ((Math.random() * 2) - 1) * 0.15;
+          if (fade === 'down') fadeValue = 1 - (particle.position.y / viewport.height);
+          else if (fade === 'up') fadeValue = particle.position.y / viewport.height;
+          else if (fade === 'right') fadeValue = 1 - (particle.position.x / viewport.width);
+          else if (fade === 'left') fadeValue = particle.position.x / viewport.width;
 
-        particle.alpha = Math.max(alphaMin, Math.min(alphaMax, particle.alpha + glimmerValue));
+          particle.alpha *= Math.pow(Math.max(0, Math.min(1, fadeValue)), 1.75);
+        }
+
+        if (glimmer) {
+          particle.glimmer = Math.max(0, Math.min(1, particle.glimmer + ((Math.random() * 2) - 1) * 0.75));
+          particle.alpha -= particle.glimmer * particle.alpha * 0.3;
+        }
       }
 
       function updateDirection(particle: DefaultRendererParticle): void {
