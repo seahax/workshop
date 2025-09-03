@@ -114,7 +114,7 @@ export function createGlimmer(
         pixelRatio = newPixelRatio;
       }
 
-      if (resizeCanvas && 'style' in canvas && canvas.width < (window.screen.width + 2) * pixelRatio) {
+      if (resizeCanvas && 'style' in canvas && canvas.width < (window.screen.width + 2) * pixelRatio * 4) {
         const expectedWidth = canvas.offsetWidth * pixelRatio;
         const expectedHeight = canvas.offsetHeight * pixelRatio;
 
