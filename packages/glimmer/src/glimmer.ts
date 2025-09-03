@@ -24,7 +24,7 @@ export function createGlimmer(
     resizeCanvas = true,
     framerate = 30,
     renderer = createDefaultRenderer(),
-  }: Options,
+  }: Options = {},
 ): Glimmer {
   const viewport: Mutable<State['viewport']> = {
     width: Number.NaN,
