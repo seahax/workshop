@@ -4,6 +4,8 @@ Just a fun visual effects project using particles on a canvas.
 
 Inspired by the venerable [particles.js](https://vincentgarreau.com/particles.js/).
 
+See it on Codepen: https://codepen.io/ChrisAckerman/pen/myeaJQv
+
 ## Usage
 
 Create or get a convas element and a 2D rendering context.
