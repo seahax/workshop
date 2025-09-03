@@ -165,7 +165,7 @@ export function createDefaultRenderer({
       function updateGlimmer(particle: DefaultRendererParticle): void {
         if (!glimmer || !isLowFrequencyUpdate) return;
 
-        let fadeValue = 0;
+        let fadeValue = 1;
 
         if (fade === 'down') fadeValue = 1 - (particle.position.y / viewport.height);
         else if (fade === 'up') fadeValue = particle.position.y / viewport.height;
