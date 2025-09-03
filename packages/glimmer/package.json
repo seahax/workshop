@@ -26,9 +26,6 @@
     "clean": "rm -rf dist",
     "start": "vite"
   },
-  "dependencies": {
-    "color": "^5.0.0"
-  },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*"
   },

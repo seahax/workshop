@@ -6,27 +6,22 @@ Inspired by the venerable [particles.js](https://vincentgarreau.com/particles.js
 
 ## Usage
 
-Create or get a convas element. Glimmer does not make any changes to the canvas position or other CSS styling. Placement is completely up to the host app.
+Create or get a convas element and a 2D rendering context.
 
 ```ts
 const canvas = document.querySelector('#my-canvas') as HTMLCanvasElement;
+const context = canvas.getContext('2d')!;
 ```
 
-Create a Glimmer instance.
+Start a glimmer.
 
 ```ts
 import { createGlimmer } from '@seahax/glimmer';
 
-const glimmer = createGlimmer(canvas);
+const glimmer = createGlimmer(context);
 ```
 
-Start the instance.
-
-```ts
-glimmer.start();
-```
-
-You can also stop the instance, which is equivalent to pausing.
+Stop the glimmer when you're done. A new glimmer must be created to restart.
 
 ```ts
 glimmer.stop();
@@ -42,17 +37,17 @@ import { createDefaultRenderer } from '@seahax/glimmer';
 const glimmer = createGlimmer(canvas, {
 
   // Particle count per 10 CSS inches squared (960^2 pixels).
-  count: 200,
+  count: 1000,
 
   // Number of seconds that it will take to spawn the full pixel count.
-  spawnTime: 0,
+  spawnTime: 3,
 
   // The background color used to fill the canvas before each draw. Using
   // transparent allows the canvas to be see-through.
   clearColor: 'transparent',
 
   // The range in pixels for particle links.
-  linkDistance: 100,
+  linkDistance: 35,
 
   // Whether or not to set the canvas rendering size to match the canvas
   // CSS size. Set this to `"hidpi"` to also adjust the canvas scale to match
@@ -133,13 +128,13 @@ export function createMyRenderer(): Renderer<TParticle> {
         // Update start.
         updateStart: (): void => { ... },
 
-        // Create a new particle (will also be updated before being rendered).
-        createParticle: (): TParticle => { ... },
-
         // Update a single particle.
         updateParticle: (
           particle: TParticle
         ): void => { ... },
+
+        // Create a new particle.
+        createParticle: (): TParticle => { ... },
 
         // Update the the particles related to a link (attract, repulse, etc).
         updateLink: (
@@ -150,7 +145,7 @@ export function createMyRenderer(): Renderer<TParticle> {
 
         // Render start.
         renderStart: (
-          context: CanvasRenderingContext2D | OffscreenRenderingContext
+          context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
           ): void => { ... },
 
         // Render a single particle link.
@@ -169,7 +164,7 @@ export function createMyRenderer(): Renderer<TParticle> {
 
         // Render end.
         renderEnd: (
-          context: CanvasRenderingContext2D | OffscreenRenderingContext
+          context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
         ): void => { ... },
 
         // Rendering stopped. The above hooks will not be called after this.

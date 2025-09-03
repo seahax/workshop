@@ -1,16 +1,16 @@
-import Color from 'color';
-
+import { hslToRgb, rgbToCss } from '../color.ts';
 import type { Particle } from '../particle.ts';
 import type { Renderer } from '../renderer.ts';
 
 export interface DefaultRendererParticle extends Particle {
   readonly createdTime: number;
+  readonly rgb: readonly [r: number, g: number, b: number];
+  readonly speed: number;
   age: number;
-  expired: boolean;
+  alpha: number;
   transition: number;
-  color: string;
-  speed: number;
   direction: number;
+  expired: boolean;
 }
 
 export interface DefaultRendererOptions {
@@ -55,7 +55,7 @@ export function createDefaultRenderer({
   alpha = 1,
   radius = 2,
   linkWidth = 0.5,
-  speed = 30,
+  speed = 15,
   wobble = 0.5,
   glimmer = true,
   fade = 'down',
@@ -73,25 +73,28 @@ export function createDefaultRenderer({
           lowFrequencyUpdateCount = count;
         },
         createParticle: () => {
-          return {
+          const particle: DefaultRendererParticle = {
             createdTime: time.elapsed,
             age: 0,
             transition: 0,
             expired: false,
-            radius: 0,
-            color: 'magenta',
-            speed: 0,
-            direction: 0,
+            radius: (radius * 0.5) + (Math.random() * radius * 0.5),
+            rgb: hslToRgb(hue + ((Math.random() - 0.5) * 30), saturation, lightness),
+            alpha: 1,
+            speed: (speed * 0.333) + (speed * (Math.random() * 0.666)),
+            direction: Math.random(),
             position: { x: viewport.width * Math.random(), y: viewport.height * Math.random() },
             removed: false,
           };
+
+          updateGlimmer(particle);
+
+          return particle;
         },
         updateParticle(particle) {
           particle.age = time.elapsed - particle.createdTime;
-          particle.radius = getRadius(particle);
-          particle.color = getColor(particle);
-          particle.speed = getSpeed(particle);
-          particle.direction = getDirection(particle);
+          updateGlimmer(particle);
+          updateDirection(particle);
 
           if (particle.expired) {
             particle.transition = Math.max(0, particle.transition - (time.delta / transitionTime));
@@ -116,8 +119,6 @@ export function createDefaultRenderer({
           );
         },
         renderParticle(context, particle) {
-          const color = Color(particle.color) ?? [];
-          const radius = getRadius(particle);
           const gradient = context.createRadialGradient(
             particle.position.x,
             particle.position.y,
@@ -127,20 +128,20 @@ export function createDefaultRenderer({
             particle.radius,
           );
 
-          color.alpha(color.alpha() * particle.transition).string();
-          gradient.addColorStop(0.33, color.alpha(color.alpha() * particle.transition).string());
-          gradient.addColorStop(1, color.alpha(0).string());
+          const color = rgbToCss(...particle.rgb, particle.alpha * particle.transition);
+          gradient.addColorStop(0.33, color);
+          gradient.addColorStop(1, 'transparent');
 
           context.fillStyle = gradient;
           context.beginPath();
-          context.arc(particle.position.x, particle.position.y, radius, 0, Math.PI * 2, false);
+          context.arc(particle.position.x, particle.position.y, particle.radius, 0, Math.PI * 2, false);
           context.closePath();
           context.fill();
         },
         renderLink(context, particle0, particle1, strength) {
-          const color0 = Color(particle0.color);
-          const color1 = Color(particle1.color);
           const transition = Math.min(particle0.transition, particle1.transition);
+          const color0 = rgbToCss(...particle0.rgb, particle0.alpha * transition * Math.pow(strength, 0.66));
+          const color1 = rgbToCss(...particle1.rgb, particle1.alpha * transition * Math.pow(strength, 0.66));
           const gradient = context.createLinearGradient(
             particle0.position.x,
             particle0.position.y,
@@ -148,8 +149,8 @@ export function createDefaultRenderer({
             particle1.position.y,
           );
 
-          gradient.addColorStop(0, color0.alpha(color0.alpha() * Math.pow(strength, 0.66) * transition).string());
-          gradient.addColorStop(1, color1.alpha(color0.alpha() * Math.pow(strength, 0.66) * transition).string());
+          gradient.addColorStop(0, color0);
+          gradient.addColorStop(1, color1);
 
           context.strokeStyle = gradient;
           context.lineWidth = linkWidth;
@@ -161,7 +162,9 @@ export function createDefaultRenderer({
         },
       };
 
-      function getColor(particle: DefaultRendererParticle): string {
+      function updateGlimmer(particle: DefaultRendererParticle): void {
+        if (!glimmer || !isLowFrequencyUpdate) return;
+
         let fadeValue = 0;
 
         if (fade === 'down') fadeValue = 1 - (particle.position.y / viewport.height);
@@ -171,44 +174,18 @@ export function createDefaultRenderer({
 
         const alphaMax = Math.pow(Math.max(0, Math.min(1, fadeValue)), 1.75) * alpha;
         const alphaMin = 0.6 * alphaMax;
+        const glimmerValue = ((Math.random() * 2) - 1) * 0.15;
 
-        let color = particle.age === 0
-          ? Color.hsl(hue + ((Math.random() - 0.5) * 30), saturation, lightness, (alphaMax + alphaMin) / 2)
-          : Color(particle.color);
-
-        if (glimmer && isLowFrequencyUpdate) {
-          const glimmerValue = ((Math.random() * 2) - 1) * 0.15;
-          color = color.alpha(Math.max(alphaMin, Math.min(alphaMax, color.alpha() + glimmerValue)));
-        }
-
-        return color.string();
+        particle.alpha = Math.max(alphaMin, Math.min(alphaMax, particle.alpha + glimmerValue));
       }
 
-      function getRadius(particle: DefaultRendererParticle): number {
-        return particle.age === 0
-          ? ((radius * 0.5) + (Math.random() * radius * 0.5))
-          : particle.radius;
-      }
+      function updateDirection(particle: DefaultRendererParticle): void {
+        if (!isLowFrequencyUpdate) return;
 
-      function getSpeed(particle: DefaultRendererParticle): number {
-        return particle.age === 0
-          ? ((speed * 0.333) + (speed * (Math.random() * 0.666)))
-          : particle.speed;
-      }
+        particle.direction += ((Math.random() - 0.5) * (time.delta / 1000) * wobble);
 
-      function getDirection(particle: DefaultRendererParticle): number {
-        if (particle.age === 0) {
-          return Math.random();
-        }
-
-        if (!isLowFrequencyUpdate) return particle.direction;
-
-        const newDirection = particle.direction + ((Math.random() - 0.5) * (time.delta / 1000) * wobble);
-
-        if (newDirection > 1) return newDirection - 1;
-        if (newDirection < 0) return 1 + newDirection;
-
-        return newDirection;
+        if (particle.direction > 1) particle.direction = particle.direction - 1;
+        else if (particle.direction < 0) particle.direction = 1 + particle.direction;
       }
     },
   };

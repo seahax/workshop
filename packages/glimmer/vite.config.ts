@@ -5,7 +5,7 @@ process.chdir(import.meta.dirname);
 
 export default defineConfig({
   plugins: [
-    lib({ runtime: 'browser', bundle: false }),
+    lib({ runtime: 'browser' }),
   ],
   server: {
     host: '127.0.0.1',

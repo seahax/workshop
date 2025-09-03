@@ -15,18 +15,17 @@ export interface Hooks<TParticle extends Particle> {
   readonly updateStart?: () => void;
 
   /**
-   * Create a new particle. New particles Particles will always be updated
-   * (`updateParticle`) once before being rendered.
-   */
-  readonly createParticle: () => TParticle;
-
-  /**
    * Update a single particle. Particles are updated in the order that they
    * were created.
    *
    * @param particle The particle.
    */
   readonly updateParticle?: (particle: TParticle) => void;
+
+  /**
+   * Create a new particle.
+   */
+  readonly createParticle: () => TParticle;
 
   /**
    * Update the the particles related to a link. Links are updated in the order
