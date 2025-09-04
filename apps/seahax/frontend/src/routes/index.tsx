@@ -10,6 +10,7 @@ import { LinkExternal } from '../components/link-external.tsx';
 import Markdown from '../components/markdown.tsx';
 import TextDefinition from '../components/text-definition.tsx';
 import useDelay from '../hooks/use-delay.ts';
+import { useDocumentVisible } from '../hooks/use-document-visible.ts';
 import content from './index.md?raw';
 import defineRoute from './util/define-route.tsx';
 
@@ -23,12 +24,13 @@ export default defineRoute({
 
 function Index(): JSX.Element {
   const glimmerCanvas = useRef<HTMLCanvasElement>(null);
+  const glimmerDocumentVisible = useDocumentVisible();
   const glimmerMediaQuery = useMediaQuery((theme) => theme.breakpoints.up('sm'));
   const glimmerScrollTrigger = !useScrollTrigger({ disableHysteresis: true, threshold: 100 });
   const glimmerVisible = useDelay(glimmerScrollTrigger, glimmerScrollTrigger, (value) => value ? 0 : 1000);
 
   useEffect(() => {
-    if (!glimmerCanvas.current || !glimmerMediaQuery || !glimmerVisible) return;
+    if (!glimmerCanvas.current || !glimmerDocumentVisible || !glimmerMediaQuery || !glimmerVisible) return;
     const context = glimmerCanvas.current.getContext('2d')!;
     const glimmer = createGlimmer(context, {
       resizeCanvas: 'hidpi',
@@ -39,11 +41,11 @@ function Index(): JSX.Element {
       }),
     });
     return () => glimmer.stop();
-  }, [glimmerMediaQuery, glimmerVisible]);
+  }, [glimmerDocumentVisible, glimmerMediaQuery, glimmerVisible]);
 
   return (
     <>
-      {glimmerMediaQuery && (
+      {glimmerDocumentVisible && glimmerMediaQuery && (
         <Fade in={glimmerScrollTrigger} appear={false} timeout={1000}>
           <Canvas canvasRef={glimmerCanvas} position="absolute" width="100%" height="100%" />
         </Fade>
