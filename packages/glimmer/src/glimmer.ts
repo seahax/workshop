@@ -17,7 +17,7 @@ const COUNT_PIXEL_AREA = 960;
 export function createGlimmer(
   context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
   {
-    count: maxCount = 1000,
+    count: maxCount = 1200,
     spawnTime = 3,
     clearColor = 'transparent',
     linkDistance = 35,

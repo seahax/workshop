@@ -54,7 +54,7 @@ export function createDefaultRenderer({
   saturation = 100,
   lightness = 70,
   alpha = 1,
-  radius = 2,
+  radius = 2.5,
   linkWidth = 0.5,
   speed = 15,
   wobble = 0.5,
@@ -142,8 +142,9 @@ export function createDefaultRenderer({
         },
         renderLink(context, particle0, particle1, strength) {
           const transition = Math.min(particle0.transition, particle1.transition);
-          const color0 = rgbToCss(...particle0.rgb, particle0.alpha * transition * Math.pow(strength, 0.66));
-          const color1 = rgbToCss(...particle1.rgb, particle1.alpha * transition * Math.pow(strength, 0.66));
+          const intensity = transition * Math.pow(strength, 0.5) * 0.9;
+          const color0 = rgbToCss(...particle0.rgb, particle0.alpha * intensity);
+          const color1 = rgbToCss(...particle1.rgb, particle1.alpha * intensity);
           const gradient = context.createLinearGradient(
             particle0.position.x,
             particle0.position.y,
@@ -177,7 +178,7 @@ export function createDefaultRenderer({
           else if (fade === 'right') fadeValue = 1 - (particle.position.x / viewport.width);
           else if (fade === 'left') fadeValue = particle.position.x / viewport.width;
 
-          particle.alpha *= Math.pow(Math.max(0, Math.min(1, fadeValue)), 1.75);
+          particle.alpha *= sineEasing(fadeValue);
         }
 
         if (glimmer) {
@@ -197,3 +198,8 @@ export function createDefaultRenderer({
     },
   };
 }
+
+const sineEasing = (value: number): number => {
+  const x = Math.max(0, Math.min(1, value));
+  return 0.5 * (Math.sin(Math.PI * (x - 0.5)) + 1);
+};
