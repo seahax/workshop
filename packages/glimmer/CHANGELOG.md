@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.8 - 2025-09-04
+
+- __fix:__ spawnTime not working correctly (bd6110f)
+
 ## 0.1.7 - 2025-09-04
 
 - __fix:__ use sine easing for directional fade (2e7510b)
