@@ -39,7 +39,7 @@ import { createDefaultRenderer } from '@seahax/glimmer';
 const glimmer = createGlimmer(canvas, {
 
   // Particle count per 10 CSS inches squared (960^2 pixels).
-  count: 1000,
+  count: 1200,
 
   // Number of seconds that it will take to spawn the full pixel count.
   spawnTime: 3,
@@ -81,10 +81,10 @@ createDefaultRenderer({
   lightness: 70,
 
   // Alpha component of the HSLA particle color.
-  alpha: 0.8,
+  alpha: 1,
 
   // Average (+/- 50%) radius of each particle in pixels.
-  radius: 2,
+  radius: 2.5,
 
   // Width of the lines connecting linked particles in pixels.
   linkWidth: 0.5,
