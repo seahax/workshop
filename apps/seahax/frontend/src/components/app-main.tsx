@@ -4,6 +4,7 @@ import { type JSX, type PropsWithChildren } from 'react';
 export default function AppMain({ children }: PropsWithChildren = {}): JSX.Element {
   return (
     <Box
+      position="relative"
       zIndex={0}
       minHeight="100vh"
       flexGrow={1}

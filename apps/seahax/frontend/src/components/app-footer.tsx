@@ -6,7 +6,7 @@ import content from './app-footer.md?raw';
 import { LinkExternal } from './link-external.tsx';
 import Markdown from './markdown.tsx';
 
-export function AppFooter(): JSX.Element {
+export default function AppFooter(): JSX.Element {
   return (
     <Container
       maxWidth="md"

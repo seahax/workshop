@@ -5,10 +5,11 @@ import { type JSX, type PropsWithChildren, useEffect, useRef } from 'react';
 import { Outlet } from 'react-router';
 
 import AppBar from '../components/app-bar.tsx';
-import { AppFooter } from '../components/app-footer.tsx';
+import AppFooter from '../components/app-footer.tsx';
 import AppMain from '../components/app-main.tsx';
 import AppTheme from '../components/app-theme.tsx';
 import AuthProvider from '../components/auth-provider.tsx';
+import Canvas from '../components/canvas.tsx';
 import { ScrollToTop } from '../components/scroll-to-top.tsx';
 import useDelay from '../hooks/use-delay.ts';
 
@@ -33,13 +34,7 @@ export default function Root({ children }: PropsWithChildren = {}): JSX.Element 
               <Box display="flex" flexDirection="column">
                 <AppMain>
                   <Fade in={showGlimmer} appear={false} timeout={1000}>
-                    <Box
-                      ref={canvas}
-                      component={'canvas'}
-                      position="absolute"
-                      width="100vw"
-                      height="100vh"
-                    />
+                    <Canvas canvasRef={canvas} position="absolute" width="100%" height="100%" />
                   </Fade>
                   <AppBar />
                   <Box zIndex={0}>

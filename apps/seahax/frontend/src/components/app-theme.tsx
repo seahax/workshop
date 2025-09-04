@@ -27,6 +27,14 @@ const theme = createTheme({
       }),
     },
     MuiContainer: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          // paddingInline: `${theme.spacing(5)} !important`,
+          [theme.breakpoints.down('lg')]: {
+            paddingInline: theme.spacing(5),
+          },
+        }),
+      },
       defaultProps: {
         maxWidth: 'md',
       },
