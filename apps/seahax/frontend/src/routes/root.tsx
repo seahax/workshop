@@ -1,5 +1,5 @@
 import { Box, CssBaseline, Fade, useScrollTrigger } from '@mui/material';
-import { createGlimmer } from '@seahax/glimmer';
+import { createDefaultRenderer, createGlimmer } from '@seahax/glimmer';
 import { SnackbarProvider } from 'notistack';
 import { type JSX, type PropsWithChildren, useEffect, useRef } from 'react';
 import { Outlet } from 'react-router';
@@ -21,7 +21,14 @@ export default function Root({ children }: PropsWithChildren = {}): JSX.Element 
   useEffect(() => {
     if (!canvas.current || !start) return;
     const context = canvas.current.getContext('2d')!;
-    const glimmer = createGlimmer(context, { resizeCanvas: 'hidpi' });
+    const glimmer = createGlimmer(context, {
+      resizeCanvas: 'hidpi',
+      renderer: createDefaultRenderer({
+        saturation: 60,
+        lightness: 50,
+        linkWidth: 0.5,
+      }),
+    });
     return () => glimmer.stop();
   }, [start]);
 
