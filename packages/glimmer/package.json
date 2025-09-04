@@ -1,6 +1,6 @@
 {
   "name": "@seahax/glimmer",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "private": false,
   "description": "Just a fun visual effects project using particles on a canvas.",
   "repository": {

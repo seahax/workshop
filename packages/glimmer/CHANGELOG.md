@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.7 - 2025-09-04
+
+- __fix:__ use sine easing for directional fade (2e7510b)
+
 ## 0.1.6 - 2025-09-03
 
 - __fix:__ canvas resize guard (8d6eb33)
