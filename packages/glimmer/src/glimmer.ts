@@ -75,8 +75,6 @@ export function createGlimmer(
   const minElapsedDelta = framerate <= 0 ? 0 : 1000 / (framerate + 0.5);
 
   let space = createSpace({ divisionSize: 10, xMin: 0, xMax: 0, yMin: 0, yMax: 0 });
-  let createCountRemainder = 0;
-  let replaceCount = 0;
   let pixelRatio = 1;
   let animationFrame = requestAnimationFrame((startTime) => {
     tick(startTime);
@@ -159,14 +157,11 @@ export function createGlimmer(
       space.add(particle);
     }
 
-    let createCount = spawnTime > 0
-      ? replaceCount + Math.min(
-        Math.max(0, count.max - count.current),
-        ((count.max * time.delta) / (spawnTime * 1000)) + createCountRemainder,
-      )
-      : Math.max(0, count.max - count.current);
+    const adjustedMaxCount = spawnTime > 0
+      ? Math.ceil(count.max * Math.min(1, time.elapsed / (spawnTime * 1000)))
+      : count.max;
 
-    for (; createCount >= 1; --createCount) {
+    for (let i = Math.max(0, adjustedMaxCount - count.current); i >= 1; --i) {
       const particle = createParticle();
       particles.add(particle);
       space.add(particle);
@@ -202,8 +197,6 @@ export function createGlimmer(
       }
     }
 
-    createCountRemainder = createCount;
-
     updateEnd?.();
 
     if (isPixelRatioChanged || isCanvasResized) {
@@ -234,13 +227,10 @@ export function createGlimmer(
       }
     }
 
-    replaceCount = 0;
-
     for (const particle of Array.from(particles)) {
       if (particle.removed) {
         particles.delete(particle);
         space.delete(particle);
-        replaceCount += 1;
         continue;
       }
 

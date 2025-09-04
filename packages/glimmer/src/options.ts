@@ -4,7 +4,7 @@ export interface Options {
   /**
    * Particles per 960 pixels square (10 CSS inches, 960^2 pixels).
    *
-   * Defaults to `150`.
+   * Defaults to `1200`.
    */
   readonly count?: number;
 
@@ -14,7 +14,7 @@ export interface Options {
    * number of particles is reached. This does not apply when replacing
    * particles that are removed.
    *
-   * Defaults to `5`.
+   * Defaults to `3`.
    */
   readonly spawnTime?: number;
 
@@ -29,7 +29,7 @@ export interface Options {
   /**
    * Distance in pixels that particle links can reach.
    *
-   * Defaults to `96` (one CSS inch).
+   * Defaults to `35`.
    */
   readonly linkDistance?: number;
 
