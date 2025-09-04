@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.11 - 2025-09-04
+
+- __fix:__ orientation change not working (85c028d)
+
 ## 0.1.10 - 2025-09-04
 
 - __fix:__ better clamping of max canvas size (to screen size) when resizeCanvas is "hidpi" (ea3a632)
