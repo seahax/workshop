@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.9 - 2025-09-04
+
+- __docs:__ Update readme defaults (69bf260)
+
 ## 0.1.8 - 2025-09-04
 
 - __fix:__ spawnTime not working correctly (bd6110f)
