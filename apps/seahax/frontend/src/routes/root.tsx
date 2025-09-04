@@ -1,7 +1,6 @@
-import { Box, CssBaseline, Fade, useScrollTrigger } from '@mui/material';
-import { createDefaultRenderer, createGlimmer } from '@seahax/glimmer';
+import { Box, CssBaseline } from '@mui/material';
 import { SnackbarProvider } from 'notistack';
-import { type JSX, type PropsWithChildren, useEffect, useRef } from 'react';
+import { type JSX, type PropsWithChildren } from 'react';
 import { Outlet } from 'react-router';
 
 import AppBar from '../components/app-bar.tsx';
@@ -9,29 +8,9 @@ import AppFooter from '../components/app-footer.tsx';
 import AppMain from '../components/app-main.tsx';
 import AppTheme from '../components/app-theme.tsx';
 import AuthProvider from '../components/auth-provider.tsx';
-import Canvas from '../components/canvas.tsx';
 import { ScrollToTop } from '../components/scroll-to-top.tsx';
-import useDelay from '../hooks/use-delay.ts';
 
 export default function Root({ children }: PropsWithChildren = {}): JSX.Element {
-  const canvas = useRef<HTMLCanvasElement>(null);
-  const showGlimmer = !useScrollTrigger({ disableHysteresis: true, threshold: 100 });
-  const start = useDelay(showGlimmer, showGlimmer, (value) => value ? 0 : 1000);
-
-  useEffect(() => {
-    if (!canvas.current || !start) return;
-    const context = canvas.current.getContext('2d')!;
-    const glimmer = createGlimmer(context, {
-      resizeCanvas: 'hidpi',
-      renderer: createDefaultRenderer({
-        saturation: 60,
-        lightness: 50,
-        linkWidth: 0.5,
-      }),
-    });
-    return () => glimmer.stop();
-  }, [start]);
-
   return (
     <>
       <AuthProvider>
@@ -40,14 +19,9 @@ export default function Root({ children }: PropsWithChildren = {}): JSX.Element 
             <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
               <Box display="flex" flexDirection="column">
                 <AppMain>
-                  <Fade in={showGlimmer} appear={false} timeout={1000}>
-                    <Canvas canvasRef={canvas} position="absolute" width="100%" height="100%" />
-                  </Fade>
                   <AppBar />
-                  <Box zIndex={0}>
-                    <Outlet />
-                    {children}
-                  </Box>
+                  <Outlet />
+                  {children}
                 </AppMain>
                 <AppFooter />
               </Box>

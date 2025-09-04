@@ -1,12 +1,15 @@
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Container, Fade, Typography, useMediaQuery, useScrollTrigger } from '@mui/material';
+import { createDefaultRenderer, createGlimmer } from '@seahax/glimmer';
 import { IconHandStop } from '@tabler/icons-react';
-import type { JSX } from 'react';
+import { type JSX, useEffect, useRef } from 'react';
 
 import { AppPage } from '../components/app-page.tsx';
 import { animation } from '../components/app-theme.tsx';
+import Canvas from '../components/canvas.tsx';
 import { LinkExternal } from '../components/link-external.tsx';
 import Markdown from '../components/markdown.tsx';
 import TextDefinition from '../components/text-definition.tsx';
+import useDelay from '../hooks/use-delay.ts';
 import content from './index.md?raw';
 import defineRoute from './util/define-route.tsx';
 
@@ -19,56 +22,82 @@ export default defineRoute({
 // TODO: Use the LinkedIn API to list work experience.
 
 function Index(): JSX.Element {
+  const glimmerCanvas = useRef<HTMLCanvasElement>(null);
+  const glimmerMediaQuery = useMediaQuery((theme) => theme.breakpoints.up('sm'));
+  const glimmerScrollTrigger = !useScrollTrigger({ disableHysteresis: true, threshold: 100 });
+  const glimmerVisible = useDelay(glimmerScrollTrigger, glimmerScrollTrigger, (value) => value ? 0 : 1000);
+
+  useEffect(() => {
+    if (!glimmerCanvas.current || !glimmerMediaQuery || !glimmerVisible) return;
+    const context = glimmerCanvas.current.getContext('2d')!;
+    const glimmer = createGlimmer(context, {
+      resizeCanvas: 'hidpi',
+      renderer: createDefaultRenderer({
+        saturation: 60,
+        lightness: 50,
+        linkWidth: 0.5,
+      }),
+    });
+    return () => glimmer.stop();
+  }, [glimmerMediaQuery, glimmerVisible]);
+
   return (
-    <AppPage>
-      <Container
-        sx={(theme) => ({
-          pt: 4,
-          pb: 18,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          gap: theme.spacing(4),
-        })}
-      >
-        <Typography
-          variant="h2"
-          component="h1"
-          marginBlock={(theme) => theme.spacing(3)}
-          sx={(theme) => ({ textAlign: 'center', color: theme.palette.secondary.main })}
+    <>
+      {glimmerMediaQuery && (
+        <Fade in={glimmerScrollTrigger} appear={false} timeout={1000}>
+          <Canvas canvasRef={glimmerCanvas} position="absolute" width="100%" height="100%" />
+        </Fade>
+      )}
+      <AppPage zIndex={1}>
+        <Container
+          sx={(theme) => ({
+            pt: 4,
+            pb: 18,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            gap: theme.spacing(4),
+          })}
         >
-          Hello, I&apos;m&nbsp;Chris.
-          {' '}
-          <Box
-            component="span"
-            sx={(theme) => ({ display: 'inline-block', transform: `translate(0px, ${theme.spacing(1)})` })}
+          <Typography
+            variant="h2"
+            component="h1"
+            marginBlock={(theme) => theme.spacing(3)}
+            sx={(theme) => ({ textAlign: 'center', color: theme.palette.secondary.main })}
           >
+            Hello, I&apos;m&nbsp;Chris.
+            {' '}
             <Box
               component="span"
-              sx={{
-                display: 'inline-block',
-                transform: 'rotate(20deg)',
-                animation: `${animation.wave} 0.5s 6 alternate ease-in-out`,
-              }}
+              sx={(theme) => ({ display: 'inline-block', transform: `translate(0px, ${theme.spacing(1)})` })}
             >
-              <IconHandStop size="4rem" stroke="1px" />
+              <Box
+                component="span"
+                sx={{
+                  display: 'inline-block',
+                  transform: 'rotate(20deg)',
+                  animation: `${animation.wave} 0.5s 6 alternate ease-in-out`,
+                }}
+              >
+                <IconHandStop size="4rem" stroke="1px" />
+              </Box>
             </Box>
-          </Box>
-        </Typography>
-        <Markdown
-          value={content}
-          jsx={{ d: TextDefinition, a: LinkExternal }}
-          display="contents"
-          flexDirection="column"
-          sx={{
-            '& p': {
-              fontSize: '1.25rem',
-              fontWeight: 300,
-              margin: 0,
-            },
-          }}
-        />
-      </Container>
-    </AppPage>
+          </Typography>
+          <Markdown
+            value={content}
+            jsx={{ d: TextDefinition, a: LinkExternal }}
+            display="contents"
+            flexDirection="column"
+            sx={{
+              '& p': {
+                fontSize: '1.25rem',
+                fontWeight: 300,
+                margin: 0,
+              },
+            }}
+          />
+        </Container>
+      </AppPage>
+    </>
   );
 }
