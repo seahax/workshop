@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.10 - 2025-09-04
+
+- __fix:__ better clamping of max canvas size (to screen size) when resizeCanvas is "hidpi" (ea3a632)
+
 ## 0.1.9 - 2025-09-04
 
 - __docs:__ Update readme defaults (69bf260)
