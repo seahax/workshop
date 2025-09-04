@@ -33,10 +33,11 @@ function Index(): JSX.Element {
     if (!glimmerCanvas.current || !glimmerDocumentVisible || !glimmerMediaQuery || !glimmerVisible) return;
     const context = glimmerCanvas.current.getContext('2d')!;
     const glimmer = createGlimmer(context, {
+      count: 750,
       resizeCanvas: 'hidpi',
       renderer: createDefaultRenderer({
-        saturation: 60,
-        lightness: 50,
+        saturation: 65,
+        lightness: 55,
         linkWidth: 0.5,
       }),
     });
