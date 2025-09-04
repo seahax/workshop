@@ -38,14 +38,19 @@ export interface Options {
    * canvas to change size and shape unexpectedly!_
    *
    * If true, then the canvas size will be adjusted to match the canvas CSS
-   * size when they don't match. If set to `hidpi`, then the scale will also be
-   * adjusted to render at the display's native resolution. If set to false,
-   * the canvas size and scale will not be changed by Glimmer, and must be
-   * managed externally.
+   * size when they don't match.
+   *
+   * If set to `hidpi`, then the scale will also be adjusted to render at the
+   * display's native resolution. If set to false, the canvas size and scale
+   * will not be changed by Glimmer, and must be managed externally.
+   *
+   * If set to a function, the canvas will be resized and scaled as indicated
+   * by the return value. Note that the width and height will be multiplied by
+   * the pixelRatio before being applied to the canvas.
    *
    * Defaults to `true`.
    */
-  readonly resizeCanvas?: boolean | 'hidpi';
+  readonly resizeCanvas?: boolean | 'hidpi' | (() => { cssWidth: number; cssHeight: number; pixelRatio: number });
 
   /**
    * Limit the framerate. Set to zero for unlimited.

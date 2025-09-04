@@ -105,24 +105,41 @@ export function createGlimmer(
     let isPixelRatioChanged = false;
     let isCanvasResized = false;
 
-    if (typeof window !== 'undefined' && resizeCanvas) {
+    if (typeof resizeCanvas === 'function') {
+      const result = resizeCanvas();
+      const scaledWidth = result.cssWidth * pixelRatio;
+      const scaledHeight = result.cssHeight * pixelRatio;
+
+      isPixelRatioChanged = result.pixelRatio !== pixelRatio;
+      pixelRatio = result.pixelRatio;
+
+      if (canvas.width !== scaledWidth) {
+        canvas.width = scaledWidth;
+        isCanvasResized = true;
+      }
+
+      if (canvas.height !== scaledHeight) {
+        canvas.height = scaledHeight;
+        isCanvasResized = true;
+      }
+    }
+    else if (typeof window !== 'undefined' && resizeCanvas) {
       if (resizeCanvas === 'hidpi') {
-        const newPixelRatio = Math.max(1, window.devicePixelRatio);
-        isPixelRatioChanged = newPixelRatio !== pixelRatio;
-        pixelRatio = newPixelRatio;
+        isPixelRatioChanged = window.devicePixelRatio !== pixelRatio;
+        pixelRatio = window.devicePixelRatio;
       }
 
       if ('style' in canvas) {
-        const expectedWidth = Math.min(screen.width, canvas.offsetWidth) * pixelRatio;
-        const expectedHeight = Math.min(screen.height, canvas.offsetHeight) * pixelRatio;
+        const scaledWidth = canvas.offsetWidth * pixelRatio;
+        const scaledHeight = canvas.offsetHeight * pixelRatio;
 
-        if (canvas.width !== expectedWidth) {
-          canvas.width = expectedWidth;
+        if (canvas.width !== scaledWidth) {
+          canvas.width = scaledWidth;
           isCanvasResized = true;
         }
 
-        if (canvas.height !== expectedHeight) {
-          canvas.height = expectedHeight;
+        if (canvas.height !== scaledHeight) {
+          canvas.height = scaledHeight;
           isCanvasResized = true;
         }
       }
