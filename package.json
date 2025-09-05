@@ -35,6 +35,7 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "@parcel/watcher",
       "@sentry/cli",
       "esbuild",
       "nx",
