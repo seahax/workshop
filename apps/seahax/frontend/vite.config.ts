@@ -16,7 +16,7 @@ const sentry = process.env.SENTRY_AUTH_TOKEN
 console.log(`Sentry Vite Plugin: ${sentry ? 'enabled' : 'disabled'}`);
 
 export default defineConfig((env) => ({
-  mode: process.env.NODE_ENV === 'development' ? 'development' : env.mode,
+  mode: process.env.VITE_MODE === 'development' ? 'development' : env.mode,
   plugins: [react(), sentry, prefetch()],
   build: {
     sourcemap: true,
