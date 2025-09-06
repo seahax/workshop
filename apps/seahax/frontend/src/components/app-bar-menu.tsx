@@ -1,9 +1,12 @@
 import { Box, Button } from '@mui/material';
 import type { JSX } from 'react';
+import { useNavigate } from 'react-router';
 
 import AppBarUser from './app-bar-user.tsx';
 
 export default function AppBarNav(): JSX.Element {
+  const navigate = useNavigate();
+
   return (
     <Box
       gap={(theme) => theme.spacing(2)}
@@ -12,9 +15,7 @@ export default function AppBarNav(): JSX.Element {
       sx={{ display: { xs: 'none', sm: 'flex' } }}
     >
       <Box gap={(theme) => theme.spacing(1)} display="flex">
-        <Button href="https://github.com/seahax" target="_blank">Projects</Button>
-        <Button href="https://seahax.substack.com/" target="_blank">Blog</Button>
-        <Button href="https://linkedin.com/in/ackermanchris" target="_blank">Experience</Button>
+        <Button href="/#projects" onClick={() => void navigate('/#projects')}>Projects</Button>
       </Box>
       <AppBarUser />
     </Box>

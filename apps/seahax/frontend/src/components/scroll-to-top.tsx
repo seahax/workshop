@@ -1,6 +1,7 @@
 import { Box, Fab, Fade, useScrollTrigger } from '@mui/material';
 import { IconArrowUp } from '@tabler/icons-react';
 import { type JSX, useCallback } from 'react';
+import { useNavigate } from 'react-router';
 
 interface Props {
   readonly target?: Node | Window;
@@ -8,9 +9,14 @@ interface Props {
 
 export function ScrollToTop({ target }: Props = {}): JSX.Element {
   const trigger = useScrollTrigger({ target, disableHysteresis: true });
+  const navigate = useNavigate();
   const onClick = useCallback(() => {
+    if (window.location.hash) {
+      void navigate(window.location.pathname);
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
+  }, [navigate]);
 
   return (
     <>

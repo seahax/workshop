@@ -1,4 +1,4 @@
-import { Box, CssBaseline } from '@mui/material';
+import { Box, CssBaseline, Toolbar } from '@mui/material';
 import { SnackbarProvider } from 'notistack';
 import { type JSX, type PropsWithChildren } from 'react';
 import { Outlet } from 'react-router';
@@ -20,8 +20,15 @@ export default function Root({ children }: PropsWithChildren = {}): JSX.Element 
               <Box display="flex" flexDirection="column">
                 <AppMain>
                   <AppBar />
-                  <Outlet />
-                  {children}
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    gap={(theme) => ({ xs: theme.spacing(6), sm: theme.spacing(8) })}
+                  >
+                    <Outlet />
+                    {children}
+                  </Box>
+                  <Toolbar />
                 </AppMain>
                 <AppFooter />
               </Box>

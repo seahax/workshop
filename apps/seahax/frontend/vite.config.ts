@@ -1,4 +1,5 @@
 import mdx from '@mdx-js/rollup';
+import data from '@seahax/vite-plugin-data';
 import prefetch from '@seahax/vite-plugin-prefetch';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react';
@@ -21,7 +22,7 @@ export default defineConfig((env) => {
 
   return {
     mode: process.env.NODE_ENV,
-    plugins: [react(), mdx(), sentry, prefetch()],
+    plugins: [react(), mdx(), data(), sentry, prefetch()],
     build: {
       sourcemap: true,
       modulePreload: false,

@@ -1,7 +1,8 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { Box, Divider, IconButton, Link, ListItemIcon, Menu, MenuItem } from '@mui/material';
+import { Box, Divider, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material';
 import { IconLogin, IconMenu2 } from '@tabler/icons-react';
 import { type JSX, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router';
 
 import { useMenuState } from '../hooks/use-menu-state.ts';
 import UserMenuContent from './user-menu-content.tsx';
@@ -13,6 +14,7 @@ export default function AppBarMenuCollapsed(): JSX.Element {
   const loginClick = useCallback(() => {
     void loginWithRedirect({ appState: { returnTo: `${window.location.pathname}${window.location.search}` } });
   }, [loginWithRedirect]);
+  const navigate = useNavigate();
 
   return (
     <Box alignItems="center" height="100%" ref={menuAnchor} sx={{ display: { xs: 'flex', sm: 'none' } }}>
@@ -32,25 +34,10 @@ export default function AppBarMenuCollapsed(): JSX.Element {
         sx={(theme) => ({ transform: `translate(0, ${theme.spacing(0.75)})` })}
       >
         <MenuItem
-          component={Link}
-          href="https://github.com/seahax"
-          target="_blank"
+          href="/#projects"
+          onClick={() => void navigate('/#projects')}
         >
           Projects
-        </MenuItem>
-        <MenuItem
-          component={Link}
-          href="https://seahax.substack.com/"
-          target="_blank"
-        >
-          Blog
-        </MenuItem>
-        <MenuItem
-          component={Link}
-          href="https://linkedin.com/in/ackermanchris"
-          target="_blank"
-        >
-          Experience
         </MenuItem>
         <Divider />
         {isAuthenticated && <UserMenuContent showAvatar />}

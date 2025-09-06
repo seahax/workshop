@@ -21,8 +21,14 @@ const theme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: (theme) => ({
+        html: {
+          scrollBehavior: 'smooth',
+        },
         body: {
           backgroundColor: theme.darken(theme.palette.background.default, 0.45),
+        },
+        ':target': {
+          scrollMarginTop: '5rem',
         },
       }),
     },
