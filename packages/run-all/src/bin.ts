@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-import '@seahax/main';
-
 import assert from 'node:assert';
 import fs from 'node:fs/promises';
 

@@ -2,7 +2,7 @@
   "name": "@seahax/run-all",
   "version": "0.1.5",
   "private": false,
-  "description": "Run all package scripts with a prefix.",
+  "description": "Because life's too short to type 'npm run test:unit && npm run test:integration && npm run test:e2e' when you could just say 'run-all test'.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "@seahax/args": "workspace:^",
-    "@seahax/main": "workspace:^",
     "execa": "^9.6.0"
   },
   "devDependencies": {

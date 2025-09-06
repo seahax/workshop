@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@seahax/args": "workspace:^",
-    "@seahax/main": "workspace:^",
     "@seahax/promise-controller": "workspace:^",
     "@seahax/semaphore": "workspace:^",
     "@seahax/store": "workspace:^",

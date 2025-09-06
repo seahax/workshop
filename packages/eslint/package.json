@@ -2,7 +2,7 @@
   "name": "@seahax/eslint",
   "version": "0.2.21",
   "private": false,
-  "description": "Yet another ESLint configuration.",
+  "description": "",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",

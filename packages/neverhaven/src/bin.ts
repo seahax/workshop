@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-import '@seahax/main';
-
 import { alias, createHelp, cue, parseOptions } from '@seahax/args';
 
 import { createGame } from './game.ts';

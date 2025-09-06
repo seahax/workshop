@@ -1,6 +1,6 @@
 # @seahax/tsconfig
 
-Shared tsconfig base.
+Shared tsconfig base. What I think the TSConfig defaults should be.
 
 - Bundler Required
 - React Compatible (preserve)

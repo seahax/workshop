@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-import '@seahax/main';
-
 import { alias, createHelp, cue, flag, parseOptions } from '@seahax/args';
 
 import { getDirectories } from './get-directories.ts';
