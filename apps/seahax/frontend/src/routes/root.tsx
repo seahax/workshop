@@ -1,4 +1,4 @@
-import { Box, CssBaseline, Toolbar } from '@mui/material';
+import { Box, CssBaseline } from '@mui/material';
 import { SnackbarProvider } from 'notistack';
 import { type JSX, type PropsWithChildren } from 'react';
 import { Outlet } from 'react-router';
