@@ -1,4 +1,14 @@
-import { Box, Card, CardContent, Container, Fade, Typography, useMediaQuery, useScrollTrigger } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardContent,
+  Container,
+  Fade,
+  Typography,
+  useMediaQuery,
+  useScrollTrigger,
+} from '@mui/material';
 import { createDefaultRenderer, createGlimmer } from '@seahax/glimmer';
 import { IconHandStop } from '@tabler/icons-react';
 import { type JSX, useEffect, useRef } from 'react';
@@ -6,6 +16,7 @@ import { type JSX, useEffect, useRef } from 'react';
 import { AppPage } from '../components/app-page.tsx';
 import { animation } from '../components/app-theme.tsx';
 import Canvas from '../components/canvas.tsx';
+import projects from '../data/projects.data.ts';
 import useDelay from '../hooks/use-delay.ts';
 import { useDocumentVisible } from '../hooks/use-document-visible.ts';
 import HomeMdx from './home.mdx';
@@ -15,7 +26,6 @@ export default defineRoute({
   Component: Home,
 });
 
-// TODO: Generate a list of packages in this repo for the Projects section.
 // TODO: Use the Substack RSS feed to list blog posts.
 // TODO: Use the LinkedIn API to list work experience.
 
@@ -45,14 +55,14 @@ function Home(): JSX.Element {
     <>
       {glimmerDocumentVisible && glimmerMediaQuery && (
         <Fade in={glimmerScrollTrigger} appear={false} timeout={1000}>
-          <Canvas canvasRef={glimmerCanvas} position="absolute" width="100%" height="100%" />
+          <Canvas canvasRef={glimmerCanvas} position="absolute" top={0} width="100%" height="100%" maxHeight="100vh" />
         </Fade>
       )}
       <AppPage zIndex={1}>
         <Container
           sx={(theme) => ({
             pt: 4,
-            pb: 18,
+            pb: 10,
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
@@ -62,7 +72,7 @@ function Home(): JSX.Element {
           <Typography
             variant="h2"
             component="h1"
-            marginBlock={(theme) => theme.spacing(3)}
+            marginBlockEnd={(theme) => theme.spacing(3)}
             sx={(theme) => ({ textAlign: 'center', color: theme.palette.secondary.main })}
           >
             Hello, I&apos;m&nbsp;Chris.
@@ -97,11 +107,32 @@ function Home(): JSX.Element {
           </Box>
         </Container>
       </AppPage>
-      <Box>
-        <Card variant="outlined">
-          <CardContent>Testing 123</CardContent>
-        </Card>
-      </Box>
+      <Container id="projects" sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <Typography variant="h4" component="h2" color="secondary">
+          My Projects
+        </Typography>
+        <Box
+          display="grid"
+          gridTemplateColumns={'repeat(auto-fit, minmax(350px, 1fr))'}
+          gridAutoRows="1fr"
+          gap={(theme) => theme.spacing(3)}
+        >
+          {projects.map((project, i) => {
+            return (
+              <Card key={i} variant="outlined" sx={{ boxShadow: (theme) => theme.shadows[4] }}>
+                <CardActionArea href={project.homepage} target="_blank" sx={{ minHeight: '100%' }}>
+                  <CardContent>
+                    <Typography variant="h5" gutterBottom component="div">
+                      {project.name.replace(/^.*\//u, '')}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">{project.description}</Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            );
+          })}
+        </Box>
+      </Container>
     </>
   );
 }

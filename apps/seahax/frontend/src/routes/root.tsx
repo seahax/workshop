@@ -28,7 +28,6 @@ export default function Root({ children }: PropsWithChildren = {}): JSX.Element 
                     <Outlet />
                     {children}
                   </Box>
-                  <Toolbar />
                 </AppMain>
                 <AppFooter />
               </Box>
