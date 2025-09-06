@@ -1,4 +1,4 @@
-import { Box, Container, Fade, Typography, useMediaQuery, useScrollTrigger } from '@mui/material';
+import { Box, Card, CardContent, Container, Fade, Typography, useMediaQuery, useScrollTrigger } from '@mui/material';
 import { createDefaultRenderer, createGlimmer } from '@seahax/glimmer';
 import { IconHandStop } from '@tabler/icons-react';
 import { type JSX, useEffect, useRef } from 'react';
@@ -8,18 +8,18 @@ import { animation } from '../components/app-theme.tsx';
 import Canvas from '../components/canvas.tsx';
 import useDelay from '../hooks/use-delay.ts';
 import { useDocumentVisible } from '../hooks/use-document-visible.ts';
-import IndexMdx from './index.mdx';
+import HomeMdx from './home.mdx';
 import defineRoute from './util/define-route.tsx';
 
 export default defineRoute({
-  Component: Index,
+  Component: Home,
 });
 
 // TODO: Generate a list of packages in this repo for the Projects section.
 // TODO: Use the Substack RSS feed to list blog posts.
 // TODO: Use the LinkedIn API to list work experience.
 
-function Index(): JSX.Element {
+function Home(): JSX.Element {
   const glimmerCanvas = useRef<HTMLCanvasElement>(null);
   const glimmerDocumentVisible = useDocumentVisible();
   const glimmerMediaQuery = useMediaQuery((theme) => theme.breakpoints.up('sm'));
@@ -93,10 +93,15 @@ function Index(): JSX.Element {
               },
             }}
           >
-            <IndexMdx />
+            <HomeMdx />
           </Box>
         </Container>
       </AppPage>
+      <Box>
+        <Card variant="outlined">
+          <CardContent>Testing 123</CardContent>
+        </Card>
+      </Box>
     </>
   );
 }

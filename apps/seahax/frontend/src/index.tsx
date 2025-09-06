@@ -17,7 +17,7 @@ const router = createBrowserRouter([
     ErrorBoundary: RouteError,
     HydrateFallback: () => null,
     children: [
-      lazyRoute({ index: true, lazy: () => import('./routes/index.tsx') }),
+      lazyRoute({ index: true, lazy: () => import('./routes/home.tsx') }),
     ],
   },
 ]);
