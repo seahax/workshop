@@ -1,0 +1,12 @@
+{
+  "name": "h.siderea",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "vite"
+  },
+  "devDependencies": {
+    "@seahax/vite-plugin-lib": "workspace:*",
+    "@seahax/vite-plugin-prefetch": "workspace:*"
+  }
+}
