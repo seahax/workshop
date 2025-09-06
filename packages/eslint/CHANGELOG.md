@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.22 - 2025-09-06
+
+- __chore:__ update some package descriptions and readmes for better content on the seahax home page (20d49e5)
+
 ## 0.2.21 - 2025-09-02
 
 - __fix:__ disable some unicorn rules (bc32398)

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.4 - 2025-09-06
+
+- __chore:__ update some package descriptions and readmes for better content on the seahax home page (20d49e5)
+
 ## 0.2.3 - 2025-08-24
 
 - __chore:__ update deps (f4eff46)

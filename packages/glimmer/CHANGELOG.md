@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.12 - 2025-09-06
+
+- __chore:__ fix glimmer dev styling (5033e90)
+
 ## 0.1.11 - 2025-09-04
 
 - __fix:__ orientation change not working (85c028d)
