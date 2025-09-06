@@ -2,9 +2,8 @@ import { Box, Container, Divider, IconButton, Tooltip, Typography } from '@mui/m
 import { IconBrandGithub, IconBrandLinkedin, IconMail } from '@tabler/icons-react';
 import type { JSX } from 'react';
 
-import content from './app-footer.md?raw';
+import AppFooterMdx from './app-footer.mdx';
 import { LinkExternal } from './link-external.tsx';
-import Markdown from './markdown.tsx';
 
 export default function AppFooter(): JSX.Element {
   return (
@@ -65,8 +64,11 @@ export default function AppFooter(): JSX.Element {
         paddingInline={(theme) => ({ xs: undefined, sm: theme.spacing(1) })}
         paddingBlock={(theme) => ({ xs: theme.spacing(1), sm: 0 })}
         color="textSecondary"
+        sx={{
+          '& p': { margin: 0 },
+        }}
       >
-        <Markdown value={content} jsx={{ a: LinkExternal }} />
+        <AppFooterMdx />
       </Typography>
     </Container>
   );

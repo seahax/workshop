@@ -6,12 +6,9 @@ import { type JSX, useEffect, useRef } from 'react';
 import { AppPage } from '../components/app-page.tsx';
 import { animation } from '../components/app-theme.tsx';
 import Canvas from '../components/canvas.tsx';
-import { LinkExternal } from '../components/link-external.tsx';
-import Markdown from '../components/markdown.tsx';
-import TextDefinition from '../components/text-definition.tsx';
 import useDelay from '../hooks/use-delay.ts';
 import { useDocumentVisible } from '../hooks/use-document-visible.ts';
-import content from './index.md?raw';
+import IndexMdx from './index.mdx';
 import defineRoute from './util/define-route.tsx';
 
 export default defineRoute({
@@ -86,11 +83,8 @@ function Index(): JSX.Element {
               </Box>
             </Box>
           </Typography>
-          <Markdown
-            value={content}
-            jsx={{ d: TextDefinition, a: LinkExternal }}
-            display="contents"
-            flexDirection="column"
+          <Box
+            display={'contents'}
             sx={{
               '& p': {
                 fontSize: '1.25rem',
@@ -98,7 +92,9 @@ function Index(): JSX.Element {
                 margin: 0,
               },
             }}
-          />
+          >
+            <IndexMdx />
+          </Box>
         </Container>
       </AppPage>
     </>

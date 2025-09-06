@@ -7,6 +7,8 @@ import Root from './root.tsx';
 export default function RouteError(): JSX.Element {
   const error = useRouteError();
 
+  console.error(error);
+
   return isRouteErrorResponse(error)
     ? (
         <RouteErrorView

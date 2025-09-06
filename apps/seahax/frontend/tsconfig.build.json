@@ -1,6 +1,7 @@
 {
   "extends": "@seahax/tsconfig",
   "compilerOptions": {
+    "plugins": [ { "name": "@mdx-js/typescript-plugin" } ],
     "rootDir": "src",
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.build.tsbuildinfo",

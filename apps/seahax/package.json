@@ -27,6 +27,7 @@
     "@mui/material": "^7.3.1",
     "@seahax/background": "workspace:*",
     "@seahax/espresso": "workspace:*",
+    "@seahax/glimmer": "workspace:*",
     "@seahax/interval": "workspace:*",
     "@seahax/service": "workspace:*",
     "@seahax/zod-codec": "workspace:*",
@@ -34,7 +35,6 @@
     "@sentry/react": "^10.5.0",
     "@tabler/icons-react": "^3.34.1",
     "helmet": "^8.1.0",
-    "marked-react": "^3.0.1",
     "mongodb": "^6.18.0",
     "morgan": "^1.10.1",
     "notistack": "^3.0.2",
@@ -45,8 +45,8 @@
     "zod": "^4.1.0"
   },
   "devDependencies": {
-    "@seahax/eslint": "workspace:*",
-    "@seahax/glimmer": "workspace:*",
+    "@mdx-js/rollup": "^3.1.1",
+    "@mdx-js/typescript-plugin": "^0.1.2",
     "@seahax/run-all": "workspace:*",
     "@seahax/vite-plugin-data": "workspace:*",
     "@seahax/vite-plugin-lib": "workspace:*",

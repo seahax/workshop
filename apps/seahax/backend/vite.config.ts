@@ -15,14 +15,16 @@ const sentry = process.env.SENTRY_AUTH_TOKEN
 
 console.log(`Sentry Vite Plugin: ${sentry ? 'enabled' : 'disabled'}`);
 
-// The mongodb driver fails due to missing optional peers if this is not set.
-process.env.NODE_ENV = 'production';
+export default defineConfig((env) => {
+  // The mongodb driver fails due to missing optional peers if this is not set.
+  process.env.NODE_ENV = 'production';
 
-export default defineConfig((env) => ({
-  mode: process.env.VITE_MODE === 'development' ? 'development' : env.mode,
-  plugins: [
-    lib({ runtime: 'node', formats: ['es'], bundle: { minify: false } }),
-    data(),
-    sentry,
-  ],
-}));
+  return {
+    mode: process.env.VITE_MODE ?? env.mode,
+    plugins: [
+      lib({ runtime: 'node', formats: ['es'], bundle: { minify: false } }),
+      data(),
+      sentry,
+    ],
+  };
+});
