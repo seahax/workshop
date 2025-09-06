@@ -17,6 +17,7 @@ export default function Canvas({ ref, canvasRef, ...props }: Props): JSX.Element
       sx={[
         {
           '& > canvas': {
+            display: 'block',
             position: 'absolute',
             height: '100%',
             width: '100%',
