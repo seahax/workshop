@@ -119,7 +119,18 @@ function Home(): JSX.Element {
         >
           {projects.map((project, i) => {
             return (
-              <Card key={i} variant="outlined" sx={{ boxShadow: (theme) => theme.shadows[4] }}>
+              <Card
+                key={i}
+                variant="outlined"
+                sx={{
+                  boxShadow: (theme) => theme.shadows[4],
+                  transition: 'scale 0.25s, box-shadow 0.25s',
+                  '&:hover': {
+                    scale: 1.03,
+                    boxShadow: (theme) => theme.shadows[8],
+                  },
+                }}
+              >
                 <CardActionArea href={project.homepage} target="_blank" sx={{ minHeight: '100%' }}>
                   <CardContent>
                     <Typography variant="h5" gutterBottom component="div">
