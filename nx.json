@@ -1,4 +1,7 @@
 {
+  "tui": {
+    "enabled": false
+  },
   "targetDefaults": {
     "build": {
       "cache": true,

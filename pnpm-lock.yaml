@@ -153,6 +153,9 @@ importers:
       '@mdx-js/typescript-plugin':
         specifier: ^0.1.2
         version: 0.1.2
+      '@seahax/eslint':
+        specifier: workspace:*
+        version: link:../../packages/eslint
       '@seahax/run-all':
         specifier: workspace:*
         version: link:../../packages/run-all
