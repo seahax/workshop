@@ -124,7 +124,7 @@ export default function plugin({
         if (command === 'build' && config.build.lib !== false) {
           config.build.lib ??= { ...libConfig, entry } as LibraryOptions;
           config.build.lib.formats ??= ['es'];
-          config.build.lib.fileName = (format, entryName) => {
+          config.build.lib.fileName ??= (format, entryName) => {
             if (format === 'es') return `${entryName}.mjs`;
             if (format === 'cjs') return `${entryName}.cjs`;
             return `${entryName}.${format}.js`;
