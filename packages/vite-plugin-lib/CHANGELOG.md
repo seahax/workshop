@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.4 - 2025-09-13
+
+- __fix:__ do not override use provided build.lib.fileName option (5f03cb2)
+
 ## 0.8.3 - 2025-08-30
 
 - __chore:__ add descriptions to packages (000878e)
