@@ -12,11 +12,11 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./src/config.d.ts",
-      "import": "./src/config.mjs"
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js"
     }
   },
-  "types": "src/config.d.ts",
+  "types": "src/index.d.ts",
   "dependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.34.0",

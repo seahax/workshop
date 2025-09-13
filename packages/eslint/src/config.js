@@ -18,9 +18,15 @@ const ext = [...jsExt, ...tsExt];
 export const DEFAULT_IGNORES = ['**/{node_modules,lib,dist,out,coverage,generated}'];
 
 /**
- * @param {Object} options
- * @param {readonly string[]} [options.ignores]
- * @returns {import('eslint').Linter.Config[]};
+ * @typedef {import('eslint').Linter.Config} Config
+ * @typedef {import('./config').Options} Options
+ */
+
+/**
+ * Seahax ESLint config factory.
+ *
+ * @param {Options} options Seahax ESLint config options.
+ * @returns {Config[]} Array of ESLint configurations.
  */
 export default function config({ ignores = DEFAULT_IGNORES } = {}) {
   return [
