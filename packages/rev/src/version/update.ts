@@ -18,7 +18,7 @@ interface ResultPrivate {
 }
 
 interface ResultUnchanged {
-  readonly state: 'unchanged';
+  readonly state: 'unchanged' | 'unreleased';
   readonly dir: string;
   readonly name: string;
 }
@@ -49,14 +49,7 @@ export async function update({ pkg, force, allowDirty }: {
   const npmMetadata = await getNpmMetadata({ spec: `${pkg.data.name}@<=${pkg.data.version}` });
 
   if (!npmMetadata) {
-    return {
-      state: 'changed',
-      dir,
-      name,
-      versions: { from: 'unreleased', to: pkg.data.version },
-      logs: [],
-      commit: async () => undefined,
-    };
+    return { state: 'unreleased', dir, name };
   }
 
   const logs = await getGitLogs({ dir, name: pkg.data.name, gitHead: npmMetadata.gitHead });
