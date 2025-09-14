@@ -110,8 +110,9 @@ export function createSemaphore<TOwner = void>({
         try {
           onAcquire?.(owner);
         }
-        finally {
+        catch (error: unknown) {
           release();
+          throw error;
         }
 
         return {
