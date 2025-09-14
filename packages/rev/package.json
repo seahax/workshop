@@ -2,7 +2,7 @@
   "name": "@seahax/rev",
   "version": "0.2.7",
   "private": false,
-  "description": "Project version and release management tool (package manager agnostic).",
+  "description": "Simple project version and release management tool (package manager agnostic).",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",

@@ -29,7 +29,7 @@ export function getNextVersion({ packageVersion, npmVersion, logs }: {
       break;
     }
 
-    if (log.type === 'feat' && recommended.priority < RELEASE.minor.priority) {
+    if (log.type.startsWith('feat') && recommended.priority < RELEASE.minor.priority) {
       recommended = RELEASE.minor;
     }
   }

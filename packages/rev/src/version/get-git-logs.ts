@@ -64,48 +64,30 @@ function getFullText(name: string, log: Omit<GitLog, 'fullText'>): string {
 function getNormalType(type: string): string {
   type = type.toLowerCase().trim();
 
-  switch (type) {
-    case 'feats':
-    case 'feature':
-    case 'features': {
-      return 'feat';
-    }
-    case 'fixes':
-    case 'fixed':
-    case 'fixing': {
-      return 'fix';
-    }
-    case 'refactors':
-    case 'refactored':
-    case 'refactoring':
-    case 'rewrite':
-    case 'rewrites':
-    case 'rewriting': {
-      return 'refactor';
-    }
-    case 'styles':
-    case 'styling': {
-      return 'style';
-    }
-    case 'tests':
-    case 'testing': {
-      return 'test';
-    }
-    case 'builds':
-    case 'building': {
-      return 'build';
-    }
-    case 'doc':
-    case 'document':
-    case 'documents':
-    case 'documenting':
-    case 'documentation': {
-      return 'docs';
-    }
-    default: {
-      return type || 'chore';
-    }
-  }
+  if (type.startsWith('feat')) return 'feat';
+
+  if (type.startsWith('fix')) return 'fix';
+
+  if (type.startsWith('perf')) return 'perf';
+
+  if (type.startsWith('ops')) return 'ops';
+
+  if (type.startsWith('refactor')) return 'refactor';
+  if (type.startsWith('rewrit')) return 'refactor';
+
+  if (type.startsWith('styl')) return 'style';
+
+  if (type.startsWith('test')) return 'test';
+
+  if (type.startsWith('build')) return 'build';
+
+  if (type.startsWith('doc')) return 'docs';
+
+  if (type.startsWith('chore')) return 'chore';
+  if (type.startsWith('patch')) return 'chore';
+  if (!type) return 'chore';
+
+  return type;
 }
 
 function compareLogs(a: GitLog, b: GitLog): number {
