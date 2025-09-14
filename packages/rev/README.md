@@ -5,6 +5,7 @@ Simple project version and release management tool (package manager agnostic).
 - [Getting Started](#getting-started)
 - [Version](#version)
   - [Commit Messages](#commit-messages)
+- [Tag](#tag)
 - [Publish](#publish)
 
 
@@ -30,7 +31,7 @@ rev version --dry-run
 rev version --force
 ```
 
-This will bump public package versions and changelogs based on commit messages since the last version.
+This will bump public package versions and changelogs based on commit messages since the last version. Changes are not commited automatically to allow review and modification before committing.
 
 ### Commit Messages
 
@@ -65,6 +66,35 @@ You must manually promote a package from alpha to beta, or from beta to stable. 
 If a version tag is present, the version is considered prerelease, and only the tag will be incremented no matter what commit messages are present. For example `2.0.0-beta.1` will be bumped to `2.0.0-beta.2`, even if there is a `feat` commit or a breaking change commit.
 
 This is due to what prerelease versions are supposed to mean. If you've created a prerelease version (eg. `2.0.0-beta.0`), then you're stating that you are working on a future `2.0.0` release that is planned out ahead of time. You already know what the future version will be, because you know the type of changes you will be making. Therefore, any commits you make are just working towards that future version, and should not affect what that future version will be.
+
+## Tag
+
+After version changes are committed, run this command to tag the release commit.
+
+```sh
+rev tag
+
+# Tag a specific commit instead of HEAD.
+rev tag --commit <commit-sha>
+
+# Use a custom suffix instead of the default ISO 8601 datetime.
+rev tag --suffix "custom-suffix"
+```
+
+> **NOTE:** This command will fail if the commit is not a release. A release commit must contain at least one package version change.
+
+The tag is an annotated tag with the name `release-<ISO_8601_DateTime>` and a message containing a list of the released packages and their new versions.
+
+Example Tag Name: `release-20250914T213442Z`
+
+Example Tag Message:
+
+```
+- package-a@1.2.3
+- package-b@4.5.6
+```
+
+If using a CI workflow, this tag can be used to trigger publishing, instead of publishing on every push to the main branch.
 
 ## Publish
 
