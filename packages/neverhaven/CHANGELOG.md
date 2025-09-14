@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.15 - 2025-09-14
+
+- __chore:__ use nx instead of pnpm commands (6f1eb95)
+
 ## 0.1.14 - 2025-09-06
 
 - __chore:__ update some package descriptions and readmes for better content on the seahax home page (20d49e5)

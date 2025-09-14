@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0 - 2025-09-14
+
+- __feat:__ improve and document commit message handling (574bdd8)
+
 ## 0.2.7 - 2025-09-14
 
 - __fix:__ workaround modifying the package.json and pnpm not wanting to publish with uncomitted changes (648efca)

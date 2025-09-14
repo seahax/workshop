@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0 - 2025-09-14
+
+- __feat:__ add onAcquire, onRelease, active, and owner (b49ba5b)
+
 ## 0.3.2 - 2025-08-30
 
 - __chore:__ add descriptions to packages (000878e)
