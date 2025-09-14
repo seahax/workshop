@@ -52,6 +52,20 @@ Examples:
 - `fix: a patch change`
 - `also a patch change because it doesn't match the format at all`
 
+# Beta and Alpha Versions
+
+Version bumping will never modify the left-most zeros in a version. This means that if a package is at `0.x.x` (a beta version), then it will always stay at `0.x.x` until you manually change it to `1.0.0` or higher. If it's at `0.0.x` (an alpha version), then it will always stay at `0.0.x` until you manually change it to `0.1.0` or higher.
+
+This is inline with the [NPM semver caret range](https://docs.npmjs.com/cli/v6/using-npm/semver#caret-ranges-123-025-004) behavior, which treats the left-most non-zero number as the "major" version.
+
+You must manually promote a package from alpha to beta, or from beta to stable. There is no commit message format that marks a package as promotable.
+
+# Prerelease Versions
+
+If a version tag is present, the version is considered prerelease, and only the tag will be incremented no matter what commit messages are present. For example `2.0.0-beta.1` will be bumped to `2.0.0-beta.2`, even if there is a `feat` commit or a breaking change commit.
+
+This is due to what prerelease versions are supposed to mean. If you've created a prerelease version (eg. `2.0.0-beta.0`), then you're stating that you are working on a future `2.0.0` release that is planned out ahead of time. You already know what the future version will be, because you know the type of changes you will be making. Therefore, any commits you make are just working towards that future version, and should not affect what that future version will be.
+
 ## Publish
 
 Update package version using the `version` command, or some other way. Then run the `publish` command at the repo root. This will use your package manager to publish all public (non-private) package that have a new (unpublished) version.

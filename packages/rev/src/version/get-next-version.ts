@@ -16,9 +16,15 @@ export function getNextVersion({ packageVersion, npmVersion, logs }: {
   npmVersion: string | undefined;
   logs: readonly GitLog[];
 }): string {
+  const isBeta = semver.major(packageVersion) === 0;
+  const isAlpha = isBeta && semver.minor(packageVersion) === 0;
   const isPreRelease = semver.prerelease(packageVersion) != null;
 
+  // Prerelease versions are always bumped to the next prerelease version.
   if (isPreRelease) return semver.inc(packageVersion, 'prerelease')!;
+  // If the current version is alpha, always do a patch bump.
+  if (isAlpha) return semver.inc(packageVersion, 'patch')!;
+  // If there is no published version, always do a patch bump.
   if (!npmVersion) return semver.inc(packageVersion, 'patch')!;
 
   let recommended: Release = RELEASE.patch;
@@ -32,6 +38,11 @@ export function getNextVersion({ packageVersion, npmVersion, logs }: {
     if (log.type.startsWith('feat') && recommended.priority < RELEASE.minor.priority) {
       recommended = RELEASE.minor;
     }
+  }
+
+  if (isBeta && recommended.priority > RELEASE.minor.priority) {
+    // Clamp the recommended release type for beta versions.
+    recommended = RELEASE.minor;
   }
 
   const currentType = semver.diff(npmVersion, packageVersion) ?? 'patch';
