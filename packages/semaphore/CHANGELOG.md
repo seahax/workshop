@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0 - 2025-09-14
+
+- __feat:__ add mutex (288ad2f)
+
 ## 0.4.0 - 2025-09-14
 
 - __feat:__ add onAcquire, onRelease, active, and owner (b49ba5b)
