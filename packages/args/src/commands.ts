@@ -3,7 +3,20 @@ export interface CommandsConfig {
 }
 
 export interface CommandsResult<TConfig extends string[] = string[]> {
+  /**
+   * The matched command, or `undefined` if no command was matched.
+   */
+  name: TConfig[number] | undefined;
+
+  /**
+   * @deprecated Use `name` instead.
+   */
   command: TConfig[number] | undefined;
+
+  /**
+   * Remaining arguments following the matched command, or all arguments if
+   * no command was matched.
+   */
   args: string[];
 };
 
@@ -19,17 +32,17 @@ export function parseCommands<const TConfig extends string[]>(
   config: ValidatedOptionNames<TConfig>,
 ): CommandsResult<TConfig> {
   const entries = config
-    .map((command): { command: string; parts: readonly string[] } => ({
-      command,
-      parts: command.split(/\s+/u).filter((part) => part.length > 0),
+    .map((name): { name: string; parts: readonly string[] } => ({
+      name,
+      parts: name.split(/\s+/u).filter((part) => part.length > 0),
     }))
     .filter(({ parts }) => parts.length > 0);
 
-  for (const { command, parts } of entries) {
+  for (const { name, parts } of entries) {
     if (parts.every((part, index) => args[index] === part)) {
-      return { command, args: args.slice(parts.length) };
+      return { name, command: name, args: args.slice(parts.length) };
     }
   }
 
-  return { command: undefined, args: [...args] };
+  return { name: undefined, command: undefined, args: [...args] };
 }

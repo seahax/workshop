@@ -10,7 +10,7 @@ test('parse commands', async () => {
     'list images',
   ]);
 
-  expect(parse(['foo', 'bar'])).toEqual({ command: undefined, args: ['foo', 'bar'] });
-  expect(parse(['help'])).toEqual({ command: 'help', args: [] });
-  expect(parse(['list', 'images', 'foo', 'bar'])).toEqual({ command: 'list images', args: ['foo', 'bar'] });
+  expect(parse(['foo', 'bar'])).toMatchObject({ name: undefined, args: ['foo', 'bar'] });
+  expect(parse(['help'])).toMatchObject({ name: 'help', args: [] });
+  expect(parse(['list', 'images', 'foo', 'bar'])).toMatchObject({ name: 'list images', args: ['foo', 'bar'] });
 });
