@@ -15,7 +15,7 @@
     "lint": "eslint */src",
     "start": "./scripts/start.sh",
     "test": "run-all test.",
-    "test.0-lint": "pnpm lint --max-warnings=0"
+    "test.0-lint": "nx lint --max-warnings=0"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.4.0",

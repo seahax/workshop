@@ -19,7 +19,7 @@
   "scripts": {
     "build": "vite build && tsc -b -f src/tsconfig.json",
     "clean": "rm -rf dist",
-    "start": "pnpm build && node bin.mjs"
+    "start": "nx build && node bin.mjs"
   },
   "dependencies": {
     "@seahax/args": "workspace:^",

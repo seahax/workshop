@@ -8,8 +8,8 @@
     "lint": "eslint . --ignore-pattern='unreleased'",
     "modernize": "npx npm-check-updates@latest -i --root --workspaces --dep dev,prod,peer,optional,packageManager --peer --format group && pnpm dedupe",
     "test": "run-all test.",
-    "test.0-build": "nx build root",
-    "test.1-lint": "nx lint root --max-warnings=0",
+    "test.0-build": "nx build",
+    "test.1-lint": "nx lint --max-warnings=0",
     "test.2-unit": "vitest run"
   },
   "devDependencies": {
