@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "nx run-many -t build --exclude root",
-    "lint": "eslint . --ignore-pattern='unreleased'",
+    "lint": "eslint .",
     "modernize": "npx npm-check-updates@latest -i --root --workspaces --dep dev,prod,peer,optional,packageManager --peer --format group && pnpm dedupe",
     "test": "run-all test.",
     "test.0-build": "nx build",
