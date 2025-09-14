@@ -4,10 +4,10 @@ import path from 'node:path';
 import { throttling } from '@octokit/plugin-throttling';
 import { Octokit } from '@octokit/rest';
 
-assert.ok(process.env.GITHUB_WORKFLOW_REF, 'Missing GITHUB_WORKFLOW_REF environment variable.');
+// assert.ok(process.env.GITHUB_WORKFLOW_REF, 'Missing GITHUB_WORKFLOW_REF environment variable.');
 assert.ok(process.env.GITHUB_REPOSITORY, 'Missing GITHUB_REPOSITORY environment variable.');
 
-const workflow = path.basename(process.env.GITHUB_WORKFLOW_REF.split('@', 1)[0]!);
+// const workflow = path.basename(process.env.GITHUB_WORKFLOW_REF.split('@', 1)[0]!);
 const [owner = '', repo = ''] = process.env.GITHUB_REPOSITORY.split('/', 2);
 const expireDays = Number.parseInt(process.env.EXPIRE_DAYS ?? '', 10) || 0;
 const expireMilliseconds = expireDays * 24 * 60 * 60 * 1000;
@@ -35,21 +35,11 @@ const octokit = new (Octokit.plugin(throttling))({
   },
 });
 
-/**
- * The workflow filename, not the ID. Turns out, the filename will work in
- * place of the ID for workflow API calls.
- */
-// const workflow = path.basename(process.env.GITHUB_WORKFLOW_REF.split('@', 1)[0] ?? '');
-// const [owner = '', repo = ''] = process.env.GITHUB_REPOSITORY.split('/', 2);
-const runs = await octokit.paginate(
-  octokit.actions.listWorkflowRuns,
-  { workflow_id: workflow, owner, repo },
-);
-
-runs.sort((a, b) => b.run_number - a.run_number);
+const runs = await octokit.paginate(octokit.actions.listWorkflowRunsForRepo, { owner, repo });
 
 for (const run of runs) {
-  const { id, run_number, created_at, status, pull_requests } = run;
+  const { id, path: runPath, run_number, created_at, status, pull_requests } = run;
+  const filename = path.relative('.github/workflows', runPath);
   const expiration = new Date(created_at).getTime() + expireMilliseconds;
   const now = Date.now();
 
@@ -57,21 +47,21 @@ for (const run of runs) {
   if (process.env.GITHUB_RUN_ID === String(id)) continue;
 
   if (expiration >= now) {
-    console.log(`Skipped run #${run_number} (${id}) with an age of less than ${expireDays} days.`);
+    console.log(`Skipped "${filename}" #${run_number} [${id}] (age < ${expireDays} days)`);
     continue;
   }
 
   if (status !== 'completed') {
-    console.log(`Skipped run #${run_number} (${id}) with status "${status}".`);
+    console.log(`Skipped "${filename}" #${run_number} [${id}] (status: ${status})`);
     continue;
   }
 
   if (pull_requests?.length) {
-    console.log(`Skipped run #${run_number} (${id}) with attached PRs.`);
+    console.log(`Skipped "${filename}" #${run_number} [${id}] (attached PRs)`);
     continue;
   }
 
-  console.log(`Delete run #${run_number} (${id}).${dryRun ? ' (dry run)' : ''}`);
+  console.log(`Delete "${filename}" #${run_number} [${id}]${dryRun ? ' (dry run)' : ''}`);
 
   if (dryRun) continue;
 

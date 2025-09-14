@@ -13,6 +13,10 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "esModuleInterop": true,
-    "noEmit": true
+    "noEmit": true,
+    // Native Node TS support.
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "rewriteRelativeImportExtensions": true,
   }
 }

@@ -1,0 +1,21 @@
+name: Cleanup
+run-name: ${{ github.workflow }}
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 0 * * 0' # Weekly on Sunday at midnight UTC
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Cleanup
+        uses: ./.github/actions/cleanup
