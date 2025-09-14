@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.25 - 2025-09-14
+
+- __fix:__ type inference problems (27a0dc3)
+
 ## 0.2.24 - 2025-09-14
 
 No changes.
