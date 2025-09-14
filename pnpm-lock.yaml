@@ -209,6 +209,12 @@ importers:
         specifier: workspace:*
         version: link:../vite-plugin-lib
 
+  packages/deep-copy:
+    devDependencies:
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+
   packages/eslint:
     dependencies:
       '@eslint/eslintrc':

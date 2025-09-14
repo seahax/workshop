@@ -1,0 +1,13 @@
+{
+  "extends": "@seahax/tsconfig",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+    "types": [
+      "vite/client"
+    ],
+    "noEmit": false
+  },
+  "include": [ "src" ]
+}
