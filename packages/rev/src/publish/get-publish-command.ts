@@ -4,7 +4,7 @@ import path from 'node:path';
 export async function getPublishCommand(dir: string): Promise<string | undefined> {
   dir = path.resolve(dir);
 
-  if (await exists(path.join(dir, 'pnpm-lock.yaml'))) return 'pnpm publish';
+  if (await exists(path.join(dir, 'pnpm-lock.yaml'))) return 'pnpm publish --no-git-checks';
   if (await exists(path.join(dir, 'yarn.lock'))) return 'yarn npm publish';
   if (await exists(path.join(dir, 'package-lock.json'))) return 'npm publish';
 
