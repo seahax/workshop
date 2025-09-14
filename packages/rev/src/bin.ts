@@ -1,33 +1,54 @@
 #!/usr/bin/env node
-import { alias, createHelp, cue, flag, parseOptions } from '@seahax/args';
+import { alias, createHelp, cue, parseCommands, parseOptions } from '@seahax/args';
+import chalk from 'chalk';
 
-import { getDirectories } from './get-directories.ts';
-import { printResult } from './print-result.ts';
-import { rev } from './rev.ts';
+import { listCommand } from './list/command.ts';
+import { publishCommand } from './publish/command.ts';
+import { versionCommand } from './version/command.ts';
 
 const help = createHelp`
-{bold Usage:} rev {blue [options]}
+{bold Usage:} rev {green <command>} {blue [options]}
 
-A conventional(-ish) versioning tool. The type of version bump (patch, minor,
-or major) is based loosely on the Conventional Commits spec.
-
-Supports single packages and monorepos. Add globs to the ".rev" file at the
-repo root to include multiple packages.
+Project version and release management tool (package manager agnostic).
+Supports single packages and monorepos. Recursively finds all non-private
+packages starting in the current working directory.
 
 Read the docs:
 https://github.com/seahax/workshop/blob/main/packages/rev/README.md
 
+{bold Commands:}
+  {green version}   Bump package versions based on commit history.
+  {green publish}   Publish packages to an npm registry.
+  {green list}      List all packages.
+
 {bold Options:}
-  {blue --force}         Bump the version even if there are no new commits.
-  {blue --allow-dirty}   Allow the Git working directory to be dirty.
-  {blue --dry-run}       Do not write any files.
-  {blue --help, -h}      Show this help message.
+  {blue --help, -h}   Show this help message.
 `;
 
+const command = parseCommands(process.argv.slice(2), ['version', 'publish', 'list']);
+
+try {
+  if (command.name === 'version') {
+    await versionCommand(command.args);
+    process.exit();
+  }
+
+  if (command.name === 'publish') {
+    await publishCommand(command.args);
+    process.exit();
+  }
+
+  if (command.name === 'list') {
+    await listCommand(command.args);
+    process.exit();
+  }
+}
+catch (error: unknown) {
+  console.error(chalk.red(String(error)));
+  process.exit(1);
+}
+
 const options = await parseOptions(process.argv.slice(2), {
-  '--force': flag(),
-  '--allow-dirty': flag(),
-  '--dry-run': flag(),
   '--help': cue(),
   '-h': alias('--help'),
 });
@@ -42,16 +63,5 @@ if (options.issues) {
   process.exit(1);
 }
 
-const {
-  '--force': force,
-  '--allow-dirty': allowDirty,
-  '--dry-run': dryRun,
-} = options.value;
-const dirs = await getDirectories();
-const promises = dirs.map(async (dir) => await rev({ dir, force, allowDirty }));
-
-for (const promise of promises) {
-  const result = await promise;
-  if (result.state === 'changed' && !dryRun) await result.commit();
-  printResult(result);
-}
+help.toStderr`{red A command is required.}`;
+process.exit(1);

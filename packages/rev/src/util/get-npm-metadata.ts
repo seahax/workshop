@@ -6,14 +6,11 @@ export interface NpmMetadata {
   readonly gitHead: string;
 }
 
-export async function getNpmMetadata({
-  name,
-  version,
-}: { name: string; version: string }): Promise<NpmMetadata | undefined> {
+export async function getNpmMetadata({ spec }: { spec: string }): Promise<NpmMetadata | undefined> {
   const { stdout, stderr, stdio, exitCode } = await $({
     stdio: 'pipe',
     reject: false,
-  })`npm view ${`${name}@<=${version}`} name version gitHead --json`;
+  })`npm view ${spec} name version gitHead --json`;
 
   if (exitCode !== 0) {
     if (stderr.includes('E404')) return;

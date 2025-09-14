@@ -11,11 +11,11 @@ const RELEASE = {
   major: { type: 'major', priority: 3 },
 } as const satisfies { [P in string]: { type: P; priority: number } };
 
-export function getNextVersion({
-  packageVersion,
-  npmVersion,
-  logs,
-}: { packageVersion: string; npmVersion?: string; logs: readonly GitLog[] }): string {
+export function getNextVersion({ packageVersion, npmVersion, logs }: {
+  packageVersion: string;
+  npmVersion: string | undefined;
+  logs: readonly GitLog[];
+}): string {
   const isPreRelease = semver.prerelease(packageVersion) != null;
 
   if (isPreRelease) return semver.inc(packageVersion, 'prerelease')!;

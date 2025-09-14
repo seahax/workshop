@@ -3,11 +3,11 @@ import path from 'node:path';
 
 import { type GitLog } from './get-git-logs.ts';
 
-export async function updateChangelog({
-  dir,
-  version,
-  logs,
-}: { dir: string; version: string; logs: readonly Pick<GitLog, 'fullText'>[] }): Promise<void> {
+export async function updateChangelog({ dir, version, logs }: {
+  dir: string;
+  version: string;
+  logs: readonly Pick<GitLog, 'fullText'>[];
+}): Promise<void> {
   const filename = path.join(dir, 'CHANGELOG.md');
   const text = await fs.readFile(filename, 'utf8').catch((error: unknown) => {
     if ((error as any)?.code === 'ENOENT') return;

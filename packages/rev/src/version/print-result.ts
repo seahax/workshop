@@ -1,22 +1,20 @@
-import path from 'node:path';
-
 import chalk from 'chalk';
 import semver from 'semver';
 
-import type { Result } from './rev.ts';
+import type { Result } from './update.ts';
 
 export function printResult(result: Result): void {
-  const label = chalk.blue(path.relative(process.cwd(), result.dir) + ':');
+  const label = chalk.blue(`> ${result.name}:`);
 
   if (result.state !== 'changed') {
-    console.log(label + ' ' + chalk.dim(result.state === 'unchanged' ? 'No changes' : 'Private'));
+    console.log(`${label} ${chalk.dim(result.state)}`);
     return;
   }
 
-  const diff = semver.diff(result.versions.from, result.versions.to);
+  const diff = result.versions.from === 'unreleased' ? 'patch' : semver.diff(result.versions.from, result.versions.to);
   const color = diff?.includes('patch') ? chalk.green : (diff?.includes('minor') ? chalk.yellow : chalk.red);
 
-  console.log(label + ' ' + chalk.white(result.versions.from + ' →') + ' ' + color(result.versions.to));
+  console.log(`${label} ${chalk.white(result.versions.from + ' →') + ' ' + color(result.versions.to)}`);
   result.logs.forEach(({ fullText }) => {
     const styledText = chalk.level === 0
       ? fullText

@@ -20,11 +20,11 @@ const TYPE_ORDER: Readonly<Record<string, number>> = {
   docs: 7,
 };
 
-export async function getGitLogs({
-  dir,
-  name,
-  gitHead,
-}: { dir: string; name: string; gitHead: string }): Promise<readonly GitLog[]> {
+export async function getGitLogs({ dir, name, gitHead }: {
+  dir: string;
+  name: string;
+  gitHead: string;
+}): Promise<GitLog[]> {
   const { stdout } = await $({
     stdout: 'pipe',
     cwd: dir,
@@ -80,17 +80,14 @@ function getNormalType(type: string): string {
     case 'refactoring':
     case 'rewrite':
     case 'rewrites':
-    case 'rewrote':
     case 'rewriting': {
       return 'refactor';
     }
     case 'styles':
-    case 'styled':
     case 'styling': {
       return 'style';
     }
     case 'tests':
-    case 'tested':
     case 'testing': {
       return 'test';
     }
@@ -101,8 +98,8 @@ function getNormalType(type: string): string {
     case 'doc':
     case 'document':
     case 'documents':
-    case 'documented':
-    case 'documenting': {
+    case 'documenting':
+    case 'documentation': {
       return 'docs';
     }
     default: {
