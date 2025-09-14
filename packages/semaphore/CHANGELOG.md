@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1 - 2025-09-14
+
+- __fix:__ bug released all locks immediately (004f215)
+
 ## 0.5.0 - 2025-09-14
 
 - __feat:__ add mutex (288ad2f)
