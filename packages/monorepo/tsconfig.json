@@ -1,0 +1,12 @@
+{
+  "extends": "@seahax/tsconfig",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+    "lib": [ "ES2023" ],
+    "types": [ "node", "vite/client" ],
+    "noEmit": false,
+  },
+  "include": [ "src" ]
+}
