@@ -4,16 +4,12 @@
   "license": "Unlicense",
   "type": "module",
   "scripts": {
-    "app.seahax.docker.start": "lerna --no-stream --scope app-seahax run docker.start",
-    "app.seahax.start": "lerna --no-stream --scope app-seahax run start",
-    "build": "lerna run build",
-    "clean": "lerna run clean && nx reset",
+    "build": "nx run-many -t build --exclude root",
     "lint": "eslint . --ignore-pattern='unreleased'",
     "modernize": "npx npm-check-updates@latest -i --root --workspaces --dep dev,prod,peer,optional,packageManager --peer --format group && pnpm dedupe",
-    "rev": "rev",
     "test": "run-all test.",
-    "test.0-build": "pnpm build",
-    "test.1-lint": "pnpm lint --max-warnings=0",
+    "test.0-build": "nx build root",
+    "test.1-lint": "nx lint root --max-warnings=0",
     "test.2-unit": "vitest run"
   },
   "devDependencies": {
@@ -27,12 +23,12 @@
     "eslint": "^9.34.0",
     "eslint-plugin-functional": "^9.0.2",
     "jsdom": "^26.1.0",
-    "lerna": "^8.2.3",
     "nx": "^21.4.1",
     "typescript": "^5.9.2",
     "vite": "^7.1.3",
     "vitest": "^3.2.4"
   },
+  "nx": {},
   "pnpm": {
     "onlyBuiltDependencies": [
       "@parcel/watcher",

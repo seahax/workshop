@@ -4,6 +4,7 @@ pnpm = "latest"
 node = "lts"
 doctl = "latest"
 aws = "latest"
+'npm:nx' = 'latest'
 'npm:@anthropic-ai/claude-code' = "latest"
 
 [env]
