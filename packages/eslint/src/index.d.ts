@@ -1,3 +1,4 @@
-export { default } from './config.js';
-export * from './config.js';
-export * from './define-config.js';
+export { default } from './config.d.ts';
+export * from './config.d.ts';
+export * from './define-config.d.ts';
+export type * from './types.d.ts';

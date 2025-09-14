@@ -1,4 +1,4 @@
-import { type Linter } from 'eslint';
+import type { Config } from './types.d.ts';
 
-export type ConfigArrayNested = (Linter.Config | ConfigArrayNested)[];
-export function defineConfig(...configs: ConfigArrayNested): Linter.Config[];
+export type ConfigArrayNested = (Config | ConfigArrayNested)[];
+export function defineConfig(...configs: ConfigArrayNested): Config[];
