@@ -56,15 +56,8 @@ export async function publishCommand(args: string[]): Promise<void> {
     extraPositional: string(),
   });
 
-  if (options.value === '--help') {
-    help();
-    process.exit();
-  }
-
-  if (options.issues) {
-    help.toStderr`{red ${options.issues[0]}}`;
-    process.exit(1);
-  }
+  if (options.value === '--help') return help().exit();
+  if (options.issues) return help.error`{red ${options.issues[0]}}`.exit(1);
 
   const {
     '--dry-run': dryRun,
@@ -72,10 +65,7 @@ export async function publishCommand(args: string[]): Promise<void> {
     positional,
   } = options.value;
 
-  if (!command) {
-    help.toStderr`${noPackageManager}`;
-    process.exit(1);
-  }
+  if (!command) return help.error`${noPackageManager}`.exit(1);
 
   const packages = await getPackages(process.cwd());
   const commit = await getGitCommit({ dir: process.cwd() });
