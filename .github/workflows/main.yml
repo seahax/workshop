@@ -12,6 +12,8 @@ on:
       - "templates/**"
 
 env:
+  TERM: xterm-256color
+  FORCE_COLOR: 1
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 concurrency:
