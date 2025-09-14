@@ -2,6 +2,12 @@
 
 Asynchronous semaphore.
 
+- [Getting Started](#getting-started)
+- [Mutex](#mutex)
+- [Controlled Functions](#controlled-functions)
+- [Draining](#draining)
+
+
 ## Getting Started
 
 Declare a semaphore.
@@ -13,30 +19,42 @@ const abortController = new AbortController();
 const semaphore = createSemaphore({
   // Abort signal to prevent new acquisitions (optional).
   signal: abortController.signal,
-  // Maximum number of tokens (Default: 1)
+  // Maximum number of locks (Default: 1)
   capacity: 1
 });
 ```
 
-Acquire a token, waiting until one is available if necessary.
+Acquire a lock, waiting until one is available if necessary.
 
 ```ts
-const token = await semaphore.acquire();
+const lock = await semaphore.acquire();
 ```
 
-Release the token when it is no longer needed.
+Release the lock when it is no longer needed.
 
 ```ts
 try {
   // Do something with limited concurrency...
 } finally {
-  token.release();
+  lock.release();
 }
+```
+
+## Mutex
+
+A mutex (mutually exclusive lock) is a semaphore with a capacity of 1.
+
+```ts
+import { createMutex } from '@seahax/semaphore';
+
+const mutex = createMutex({
+  // Options are the same as createMetaphore, except capacity is always 1.
+});
 ```
 
 ## Controlled Functions
 
-Async functions can be decorated so that they automatically acquire and release tokens when called.
+Async functions can be decorated so that they automatically acquire and release locks when called.
 
 ```ts
 const callback = semaphore.controlled(async (arg: string): Promise<void> => {
@@ -50,7 +68,7 @@ await callback('Hello, World!');
 
 ## Draining
 
-It is possible to wait for all semaphore tokens to be released. This is useful for cleanup.
+It is possible to wait for all semaphore locks to be released. This is useful for cleanup.
 
 ```ts
 await semaphore.drain();
