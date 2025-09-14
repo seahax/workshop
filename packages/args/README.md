@@ -233,17 +233,32 @@ preserved.
 Then, use the returned print function to print your help text as needed.
 
 ```ts
-// Print the above help text.
+// Print help
 help();
-// Print the above help text to STDERR.
-help.toStderr();
+// Print help and exit with exit code 0.
+help().exit();
+// Print help and exit with a specific exit code.
+help().exit(1);
+// Print help and throw an error.
+help().throw(() => new Error('Something went wrong'));
+// Same as the above, but output to STDERR instead of STDOUT.
+help.error();
+help.error().exit();
+help.error().exit(1);
+help.error().throw(() => new Error('Something went wrong'));
 ```
 
-You can also append additional text when printing.
+You can also append text to the help text.
 
 ```ts
-help`Extra text appended to the help text.`;
-help.toStderr`Extra text appended to the help text.`;
+help`Appended text.`;
+help`Appended text.`.exit();
+help`Appended text.`.exit(1);
+help`Appended text.`.throw(() => new Error('Something went wrong'));
+help.error`Appended text.`;
+help.error`Appended text.`.exit();
+help.error`Appended text.`.exit(1);
+help.error`Appended text.`.throw(() => new Error('Something went wrong'));
 ```
 
 ### Prevent Paragraph Wrapping
@@ -282,7 +297,7 @@ Passing standard schema issues to any of the help functions will stringify them 
 const help = createHelp`...`;
 
 help`${issue}`;
-help.toStderr`${issue}`;
+help.error`${issue}`;
 ```
 
 Example: An unknown option issue.
