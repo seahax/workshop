@@ -1,9 +1,5 @@
 # Changelog
 
-## 0.6.0 - 2025-09-14
-
-- __feat:__ add after help actions (7c9c62f)
-
 ## 0.5.4 - 2025-09-14
 
 No changes.
