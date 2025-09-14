@@ -1,4 +1,4 @@
-export interface SemaphoreOptions {
+export interface SemaphoreOptions<TOwner> {
   /**
    * A signal that when aborted will prevent the semaphore from issuing more
    * tokens. If the `acquire` method is called or a controlled function is
@@ -10,16 +10,31 @@ export interface SemaphoreOptions {
    * The maximum number of tokens which can be acquired simultaneously.
    */
   readonly capacity?: number;
+
+  /**
+   * A callback invoked when a token is acquired or released.
+   */
+  readonly onAcquire?: (owner: TOwner) => void;
+
+  /**
+   * A callback invoked when a token is released.
+   */
+  readonly onRelease?: (owner: TOwner) => void;
 }
 
 export interface SemaphoreToken {
+  /**
+   * True if the token has not been released yet.
+   */
+  readonly active: boolean;
+
   /**
    * Release the acquired token. This has no effect if called more than once.
    */
   release(): void;
 }
 
-export interface Semaphore {
+export interface Semaphore<TOwner> {
   /**
    * The number of tokens which are acquired or waiting to be acquired.
    */
@@ -33,7 +48,7 @@ export interface Semaphore {
   /**
    * Acquire a token, waiting until one is available if necessary.
    */
-  acquire(): Promise<SemaphoreToken>;
+  acquire(owner: TOwner): Promise<SemaphoreToken>;
 
   /**
    * Wait for all tokens to be released.
@@ -45,14 +60,17 @@ export interface Semaphore {
    * a token when called.
    */
   controlled<TReturn, TArgs extends any[]>(
-    callback: (...args: TArgs) => Promise<TReturn>
+    callback: (...args: TArgs) => Promise<TReturn>,
+    owner: TOwner,
   ): (...args: TArgs) => Promise<TReturn>;
 }
 
-export function createSemaphore({
+export function createSemaphore<TOwner = void>({
   signal,
   capacity = 1,
-}: SemaphoreOptions = {}): Semaphore {
+  onAcquire,
+  onRelease,
+}: SemaphoreOptions<TOwner> = {}): Semaphore<TOwner> {
   capacity = Math.max(1, capacity);
 
   const onDrain: (() => void)[] = [];
@@ -68,10 +86,10 @@ export function createSemaphore({
       return capacity;
     },
 
-    async acquire() {
+    async acquire(owner) {
       signal?.throwIfAborted();
 
-      let released = false;
+      let active = true;
 
       return await new Promise<SemaphoreToken>((resolve, reject) => {
         if (acquired < capacity) acquire().then(resolve, reject);
@@ -83,28 +101,43 @@ export function createSemaphore({
 
         ++acquired;
 
-        return { release };
+        try {
+          onAcquire?.(owner);
+        }
+        finally {
+          release();
+        }
+
+        return {
+          get active() { return active; },
+          release,
+        };
       }
 
       function release(): void {
-        if (released) return;
+        if (!active) return;
 
-        released = true;
+        active = false;
         --acquired;
 
-        while (acquired < capacity && queue.length > 0) {
-          queue.shift()?.();
+        try {
+          onRelease?.(owner);
         }
+        finally {
+          while (acquired < capacity && queue.length > 0) {
+            queue.shift()?.();
+          }
 
-        while (getSize() === 0 && onDrain.length > 0) {
-          onDrain.shift()?.();
+          while (getSize() === 0 && onDrain.length > 0) {
+            onDrain.shift()?.();
+          }
         }
       }
     },
 
-    controlled(callback) {
+    controlled(callback, owner: TOwner) {
       return async (...args) => {
-        const token = await this.acquire();
+        const token = await this.acquire(owner);
 
         try {
           return await callback(...args);
