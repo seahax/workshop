@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.5 - 2025-09-14
+
+- __refactor:__ implement commands (version, publish, list) (621bf36)
+
 ## 0.2.4 - 2025-09-06
 
 - __chore:__ update some package descriptions and readmes for better content on the seahax home page (20d49e5)

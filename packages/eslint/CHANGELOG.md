@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.23 - 2025-09-14
+
+- __chore:__ add defineConfig helper (fd1e0ed)
+
 ## 0.2.22 - 2025-09-06
 
 - __chore:__ update some package descriptions and readmes for better content on the seahax home page (20d49e5)

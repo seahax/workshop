@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.3 - 2025-09-14
+
+- __chore:__ rename command result command to name (7054d5f)
+
 ## 0.5.2 - 2025-08-30
 
 - __chore:__ add descriptions to packages (000878e)
