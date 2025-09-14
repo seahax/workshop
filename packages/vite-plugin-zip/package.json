@@ -1,6 +1,6 @@
 {
   "name": "@seahax/vite-plugin-zip",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "private": false,
   "description": "Vite plugin that zips up the build output.",
   "repository": {

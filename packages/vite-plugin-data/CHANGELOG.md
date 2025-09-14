@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.14 - 2025-09-14
+
+- __chore:__ use >= range for vite peer dependencies (6f677b2)
+
 ## 1.0.13 - 2025-08-30
 
 - __fix:__ top level imports not working because config file was detected as cjs (not esm) (14aa002)

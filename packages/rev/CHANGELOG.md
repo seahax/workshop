@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0 - 2025-09-14
+
+- __feat:__ clamp alpha and beta release types (98c758a)
+
 ## 0.3.0 - 2025-09-14
 
 - __feat:__ improve and document commit message handling (574bdd8)

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.5 - 2025-09-14
+
+- __chore:__ use >= range for vite peer dependencies (6f677b2)
+
 ## 0.8.4 - 2025-09-13
 
 - __fix:__ do not override use provided build.lib.fileName option (5f03cb2)

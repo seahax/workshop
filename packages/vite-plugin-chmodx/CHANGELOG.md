@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.15 - 2025-09-14
+
+- __chore:__ use >= range for vite peer dependencies (6f677b2)
+
 ## 0.1.14 - 2025-08-30
 
 - __chore:__ add descriptions to packages (000878e)
