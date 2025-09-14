@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.0 - 2025-09-14
+
+- __feat:__ add tag --push option (43fb0a8)
+- __feat:__ add tag command (953f26b)
+- __fix:__ use --no-git-checks for pnpm publish (45f890c)
+- __chore:__ use new args features (ae30838)
+
 ## 0.4.0 - 2025-09-14
 
 - __feat:__ clamp alpha and beta release types (98c758a)

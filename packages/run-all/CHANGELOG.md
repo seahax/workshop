@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.7 - 2025-09-14
+
+- __fix:__ lint deprecated warnings (50e368a)
+
 ## 0.1.6 - 2025-09-06
 
 - __chore:__ update some package descriptions and readmes for better content on the seahax home page (20d49e5)

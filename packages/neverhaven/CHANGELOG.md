@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.16 - 2025-09-14
+
+- __fix:__ lint deprecated warnings (50e368a)
+
 ## 0.1.15 - 2025-09-14
 
 - __chore:__ use nx instead of pnpm commands (6f1eb95)

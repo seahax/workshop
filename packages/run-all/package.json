@@ -1,6 +1,6 @@
 {
   "name": "@seahax/run-all",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "private": false,
   "description": "Because life's too short to type 'npm run test:unit && npm run test:integration && npm run test:e2e' when you could just say 'run-all test'.",
   "repository": {
