@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.6 - 2025-09-14
+
+- __fix:__ handle missing gitHead in package info (816e8ac)
+- __fix:__ unreleased should be printed as unreleased (e8ae7eb)
+
 ## 0.2.5 - 2025-09-14
 
 - __refactor:__ implement commands (version, publish, list) (621bf36)

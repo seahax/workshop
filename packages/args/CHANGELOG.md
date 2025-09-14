@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.4 - 2025-09-14
+
+No changes.
+
 ## 0.5.3 - 2025-09-14
 
 - __chore:__ rename command result command to name (7054d5f)

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.24 - 2025-09-14
+
+No changes.
+
 ## 0.2.23 - 2025-09-14
 
 - __chore:__ add defineConfig helper (fd1e0ed)
