@@ -33,6 +33,7 @@ export async function publish({ pkg, command, dryRun, extraArgs, commit }: {
   const patchedPackageText = JSON.stringify({ ...JSON.parse(packageText), gitHead: commit }, null, 2) + '\n';
 
   if (!dryRun) {
+    await execa`git update-index --skip-worktree ${pkg.filename}`;
     await fs.writeFile(pkg.filename, patchedPackageText, 'utf8');
   }
 
@@ -51,6 +52,7 @@ export async function publish({ pkg, command, dryRun, extraArgs, commit }: {
     if (!dryRun) {
       // Restore original package.json content.
       await fs.writeFile(pkg.filename, packageText, 'utf8');
+      await execa`git update-index --no-skip-worktree ${pkg.filename}`;
     }
   }
 }
