@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 import path from 'node:path';
 
-import { alias, createHelp, cue, option, parseOptions } from '@seahax/args';
+import { alias, createHelp, cue, flag, option, parseOptions } from '@seahax/args';
 import { getPackages } from '@seahax/monorepo';
 import chalk from 'chalk';
 
 import { createGitTag } from './create-git-tag.ts';
 import { getDefaultTagSuffix } from './get-default-tag-suffix.ts';
 import { getVersionAtCommit } from './get-version-at-commit.ts';
+import { pushGitTag } from './push-git-tag.ts';
 
 const help = createHelp`
 {bold Usage:} rev tag {blue [options]}
@@ -29,6 +30,7 @@ at least one package, or the command will fail.
 {bold Options:}
   {blue --commit, -c}   The commit to tag (default: HEAD).
   {blue --suffix, -s}   Override the tag suffix (default: ISO 8601 DateTime).
+  {blue --push, -p}     Push the tag to the remote repository.
   {blue --help, -h}     Show this help message.
 `;
 
@@ -38,6 +40,8 @@ export async function tagCommand(args: string[]): Promise<void> {
     '-c': alias('--commit'),
     '--suffix': option(),
     '-s': alias('--suffix'),
+    '--push': flag(),
+    '-p': alias('--push'),
     '--help': cue(),
     '-h': alias('--help'),
   });
@@ -48,6 +52,7 @@ export async function tagCommand(args: string[]): Promise<void> {
   const {
     '--commit': commit = 'HEAD',
     '--suffix': suffix = getDefaultTagSuffix(),
+    '--push': push = false,
   } = options.value;
 
   const packages = await getPackages(process.cwd());
@@ -82,4 +87,12 @@ export async function tagCommand(args: string[]): Promise<void> {
 
   console.log(chalk.blue(`${tagName} (${commit}):`));
   console.log(chalk.gray(tagMessage));
+
+  if (!push) return;
+
+  const pushExitCode = await pushGitTag({ tag: tagName });
+
+  if (pushExitCode !== 0) {
+    process.exit(pushExitCode);
+  }
 }
