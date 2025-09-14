@@ -1,3 +1,4 @@
+import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import type { PackageResult } from '@seahax/monorepo';
@@ -6,11 +7,12 @@ import { execa, parseCommandString } from 'execa';
 
 import { getNpmMetadata } from '../util/get-npm-metadata.ts';
 
-export async function publish({ pkg, command, dryRun, extraArgs }: {
+export async function publish({ pkg, command, dryRun, extraArgs, commit }: {
   pkg: PackageResult;
   command: string;
   dryRun: boolean;
   extraArgs: string[];
+  commit: string;
 }): Promise<{ exitCode: number } | undefined> {
   const dir = path.dirname(pkg.filename);
   const label = chalk.blue(`> ${pkg.data.name}:`);
@@ -26,13 +28,29 @@ export async function publish({ pkg, command, dryRun, extraArgs }: {
   }
 
   console.log(`${label} ${chalk.white(pkg.data.version)}`);
-  const [cmd, ...commandArgs] = parseCommandString(command);
-  const result = await execa(cmd!, [...commandArgs, ...(dryRun ? ['--dry-run'] : []), ...extraArgs], {
-    stdio: 'inherit',
-    preferLocal: true,
-    cwd: dir,
-    reject: false,
-  });
 
-  return { exitCode: result.exitCode ?? 1 };
+  const packageText = await fs.readFile(pkg.filename, 'utf8');
+  const patchedPackageText = JSON.stringify({ ...JSON.parse(packageText), gitHead: commit }, null, 2) + '\n';
+
+  if (!dryRun) {
+    await fs.writeFile(pkg.filename, patchedPackageText, 'utf8');
+  }
+
+  try {
+    const [cmd, ...commandArgs] = parseCommandString(command);
+    const result = await execa(cmd!, [...commandArgs, ...(dryRun ? ['--dry-run'] : []), ...extraArgs], {
+      stdio: 'inherit',
+      preferLocal: true,
+      cwd: dir,
+      reject: false,
+    });
+
+    return { exitCode: result.exitCode ?? 1 };
+  }
+  finally {
+    if (!dryRun) {
+      // Restore original package.json content.
+      await fs.writeFile(pkg.filename, packageText, 'utf8');
+    }
+  }
 }

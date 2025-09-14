@@ -3,7 +3,7 @@ import semver from 'semver';
 
 export interface NpmMetadata {
   readonly version: string;
-  readonly gitHead: string;
+  readonly gitHead?: string;
 }
 
 export async function getNpmMetadata({ spec }: { spec: string }): Promise<NpmMetadata | undefined> {
@@ -22,9 +22,7 @@ export async function getNpmMetadata({ spec }: { spec: string }): Promise<NpmMet
 
   const data: NpmMetadata | NpmMetadata[] = JSON.parse(stdout);
   const entries = Array.isArray(data) ? data : [data];
-  const closest = entries
-    .filter((entry) => entry.gitHead)
-    .sort((a, b) => semver.compare(b.version, a.version)).at(0);
+  const closest = entries.toSorted((a, b) => semver.compare(b.version, a.version)).at(0);
 
   return closest;
 }

@@ -52,9 +52,11 @@ export async function update({ pkg, force, allowDirty }: {
     return { state: 'unreleased', dir, name };
   }
 
-  const logs = await getGitLogs({ dir, name: pkg.data.name, gitHead: npmMetadata.gitHead });
+  const logs = npmMetadata.gitHead
+    ? await getGitLogs({ dir, name: pkg.data.name, gitHead: npmMetadata.gitHead })
+    : [];
 
-  if (!force && logs.length === 0 && npmMetadata) {
+  if (!force && npmMetadata.gitHead && logs.length === 0 && npmMetadata) {
     return { state: 'unchanged', dir, name };
   }
 

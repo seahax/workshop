@@ -2,6 +2,7 @@
 import { alias, createHelp, createHelpSnippet, cue, flag, option, parseOptions, string } from '@seahax/args';
 import { getPackages } from '@seahax/monorepo';
 
+import { getGitCommit } from './get-git-commit.ts';
 import { getPublishCommand } from './get-publish-command.ts';
 import { publish } from './publish.ts';
 
@@ -77,9 +78,10 @@ export async function publishCommand(args: string[]): Promise<void> {
   }
 
   const packages = await getPackages(process.cwd());
+  const commit = await getGitCommit({ dir: process.cwd() });
 
   for (const pkg of packages) {
-    const result = await publish({ pkg, command, dryRun, extraArgs: positional });
+    const result = await publish({ pkg, command, dryRun, extraArgs: positional, commit });
 
     if (result && result.exitCode !== 0) {
       process.exit(result.exitCode);
