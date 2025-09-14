@@ -1,10 +1,11 @@
-name: Publish
+name: Main
 run-name: ${{ github.workflow }}
 
 on:
   workflow_dispatch: {}
   push:
     branches: [main]
+    tags: ['release-*']
     paths-ignore:
       - ".devcontainer/**"
       - "apps/**"
@@ -41,4 +42,5 @@ jobs:
         run: nx test root
 
       - name: Publish
+        if: github.ref_type == 'tag'
         run: npx rev publish
