@@ -10,10 +10,49 @@ interface HelpSnippet {
   _formatHelpSnippet(formatter: typeof chalkTemplate): string;
 }
 
+export interface AfterHelpActions {
+  exit(code?: number): never;
+  throw(getError: () => Error): never;
+}
+
 export interface Help {
-  (...args: PrintArgs): void;
-  toStderr(...args: PrintArgs): void;
+  (...args: PrintArgs): AfterHelpActions;
+  error: (...args: PrintArgs) => AfterHelpActions;
+  /** @deprecated Use `error`. */
+  toStderr(...args: PrintArgs): AfterHelpActions;
 };
+
+export function createHelp(...args: PrintArgs): Help {
+  const prefix = createHelpSnippet(...args);
+
+  const self = Object.assign((...args: PrintArgs) => {
+    help(console.log, chalkTemplate, ...args);
+    return createAfterHelpActions();
+  }, {
+    error: (...args: PrintArgs) => {
+      help(console.error, chalkTemplateStderr, ...args);
+      return createAfterHelpActions();
+    },
+    toStderr: (...args: PrintArgs) => {
+      return self.error(...args);
+    },
+  });
+
+  return self;
+
+  function help(log: typeof console.log, format: typeof chalkTemplate, ...args: PrintArgs): void {
+    const prefixText = trimLines(prefix._formatHelpSnippet(format));
+    const suffixText = trimLines(createHelpSnippet(...args)._formatHelpSnippet(format));
+    const combinedText = prefixText
+      ? (suffixText
+          ? `${prefixText}\n\n${suffixText}`
+          : `${prefixText}\n`)
+      : suffixText;
+    const wrappedText = wrap(combinedText);
+
+    log(wrappedText);
+  }
+}
 
 export function createHelpSnippet(
   ...args: PrintArgs
@@ -31,25 +70,17 @@ export function createHelpSnippet(
   };
 }
 
-export function createHelp(...args: PrintArgs): Help {
-  const prefix = createHelpSnippet(...args);
-
-  return Object.assign((...args: PrintArgs) => help(console.log, chalkTemplate, ...args), {
-    toStderr: (...args: PrintArgs) => help(console.error, chalkTemplateStderr, ...args),
-  });
-
-  function help(log: typeof console.log, format: typeof chalkTemplate, ...args: PrintArgs): void {
-    const prefixText = trimLines(prefix._formatHelpSnippet(format));
-    const suffixText = trimLines(createHelpSnippet(...args)._formatHelpSnippet(format));
-    const combinedText = prefixText
-      ? (suffixText
-          ? `${prefixText}\n\n${suffixText}`
-          : `${prefixText}\n`)
-      : suffixText;
-    const wrappedText = wrap(combinedText);
-
-    log(wrappedText);
-  }
+function createAfterHelpActions(): AfterHelpActions {
+  return {
+    exit(code?: number): never {
+      // eslint-disable-next-line unicorn/no-process-exit
+      process.exit(code);
+    },
+    throw(getError: () => Error | string): never {
+      const error = getError();
+      throw typeof error === 'string' ? new Error(error) : error;
+    },
+  };
 }
 
 function isHelpSnippet(value: unknown): value is HelpSnippet {
