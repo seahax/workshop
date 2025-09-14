@@ -18,41 +18,40 @@ Run all package.json scripts that begin with one of the {blue prefixes}.
   {blue --help, -h}   Show this help message.
 `;
 
-const options = await parseOptions(process.argv.slice(2), {
-  '--help': cue(),
-  '-h': alias('--help'),
-  extraPositional: string(),
-});
+await (async () => {
+  const options = await parseOptions(process.argv.slice(2), {
+    '--help': cue(),
+    '-h': alias('--help'),
+    extraPositional: string(),
+  });
 
-if (options.value === '--help') {
-  help();
-  process.exit();
-}
+  if (options.value === '--help') {
+    help();
+    process.exit();
+  }
 
-if (options.issues) {
-  help.toStderr`{red ${options.issues[0]}}`;
-  process.exit(1);
-}
+  if (options.issues) return help.error`{red ${options.issues[0]}}`.exit(1);
 
-const { positional: prefixes } = options.value;
-const allScripts = await getScriptNames();
-const packageManager = getPackageManager();
-const scripts = new Set<string>();
+  const { positional: prefixes } = options.value;
+  const allScripts = await getScriptNames();
+  const packageManager = getPackageManager();
+  const scripts = new Set<string>();
 
-for (const prefix of prefixes) {
-  for (const script of allScripts) {
-    if (script.startsWith(prefix) && !prefixes.includes(script)) {
-      scripts.add(script);
+  for (const prefix of prefixes) {
+    for (const script of allScripts) {
+      if (script.startsWith(prefix) && !prefixes.includes(script)) {
+        scripts.add(script);
+      }
     }
   }
-}
 
-assert.ok(scripts.size > 0, 'No matching scripts found.');
-console.log(`Running Scripts: ${[...scripts].map((script) => `\n- ${script}`).join('')}`);
+  assert.ok(scripts.size > 0, 'No matching scripts found.');
+  console.log(`Running Scripts: ${[...scripts].map((script) => `\n- ${script}`).join('')}`);
 
-for (const script of scripts) {
-  await execa(packageManager, ['run', script], { stdio: 'inherit', preferLocal: true });
-}
+  for (const script of scripts) {
+    await execa(packageManager, ['run', script], { stdio: 'inherit', preferLocal: true });
+  }
+})();
 
 function getPackageManager(): 'npm' | 'pnpm' | 'yarn' {
   const execPath = process.env.npm_execpath?.toLowerCase();
@@ -66,7 +65,7 @@ function getPackageManager(): 'npm' | 'pnpm' | 'yarn' {
   throw new Error('Unsupported package manager.');
 }
 
-export async function getScriptNames(): Promise<string[]> {
+async function getScriptNames(): Promise<string[]> {
   try {
     return Object.keys(JSON.parse(await fs.readFile('package.json', 'utf8')).scripts);
   }
