@@ -442,6 +442,12 @@ importers:
         specifier: workspace:*
         version: link:../vite-plugin-lib
 
+  packages/time:
+    devDependencies:
+      '@seahax/vite-plugin-lib':
+        specifier: workspace:*
+        version: link:../vite-plugin-lib
+
   packages/tsconfig: {}
 
   packages/vite-plugin-chmodx:
