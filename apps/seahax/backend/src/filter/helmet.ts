@@ -3,20 +3,22 @@ import helmetMiddleware from 'helmet';
 
 import { config } from '../service/config.ts';
 
+console.log(helmetMiddleware.contentSecurityPolicy.getDefaultDirectives());
+
 const helmetDefault = helmetMiddleware({
   contentSecurityPolicy: {
     directives: {
       'connect-src': [
-        ...helmetMiddleware.contentSecurityPolicy.getDefaultDirectives()['connect-src'] ?? [],
+        "'self'",
         // Required for Auth0 PKCE auth code exchange.
         'https://auth0.seahax.com',
         // Required for Sentry reporting.
         'https://*.sentry.io',
       ],
       'img-src': [
-        ...helmetMiddleware.contentSecurityPolicy.getDefaultDirectives()['img-src'] ?? [],
-        // Required for Auth0 profile pictures.
-        'https://*.gravatar.com',
+        "'self'", 'data:',
+        // Required for Auth0 (Wordpress/Gravatar) profile pictures.
+        'https://*.gravatar.com', 'https://*.wp.com', 'https://cdn.auth0.com',
       ],
       'upgrade-insecure-requests': config.environment === 'development' ? null : [],
     },
