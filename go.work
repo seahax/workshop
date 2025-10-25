@@ -1,0 +1,8 @@
+go 1.25.3
+
+use (
+  ./apps/seahax/backend-go
+  ./go/api
+  ./go/env
+  ./go/defaults
+)

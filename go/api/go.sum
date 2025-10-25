@@ -1,0 +1,6 @@
+github.com/andybalholm/brotli v1.2.0 h1:ukwgCxwYrmACq68yiUqwIWnGY0cTPox/M94sVwToPjQ=
+github.com/andybalholm/brotli v1.2.0/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
+github.com/google/brotli/go/brotli v1.1.1-rc0 h1:eoqIqYQOGQklpIRy7h7ZpgcornVZDJHCwMrIVSb9piE=
+github.com/google/brotli/go/brotli v1.1.1-rc0/go.mod h1:YxJlH7Wh10ij62fUKHspdbd+THlW1vMIuei0oXsBK9Y=
+github.com/klauspost/compress v1.18.1 h1:bcSGx7UbpBqMChDtsF28Lw6v/G94LPrrbMbdC3JH2co=
+github.com/klauspost/compress v1.18.1/go.mod h1:ZQFFVG+MdnR0P+l6wpXgIL4NTtwiKIdBnrBd8Nrxr+0=

@@ -1,7 +1,12 @@
+[settings]
+experimental = true
+
 [tools]
 npm = "latest"
 pnpm = "latest"
 node = "lts"
+go = "latest"
+"go:github.com/766b/go-outliner" = "latest"
 doctl = "latest"
 aws = "latest"
 'npm:nx' = 'latest'

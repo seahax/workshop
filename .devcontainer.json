@@ -35,7 +35,11 @@
         "yzhang.markdown-all-in-one",
         "ms-azuretools.vscode-containers",
         "qezhu.gitlink",
-        "Anthropic.claude-code"
+        "Anthropic.claude-code",
+        "golang.go",
+        "premparihar.gotestexplorer",
+        "msyrus.go-doc",
+        "766b.go-outliner"
       ],
       "settings": {
         "remote.autoForwardPorts": true,
