@@ -30,13 +30,13 @@ jobs:
       - name: Publish
         run: |
           set -e
+          initial_commit=$(git rev-parse HEAD)
           for filename in go/*/version; do
-            git reset --hard "$GITHUB_REF"
+            git reset --hard "$initial_commit"
             version_commit=$(git rev-list -1 HEAD -- "$filename")
             git reset --hard "$version_commit"
             dir=$(dirname "$filename")
             (cd "$dir" && go mod tidy &>/dev/null)
-            git status "$dir"
             if ! git diff-index --quiet HEAD -- "$dir"; then
               echo "Uncommitted changes in \"$dir\" after 'go mod tidy'. Skipping publish."
               continue
