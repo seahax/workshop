@@ -43,10 +43,8 @@ jobs:
             fi
             version=$(head -n 1 "$filename")
             tag="${dir}/v${version}"
-            git tag "$tag"
-            if git push origin tag "$tag" &>/dev/null; then
-              echo "Published $tag"
-            else
-              echo "Failed to publish $tag (it may already exist)."
+            if ! git tag "$tag"; then
+              continue
             fi
+            git push origin tag "$tag"
           done
