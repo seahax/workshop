@@ -12,8 +12,8 @@ import (
 
 	"github.com/andybalholm/brotli"
 	"github.com/klauspost/compress/zstd"
-	"seahax.com/defaults"
-	"seahax.com/go/api"
+	"github.com/seahax/workshop/go/api"
+	"github.com/seahax/workshop/go/defaults"
 )
 
 type Algorithm struct {

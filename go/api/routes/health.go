@@ -5,8 +5,8 @@ import (
 	"strings"
 	"sync"
 
-	"seahax.com/defaults"
-	"seahax.com/go/api"
+	"github.com/seahax/workshop/go/api"
+	"github.com/seahax/workshop/go/defaults"
 )
 
 // A health check endpoint.

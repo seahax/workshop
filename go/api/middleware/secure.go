@@ -3,8 +3,8 @@ package middleware
 import (
 	"strings"
 
-	"seahax.com/defaults"
-	"seahax.com/go/api"
+	"github.com/seahax/workshop/go/api"
+	"github.com/seahax/workshop/go/defaults"
 )
 
 // Add security-related HTTP headers to responses.

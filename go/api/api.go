@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"seahax.com/defaults"
+	"github.com/seahax/workshop/go/defaults"
 )
 
 const (

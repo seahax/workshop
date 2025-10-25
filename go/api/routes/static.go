@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strings"
 
-	"seahax.com/defaults"
-	"seahax.com/go/api"
+	"github.com/seahax/workshop/go/api"
+	"github.com/seahax/workshop/go/defaults"
 )
 
 // A static file serving endpoint with optional SPA support.

@@ -3,8 +3,8 @@ package routes
 import (
 	"strings"
 
-	"seahax.com/defaults"
-	"seahax.com/go/api"
+	"github.com/seahax/workshop/go/api"
+	"github.com/seahax/workshop/go/defaults"
 )
 
 // An information endpoint that returns static JSON data.

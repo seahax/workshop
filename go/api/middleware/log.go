@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"seahax.com/go/api"
+	"github.com/seahax/workshop/go/api"
 )
 
 // Log requests and include request headers in all log entries.

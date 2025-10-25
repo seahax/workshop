@@ -11,15 +11,6 @@ import (
 	"time"
 )
 
-// Enhanced [http.ResponseWriter] which tracks whether headers have been
-// written, the time they were written, and the response status code.
-type ResponseWriter interface {
-	http.ResponseWriter
-	Written() bool
-	WriteHeaderTime() int64
-	Status() int
-}
-
 // Response accessor with convenience methods for writing common responses.
 type Response struct {
 	ResponseWriter
@@ -29,6 +20,15 @@ type Response struct {
 	Log *slog.Logger
 	// Register cleanup callbacks to be called when the response is finished.
 	Cleanup func(callback func())
+}
+
+// Enhanced [http.ResponseWriter] which tracks whether headers have been
+// written, the time they were written, and the response status code.
+type ResponseWriter interface {
+	http.ResponseWriter
+	Written() bool
+	WriteHeaderTime() int64
+	Status() int
 }
 
 // Write an error message with the given status code to the response. The

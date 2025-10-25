@@ -1,4 +1,4 @@
-module seahax.com/go/api
+module github.com/seahax/workshop/go/api
 
 go 1.25.3
 
