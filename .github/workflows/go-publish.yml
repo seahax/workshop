@@ -30,16 +30,21 @@ jobs:
           set -e
           for filename in go/*/version; do
             git reset --hard "$GITHUB_REF"
-            hash=$(git rev-list -1 HEAD -- "$filename")
-            git reset --hard "$hash"
+            version_commit=$(git rev-list -1 HEAD -- "$filename")
+            git reset --hard "$version_commit"
             dir=$(dirname "$filename")
-            (cd "$dir" && go mod tidy)
+            (cd "$dir" && go mod tidy &>/dev/null)
+            git status "$dir"
             if ! git diff-index --quiet HEAD -- "$dir"; then
               echo "Uncommitted changes in \"$dir\" after 'go mod tidy'. Skipping publish."
               continue
             fi
             version=$(head -n 1 "$filename")
             tag="${dir}/v${version}"
-            git tag "$tag" "$hash"
-            git push origin tag "$tag" || true
+            git tag "$tag"
+            if git push origin tag "$tag" &>/dev/null; then
+              echo "Published $tag"
+            else
+              echo "Failed to publish $tag (it may already exist)."
+            fi
           done
