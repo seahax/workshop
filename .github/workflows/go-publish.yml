@@ -29,6 +29,9 @@ jobs:
         run: |
           set -e
           for filename in go/*/version; do
+            git reset --hard "$GITHUB_REF"
+            hash=$(git rev-list -1 HEAD -- "$filename")
+            git reset --hard "$hash"
             dir=$(dirname "$filename")
             (cd "$dir" && go mod tidy)
             if ! git diff-index --quiet HEAD -- "$dir"; then
@@ -37,7 +40,6 @@ jobs:
             fi
             version=$(head -n 1 "$filename")
             tag="${dir}/v${version}"
-            hash=$(git rev-list -1 HEAD -- "$filename")
             git tag "$tag" "$hash"
             git push origin tag "$tag" || true
           done
