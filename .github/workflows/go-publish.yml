@@ -1,0 +1,41 @@
+name: Go Publish
+run-name: ${{ github.workflow }}
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - ".github/**"
+      - "go/*/version"
+
+env:
+  TERM: xterm-256color
+  FORCE_COLOR: 1
+
+concurrency:
+  group: ${{ github.workflow }}
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish
+        run: |
+          set -e
+          for filename in go/*/version; do
+            dir=$(dirname "$filename")
+            version=$(head -n 1 "$filename")
+            tag="${dir}/v${version}"
+            hash=$(git rev-list -1 HEAD -- "$filename")
+            if ! git tag "$tag" "$hash"; then
+              echo "Tag ${dir}/v${version} already exists."
+              continue
+            fi
+            git push origin tag "$tag"
+          done
