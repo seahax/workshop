@@ -30,6 +30,11 @@ jobs:
           set -e
           for filename in go/*/version; do
             dir=$(dirname "$filename")
+            (cd "$dir" && go mod tidy)
+            if ! git diff-index --quiet HEAD -- "$dir"; then
+              echo "Uncommitted changes in \"$dir\" after 'go mod tidy'. Skipping publish."
+              continue
+            fi
             version=$(head -n 1 "$filename")
             tag="${dir}/v${version}"
             hash=$(git rev-list -1 HEAD -- "$filename")
