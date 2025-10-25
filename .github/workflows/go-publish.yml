@@ -32,17 +32,20 @@ jobs:
           set -e
           initial_commit=$(git rev-parse HEAD)
           for filename in go/*/version; do
-            git reset --hard "$initial_commit"
+            git reset --hard "$initial_commit" &>/dev/null
+
             version_commit=$(git rev-list -1 HEAD -- "$filename")
-            git reset --hard "$version_commit"
             dir=$(dirname "$filename")
+            version=$(head -n 1 "$filename")
+            tag="${dir}/v${version}"
+
+            echo "Publishing ${tag}..."
+            git reset --hard "$version_commit" &>/dev/null
             (cd "$dir" && go mod tidy &>/dev/null)
             if ! git diff-index --quiet HEAD -- "$dir"; then
               echo "Uncommitted changes in \"$dir\" after 'go mod tidy'. Skipping publish."
               continue
             fi
-            version=$(head -n 1 "$filename")
-            tag="${dir}/v${version}"
             if ! git tag "$tag"; then
               continue
             fi
