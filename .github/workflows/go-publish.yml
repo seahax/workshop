@@ -33,9 +33,6 @@ jobs:
             version=$(head -n 1 "$filename")
             tag="${dir}/v${version}"
             hash=$(git rev-list -1 HEAD -- "$filename")
-            if ! git tag "$tag" "$hash"; then
-              echo "Tag ${dir}/v${version} already exists."
-              continue
-            fi
-            git push origin tag "$tag"
+            git tag "$tag" "$hash"
+            git push origin tag "$tag" || true
           done
