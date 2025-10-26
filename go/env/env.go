@@ -1,23 +1,21 @@
 package env
 
 import (
-	"errors"
 	"fmt"
+	"log"
 	"os"
 	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
-
-	"github.com/go-playground/validator/v10"
 )
 
-var rxAddUnderscore = regexp.MustCompile("([^A-Z])([A-Z])")
-var validate = validator.New()
+var rxInvalidNameChars = regexp.MustCompile("[^A-Z0-9_]+")
 
 // Bind environment variables with the given prefix to the target struct, with
 // validation (go-playground/validator).
-func BindPrefixedEnv(prefix string, target any) error {
+func BindWithPrefix(prefix string, target any) error {
+	prefix = strings.ToUpper(prefix)
 	reflectRoot := reflect.ValueOf(target)
 
 	if reflectRoot.Kind() == reflect.Pointer {
@@ -37,14 +35,16 @@ func BindPrefixedEnv(prefix string, target any) error {
 			continue
 		}
 
-		envTag := reflectField.Tag.Get("env")
+		envName, ok := reflectField.Tag.Lookup("env")
 
-		if envTag == "ignore" {
+		if !ok || envName == "" {
 			continue
 		}
 
-		fieldName := reflectField.Name
-		envName := prefix + strings.ToUpper(rxAddUnderscore.ReplaceAllString(fieldName, "${1}_${2}"))
+		envName = strings.TrimSpace(envName)
+		envName = strings.ToUpper(envName)
+		envName = rxInvalidNameChars.ReplaceAllString(envName, "_")
+		envName = prefix + envName
 		envStr, envExists := os.LookupEnv(envName)
 
 		var value any
@@ -105,28 +105,6 @@ func BindPrefixedEnv(prefix string, target any) error {
 			value = reflectRoot.Field(i).Interface()
 		}
 
-		validateTag := reflectField.Tag.Get("validate")
-
-		if validateTag != "" {
-			err := func() error {
-				defer func() {
-					if r := recover(); r != nil {
-						panic(fmt.Sprintf("failed validating environment %s (validate: %s) (%v)", envName, validateTag, r))
-					}
-				}()
-
-				return validate.Var(value, validateTag)
-			}()
-
-			var fieldErr validator.FieldError
-
-			if errors.As(err, &fieldErr) {
-				return fmt.Errorf(`environment %s is invalid (%s)`, envName, fieldErr.Tag())
-			} else if err != nil {
-				return fmt.Errorf(`environment %s is invalid (%s)`, envName, validateTag)
-			}
-		}
-
 		reflectValue := reflect.ValueOf(value).Convert(reflectRoot.Field(i).Type())
 		reflectRoot.Field(i).Set(reflectValue)
 	}
@@ -136,6 +114,36 @@ func BindPrefixedEnv(prefix string, target any) error {
 
 // Bind environment variables to the target struct, with validation
 // (go-playground/validator).
-func BindEnv(target any) error {
-	return BindPrefixedEnv("", target)
+func Bind(target any) error {
+	return BindWithPrefix("", target)
+}
+
+// Helper for getting the env tag value of a struct field. If the field or tag
+// is not found, an empty string is returned.
+func GetTag(target any, name string) string {
+	value := reflect.ValueOf(target)
+
+	if value.Kind() != reflect.Pointer {
+		log.Panicln("environment binding only supports struct pointers")
+	}
+
+	value = value.Elem()
+
+	if value.Kind() != reflect.Struct {
+		log.Panicln("environment binding only supports struct pointers")
+	}
+
+	field, ok := value.Type().FieldByName(name)
+
+	if !ok {
+		return ""
+	}
+
+	env, ok := field.Tag.Lookup("env")
+
+	if !ok {
+		return ""
+	}
+
+	return env
 }
