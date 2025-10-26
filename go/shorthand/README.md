@@ -1,4 +1,4 @@
-# seahax.com/shorthand
+# seahax.com/go/shorthand
 
 Utility functions for simple value manipulation.
 
