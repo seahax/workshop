@@ -34,20 +34,25 @@ jobs:
           for filename in go/*/version; do
             git reset --hard "$initial_commit" &>/dev/null
 
-            version_commit=$(git rev-list -1 HEAD -- "$filename")
             dir=$(dirname "$filename")
             version=$(head -n 1 "$filename")
             tag="${dir}/v${version}"
 
             echo "Publishing ${tag}..."
+            version_commit=$(git rev-list -1 HEAD -- "$filename")
             git reset --hard "$version_commit" &>/dev/null
-            (cd "$dir" && go mod tidy &>/dev/null)
-            if ! git diff-index --quiet HEAD -- "$dir"; then
-              echo "Uncommitted changes in \"$dir\" after 'go mod tidy'. Skipping publish."
-              continue
-            fi
-            if ! git tag "$tag"; then
-              continue
-            fi
-            git push origin tag "$tag"
+            (
+              set -e
+              cd "$dir"
+              go mod tidy
+              if ! git diff-index --quiet HEAD -- "$dir"; then
+                echo "Uncommitted changes in \"$dir\". Skipping publish."
+                exit
+              fi
+              go test -v -count=1
+              if ! git tag "$tag"; then
+                exit
+              fi
+              git push origin tag "$tag"
+            )
           done
