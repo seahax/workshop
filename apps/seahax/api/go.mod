@@ -3,7 +3,7 @@ module seahax/api
 go 1.25.3
 
 require (
-	github.com/seahax/workshop/go/api v0.0.1
+	github.com/seahax/workshop/go/api v0.0.4
 	github.com/seahax/workshop/go/env v0.0.1
 )
 
@@ -15,7 +15,7 @@ require (
 	github.com/go-playground/validator/v10 v10.28.0 // indirect
 	github.com/klauspost/compress v1.18.1 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
-	github.com/seahax/workshop/go/defaults v0.0.0-20251025212723-4dd73eee62c3 // indirect
+	github.com/seahax/workshop/go/defaults v0.0.1 // indirect
 	golang.org/x/crypto v0.43.0 // indirect
 	golang.org/x/sys v0.37.0 // indirect
 	golang.org/x/text v0.30.0 // indirect
