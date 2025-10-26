@@ -7,7 +7,7 @@ on:
     branches: [main]
     paths:
       - ".github/**"
-      - "go/*/version"
+      - "go/**"
 
 env:
   TERM: xterm-256color
@@ -30,18 +30,19 @@ jobs:
       - name: Publish
         run: |
           set -e
-          initial_commit=$(git rev-parse HEAD)
+          error=0
           for filename in go/*/version; do
             (
               set -e
-              git reset --hard "$initial_commit" &>/dev/null
               dir=$(dirname "$filename")
               version=$(head -n 1 "$filename")
               tag="${dir}/v${version}"
 
+              if [ $(git tag -l "$tag") ]; then
+                exit
+              fi
+
               echo "::group::Publishing ${tag}"
-              version_commit=$(git rev-list -1 HEAD -- "$filename")
-              git reset --hard "$version_commit"
               cd "$dir"
               go mod tidy
 
@@ -51,15 +52,17 @@ jobs:
               fi
 
               go test -v -count=1
-
-              if ! git tag "$tag"; then
-                exit
-              fi
-
+              git tag "$tag"
               git push origin tag "$tag"
-              
+
               module=$(cat go.mod | grep --color=never -Po '(?<=^module )\S+$')
               GOPROXY=proxy.golang.org go list -m "${module}@v${version}" &>/dev/null || true
             )
+
+            if [ $? -ne 0 ]; then
+              error=1
+            fi
+
             echo ::endgroup::
           done
+          exit $error
