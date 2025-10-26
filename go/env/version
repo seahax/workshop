@@ -1,4 +1,4 @@
-0.0.2
+0.0.3
 
 The first line of this file must be the version number. The Go Publish workflow
 will create a tag for the version on the first line at the commit when this

@@ -1,3 +1,5 @@
-module github.com/seahax/workshop/go/env
+module seahax.com/go/env
 
 go 1.25.3
+
+require seahax.com/go/shorthand v0.0.2

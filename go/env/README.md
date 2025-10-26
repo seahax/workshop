@@ -1,23 +1,24 @@
-# seahax.com/go/env
+# seahax.com/env
 
-Bind environment variables to Go structs using struct tags.
+Bind environment variables to structs using struct tags.
 
-- Parse string, bool, and all numeric types.
-- Use initial struct values as defaults.
-- Skip unexported fields and fields without `env` tags.
+- Parses string, bool, and all numeric types by default.
+- Uses initial struct values as defaults.
+- Skips unexported fields and fields without `env` tags.
+- Supports prefixes, continue-on-error mode, and custom parsers.
 
 ```go
 import (
   "log"
   "sync"
 
-  "seahax.com/go/env"
+  "seahax.com/env"
 )
 
 struct Config {
-  Environment    string `env:"APP_ENVIRONMENT"`
-  DatabaseURL    string `env:"APP_DATABASE_URL"`
-  ThreadCount    int    `env:"APP_THREAD_COUNT"`
+  Environment    string `env:"ENVIRONMENT"`
+  DatabaseURL    string `env:"DATABASE_URL"`
+  ThreadCount    int    `env:"THREAD_COUNT"`
   StartTime      int64 // No tag, so not bound.
 }
 
