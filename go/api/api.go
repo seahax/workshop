@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"log/slog"
 	"maps"
@@ -114,6 +115,7 @@ func (i *Api) BindServer(server *http.Server) {
 	server.ReadHeaderTimeout = defaults.NonZeroOrDefault(server.ReadHeaderTimeout, DefaultReadHeaderTimeout)
 	server.WriteTimeout = defaults.NonZeroOrDefault(server.WriteTimeout, DefaultWriteTimeout)
 	server.IdleTimeout = defaults.NonZeroOrDefault(server.IdleTimeout, DefaultIdleTimeout)
+	server.TLSNextProto = defaults.NonZeroOrDefault(server.TLSNextProto, make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0))
 
 	i.mut.Lock()
 	if i.servers == nil {
