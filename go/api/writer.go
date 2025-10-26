@@ -38,7 +38,3 @@ func (r *writer) Write(data []byte) (int, error) {
 
 	return r.ResponseWriter.Write(data)
 }
-
-func NewWriter(w http.ResponseWriter) *writer {
-	return &writer{ResponseWriter: w}
-}

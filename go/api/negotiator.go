@@ -9,6 +9,9 @@ import (
 const maxQualityInt = 1000
 
 // HTTP content negotiation helper.
+//
+// TODO: Replace with the future Go built-in content negotiation package
+// (https://github.com/golang/go/issues/19307).
 type Negotiator struct {
 	IsParameterized bool
 	IsMediaType     bool

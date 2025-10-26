@@ -198,7 +198,7 @@ func isCompressible(header http.Header, minSize int, filter func(contentType str
 	}
 
 	contentLength := header.Get("Content-Length")
-	minSize = defaults.PositiveOrDefault(minSize, CompressMinSizeDefault)
+	minSize = defaults.NonZeroOrDefault(minSize, CompressMinSizeDefault)
 	if value, err := strconv.Atoi(contentLength); err != nil || value < minSize {
 		return false
 	}
