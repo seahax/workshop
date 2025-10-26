@@ -5,10 +5,9 @@ on:
   workflow_dispatch: {}
   push:
     branches: [main]
-    tags: ['release-*']
-    paths-ignore:
-      - ".devcontainer/**"
-      - "apps/**"
+    paths:
+      - ".github/**"
+      - "packages/**"
       - "templates/**"
 
 env:
@@ -44,5 +43,4 @@ jobs:
         run: nx test root
 
       - name: Publish
-        if: github.ref_type == 'tag'
         run: npx rev publish
