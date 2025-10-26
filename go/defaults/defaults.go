@@ -1,24 +1,11 @@
 package defaults
 
-import (
-	"cmp"
-	"reflect"
-)
+import "reflect"
 
 func NonZeroOrDefault[T any](value T, defaultValue T) T {
-	v := reflect.ValueOf(value)
+	reflectValue := reflect.ValueOf(value)
 
-	if !v.IsValid() || v.IsZero() {
-		return defaultValue
-	}
-
-	return value
-}
-
-func PositiveOrDefault[T cmp.Ordered](value T, defaultValue T) T {
-	var zero T
-
-	if value <= zero {
+	if !reflectValue.IsValid() || reflectValue.IsZero() {
 		return defaultValue
 	}
 
