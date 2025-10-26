@@ -57,6 +57,8 @@ jobs:
               fi
 
               git push origin tag "$tag"
+              module=$(cat go.mod | grep --color=never -Po '(?<=^module )\S+$')
+              GOPROXY=proxy.golang.org go list -m "${module}@v${version}" || true
             )
             echo ::endgroup::
           done
