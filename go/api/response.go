@@ -63,7 +63,9 @@ func (r *Response) WriteJSON(v any) error {
 		header.Set("Content-Type", "application/json")
 	}
 
-	return json.NewEncoder(r).Encode(v)
+	_, err = r.Write(text)
+
+	return err
 }
 
 // Write the content of a file to the response.
