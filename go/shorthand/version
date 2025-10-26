@@ -1,11 +1,1 @@
 0.0.1
-
-The first line of this file must be the version number. The Go Publish workflow
-will create a tag for the version on the first line at the commit when this
-file was last modified.
-
-If the workflow fails before tagging due to a precondition not being met, then
-you must make a new commit that includes a change to this file. You can either
-bump the version number (possibly skipping versions), rebase and move the
-version file change commit to the top, or just change a line in this file (eg.
-"Updating commit for version 0.0.1").
