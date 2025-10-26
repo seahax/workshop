@@ -39,7 +39,7 @@ jobs:
               version=$(head -n 1 "$filename")
               tag="${dir}/v${version}"
 
-              echo "Publishing ${tag}..."
+              echo "::group::Publishing ${tag}"
               version_commit=$(git rev-list -1 HEAD -- "$filename")
               git reset --hard "$version_commit"
               cd "$dir"
@@ -58,4 +58,5 @@ jobs:
 
               git push origin tag "$tag"
             )
+            echo ::endgroup::
           done
