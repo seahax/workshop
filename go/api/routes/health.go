@@ -62,7 +62,7 @@ const (
 	StatusUnhealthy status = "unhealthy"
 )
 
-const DefaultHealthPattern = "GET /health"
+const DefaultHealthPattern = "GET /_health"
 
 func (h *Health) Route() (string, func(*api.Context)) {
 	pattern := defaults.NonZeroOrDefault(h.Pattern, DefaultHealthPattern)

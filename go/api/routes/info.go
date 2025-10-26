@@ -13,7 +13,7 @@ type Info struct {
 	JSON    map[string]any
 }
 
-const DefaultInfoPattern = "GET /info"
+const DefaultInfoPattern = "GET /_info"
 
 func (h *Info) Route() (string, func(*api.Context)) {
 	pattern := defaults.NonZeroOrDefault(h.Pattern, DefaultInfoPattern)
