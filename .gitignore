@@ -19,3 +19,4 @@ coverage
 *.tfstate*
 *.local
 *.local.*
+go.work*

@@ -1,8 +1,0 @@
-go 1.25.3
-
-use (
-  ./apps/seahax/api
-  ./go/api
-  ./go/env
-  ./go/defaults
-)
