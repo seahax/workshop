@@ -9,11 +9,11 @@ import (
 	"strings"
 	"syscall"
 
-	"seahax/services/config"
+	"seahax/api/services/config"
 
-	"seahax.com/go/api"
-	"seahax.com/go/api/middleware"
-	"seahax.com/go/api/routes"
+	"github.com/seahax/workshop/go/api"
+	"github.com/seahax/workshop/go/api/middleware"
+	"github.com/seahax/workshop/go/api/routes"
 )
 
 func main() {

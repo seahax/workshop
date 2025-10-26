@@ -6,16 +6,18 @@
   "scripts": {
     "build": "run-all build.",
     "build.0-frontend": "vite build -c frontend/vite.config.ts",
-    "build.1-backend": "vite build -c backend/vite.config.ts",
-    "build.2-types": "tsc -b -f tsconfig.json",
+    "build.1-frontend-types": "tsc -b -f frontend/tsconfig.json",
+    "build.2-api": "cd api && GOOS=linux CGO_ENABLED=0 go build -o dist/api main.go",
     "clean": "rm -rf backend/dist frontend/dist",
     "docker": "run-all docker.",
     "docker.build": "./scripts/docker-build.sh",
     "docker.start": "./scripts/docker-start.sh",
     "lint": "eslint */src",
+    "modernize": "cd api && go get -u && go mod tidy",
     "start": "./scripts/start.sh",
     "test": "run-all test.",
-    "test.0-lint": "nx lint --max-warnings=0"
+    "test.0-lint": "nx lint --max-warnings=0",
+    "test.1-api": "cd api && go test -v -count=1"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.4.0",

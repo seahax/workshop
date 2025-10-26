@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"seahax.com/go/env"
+	"github.com/seahax/workshop/go/env"
 )
 
 type Config struct {
@@ -54,3 +54,5 @@ func Get() *Config {
 
 	return singleton
 }
+
+// TODO: Add MongoDB client.

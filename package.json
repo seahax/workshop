@@ -6,7 +6,9 @@
   "scripts": {
     "build": "nx run-many -t build --exclude root",
     "lint": "eslint .",
-    "modernize": "npx npm-check-updates@latest -i --root --workspaces --dep dev,prod,peer,optional,packageManager --peer --format group && pnpm dedupe",
+    "modernize": "run-all modernize.",
+    "modernize.node": "npx npm-check-updates@latest -i --root --workspaces --dep dev,prod,peer,optional,packageManager --peer --format group && pnpm dedupe",
+    "modernize.script": "nx run-many -t modernize --exclude root",
     "test": "run-all test.",
     "test.0-build": "nx build",
     "test.1-lint": "nx lint --max-warnings=0",
