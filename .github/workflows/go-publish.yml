@@ -41,7 +41,7 @@ jobs:
 
               echo "Publishing ${tag}..."
               version_commit=$(git rev-list -1 HEAD -- "$filename")
-              git reset --hard "$version_commit" &>/dev/null
+              git reset --hard "$version_commit"
               cd "$dir"
               go mod tidy
 
