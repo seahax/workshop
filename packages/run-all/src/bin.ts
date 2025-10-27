@@ -49,7 +49,15 @@ await (async () => {
   console.log(`Running Scripts: ${[...scripts].map((script) => `\n- ${script}`).join('')}`);
 
   for (const script of scripts) {
-    await execa(packageManager, ['run', script], { stdio: 'inherit', preferLocal: true });
+    const result = await execa(
+      packageManager,
+      ['run', script],
+      { stdio: 'inherit', preferLocal: true, rejects: false },
+    );
+
+    if (result.exitCode !== 0) {
+      process.exit(result.exitCode);
+    }
   }
 })();
 

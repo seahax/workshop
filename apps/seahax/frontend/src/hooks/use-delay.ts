@@ -18,14 +18,9 @@ export default function useDelay<T>(initialValue: T, currentValue: T, delay: num
 
     const delay = typeof delayRef.current === 'number' ? delayRef.current : delayRef.current(currentValue);
 
-    if (delay > 0) {
-      timeoutRef.current = window.setTimeout(() => {
-        setValue(currentValue);
-      }, delay);
-    }
-    else {
+    timeoutRef.current = window.setTimeout(() => {
       setValue(currentValue);
-    }
+    }, delay);
 
     return () => {
       clearTimeout(timeoutRef.current);

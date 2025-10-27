@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { Box, Button, CircularProgress, Fade, IconButton, Menu } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import { type JSX, useCallback, useEffect, useRef } from 'react';
+import { type JSX, useCallback, useEffect, useState } from 'react';
 
 import useDelay from '../hooks/use-delay.ts';
 import { useMenuState } from '../hooks/use-menu-state.ts';
@@ -10,7 +10,7 @@ import UserMenuContent from './user-menu-content.tsx';
 
 export default function AppBarUser(): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
-  const menuAnchor = useRef<HTMLElement | null>(null);
+  const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
   const menuState = useMenuState();
   const { isAuthenticated, isLoading, error, loginWithRedirect } = useAuth0();
   const showLoading = useDelay(false, isLoading, (value) => value ? 1000 : 0);
@@ -31,7 +31,7 @@ export default function AppBarUser(): JSX.Element {
           height="100%"
           display="flex"
           alignItems="center"
-          ref={menuAnchor}
+          ref={setMenuAnchor}
         >
           <IconButton
             size="small"
@@ -55,7 +55,7 @@ export default function AppBarUser(): JSX.Element {
       <Menu
         open={menuState.isOpen}
         onClose={menuState.close}
-        anchorEl={menuAnchor.current}
+        anchorEl={menuAnchor}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'right',
