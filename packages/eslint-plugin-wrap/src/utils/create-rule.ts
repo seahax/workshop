@@ -16,7 +16,7 @@ type Report = (
   messageId: MessageId,
   target: TSESTree.Node | TSESTree.Token | TSESTree.SourceLocation,
   fix: (fixer: RuleFixer) => Generator<RuleFix>,
-  autoFix: boolean
+  autoFix: boolean,
 ) => void;
 type Create = (context: Readonly<RuleContext<keyof typeof messages, [Options?]>>, report: Report) => RuleListener;
 

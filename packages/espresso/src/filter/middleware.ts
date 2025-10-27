@@ -5,7 +5,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
  */
 export type SimpleMiddleware = (
   request: IncomingMessage,
-  response: ServerResponse
+  response: ServerResponse,
 ) => void;
 
 /**
@@ -14,7 +14,7 @@ export type SimpleMiddleware = (
 export type NextMiddleware = (
   request: IncomingMessage,
   response: ServerResponse,
-  next: (error?: unknown) => void
+  next: (error?: unknown) => void,
 ) => void;
 
 /**
@@ -24,5 +24,5 @@ export type ErrorMiddleware = (
   error: unknown,
   request: IncomingMessage,
   response: ServerResponse,
-  next: (error?: unknown) => void
+  next: (error?: unknown) => void,
 ) => void;

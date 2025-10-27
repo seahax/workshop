@@ -241,8 +241,8 @@ export function createApplication({ headers, compression = true }: ApplicationOp
 
         self.emit('closing');
 
-        void Promise.all(servers.map((server) => {
-          return server.listening ? new Promise<void>((resolve) => server.on('close', resolve)) : undefined;
+        void Promise.all(servers.flatMap((server): Promise<void> | [] => {
+          return server.listening ? new Promise<void>((resolve) => server.on('close', resolve)) : [];
         })).then(() => {
           self.emit('close');
         });

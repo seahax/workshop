@@ -33,7 +33,7 @@
     "@types/vary": "^1.1.3",
     "compressible": "^2.0.18",
     "etag": "^1.8.1",
-    "mime": "^4.0.7",
+    "mime": "^4.1.0",
     "negotiator": "^1.0.0",
     "vary": "^1.1.2"
   },

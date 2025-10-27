@@ -70,7 +70,7 @@ export interface Hooks<TParticle extends Particle> {
     context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
     particle0: TParticle,
     particle1: TParticle,
-    strength: number
+    strength: number,
   ) => void;
 
   /**
@@ -82,7 +82,7 @@ export interface Hooks<TParticle extends Particle> {
    */
   readonly renderParticle?: (
     context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
-    particle: TParticle
+    particle: TParticle,
   ) => void;
 
   /**

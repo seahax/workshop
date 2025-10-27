@@ -23,11 +23,11 @@
   "dependencies": {
     "@seahax/args": "workspace:^",
     "@seahax/monorepo": "workspace:^",
-    "@types/semver": "^7.7.0",
-    "chalk": "^5.6.0",
+    "@types/semver": "^7.7.1",
+    "chalk": "^5.6.2",
     "execa": "^9.6.0",
     "globby": "^14.1.0",
-    "semver": "^7.7.2"
+    "semver": "^7.7.3"
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*"

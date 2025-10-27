@@ -27,12 +27,12 @@
   },
   "dependencies": {
     "@standard-schema/spec": "^1.0.0",
-    "chalk-template": "^1.1.0",
-    "wrap-ansi": "^9.0.0"
+    "chalk-template": "^1.1.2",
+    "wrap-ansi": "^9.0.2"
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*",
-    "zod": "^4.1.0"
+    "zod": "^4.1.12"
   },
   "publishConfig": {
     "access": "public"
