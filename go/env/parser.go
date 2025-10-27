@@ -75,7 +75,7 @@ func getDefaultParser(type_ reflect.Type) parserFunc {
 	}
 
 	return func(envStr string, envName string, reflectField reflect.StructField) (any, error) {
-		panic(fmt.Errorf(
+		panic(fmt.Sprintf(
 			"unsupported field type %s for %s",
 			reflectField.Type.Kind(),
 			envName,

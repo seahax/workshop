@@ -2,7 +2,6 @@ package env
 
 import (
 	"errors"
-	"fmt"
 	"reflect"
 	"regexp"
 	"strings"
@@ -11,7 +10,7 @@ import (
 )
 
 type Binder struct {
-	env Env
+	Env Env
 	// Prefix to add to all environment variable names. The prefix will be
 	// uppercased automatically. For example, a field with tag `env:"PORT"` and
 	// prefix `app_` will bind to the environment variable `APP_PORT`.
@@ -32,38 +31,26 @@ var rxInvalidNameChars = regexp.MustCompile("[^A-Z0-9_]+")
 // Binder.ContinueOnError is true. Will panic if the target is not a struct
 // pointer.
 func (b *Binder) Bind(target any) error {
-	prefix := strings.ToUpper(b.Prefix)
-	reflectRoot := reflect.ValueOf(target)
+	reflectStruct := reflectStruct(target)
+	reflectStructType := reflectStruct.Type()
 
-	if reflectRoot.Kind() == reflect.Pointer {
-		reflectRoot = reflectRoot.Elem()
-	}
-
-	if reflectRoot.Kind() != reflect.Struct {
-		panic(fmt.Errorf("only struct pointers can be bound to the environment"))
-	}
-
-	reflectRootType := reflectRoot.Type()
 	var errs []error
 
-	for i := 0; i < reflectRoot.NumField(); i++ {
-		reflectField := reflectRootType.Field(i)
+	for i := 0; i < reflectStruct.NumField(); i++ {
+		reflectField := reflectStructType.Field(i)
 
 		if !reflectField.IsExported() {
 			continue
 		}
 
-		envName, ok := reflectField.Tag.Lookup("env")
-		envName = strings.TrimSpace(envName)
+		tagValue, ok := reflectField.Tag.Lookup("env")
 
-		if !ok || envName == "" {
+		if !ok {
 			continue
 		}
 
-		envName = prefix + envName
-		envName = strings.ToUpper(envName)
-		envName = rxInvalidNameChars.ReplaceAllString(envName, "_")
-		env := shorthand.Coalesce(b.env, defaultEnv)
+		envName := normalizeEnvName(b.Prefix, tagValue)
+		env := shorthand.Coalesce(b.Env, defaultEnv)
 		envStr, envExists := env.LookupEnv(envName)
 
 		if !envExists {
@@ -90,8 +77,8 @@ func (b *Binder) Bind(target any) error {
 			return err
 		}
 
-		reflectValue := reflect.ValueOf(value).Convert(reflectRoot.Field(i).Type())
-		reflectRoot.Field(i).Set(reflectValue)
+		reflectValue := reflect.ValueOf(value).Convert(reflectStruct.Field(i).Type())
+		reflectStruct.Field(i).Set(reflectValue)
 	}
 
 	if len(errs) > 0 {
@@ -101,10 +88,66 @@ func (b *Binder) Bind(target any) error {
 	return nil
 }
 
-// Bind environment variables to the target struct. If any variable fails to
-// bind, a *BindEnvError will be returned. Will panic if the target is not a
-// struct pointer.
+// Get the environment variable name for the given struct field, including the
+// Binder.Prefix. If the field does not have an `env` tag, an empty string is
+// returned.
+func (b *Binder) GetEnvName(target any, fieldName string) string {
+	reflectStruct := reflectStruct(target)
+
+	field, ok := reflectStruct.Type().FieldByName(fieldName)
+
+	if !ok {
+		return ""
+	}
+
+	envName, ok := field.Tag.Lookup("env")
+
+	if !ok {
+		return ""
+	}
+
+	return normalizeEnvName(b.Prefix, envName)
+}
+
+var binder = Binder{}
+
+// Use the Binder to bind environment variables to the target struct. The
+// returned error will be a *BindEnvError, or []*BindEnvError if
+// Binder.ContinueOnError is true. Will panic if the target is not a struct
+// pointer.
 func Bind(target any) error {
-	binder := Binder{}
 	return binder.Bind(target)
+}
+
+// Get the environment variable name for the given struct field. If the field
+// does not have an `env` tag, an empty string is returned.
+//
+// Note: If you are using a binder with a Prefix, use the binder's GetEnvName
+// method instead so that the prefix is included.
+func GetEnvName(target any, fieldName string) string {
+	return binder.GetEnvName(target, fieldName)
+}
+
+func reflectStruct(target any) reflect.Value {
+	value := reflect.ValueOf(target)
+
+	if value.Kind() != reflect.Pointer {
+		panic("only struct pointers can be bound to the environment")
+	}
+
+	value = value.Elem()
+
+	if value.Kind() != reflect.Struct {
+		panic("only struct pointers can be bound to the environment")
+	}
+
+	return value
+}
+
+func normalizeEnvName(prefix string, envName string) string {
+	value := strings.TrimSpace(prefix) + strings.TrimSpace(envName)
+	value = strings.ToUpper(value)
+	value = rxInvalidNameChars.ReplaceAllString(value, "_")
+
+	return value
 }
