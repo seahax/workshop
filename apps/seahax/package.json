@@ -14,7 +14,7 @@
     "docker.start": "./scripts/docker-start.sh",
     "lint": "eslint */src",
     "modernize": "cd api && go get -u && go mod tidy",
-    "start": "./scripts/start.sh",
+    "start": "cd api && go run main.go",
     "test": "run-all test.",
     "test.0-lint": "nx lint --max-warnings=0",
     "test.1-api": "cd api && go test -v -count=1"

@@ -1,5 +1,5 @@
 [env]
 APP_HOSTNAME = "127.0.0.1"
 APP_PORT = "8080"
-APP_STATIC_PATH = "./frontend/dist"
+APP_STATIC_PATH = "{{config_root}}/frontend/dist"
 APP_ORIGIN = "http://127.0.0.1:8080"

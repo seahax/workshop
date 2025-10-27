@@ -3,43 +3,46 @@ package config
 import (
 	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"sync"
 	"time"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/seahax/workshop/go/env"
+	"seahax.com/go/env"
+	"seahax.com/go/shorthand"
 )
 
 type Config struct {
 	// The timestamp when the application was built.
-	BuildTimestamp int64 `env:"APP_BUILD_TIMESTAMP"`
+	BuildTimestamp int64 `env:"BUILD_TIMESTAMP"`
 
 	// The timestamp when the application started.
 	StartTimestamp int64
 
 	// The commit hash of the application build.
-	Commit string `env:"APP_COMMIT"`
+	Commit string `env:"COMMIT"`
 
 	// The application environment (eg. development, production).
-	Environment string `env:"APP_ENVIRONMENT" validate:"required,oneof=development production"`
+	Environment string `env:"ENVIRONMENT" validate:"required,oneof=development production"`
 
 	// The hostname or IP address the application binds to.
-	Hostname string `env:"APP_HOSTNAME" validate:"isdefault|ipv4|ipv6|hostname"`
+	Hostname string `env:"HOSTNAME" validate:"isdefault|ipv4|ipv6|hostname"`
 
 	// The port number the application binds to.
-	Port uint `env:"APP_PORT" validate:"required,port"`
+	Port uint `env:"PORT" validate:"required,port"`
 
 	// The origin URL of the application.
-	Origin string `env:"APP_ORIGIN" validate:"required,url"`
+	Origin string `env:"ORIGIN" validate:"required,url"`
 
 	// The path to the static files served by the application.
-	StaticPath string `env:"APP_STATIC_PATH" validate:"required,dir"`
-}
+	StaticPath string `env:"STATIC_PATH" validate:"required,dir"`
 
-func (c Config) Address() string {
-	return fmt.Sprintf("%s:%d", c.Hostname, c.Port)
+	// The server bind address in "host:port" format.
+	Address string
+
+	// The application logger.
+	Log *slog.Logger
 }
 
 var Get = sync.OnceValue(func() *Config {
@@ -49,23 +52,39 @@ var Get = sync.OnceValue(func() *Config {
 		StartTimestamp: now,
 		Environment:    "development",
 	}
-
-	if err := env.Bind(cfg); err != nil {
-		log.Fatalln(err)
+	binder := env.Binder{
+		Prefix: "APP_",
 	}
 
+	shorthand.Critical(binder.Bind(cfg))
+
 	if err := validator.New().Struct(cfg); err != nil {
-		var errs validator.ValidationErrors
-		if errors.As(err, &errs) {
-			for _, err := range errs {
-				env := env.GetTag(cfg, err.StructField())
-				log.Printf(`invalid config '%s' (%s)`, env, err.ActualTag())
-			}
-			os.Exit(1)
-		}
+		printConfigErrors(err, &binder, cfg)
+		os.Exit(1)
+	}
+
+	cfg.Address = fmt.Sprintf("%s:%d", cfg.Hostname, cfg.Port)
+
+	if cfg.Environment == "production" {
+		cfg.Log = slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	} else {
+		cfg.Log = slog.Default()
 	}
 
 	return cfg
 })
+
+func printConfigErrors(err error, binder *env.Binder, cfg *Config) {
+	var fieldErrs validator.ValidationErrors
+
+	if errors.As(err, &fieldErrs) {
+		for _, fieldErr := range fieldErrs {
+			name := binder.GetEnvName(cfg, fieldErr.StructField())
+			fmt.Printf(`invalid config '%s' (%s): %v`, name, fieldErr.ActualTag(), fieldErr.Value())
+		}
+	} else {
+		fmt.Println(err)
+	}
+}
 
 // TODO: Add MongoDB client.

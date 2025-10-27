@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -11,16 +10,18 @@ import (
 
 	"seahax/api/services/config"
 
-	"github.com/seahax/workshop/go/api"
-	"github.com/seahax/workshop/go/api/middleware"
-	"github.com/seahax/workshop/go/api/routes"
+	"seahax.com/go/api"
+	"seahax.com/go/api/middleware"
+	"seahax.com/go/api/routes"
 )
 
 func main() {
 	config := config.Get()
+	log := config.Log
 	app := &api.Api{
+		Log: log,
 		Listening: func(url string) {
-			slog.Info(fmt.Sprintf("Server is listening on %s", url))
+			log.Info(fmt.Sprintf("Server is listening on %s", url))
 		},
 	}
 
@@ -55,17 +56,17 @@ func main() {
 		},
 	})
 
-	app.BindAddress(config.Address())
+	app.BindAddress(config.Address)
 
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 	<-signalChan
 
 	if errs := app.Shutdown(); errs != nil {
-		slog.Error(fmt.Sprintf("%v", errs))
+		log.Error(fmt.Sprintf("%v", errs))
 
 		for _, err := range errs {
-			slog.Error(fmt.Sprintf("%v", err))
+			log.Error(fmt.Sprintf("%v", err))
 		}
 	}
 
