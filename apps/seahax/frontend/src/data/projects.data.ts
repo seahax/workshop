@@ -17,6 +17,8 @@ const PROJECTS = [
   //
 ] as const as Project[];
 
+// TODO: Add Go projects.
+
 async function findPackages(dir: string): Promise<Project[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
   const directories: Dirent[] = [];
