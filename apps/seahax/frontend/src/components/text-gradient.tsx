@@ -39,7 +39,7 @@ export default function TextGradient({ children, slotProps, ...props }: Props): 
         color="transparent"
         sx={[
           {
-            background: `linear-gradient(darkblue -35%, skyblue 40%, gold 70%, orange 76%, coral 85%, salmon 90%) text`,
+            background: `linear-gradient(darkblue -10%, skyblue 45%, gold 55%, orange 62%, coral 68%, salmon 74%) text`,
             backgroundClip: 'text',
           },
           ...(Array.isArray(slotProps?.gradient?.sx) ? slotProps.gradient.sx : [slotProps?.gradient?.sx]),

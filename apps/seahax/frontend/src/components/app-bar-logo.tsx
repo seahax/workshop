@@ -7,7 +7,7 @@ import TextGradient from './text-gradient.tsx';
 export default function AppBarLogo(): JSX.Element {
   return (
     <Link component={RouterLink} to="/" flexGrow={1}>
-      <TextGradient fontSize={24} fontWeight={600} fontFamily="'Rock Salt'">Seahax</TextGradient>
+      <TextGradient fontSize={36} fontWeight={400} fontFamily="'Walter Turncoat'">Seahax</TextGradient>
     </Link>
   );
 }

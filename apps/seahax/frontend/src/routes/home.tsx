@@ -10,11 +10,9 @@ import {
   useScrollTrigger,
 } from '@mui/material';
 import { createDefaultRenderer, createGlimmer } from '@seahax/glimmer';
-import { IconHandStop } from '@tabler/icons-react';
 import { type JSX, useEffect, useRef } from 'react';
 
 import { AppPage } from '../components/app-page.tsx';
-import { animation } from '../components/app-theme.tsx';
 import Canvas from '../components/canvas.tsx';
 import projects from '../data/projects.data.ts';
 import useDelay from '../hooks/use-delay.ts';
@@ -26,7 +24,6 @@ export default defineRoute({
   Component: Home,
 });
 
-// TODO: Use the Substack RSS feed to list blog posts.
 // TODO: Use the LinkedIn API to list work experience.
 
 function Home(): JSX.Element {
@@ -76,22 +73,6 @@ function Home(): JSX.Element {
             sx={(theme) => ({ textAlign: 'center', color: theme.palette.secondary.main })}
           >
             Hello, I&apos;m&nbsp;Chris.
-            {' '}
-            <Box
-              component="span"
-              sx={(theme) => ({ display: 'inline-block', transform: `translate(0px, ${theme.spacing(1)})` })}
-            >
-              <Box
-                component="span"
-                sx={{
-                  display: 'inline-block',
-                  transform: 'rotate(20deg)',
-                  animation: `${animation.wave} 0.5s 6 alternate ease-in-out`,
-                }}
-              >
-                <IconHandStop size="4rem" stroke="1px" />
-              </Box>
-            </Box>
           </Typography>
           <Box
             display={'contents'}

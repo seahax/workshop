@@ -36,7 +36,7 @@ export default function AppFooter(): JSX.Element {
           </IconButton>
         </Tooltip>
         <Tooltip title="GitHub Repository" placement="top">
-          <IconButton component={LinkExternal} href="https://github.com/seahax/workshop/tree/main/apps/seahax">
+          <IconButton component={LinkExternal} href="https://github.com/seahax/workshop">
             <IconBrandGithub size={32} />
           </IconButton>
         </Tooltip>

@@ -17,6 +17,19 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: '"Fredoka Variable", "Helvetica", "Arial", sans-serif',
+    h1: {
+      fontFamily: '"Walter Turncoat", "Helvetica", "Arial", sans-serif',
+    },
+    h2: {
+      fontFamily: '"Walter Turncoat", "Helvetica", "Arial", sans-serif',
+      fontWeight: 200,
+    },
+    h3: {
+      fontFamily: '"Walter Turncoat", "Helvetica", "Arial", sans-serif',
+    },
+    h4: {
+      fontFamily: '"Walter Turncoat", "Helvetica", "Arial", sans-serif',
+    },
   },
   components: {
     MuiCssBaseline: {
