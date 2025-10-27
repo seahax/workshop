@@ -1,33 +1,51 @@
 package api
 
 import (
-	"regexp"
+	"path"
 	"strings"
 )
 
-var rxPattern = regexp.MustCompile(`^(?:([ \t]+)[ \t]+)?([^/]+)?(/.*)?$`)
-
-func parsePattern(pattern string) (method string, domain string, path string) {
-	m := rxPattern.FindStringSubmatch(pattern)
-
-	return m[1], m[2], m[3]
+type Pattern struct {
+	Method string
+	Domain string
+	Path   string
 }
 
-func createPattern(method string, domain string, path string) string {
-	var pattern strings.Builder
+func (p *Pattern) String() string {
+	var pattern string
 
-	if method != "" {
-		pattern.WriteString(method)
-		pattern.WriteString(" ")
+	if p.Method != "" {
+		pattern = p.Method + " "
 	}
 
-	if domain != "" {
-		pattern.WriteString(domain)
+	pattern += path.Join(p.Domain, "/", p.Path)
+
+	return pattern
+}
+
+func ParsePattern(pattern string) *Pattern {
+	var method, domain, path string
+
+	pattern = strings.TrimSpace(pattern)
+	spaceIndex := strings.IndexAny(pattern, " \t")
+
+	if spaceIndex != -1 {
+		method = pattern[:spaceIndex]
+		pattern = strings.TrimSpace(pattern[spaceIndex+1:])
 	}
 
-	if path != "" {
-		pattern.WriteString(path)
+	slashIndex := strings.Index(pattern, "/")
+
+	if slashIndex != -1 {
+		domain = strings.TrimSpace(pattern[:slashIndex])
+		path = strings.TrimSpace(pattern[slashIndex:])
+	} else {
+		domain = strings.TrimSpace(pattern)
 	}
 
-	return pattern.String()
+	return &Pattern{
+		Method: method,
+		Domain: domain,
+		Path:   path,
+	}
 }

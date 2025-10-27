@@ -2,17 +2,17 @@ package routes
 
 import (
 	"net/http"
-	"strings"
 	"sync"
 
-	"github.com/seahax/workshop/go/api"
-	"github.com/seahax/workshop/go/defaults"
+	"seahax.com/go/api"
+	"seahax.com/go/shorthand"
 )
 
 // A health check endpoint.
 type Health struct {
-	Pattern string
-	State   *HealthState
+	Path   string
+	Domain string
+	State  *HealthState
 }
 
 // Current health state snapshot.
@@ -62,15 +62,10 @@ const (
 	StatusUnhealthy status = "unhealthy"
 )
 
-const DefaultHealthPattern = "GET /_health"
+const DefaultHealthPath = "/_health"
 
 func (h *Health) Route() (string, func(*api.Context)) {
-	pattern := defaults.NonZeroOrDefault(h.Pattern, DefaultHealthPattern)
-
-	if !strings.ContainsAny(pattern, " \t") {
-		pattern = "GET " + pattern
-	}
-
+	pattern := &api.Pattern{Method: "GET", Domain: h.Domain, Path: shorthand.Coalesce(h.Path, DefaultHealthPath)}
 	handler := func(ctx *api.Context) {
 		if h.State == nil {
 			ctx.Response.WriteJSON(&HealthSnapshot{
@@ -90,5 +85,5 @@ func (h *Health) Route() (string, func(*api.Context)) {
 		ctx.Response.WriteJSON(snapshot)
 	}
 
-	return pattern, handler
+	return pattern.String(), handler
 }

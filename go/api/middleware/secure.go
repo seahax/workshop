@@ -3,8 +3,8 @@ package middleware
 import (
 	"strings"
 
-	"github.com/seahax/workshop/go/api"
-	"github.com/seahax/workshop/go/defaults"
+	"seahax.com/go/api"
+	"seahax.com/go/shorthand"
 )
 
 // Add security-related HTTP headers to responses.
@@ -127,19 +127,19 @@ func (s *Secure) Handle(ctx *api.Context, next func()) {
 		csp := []string{}
 
 		if s.CSPDefaultSrc != "-" {
-			csp = append(csp, "default-src "+defaults.NonZeroOrDefault(s.CSPDefaultSrc, DefaultCSPDefaultSrc))
+			csp = append(csp, "default-src "+shorthand.Coalesce(s.CSPDefaultSrc, DefaultCSPDefaultSrc))
 		}
 
 		if s.CSPScriptSrc != "-" {
-			csp = append(csp, "script-src "+defaults.NonZeroOrDefault(s.CSPScriptSrc, DefaultCSPScriptSrc))
+			csp = append(csp, "script-src "+shorthand.Coalesce(s.CSPScriptSrc, DefaultCSPScriptSrc))
 		}
 
 		if s.CSPScriptSrcAttr != "-" {
-			csp = append(csp, "script-src-attr "+defaults.NonZeroOrDefault(s.CSPScriptSrcAttr, DefaultCSPScriptSrcAttr))
+			csp = append(csp, "script-src-attr "+shorthand.Coalesce(s.CSPScriptSrcAttr, DefaultCSPScriptSrcAttr))
 		}
 
 		if s.CSPStyleSrc != "-" {
-			csp = append(csp, "style-src "+defaults.NonZeroOrDefault(s.CSPStyleSrc, DefaultCSPStyleSrc))
+			csp = append(csp, "style-src "+shorthand.Coalesce(s.CSPStyleSrc, DefaultCSPStyleSrc))
 		}
 
 		if s.CSPStyleSrcAttr != "-" && s.CSPStyleSrcAttr != "" {
@@ -151,15 +151,15 @@ func (s *Secure) Handle(ctx *api.Context, next func()) {
 		}
 
 		if s.CSPImgSrc != "-" {
-			csp = append(csp, "img-src "+defaults.NonZeroOrDefault(s.CSPImgSrc, DefaultCSPImgSrc))
+			csp = append(csp, "img-src "+shorthand.Coalesce(s.CSPImgSrc, DefaultCSPImgSrc))
 		}
 
 		if s.CSPFontSrc != "-" {
-			csp = append(csp, "font-src "+defaults.NonZeroOrDefault(s.CSPFontSrc, DefaultCSPFontSrc))
+			csp = append(csp, "font-src "+shorthand.Coalesce(s.CSPFontSrc, DefaultCSPFontSrc))
 		}
 
 		if s.CSPObjectSrc != "-" {
-			csp = append(csp, "object-src "+defaults.NonZeroOrDefault(s.CSPObjectSrc, DefaultCSPObjectSrc))
+			csp = append(csp, "object-src "+shorthand.Coalesce(s.CSPObjectSrc, DefaultCSPObjectSrc))
 		}
 
 		if s.CSPChildSrc != "-" && s.CSPChildSrc != "" {
@@ -183,15 +183,15 @@ func (s *Secure) Handle(ctx *api.Context, next func()) {
 		}
 
 		if s.CSPBaseURI != "-" {
-			csp = append(csp, "base-uri "+defaults.NonZeroOrDefault(s.CSPBaseURI, DefaultCSPBaseURI))
+			csp = append(csp, "base-uri "+shorthand.Coalesce(s.CSPBaseURI, DefaultCSPBaseURI))
 		}
 
 		if s.CSPFormAction != "-" {
-			csp = append(csp, "form-action "+defaults.NonZeroOrDefault(s.CSPFormAction, DefaultCSPFormAction))
+			csp = append(csp, "form-action "+shorthand.Coalesce(s.CSPFormAction, DefaultCSPFormAction))
 		}
 
 		if s.CSPFrameAncestors != "-" {
-			csp = append(csp, "frame-ancestors "+defaults.NonZeroOrDefault(s.CSPFrameAncestors, DefaultCSPFrameAncestors))
+			csp = append(csp, "frame-ancestors "+shorthand.Coalesce(s.CSPFrameAncestors, DefaultCSPFrameAncestors))
 		}
 
 		if !s.CSPUpgradeInsecureRequestsDisabled {
@@ -208,43 +208,43 @@ func (s *Secure) Handle(ctx *api.Context, next func()) {
 	}
 
 	if s.CrossOriginOpenerPolicy != "-" {
-		header.Set("Cross-Origin-Opener-Policy", defaults.NonZeroOrDefault(s.CrossOriginOpenerPolicy, DefaultCrossOriginOpenerPolicy))
+		header.Set("Cross-Origin-Opener-Policy", shorthand.Coalesce(s.CrossOriginOpenerPolicy, DefaultCrossOriginOpenerPolicy))
 	}
 
 	if s.CrossOriginResourcePolicy != "-" {
-		header.Set("Cross-Origin-Resource-Policy", defaults.NonZeroOrDefault(s.CrossOriginResourcePolicy, DefaultCrossOriginResourcePolicy))
+		header.Set("Cross-Origin-Resource-Policy", shorthand.Coalesce(s.CrossOriginResourcePolicy, DefaultCrossOriginResourcePolicy))
 	}
 
 	if s.OriginAgentCluster != "-" {
-		header.Set("Origin-Agent-Cluster", defaults.NonZeroOrDefault(s.OriginAgentCluster, DefaultOriginAgentCluster))
+		header.Set("Origin-Agent-Cluster", shorthand.Coalesce(s.OriginAgentCluster, DefaultOriginAgentCluster))
 	}
 
 	if s.ReferrerPolicy != "-" {
-		header.Set("Referrer-Policy", defaults.NonZeroOrDefault(s.ReferrerPolicy, DefaultReferrerPolicy))
+		header.Set("Referrer-Policy", shorthand.Coalesce(s.ReferrerPolicy, DefaultReferrerPolicy))
 	}
 
 	if s.StrictTransportSecurity != "-" {
-		header.Set("Strict-Transport-Security", defaults.NonZeroOrDefault(s.StrictTransportSecurity, DefaultStrictTransportSecurity))
+		header.Set("Strict-Transport-Security", shorthand.Coalesce(s.StrictTransportSecurity, DefaultStrictTransportSecurity))
 	}
 
 	if s.XContentTypeOptions != "-" {
-		header.Set("X-Content-Type-Options", defaults.NonZeroOrDefault(s.XContentTypeOptions, DefaultXContentTypeOptions))
+		header.Set("X-Content-Type-Options", shorthand.Coalesce(s.XContentTypeOptions, DefaultXContentTypeOptions))
 	}
 
 	if s.XDNSPrefetchControl != "-" {
-		header.Set("X-DNS-Prefetch-Control", defaults.NonZeroOrDefault(s.XDNSPrefetchControl, DefaultXDNSPrefetchControl))
+		header.Set("X-DNS-Prefetch-Control", shorthand.Coalesce(s.XDNSPrefetchControl, DefaultXDNSPrefetchControl))
 	}
 
 	if s.XDownloadOptions != "-" {
-		header.Set("X-Download-Options", defaults.NonZeroOrDefault(s.XDownloadOptions, DefaultXDownloadOptions))
+		header.Set("X-Download-Options", shorthand.Coalesce(s.XDownloadOptions, DefaultXDownloadOptions))
 	}
 
 	if s.XFrameOptions != "-" {
-		header.Set("X-Frame-Options", defaults.NonZeroOrDefault(s.XFrameOptions, DefaultXFrameOptions))
+		header.Set("X-Frame-Options", shorthand.Coalesce(s.XFrameOptions, DefaultXFrameOptions))
 	}
 
 	if s.XPermittedCrossDomainPolicies != "-" {
-		header.Set("X-Permitted-Cross-Domain-Policies", defaults.NonZeroOrDefault(s.XPermittedCrossDomainPolicies, DefaultXPermittedCrossDomainPolicies))
+		header.Set("X-Permitted-Cross-Domain-Policies", shorthand.Coalesce(s.XPermittedCrossDomainPolicies, DefaultXPermittedCrossDomainPolicies))
 	}
 
 	if !s.XPoweredByEnabled {
@@ -252,7 +252,7 @@ func (s *Secure) Handle(ctx *api.Context, next func()) {
 	}
 
 	if s.XXSSProtection != "-" {
-		header.Set("X-XSS-Protection", defaults.NonZeroOrDefault(s.XXSSProtection, DefaultXXSSProtection))
+		header.Set("X-XSS-Protection", shorthand.Coalesce(s.XXSSProtection, DefaultXXSSProtection))
 	}
 
 	next()

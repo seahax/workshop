@@ -3,6 +3,8 @@ package api
 import (
 	"fmt"
 	"net/http"
+
+	"seahax.com/go/shorthand"
 )
 
 type ShutdownError []*ServerError
@@ -12,13 +14,7 @@ func (e ShutdownError) Error() string {
 }
 
 func (e ShutdownError) Unwrap() []error {
-	var unwrapped []error
-
-	for _, err := range e {
-		unwrapped = append(unwrapped, err)
-	}
-
-	return unwrapped
+	return shorthand.Select(e, func(v *ServerError) error { return v })
 }
 
 type ServerError struct {

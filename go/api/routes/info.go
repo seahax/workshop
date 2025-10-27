@@ -1,31 +1,25 @@
 package routes
 
 import (
-	"strings"
-
-	"github.com/seahax/workshop/go/api"
-	"github.com/seahax/workshop/go/defaults"
+	"seahax.com/go/api"
+	"seahax.com/go/shorthand"
 )
 
 // An information endpoint that returns static JSON data.
 type Info struct {
-	Pattern string
-	JSON    map[string]any
+	Path   string
+	Domain string
+	JSON   map[string]any
 }
 
-const DefaultInfoPattern = "GET /_info"
+const DefaultInfoPath = "/_info"
 
 func (h *Info) Route() (string, func(*api.Context)) {
-	pattern := defaults.NonZeroOrDefault(h.Pattern, DefaultInfoPattern)
-
-	if !strings.ContainsAny(pattern, " \t") {
-		pattern = "GET " + pattern
-	}
-
+	pattern := &api.Pattern{Method: "GET", Domain: h.Domain, Path: shorthand.Coalesce(h.Path, DefaultInfoPath)}
 	handler := func(ctx *api.Context) {
 		ctx.Response.Header().Set("Cache-Control", "no-cache")
 		ctx.Response.WriteJSON(h.JSON)
 	}
 
-	return pattern, handler
+	return pattern.String(), handler
 }

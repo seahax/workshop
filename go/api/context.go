@@ -8,7 +8,7 @@ import (
 )
 
 type Context struct {
-	mut      sync.Mutex
+	mut      sync.RWMutex
 	cleanups []func()
 	// A logger specific to this request context.
 	Log *slog.Logger
@@ -26,9 +26,9 @@ func (c *Context) Cleanup(callback func()) {
 }
 
 func (c *Context) close() {
-	c.mut.Lock()
+	c.mut.RLock()
 	cleanups := c.cleanups
-	c.mut.Unlock()
+	c.mut.RUnlock()
 
 	for _, cleanup := range cleanups {
 		cleanup()
@@ -39,14 +39,14 @@ func getContext(api *Api, responseWriter http.ResponseWriter, request *http.Requ
 	ctx, _ := request.Context().Value(api).(*Context)
 
 	if ctx == nil {
-		logHandler := api.LogHandler
+		log := api.Log
 
-		if logHandler == nil {
-			logHandler = slog.Default().Handler()
+		if log == nil {
+			log = slog.Default()
 		}
 
 		ctx = &Context{}
-		ctx.Log = slog.New(logHandler)
+		ctx.Log = log
 		ctx.Request = request.WithContext(context.WithValue(request.Context(), api, ctx))
 		ctx.Response = &Response{
 			ResponseWriter: &writer{ResponseWriter: responseWriter},

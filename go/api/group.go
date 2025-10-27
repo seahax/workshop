@@ -7,7 +7,7 @@ import (
 
 // A group of routes with a common prefix and shared middleware.
 type Group struct {
-	mut         sync.Mutex
+	mut         sync.RWMutex
 	Prefix      string
 	Middlewares []Middleware
 	Routes      []Routable
@@ -17,9 +17,9 @@ type Group struct {
 func (g *Group) Route(routable Routable, middlewares ...Middleware) {
 	pattern, baseHandler := routable.Route()
 	handler := applyMiddlewares(middlewares, func(ctx *Context) {
-		g.mut.Lock()
+		g.mut.RLock()
 		groupMiddlewares := g.Middlewares
-		g.mut.Unlock()
+		g.mut.RUnlock()
 
 		withMiddlewares(groupMiddlewares, ctx, func() {
 			baseHandler(ctx)
@@ -53,10 +53,10 @@ func applyGroup(
 	routes := source.Routes
 
 	for _, routable := range routes {
-		pattern, handler := routable.Route()
-		method, domain, path := parsePattern(pattern)
-		pattern = createPattern(method, domain, gopath.Join(source.Prefix, path))
-		route := &Route{Pattern: pattern, Handler: handler}
+		patternStr, handler := routable.Route()
+		pattern := ParsePattern(patternStr)
+		pattern.Path = gopath.Join(source.Prefix, pattern.Path)
+		route := &Route{Pattern: pattern.String(), Handler: handler}
 		target.Route(route, middlewares...)
 	}
 }

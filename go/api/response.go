@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"seahax.com/go/shorthand"
 )
 
 // Response accessor with convenience methods for writing common responses.
@@ -91,16 +93,12 @@ func (r *Response) WriteFileContent(name string, modified time.Time, content io.
 // This method prevents path traversal attacks and ignores dotfiles in the
 // fileNames array.
 func (r *Response) WriteFile(rootDir string, onBeforeWrite func(fileName string), fileNames ...string) {
-	var safeFileNames []string
+	// Skip dotfiles.
+	fileNames = shorthand.Filter(fileNames, func(v string) bool {
+		return !strings.HasPrefix(v, ".") && !strings.Contains(v, "/.") && !strings.Contains(v, "\\.")
+	})
 
-	for _, name := range fileNames {
-		// Skip dotfiles.
-		if !strings.HasPrefix(name, ".") && !strings.Contains(name, "/.") && !strings.Contains(name, "\\.") {
-			safeFileNames = append(safeFileNames, name)
-		}
-	}
-
-	if len(safeFileNames) == 0 {
+	if len(fileNames) == 0 {
 		r.Error(http.StatusNotFound)
 		return
 	}
@@ -116,7 +114,7 @@ func (r *Response) WriteFile(rootDir string, onBeforeWrite func(fileName string)
 
 	defer root.Close()
 
-	r.WriteFileUnsafe(http.FS(root.FS()), onBeforeWrite, safeFileNames...)
+	r.WriteFileUnsafe(http.FS(root.FS()), onBeforeWrite, fileNames...)
 }
 
 // UNSAFE: This does not provide protection against path traversal attacks and

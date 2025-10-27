@@ -2,30 +2,21 @@ package routes
 
 import (
 	"net/http"
-	"strings"
 
-	"github.com/seahax/workshop/go/api"
-	"github.com/seahax/workshop/go/defaults"
+	"seahax.com/go/api"
 )
 
 // A static file serving endpoint with optional SPA support.
 type Static struct {
-	PatternPrefix string
-	RootDir       string
-	SpaIndex      string
-	Header        func(header http.Header, fileName string)
+	Prefix   string
+	Domain   string
+	RootDir  string
+	SpaIndex string
+	Header   func(header http.Header, fileName string)
 }
 
-const DefaultStaticPatternPrefix = "GET /"
-
 func (s *Static) Route() (string, func(*api.Context)) {
-	prefix := defaults.NonZeroOrDefault(s.PatternPrefix, DefaultStaticPatternPrefix)
-
-	if !strings.ContainsAny(prefix, " \t") {
-		prefix = "GET " + prefix
-	}
-
-	pattern := prefix + "/{fileName...}"
+	pattern := &api.Pattern{Method: "GET", Domain: s.Domain, Path: s.Prefix + "/{fileName...}"}
 	handler := func(c *api.Context) {
 		fileName := c.Request.PathValue("fileName")
 		onBeforeWrite := func(fileName string) {
@@ -36,5 +27,5 @@ func (s *Static) Route() (string, func(*api.Context)) {
 		c.Response.WriteFile(s.RootDir, onBeforeWrite, fileName, s.SpaIndex)
 	}
 
-	return pattern, handler
+	return pattern.String(), handler
 }

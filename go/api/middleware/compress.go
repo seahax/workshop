@@ -12,8 +12,8 @@ import (
 
 	"github.com/andybalholm/brotli"
 	"github.com/klauspost/compress/zstd"
-	"github.com/seahax/workshop/go/api"
-	"github.com/seahax/workshop/go/defaults"
+	"seahax.com/go/api"
+	"seahax.com/go/shorthand"
 )
 
 type Algorithm struct {
@@ -125,7 +125,7 @@ func (w *compressResponseWriter) WriteHeader(statusCode int) {
 	header := w.Header()
 
 	if isCompressible(header, w.config.MinSize, w.config.Filter) {
-		algorithms := defaults.NonZeroOrDefault(w.config.Algorithms, defaultAlgorithms)
+		algorithms := shorthand.Coalesce(w.config.Algorithms, defaultAlgorithms)
 		offers, writers := getOffersAndWriters(algorithms)
 		negotiator := getNegotiator(offers)
 		encoding, ok := negotiator.Match(header.Values("Accept-Encoding"))
@@ -136,7 +136,6 @@ func (w *compressResponseWriter) WriteHeader(statusCode int) {
 			if err != nil {
 				w.log.Error(fmt.Sprintf("Error creating %s writer: %v", encoding, err))
 			} else {
-
 				w.cleanup(func() {
 					if err := writer.Close(); err != nil {
 						w.log.Error(fmt.Sprintf("Error closing %s writer: %v", encoding, err))
@@ -160,7 +159,7 @@ func (w *compressResponseWriter) Write(data []byte) (int, error) {
 
 	// Use the compression writer if available, or default to the regular
 	// response writer.
-	writer := defaults.NonZeroOrDefault[io.Writer](w.writer, w.ResponseWriter)
+	writer := shorthand.Coalesce[io.Writer](w.writer, w.ResponseWriter)
 
 	return writer.Write(data)
 }
@@ -192,19 +191,21 @@ func getNegotiator(offers []string) api.Negotiator {
 
 func isCompressible(header http.Header, minSize int, filter func(contentType string) bool) bool {
 	contentEncoding := header.Get("Content-Encoding")
+
 	if contentEncoding != "" {
 		// Already encoded
 		return false
 	}
 
 	contentLength := header.Get("Content-Length")
-	minSize = defaults.NonZeroOrDefault(minSize, CompressMinSizeDefault)
+	minSize = shorthand.Coalesce(minSize, CompressMinSizeDefault)
+
 	if value, err := strconv.Atoi(contentLength); err != nil || value < minSize {
 		return false
 	}
 
 	contentType := header.Get("Content-Type")
-	filter = defaults.NonZeroOrDefault(filter, CompressFilterDefault)
+	filter = shorthand.Coalesce(filter, CompressFilterDefault)
 
 	return filter(contentType)
 }

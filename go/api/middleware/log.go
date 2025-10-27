@@ -6,7 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/seahax/workshop/go/api"
+	"seahax.com/go/api"
+	"seahax.com/go/shorthand"
 )
 
 // Log requests and include request headers in all log entries.
@@ -66,12 +67,10 @@ func (l *Log) Handle(ctx *api.Context, next func()) {
 	start := time.Now().UnixMilli()
 
 	if len(l.Headers) > 0 {
-		attrs := []slog.Attr{}
-
-		for _, header := range l.Headers {
+		attrs := shorthand.Select(l.Headers, func(header string) slog.Attr {
 			name := rxNonAlphaNumeric.ReplaceAllString(strings.ToLower(header), "_")
-			attrs = append(attrs, slog.String(name, ctx.Request.Header.Get(header)))
-		}
+			return slog.String(name, ctx.Request.Header.Get(header))
+		})
 
 		ctx.Log = slog.New(ctx.Log.Handler().WithAttrs(attrs))
 	}

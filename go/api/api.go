@@ -8,11 +8,10 @@ import (
 	"maps"
 	"net"
 	"net/http"
-	"regexp"
 	"sync"
 	"time"
 
-	"github.com/seahax/workshop/go/defaults"
+	"seahax.com/go/shorthand"
 )
 
 const (
@@ -43,9 +42,8 @@ type Api struct {
 	// route is matched. Middleware is executed in the order it is added.
 	Middlewares []Middleware
 
-	// Optional handler used by the request Context logger. If nil, then
-	// slog.Handler().Default() is used
-	LogHandler slog.Handler
+	// Optional request Context Logger. If nil, then slog.Default() is used.
+	Log *slog.Logger
 
 	// Optional callback that is called when a listener is created.
 	Listening func(url string)
@@ -55,13 +53,11 @@ type Api struct {
 	Error func(err *ServerError)
 }
 
-var rxMultipleForwardSlashes = regexp.MustCompile("[/]+")
-
 // Add a route to the API with optional middlewares.
 func (i *Api) Route(routable Routable, middlewares ...Middleware) {
 	pattern, handler := routable.Route()
+	pattern = ParsePattern(pattern).String() // Removes duplicate slashes
 	handler = applyMiddlewares(middlewares, handler)
-	pattern = rxMultipleForwardSlashes.ReplaceAllString(pattern, "/")
 
 	i.mux.HandleFunc(pattern, func(response http.ResponseWriter, request *http.Request) {
 		apiCtx := getContext(i, response, request)
@@ -111,11 +107,11 @@ func (i *Api) Use(middlewares ...Middleware) {
 // occur.
 func (i *Api) BindServer(server *http.Server) {
 	server.Handler = i
-	server.ReadTimeout = defaults.NonZeroOrDefault(server.ReadTimeout, DefaultReadTimeout)
-	server.ReadHeaderTimeout = defaults.NonZeroOrDefault(server.ReadHeaderTimeout, DefaultReadHeaderTimeout)
-	server.WriteTimeout = defaults.NonZeroOrDefault(server.WriteTimeout, DefaultWriteTimeout)
-	server.IdleTimeout = defaults.NonZeroOrDefault(server.IdleTimeout, DefaultIdleTimeout)
-	server.TLSNextProto = defaults.NonZeroOrDefault(server.TLSNextProto, make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0))
+	server.ReadTimeout = shorthand.Coalesce(server.ReadTimeout, DefaultReadTimeout)
+	server.ReadHeaderTimeout = shorthand.Coalesce(server.ReadHeaderTimeout, DefaultReadHeaderTimeout)
+	server.WriteTimeout = shorthand.Coalesce(server.WriteTimeout, DefaultWriteTimeout)
+	server.IdleTimeout = shorthand.Coalesce(server.IdleTimeout, DefaultIdleTimeout)
+	server.TLSNextProto = shorthand.Coalesce(server.TLSNextProto, make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0))
 
 	i.mut.Lock()
 	if i.servers == nil {
@@ -132,7 +128,7 @@ func (i *Api) BindServer(server *http.Server) {
 		}
 	}
 
-	address := defaults.NonZeroOrDefault(server.Addr, DefaultAddr)
+	address := shorthand.Coalesce(server.Addr, DefaultAddr)
 	listener, err := net.Listen("tcp", address)
 
 	if err != nil {
