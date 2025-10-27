@@ -15,22 +15,34 @@ const theme = createTheme({
       paper: 'hsla(216, 40%, 18%, 1.00)',
     },
   },
-  typography: {
+  typography: (color) => ({
     fontFamily: '"Fredoka Variable", "Helvetica", "Arial", sans-serif',
     h1: {
       fontFamily: '"Walter Turncoat", "Helvetica", "Arial", sans-serif',
+      fontSize: '3.25rem',
+      color: color.secondary.main,
     },
     h2: {
       fontFamily: '"Walter Turncoat", "Helvetica", "Arial", sans-serif',
-      fontWeight: 200,
+      fontSize: '2.125rem',
+      color: color.secondary.main,
     },
     h3: {
-      fontFamily: '"Walter Turncoat", "Helvetica", "Arial", sans-serif',
+      fontSize: '1.75rem',
     },
     h4: {
-      fontFamily: '"Walter Turncoat", "Helvetica", "Arial", sans-serif',
+      fontSize: '1.25rem',
+      fontWeight: 600,
     },
-  },
+    h5: {
+      fontSize: '1.0rem',
+      fontWeight: 600,
+    },
+    h6: {
+      fontSize: '0.875rem',
+      fontWeight: 600,
+    },
+  }),
   components: {
     MuiCssBaseline: {
       styleOverrides: (theme) => ({

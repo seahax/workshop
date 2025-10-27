@@ -66,12 +66,7 @@ function Home(): JSX.Element {
             gap: theme.spacing(4),
           })}
         >
-          <Typography
-            variant="h2"
-            component="h1"
-            marginBlockEnd={(theme) => theme.spacing(3)}
-            sx={(theme) => ({ textAlign: 'center', color: theme.palette.secondary.main })}
-          >
+          <Typography variant="h1" marginBlockEnd={(theme) => theme.spacing(3)} sx={{ textAlign: 'center' }}>
             Hello, I&apos;m&nbsp;Chris.
           </Typography>
           <Box
@@ -89,7 +84,7 @@ function Home(): JSX.Element {
         </Container>
       </AppPage>
       <Container id="projects" sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-        <Typography variant="h4" component="h2" color="secondary">
+        <Typography variant="h2">
           My Projects
         </Typography>
         <Box
@@ -114,7 +109,7 @@ function Home(): JSX.Element {
               >
                 <CardActionArea href={project.homepage} target="_blank" sx={{ minHeight: '100%' }}>
                   <CardContent>
-                    <Typography variant="h5" gutterBottom component="div">
+                    <Typography variant="h3" gutterBottom>
                       {project.name.replace(/^.*\//u, '')}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">{project.description}</Typography>
