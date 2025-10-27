@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.26 - 2025-10-27
+
+- __chore:__ update minor deps (b5fc3d0)
+- __chore:__ update major deps (97ceaf1)
+
 ## 0.2.25 - 2025-09-14
 
 - __fix:__ type inference problems (27a0dc3)

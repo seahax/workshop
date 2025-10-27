@@ -1,6 +1,6 @@
 {
   "name": "@seahax/rev",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": false,
   "description": "Simple project version and release management tool (package manager agnostic).",
   "repository": {

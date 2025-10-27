@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.5 - 2025-10-27
+
+- __chore:__ update minor deps (b5fc3d0)
+
 ## 0.3.4 - 2025-08-30
 
 - __chore:__ add descriptions to packages (000878e)

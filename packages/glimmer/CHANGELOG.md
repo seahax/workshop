@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.13 - 2025-10-27
+
+- __chore:__ update minor deps (b5fc3d0)
+
 ## 0.1.12 - 2025-09-06
 
 - __chore:__ fix glimmer dev styling (5033e90)

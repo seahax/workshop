@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.8 - 2025-10-27
+
+- __chore:__ update major deps (97ceaf1)
+
 ## 0.1.7 - 2025-09-14
 
 - __fix:__ lint deprecated warnings (50e368a)

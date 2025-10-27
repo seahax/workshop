@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.1 - 2025-10-27
+
+- __chore:__ update minor deps (b5fc3d0)
+
 ## 0.6.0 - 2025-09-14
 
 - __feat:__ add after help actions (7c9c62f)

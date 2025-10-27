@@ -1,6 +1,6 @@
 {
   "name": "@seahax/vite-plugin-data",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "private": false,
   "description": "Vite plugin that enables compile time data modules. Compile time is best time.",
   "repository": {

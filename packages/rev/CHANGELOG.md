@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.1 - 2025-10-27
+
+- __chore:__ update minor deps (b5fc3d0)
+- __chore:__ update major deps (97ceaf1)
+
 ## 0.5.0 - 2025-09-14
 
 - __feat:__ add tag --push option (43fb0a8)

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2 - 2025-10-27
+
+- __chore:__ update minor deps (b5fc3d0)
+
 ## 0.3.1 - 2025-08-30
 
 - __fix:__ controller with undefined prefix adds /undefined to route paths (59d0cac)

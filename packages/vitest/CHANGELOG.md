@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.6 - 2025-10-27
+
+- __chore:__ update major deps (97ceaf1)
+
 ## 0.1.5 - 2025-08-24
 
 - __chore:__ update deps (f4eff46)

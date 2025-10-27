@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.16 - 2025-10-27
+
+- __chore:__ update minor deps (b5fc3d0)
+
 ## 0.1.15 - 2025-09-14
 
 - __chore:__ use >= range for vite peer dependencies (6f677b2)
