@@ -4,12 +4,13 @@ import (
 	"context"
 	"log/slog"
 	"net/http"
-	"sync"
 )
 
+// Context for an API request, containing request-specific data and convenience
+// methods.
+//
+// Use the NewContext constructor to create Context instances.
 type Context struct {
-	mut      sync.RWMutex
-	cleanups []func()
 	// A logger specific to this request context.
 	Log *slog.Logger
 	// The associated HTTP request.
@@ -18,46 +19,25 @@ type Context struct {
 	Response *Response
 }
 
-// Register a cleanup callback to be called when the response is finished.
-func (c *Context) Cleanup(callback func()) {
-	c.mut.Lock()
-	c.cleanups = append(c.cleanups, callback)
-	c.mut.Unlock()
-}
+func NewContext(api *Api, writer http.ResponseWriter, request *http.Request) *Context {
+	log := api.Log
 
-func (c *Context) close() {
-	c.mut.RLock()
-	cleanups := c.cleanups
-	c.mut.RUnlock()
-
-	for _, cleanup := range cleanups {
-		cleanup()
+	if log == nil {
+		log = slog.Default()
 	}
+
+	ctx := &Context{Log: log}
+	ctx.Request = request.WithContext(context.WithValue(request.Context(), api, ctx))
+	ctx.Response = NewResponse(log, writer, request)
+
+	return ctx
 }
 
-func getContext(api *Api, responseWriter http.ResponseWriter, request *http.Request) *Context {
-	ctx, _ := request.Context().Value(api).(*Context)
+func GetContext(api *Api, request *http.Request) *Context {
+	ctx, ok := request.Context().Value(api).(*Context)
 
-	if ctx == nil {
-		log := api.Log
-
-		if log == nil {
-			log = slog.Default()
-		}
-
-		ctx = &Context{}
-		ctx.Log = log
-		ctx.Request = request.WithContext(context.WithValue(request.Context(), api, ctx))
-		ctx.Response = &Response{
-			ResponseWriter: &writer{ResponseWriter: responseWriter},
-			Request:        request,
-			Log:            ctx.Log,
-			Cleanup:        ctx.Cleanup,
-		}
-
-		if ctx.Log == nil {
-			ctx.Log = slog.Default()
-		}
+	if !ok {
+		panic("request context.Context is missing api.Context value")
 	}
 
 	return ctx

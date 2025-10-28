@@ -14,7 +14,7 @@ type Info struct {
 
 const DefaultInfoPath = "/_info"
 
-func (h *Info) Route() (string, func(*api.Context)) {
+func (h *Info) GetRoute() (string, func(*api.Context)) {
 	pattern := &api.Pattern{Method: "GET", Domain: h.Domain, Path: shorthand.Coalesce(h.Path, DefaultInfoPath)}
 	handler := func(ctx *api.Context) {
 		ctx.Response.Header().Set("Cache-Control", "no-cache")

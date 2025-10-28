@@ -64,13 +64,13 @@ const (
 
 const DefaultHealthPath = "/_health"
 
-func (h *Health) Route() (string, func(*api.Context)) {
+func (h *Health) GetRoute() (string, func(*api.Context)) {
 	pattern := &api.Pattern{Method: "GET", Domain: h.Domain, Path: shorthand.Coalesce(h.Path, DefaultHealthPath)}
 	handler := func(ctx *api.Context) {
 		if h.State == nil {
 			ctx.Response.WriteJSON(&HealthSnapshot{
 				Status: string(StatusHealthy),
-				Detail: make(map[string]string),
+				Detail: map[string]string{},
 			})
 			return
 		}

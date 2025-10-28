@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"net/http"
 	"strings"
 
 	"seahax.com/go/api"
@@ -89,11 +90,11 @@ type Secure struct {
 	// X-Permitted-Cross-Domain-Policies header value. If empty,
 	// DefaultXPermittedCrossDomainPolicies is used. If "-", header is not set.
 	XPermittedCrossDomainPolicies string
-	// If true, the X-Powered-By header is NOT removed.
-	XPoweredByEnabled bool
 	// X-XSS-Protection header value. If empty, DefaultXXSSProtection is used.
 	// If "-", header is not set.
 	XXSSProtection string
+	// If true, the X-Powered-By header is NOT removed.
+	XPoweredByEnabled bool
 }
 
 const (
@@ -121,80 +122,88 @@ const (
 )
 
 func (s *Secure) Handle(ctx *api.Context, next func()) {
-	header := ctx.Response.Header()
+	ctx.Response.RegisterOnBeforeWriteHeader(func() {
+		s.Apply(ctx.Response.Header())
+	})
 
-	if !s.CSPDisabled {
+	next()
+}
+
+func (s *Secure) Apply(header http.Header) {
+	config := s
+
+	if header.Get("Content-Security-Policy") == "" && !config.CSPDisabled {
 		csp := []string{}
 
-		if s.CSPDefaultSrc != "-" {
-			csp = append(csp, "default-src "+shorthand.Coalesce(s.CSPDefaultSrc, DefaultCSPDefaultSrc))
+		if config.CSPDefaultSrc != "-" {
+			csp = append(csp, "default-src "+shorthand.Coalesce(config.CSPDefaultSrc, DefaultCSPDefaultSrc))
 		}
 
-		if s.CSPScriptSrc != "-" {
-			csp = append(csp, "script-src "+shorthand.Coalesce(s.CSPScriptSrc, DefaultCSPScriptSrc))
+		if config.CSPScriptSrc != "-" {
+			csp = append(csp, "script-src "+shorthand.Coalesce(config.CSPScriptSrc, DefaultCSPScriptSrc))
 		}
 
-		if s.CSPScriptSrcAttr != "-" {
-			csp = append(csp, "script-src-attr "+shorthand.Coalesce(s.CSPScriptSrcAttr, DefaultCSPScriptSrcAttr))
+		if config.CSPScriptSrcAttr != "-" {
+			csp = append(csp, "script-src-attr "+shorthand.Coalesce(config.CSPScriptSrcAttr, DefaultCSPScriptSrcAttr))
 		}
 
-		if s.CSPStyleSrc != "-" {
-			csp = append(csp, "style-src "+shorthand.Coalesce(s.CSPStyleSrc, DefaultCSPStyleSrc))
+		if config.CSPStyleSrc != "-" {
+			csp = append(csp, "style-src "+shorthand.Coalesce(config.CSPStyleSrc, DefaultCSPStyleSrc))
 		}
 
-		if s.CSPStyleSrcAttr != "-" && s.CSPStyleSrcAttr != "" {
-			csp = append(csp, "style-src-attr "+s.CSPStyleSrcAttr)
+		if config.CSPStyleSrcAttr != "-" && config.CSPStyleSrcAttr != "" {
+			csp = append(csp, "style-src-attr "+config.CSPStyleSrcAttr)
 		}
 
-		if s.CSPStyleSrcElem != "-" && s.CSPStyleSrcElem != "" {
-			csp = append(csp, "style-src-elem "+s.CSPStyleSrcElem)
+		if config.CSPStyleSrcElem != "-" && config.CSPStyleSrcElem != "" {
+			csp = append(csp, "style-src-elem "+config.CSPStyleSrcElem)
 		}
 
-		if s.CSPImgSrc != "-" {
-			csp = append(csp, "img-src "+shorthand.Coalesce(s.CSPImgSrc, DefaultCSPImgSrc))
+		if config.CSPImgSrc != "-" {
+			csp = append(csp, "img-src "+shorthand.Coalesce(config.CSPImgSrc, DefaultCSPImgSrc))
 		}
 
-		if s.CSPFontSrc != "-" {
-			csp = append(csp, "font-src "+shorthand.Coalesce(s.CSPFontSrc, DefaultCSPFontSrc))
+		if config.CSPFontSrc != "-" {
+			csp = append(csp, "font-src "+shorthand.Coalesce(config.CSPFontSrc, DefaultCSPFontSrc))
 		}
 
-		if s.CSPObjectSrc != "-" {
-			csp = append(csp, "object-src "+shorthand.Coalesce(s.CSPObjectSrc, DefaultCSPObjectSrc))
+		if config.CSPObjectSrc != "-" {
+			csp = append(csp, "object-src "+shorthand.Coalesce(config.CSPObjectSrc, DefaultCSPObjectSrc))
 		}
 
-		if s.CSPChildSrc != "-" && s.CSPChildSrc != "" {
-			csp = append(csp, "child-src "+s.CSPChildSrc)
+		if config.CSPChildSrc != "-" && config.CSPChildSrc != "" {
+			csp = append(csp, "child-src "+config.CSPChildSrc)
 		}
 
-		if s.CSPConnectSrc != "-" {
-			csp = append(csp, "connect-src "+s.CSPConnectSrc)
+		if config.CSPConnectSrc != "-" {
+			csp = append(csp, "connect-src "+config.CSPConnectSrc)
 		}
 
-		if s.CSPManifestSrc != "-" && s.CSPManifestSrc != "" {
-			csp = append(csp, "manifest-src "+s.CSPManifestSrc)
+		if config.CSPManifestSrc != "-" && config.CSPManifestSrc != "" {
+			csp = append(csp, "manifest-src "+config.CSPManifestSrc)
 		}
 
-		if s.CSPMediaSrc != "-" && s.CSPMediaSrc != "" {
-			csp = append(csp, "media-src "+s.CSPMediaSrc)
+		if config.CSPMediaSrc != "-" && config.CSPMediaSrc != "" {
+			csp = append(csp, "media-src "+config.CSPMediaSrc)
 		}
 
-		if s.CSPWorkerSrc != "-" && s.CSPWorkerSrc != "" {
-			csp = append(csp, "worker-src "+s.CSPWorkerSrc)
+		if config.CSPWorkerSrc != "-" && config.CSPWorkerSrc != "" {
+			csp = append(csp, "worker-src "+config.CSPWorkerSrc)
 		}
 
-		if s.CSPBaseURI != "-" {
-			csp = append(csp, "base-uri "+shorthand.Coalesce(s.CSPBaseURI, DefaultCSPBaseURI))
+		if config.CSPBaseURI != "-" {
+			csp = append(csp, "base-uri "+shorthand.Coalesce(config.CSPBaseURI, DefaultCSPBaseURI))
 		}
 
-		if s.CSPFormAction != "-" {
-			csp = append(csp, "form-action "+shorthand.Coalesce(s.CSPFormAction, DefaultCSPFormAction))
+		if config.CSPFormAction != "-" {
+			csp = append(csp, "form-action "+shorthand.Coalesce(config.CSPFormAction, DefaultCSPFormAction))
 		}
 
-		if s.CSPFrameAncestors != "-" {
-			csp = append(csp, "frame-ancestors "+shorthand.Coalesce(s.CSPFrameAncestors, DefaultCSPFrameAncestors))
+		if config.CSPFrameAncestors != "-" {
+			csp = append(csp, "frame-ancestors "+shorthand.Coalesce(config.CSPFrameAncestors, DefaultCSPFrameAncestors))
 		}
 
-		if !s.CSPUpgradeInsecureRequestsDisabled {
+		if !config.CSPUpgradeInsecureRequestsDisabled {
 			csp = append(csp, "upgrade-insecure-requests")
 		}
 
@@ -203,57 +212,55 @@ func (s *Secure) Handle(ctx *api.Context, next func()) {
 		}
 	}
 
-	if s.CrossOriginEmbedderPolicy != "-" && s.CrossOriginEmbedderPolicy != "" {
-		header.Set("Cross-Origin-Embedder-Policy", s.CrossOriginEmbedderPolicy)
+	if header.Get("Cross-Origin-Embedder-Policy") == "" && config.CrossOriginEmbedderPolicy != "-" && config.CrossOriginEmbedderPolicy != "" {
+		header.Set("Cross-Origin-Embedder-Policy", config.CrossOriginEmbedderPolicy)
 	}
 
-	if s.CrossOriginOpenerPolicy != "-" {
-		header.Set("Cross-Origin-Opener-Policy", shorthand.Coalesce(s.CrossOriginOpenerPolicy, DefaultCrossOriginOpenerPolicy))
+	if header.Get("Cross-Origin-Opener-Policy") == "" && config.CrossOriginOpenerPolicy != "-" {
+		header.Set("Cross-Origin-Opener-Policy", shorthand.Coalesce(config.CrossOriginOpenerPolicy, DefaultCrossOriginOpenerPolicy))
 	}
 
-	if s.CrossOriginResourcePolicy != "-" {
-		header.Set("Cross-Origin-Resource-Policy", shorthand.Coalesce(s.CrossOriginResourcePolicy, DefaultCrossOriginResourcePolicy))
+	if header.Get("Cross-Origin-Resource-Policy") == "" && config.CrossOriginResourcePolicy != "-" {
+		header.Set("Cross-Origin-Resource-Policy", shorthand.Coalesce(config.CrossOriginResourcePolicy, DefaultCrossOriginResourcePolicy))
 	}
 
-	if s.OriginAgentCluster != "-" {
-		header.Set("Origin-Agent-Cluster", shorthand.Coalesce(s.OriginAgentCluster, DefaultOriginAgentCluster))
+	if header.Get("Origin-Agent-Cluster") == "" && config.OriginAgentCluster != "-" {
+		header.Set("Origin-Agent-Cluster", shorthand.Coalesce(config.OriginAgentCluster, DefaultOriginAgentCluster))
 	}
 
-	if s.ReferrerPolicy != "-" {
-		header.Set("Referrer-Policy", shorthand.Coalesce(s.ReferrerPolicy, DefaultReferrerPolicy))
+	if header.Get("Referrer-Policy") == "" && config.ReferrerPolicy != "-" {
+		header.Set("Referrer-Policy", shorthand.Coalesce(config.ReferrerPolicy, DefaultReferrerPolicy))
 	}
 
-	if s.StrictTransportSecurity != "-" {
-		header.Set("Strict-Transport-Security", shorthand.Coalesce(s.StrictTransportSecurity, DefaultStrictTransportSecurity))
+	if header.Get("Strict-Transport-Security") == "" && config.StrictTransportSecurity != "-" {
+		header.Set("Strict-Transport-Security", shorthand.Coalesce(config.StrictTransportSecurity, DefaultStrictTransportSecurity))
 	}
 
-	if s.XContentTypeOptions != "-" {
-		header.Set("X-Content-Type-Options", shorthand.Coalesce(s.XContentTypeOptions, DefaultXContentTypeOptions))
+	if header.Get("X-Content-Type-Options") == "" && config.XContentTypeOptions != "-" {
+		header.Set("X-Content-Type-Options", shorthand.Coalesce(config.XContentTypeOptions, DefaultXContentTypeOptions))
 	}
 
-	if s.XDNSPrefetchControl != "-" {
-		header.Set("X-DNS-Prefetch-Control", shorthand.Coalesce(s.XDNSPrefetchControl, DefaultXDNSPrefetchControl))
+	if header.Get("X-DNS-Prefetch-Control") == "" && config.XDNSPrefetchControl != "-" {
+		header.Set("X-DNS-Prefetch-Control", shorthand.Coalesce(config.XDNSPrefetchControl, DefaultXDNSPrefetchControl))
 	}
 
-	if s.XDownloadOptions != "-" {
-		header.Set("X-Download-Options", shorthand.Coalesce(s.XDownloadOptions, DefaultXDownloadOptions))
+	if header.Get("X-Download-Options") == "" && config.XDownloadOptions != "-" {
+		header.Set("X-Download-Options", shorthand.Coalesce(config.XDownloadOptions, DefaultXDownloadOptions))
 	}
 
-	if s.XFrameOptions != "-" {
-		header.Set("X-Frame-Options", shorthand.Coalesce(s.XFrameOptions, DefaultXFrameOptions))
+	if header.Get("X-Frame-Options") == "" && config.XFrameOptions != "-" {
+		header.Set("X-Frame-Options", shorthand.Coalesce(config.XFrameOptions, DefaultXFrameOptions))
 	}
 
-	if s.XPermittedCrossDomainPolicies != "-" {
-		header.Set("X-Permitted-Cross-Domain-Policies", shorthand.Coalesce(s.XPermittedCrossDomainPolicies, DefaultXPermittedCrossDomainPolicies))
+	if header.Get("X-Permitted-Cross-Domain-Policies") == "" && config.XPermittedCrossDomainPolicies != "-" {
+		header.Set("X-Permitted-Cross-Domain-Policies", shorthand.Coalesce(config.XPermittedCrossDomainPolicies, DefaultXPermittedCrossDomainPolicies))
 	}
 
-	if !s.XPoweredByEnabled {
+	if header.Get("X-XSS-Protection") == "" && config.XXSSProtection != "-" {
+		header.Set("X-XSS-Protection", shorthand.Coalesce(config.XXSSProtection, DefaultXXSSProtection))
+	}
+
+	if !config.XPoweredByEnabled {
 		header.Del("X-Powered-By")
 	}
-
-	if s.XXSSProtection != "-" {
-		header.Set("X-XSS-Protection", shorthand.Coalesce(s.XXSSProtection, DefaultXXSSProtection))
-	}
-
-	next()
 }

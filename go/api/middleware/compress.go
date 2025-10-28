@@ -5,7 +5,6 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
-	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -103,90 +102,51 @@ const (
 )
 
 func (c *Compress) Handle(ctx *api.Context, next func()) {
-	ctx.Response.ResponseWriter = &compressResponseWriter{
-		ResponseWriter: ctx.Response.ResponseWriter,
-		config:         c,
-		cleanup:        ctx.Cleanup,
-		log:            ctx.Response.Log,
-	}
+	response := ctx.Response
+	header := response.Header()
 
-	next()
-}
+	var cleanup func()
 
-type compressResponseWriter struct {
-	api.ResponseWriter
-	config  *Compress
-	writer  io.WriteCloser
-	cleanup func(callback func())
-	log     *slog.Logger
-}
+	defer func() {
+		if cleanup != nil {
+			cleanup()
+		}
+	}()
 
-func (w *compressResponseWriter) WriteHeader(statusCode int) {
-	header := w.Header()
+	response.RegisterOnBeforeWriteHeader(func() {
+		if isCompressible(header, c.MinSize, c.Filter) {
+			algorithms := shorthand.Coalesce(c.Algorithms, defaultAlgorithms)
+			offers, writers := getOffersAndWriters(algorithms)
+			negotiator := getNegotiator(offers)
+			encoding, ok := negotiator.Match(header.Values("Accept-Encoding"))
 
-	if isCompressible(header, w.config.MinSize, w.config.Filter) {
-		algorithms := shorthand.Coalesce(w.config.Algorithms, defaultAlgorithms)
-		offers, writers := getOffersAndWriters(algorithms)
-		negotiator := getNegotiator(offers)
-		encoding, ok := negotiator.Match(header.Values("Accept-Encoding"))
+			if ok {
+				writer, err := writers[encoding](response.Writer)
 
-		if ok {
-			writer, err := writers[encoding](w.ResponseWriter)
-
-			if err != nil {
-				w.log.Error(fmt.Sprintf("Error creating %s writer: %v", encoding, err))
-			} else {
-				w.cleanup(func() {
-					if err := writer.Close(); err != nil {
-						w.log.Error(fmt.Sprintf("Error closing %s writer: %v", encoding, err))
+				if err != nil {
+					ctx.Log.Error(fmt.Sprintf("Error creating %s writer: %v", encoding, err))
+				} else {
+					header.Set("Content-Encoding", encoding)
+					header.Del("Content-Length")
+					response.Writer = writer
+					cleanup = func() {
+						if err := writer.Close(); err != nil {
+							ctx.Log.Error(fmt.Sprintf("Error closing %s writer: %v", encoding, err))
+						}
 					}
-				})
-				w.writer = writer
-				header.Set("Content-Encoding", encoding)
-				header.Del("Content-Length")
+				}
 			}
 		}
-	}
 
-	header.Set("Vary", "Accept-Encoding")
-	w.ResponseWriter.WriteHeader(statusCode)
-}
+		header.Set("Vary", "Accept-Encoding")
+	})
 
-func (w *compressResponseWriter) Write(data []byte) (int, error) {
-	if !w.Written() {
-		w.WriteHeader(http.StatusOK)
-	}
-
-	// Use the compression writer if available, or default to the regular
-	// response writer.
-	writer := shorthand.Coalesce[io.Writer](w.writer, w.ResponseWriter)
-
-	return writer.Write(data)
+	next()
 }
 
 func CompressFilterDefault(contentType string) bool {
 	return strings.HasPrefix(contentType, "text/") ||
 		strings.HasPrefix(contentType, "application/")
-}
-
-func getOffersAndWriters(algorithms []Algorithm) (offers []string, writers map[string]func(io.Writer) (io.WriteCloser, error)) {
-	offers = make([]string, 0, len(algorithms))
-	writers = make(map[string]func(io.Writer) (io.WriteCloser, error), len(algorithms))
-
-	for _, algo := range algorithms {
-		offers = append(offers, algo.Name)
-		writers[algo.Name] = algo.Writer
-	}
-
-	return offers, writers
-}
-
-func getNegotiator(offers []string) api.Negotiator {
-	return api.Negotiator{
-		IsParameterized: true,
-		IsMediaType:     true,
-		Offers:          offers,
-	}
 }
 
 func isCompressible(header http.Header, minSize int, filter func(contentType string) bool) bool {
@@ -208,4 +168,24 @@ func isCompressible(header http.Header, minSize int, filter func(contentType str
 	filter = shorthand.Coalesce(filter, CompressFilterDefault)
 
 	return filter(contentType)
+}
+
+func getOffersAndWriters(algorithms []Algorithm) (offers []string, writers map[string]func(io.Writer) (io.WriteCloser, error)) {
+	offers = make([]string, 0, len(algorithms))
+	writers = make(map[string]func(io.Writer) (io.WriteCloser, error), len(algorithms))
+
+	for _, algo := range algorithms {
+		offers = append(offers, algo.Name)
+		writers[algo.Name] = algo.Writer
+	}
+
+	return offers, writers
+}
+
+func getNegotiator(offers []string) api.Negotiator {
+	return api.Negotiator{
+		IsParameterized: true,
+		IsMediaType:     true,
+		Offers:          offers,
+	}
 }

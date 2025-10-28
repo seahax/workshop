@@ -64,7 +64,7 @@ const (
 var rxNonAlphaNumeric = regexp.MustCompile("[^a-z0-9]+")
 
 func (l *Log) Handle(ctx *api.Context, next func()) {
-	start := time.Now().UnixMilli()
+	startTimestamp := time.Now().UnixMilli()
 
 	if len(l.Headers) > 0 {
 		attrs := shorthand.Select(l.Headers, func(header string) slog.Attr {
@@ -76,6 +76,12 @@ func (l *Log) Handle(ctx *api.Context, next func()) {
 	}
 
 	if !l.RequestDisabled {
+		var headerTimestamp int64
+
+		ctx.Response.RegisterOnBeforeWriteHeader(func() {
+			headerTimestamp = time.Now().UnixMilli()
+		})
+
 		defer func() {
 			attrs := []slog.Attr{}
 			attrs = appendAttr(attrs, l.AttrURL, DefaultURLAttr, func(name string) slog.Attr {
@@ -103,10 +109,10 @@ func (l *Log) Handle(ctx *api.Context, next func()) {
 				return slog.String(name, ctx.Response.Header().Get("Content-Type"))
 			})
 			attrs = appendAttr(attrs, l.AttrResponseTime, DefaultResponseTimeAttr, func(name string) slog.Attr {
-				return slog.Int64(name, max(ctx.Response.WriteHeaderTime()-start, 0))
+				return slog.Int64(name, max(headerTimestamp-startTimestamp, 0))
 			})
 			attrs = appendAttr(attrs, l.AttrTotalTime, DefaultTotalTimeAttr, func(name string) slog.Attr {
-				return slog.Int64(name, time.Now().UnixMilli()-start)
+				return slog.Int64(name, time.Now().UnixMilli()-startTimestamp)
 			})
 			ctx.Log.LogAttrs(ctx.Request.Context(), slog.LevelInfo, "incoming request", attrs...)
 		}()

@@ -1,21 +1,29 @@
 package api
 
 import (
-	gopath "path"
+	"path"
 	"sync"
 )
+
+type GroupProvider interface {
+	GetGroup() (prefix string, routes []RouteProvider)
+}
 
 // A group of routes with a common prefix and shared middleware.
 type Group struct {
 	mut         sync.RWMutex
 	Prefix      string
 	Middlewares []Middleware
-	Routes      []Routable
+	Routes      []RouteProvider
+}
+
+func (g *Group) GetGroup() (prefix string, routes []RouteProvider) {
+	return g.Prefix, g.Routes
 }
 
 // Add a route to the group with optional route specific middleware.
-func (g *Group) Route(routable Routable, middlewares ...Middleware) {
-	pattern, baseHandler := routable.Route()
+func (g *Group) Route(routeProvider RouteProvider, middlewares ...Middleware) {
+	pattern, baseHandler := routeProvider.GetRoute()
 	handler := applyMiddlewares(middlewares, func(ctx *Context) {
 		g.mut.RLock()
 		groupMiddlewares := g.Middlewares
@@ -30,8 +38,8 @@ func (g *Group) Route(routable Routable, middlewares ...Middleware) {
 }
 
 // Add a sub-group of routes to the group with optional middleware.
-func (g *Group) Group(routes *Group, middlewares ...Middleware) {
-	applyGroup(routes, g, middlewares)
+func (g *Group) Group(groupProvider GroupProvider, middlewares ...Middleware) {
+	applyGroup(groupProvider, g, middlewares)
 }
 
 // Use middleware in all requests handled by routes in this group. These will
@@ -44,18 +52,18 @@ func (g *Group) Use(middlewares ...Middleware) {
 }
 
 func applyGroup(
-	source *Group,
+	source GroupProvider,
 	target interface {
-		Route(route Routable, middlewares ...Middleware)
+		Route(route RouteProvider, middlewares ...Middleware)
 	},
 	middlewares []Middleware,
 ) {
-	routes := source.Routes
+	prefix, routes := source.GetGroup()
 
 	for _, routable := range routes {
-		patternStr, handler := routable.Route()
+		patternStr, handler := routable.GetRoute()
 		pattern := ParsePattern(patternStr)
-		pattern.Path = gopath.Join(source.Prefix, pattern.Path)
+		pattern.Path = path.Join(prefix, pattern.Path)
 		route := &Route{Pattern: pattern.String(), Handler: handler}
 		target.Route(route, middlewares...)
 	}

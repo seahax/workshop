@@ -2,35 +2,68 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"seahax.com/go/shorthand"
 )
 
 // Response accessor with convenience methods for writing common responses.
+//
+// Use the NewResponse constructor to create Response instances.
 type Response struct {
-	ResponseWriter
+	header              func() http.Header
+	writeHeader         func(statusCode int)
+	status              atomic.Int32
+	onBeforeWriteHeader shorthand.Observable
+
+	// The underlying [io.Writer] for writing response body data. This can be
+	// wrapped by middleware to provide features like compression.
+	io.Writer
 	// The associated HTTP request.
 	Request *http.Request
 	// The parent Api Logger.
 	Log *slog.Logger
-	// Register cleanup callbacks to be called when the response is finished.
-	Cleanup func(callback func())
 }
 
-// Enhanced [http.ResponseWriter] which tracks whether headers have been
-// written, the time they were written, and the response status code.
-type ResponseWriter interface {
-	http.ResponseWriter
-	Written() bool
-	WriteHeaderTime() int64
-	Status() int
+func (r *Response) Header() http.Header {
+	return r.header()
+}
+
+func (r *Response) WriteHeader(statusCode int) {
+	if statusCode < 100 || statusCode > 599 {
+		panic(fmt.Sprintf("invalid WriteHeader status code %d", statusCode))
+	}
+
+	ok := r.status.CompareAndSwap(0, int32(statusCode))
+
+	if ok {
+		r.onBeforeWriteHeader.NotifyBackwards()
+	}
+
+	// Don't guard against multiple calls to the underlying ResponseWriter
+	// because it has internals for hijacking and warning that should be
+	// preserved.
+	r.writeHeader(statusCode)
+}
+
+func (r *Response) Status() int {
+	return int(r.status.Load())
+}
+
+func (r *Response) Written() bool {
+	return r.status.Load() != 0
+}
+
+func (r *Response) RegisterOnBeforeWriteHeader(callback func()) {
+	r.onBeforeWriteHeader.Subscribe(callback)
 }
 
 // Write an error message with the given status code to the response. The
@@ -156,4 +189,24 @@ func (r *Response) WriteFileUnsafe(dir http.FileSystem, onBeforeWrite func(fileN
 	}
 
 	r.Error(http.StatusNotFound)
+}
+
+func NewResponse(
+	log *slog.Logger,
+	responseWriter http.ResponseWriter,
+	request *http.Request,
+) *Response {
+	return &Response{
+		header:      responseWriter.Header,
+		writeHeader: responseWriter.WriteHeader,
+		Writer:      ioWriterFunc(func(b []byte) (int, error) { return responseWriter.Write(b) }),
+		Request:     request,
+		Log:         log,
+	}
+}
+
+type ioWriterFunc func([]byte) (int, error)
+
+func (f ioWriterFunc) Write(data []byte) (int, error) {
+	return f(data)
 }

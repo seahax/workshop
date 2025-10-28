@@ -54,20 +54,22 @@ type Api struct {
 }
 
 // Add a route to the API with optional middlewares.
-func (i *Api) Route(routable Routable, middlewares ...Middleware) {
-	pattern, handler := routable.Route()
+func (i *Api) Route(routeProvider RouteProvider, middlewares ...Middleware) {
+	pattern, handler := routeProvider.GetRoute()
 	pattern = ParsePattern(pattern).String() // Removes duplicate slashes
 	handler = applyMiddlewares(middlewares, handler)
 
 	i.mux.HandleFunc(pattern, func(response http.ResponseWriter, request *http.Request) {
-		apiCtx := getContext(i, response, request)
-		handler(apiCtx)
+		// The [api.Context] was already created in ServeHTTP, so just retrieve it
+		// from the request [context.Context].
+		ctx := GetContext(i, request)
+		handler(ctx)
 	})
 }
 
 // Add a group of routes to the API with optional middlewares.
-func (i *Api) Group(group *Group, middlewares ...Middleware) {
-	applyGroup(group, i, middlewares)
+func (i *Api) Group(groupProvider GroupProvider, middlewares ...Middleware) {
+	applyGroup(groupProvider, i, middlewares)
 }
 
 // Use middleware in all requests handled by this API, even if no route is
@@ -111,11 +113,11 @@ func (i *Api) BindServer(server *http.Server) {
 	server.ReadHeaderTimeout = shorthand.Coalesce(server.ReadHeaderTimeout, DefaultReadHeaderTimeout)
 	server.WriteTimeout = shorthand.Coalesce(server.WriteTimeout, DefaultWriteTimeout)
 	server.IdleTimeout = shorthand.Coalesce(server.IdleTimeout, DefaultIdleTimeout)
-	server.TLSNextProto = shorthand.Coalesce(server.TLSNextProto, make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0))
+	server.TLSNextProto = shorthand.Coalesce(server.TLSNextProto, map[string]func(*http.Server, *tls.Conn, http.Handler){})
 
 	i.mut.Lock()
 	if i.servers == nil {
-		i.servers = make(map[*http.Server]bool)
+		i.servers = map[*http.Server]bool{}
 	}
 	i.servers[server] = true
 	i.mut.Unlock()
@@ -185,7 +187,7 @@ func (i *Api) BindAddress(addr string) {
 func (i *Api) Shutdown() ShutdownError {
 	i.mut.Lock()
 	servers := maps.Keys(i.servers)
-	i.servers = make(map[*http.Server]bool)
+	i.servers = map[*http.Server]bool{}
 	i.mut.Unlock()
 
 	serverChan := make(chan *ServerError)
@@ -230,13 +232,8 @@ func (i *Api) Shutdown() ShutdownError {
 }
 
 func (i *Api) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	i.mut.Lock()
-	middlewares := i.Middlewares
-	i.mut.Unlock()
+	ctx := NewContext(i, writer, request)
 
-	ctx := getContext(i, writer, request)
-
-	defer ctx.close()
 	defer func() {
 		if err := recover(); err != nil {
 			ctx.Log.Error("Panic in API handler", "error", err)
@@ -246,6 +243,10 @@ func (i *Api) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 			}
 		}
 	}()
+
+	i.mut.Lock()
+	middlewares := i.Middlewares
+	i.mut.Unlock()
 
 	withMiddlewares(middlewares, ctx, func() {
 		i.mux.ServeHTTP(ctx.Response, ctx.Request)

@@ -20,6 +20,13 @@ func (p *Pattern) String() string {
 
 	pattern += path.Join(p.Domain, "/", p.Path)
 
+	// The [path.Join] function removes trailing slashes. But, a trailing slash
+	// has a special meaning for [net/http.Mux] patterns. So, if the original
+	// path had a trailing slash, preserve it.
+	if strings.HasSuffix(p.Path, "/") && !strings.HasSuffix(pattern, "/") {
+		pattern += "/"
+	}
+
 	return pattern
 }
 
