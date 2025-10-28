@@ -1,2 +1,2 @@
-Utility functions for simple things that are unnecessarily verbose in Go. I
-miss ternary operators and null (nil) coalescing.
+Utilities for simple things that are unnecessarily verbose or missing
+from the standard library. I miss ternary operators and null (nil) coalescing.

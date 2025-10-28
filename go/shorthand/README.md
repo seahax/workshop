@@ -1,3 +1,4 @@
 # seahax.com/go/shorthand
 
-Utility functions for simple operations that are unnecessarily verbose in Go.
+Utilities for simple things that are unnecessarily verbose or missing
+from the standard library.
