@@ -8,11 +8,12 @@ import (
 	"strings"
 	"syscall"
 
+	"seahax/api/routes"
 	"seahax/api/services/config"
 
 	"seahax.com/go/api"
-	"seahax.com/go/api/middleware"
-	"seahax.com/go/api/routes"
+	apiMiddleware "seahax.com/go/api/middleware"
+	apiRoutes "seahax.com/go/api/routes"
 )
 
 func main() {
@@ -26,17 +27,17 @@ func main() {
 	}
 
 	// Middleware
-	app.Use(&middleware.Log{})
-	app.Use(&middleware.Secure{
+	app.Use(&apiMiddleware.Log{})
+	app.Use(&apiMiddleware.Secure{
 		CSPConnectSrc:                      "'self' https://auth0.seahax.com https://*.sentry.io",
 		CSPImgSrc:                          "'self' data: https://*.gravatar.com https://*.wp.com https://cdn.auth0.com",
 		CSPUpgradeInsecureRequestsDisabled: config.Environment == "development",
 	})
-	app.Use(&middleware.Compress{})
+	app.Use(&apiMiddleware.Compress{})
 
 	// Routes
-	app.Route(&routes.Health{})
-	app.Route(&routes.Info{
+	app.Route(&apiRoutes.Health{})
+	app.Route(&apiRoutes.Info{
 		JSON: map[string]any{
 			"commit":         config.Commit,
 			"buildTimestamp": config.BuildTimestamp,
@@ -44,7 +45,8 @@ func main() {
 			"environment":    config.Environment,
 		},
 	})
-	app.Route(&routes.Static{
+	app.Route(&routes.Musings{})
+	app.Route(&apiRoutes.Static{
 		RootDir:  config.StaticPath,
 		SpaIndex: "index.html",
 		Header: func(header http.Header, fileName string) {

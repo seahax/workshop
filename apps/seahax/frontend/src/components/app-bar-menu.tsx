@@ -16,8 +16,7 @@ export default function AppBarNav(): JSX.Element {
     >
       <Box gap={(theme) => theme.spacing(1)} display="flex">
         <Button href="/#projects" onClick={() => void navigate('/#projects')}>Projects</Button>
-        {/* TODO: Add the Musings button when the Obsidian proxy is ready. */}
-        {/* <Button href="/musings">Musings</Button> */}
+        <Button href="/musings" target="_blank">Musings</Button>
       </Box>
       <AppBarUser />
     </Box>
