@@ -5,39 +5,40 @@ import (
 	"sync"
 )
 
-type ObservableValue[T any] struct {
+// A thread-safe event channel (pubsub).
+type Observable[T any] struct {
 	mut           sync.RWMutex
-	subscriptions []*subscription[T]
+	subscriptions []*Subscription[T]
 }
 
-type Unsubscribe func()
-
-type subscription[T any] struct {
-	subscriber func(T)
-}
-
-func (o *ObservableValue[T]) Subscribe(subscriber func(T)) Unsubscribe {
-	subscription := &subscription[T]{subscriber: subscriber}
-	o.mut.Lock()
-	o.subscriptions = append(o.subscriptions, subscription)
-	o.mut.Unlock()
-
-	return func() {
+// Register a callback to be called when Notify is called.
+func (o *Observable[T]) Subscribe(subscriber func(T)) *Subscription[T] {
+	subscription := &Subscription[T]{subscriber: subscriber}
+	subscription.unsubscribe = func() {
 		o.mut.Lock()
 		defer o.mut.Unlock()
 		if i := slices.Index(o.subscriptions, subscription); i != -1 {
 			o.subscriptions = slices.Delete(o.subscriptions, i, i+1)
 		}
 	}
+
+	o.mut.Lock()
+	o.subscriptions = append(o.subscriptions, subscription)
+	o.mut.Unlock()
+
+	return subscription
 }
 
-func (o *ObservableValue[T]) Clear() {
+// Remove all subscriptions.
+func (o *Observable[T]) Clear() {
 	o.mut.Lock()
 	o.subscriptions = nil
 	o.mut.Unlock()
 }
 
-func (o *ObservableValue[T]) Notify(data T) {
+// Notify all subscribers with the given data. Subscribers are notified in the
+// order they were added.
+func (o *Observable[T]) Notify(data T) {
 	o.mut.RLock()
 	subscriptions := o.subscriptions
 	o.mut.RUnlock()
@@ -47,7 +48,9 @@ func (o *ObservableValue[T]) Notify(data T) {
 	}
 }
 
-func (o *ObservableValue[T]) NotifyBackwards(data T) {
+// Notify all subscribers with the given data. Subscribers are notified in the
+// reverse order they were added.
+func (o *Observable[T]) NotifyBackwards(data T) {
 	o.mut.RLock()
 	subscriptions := o.subscriptions
 	o.mut.RUnlock()
@@ -57,24 +60,11 @@ func (o *ObservableValue[T]) NotifyBackwards(data T) {
 	}
 }
 
-type Observable struct {
-	internal ObservableValue[any]
+type Subscription[T any] struct {
+	subscriber  func(T)
+	unsubscribe func()
 }
 
-func (o *Observable) Subscribe(subscriber func()) Unsubscribe {
-	return o.internal.Subscribe(func(_ any) {
-		subscriber()
-	})
-}
-
-func (o *Observable) Clear() {
-	o.internal.Clear()
-}
-
-func (o *Observable) Notify() {
-	o.internal.Notify(nil)
-}
-
-func (o *Observable) NotifyBackwards() {
-	o.internal.NotifyBackwards(nil)
+func (s *Subscription[T]) Unsubscribe() {
+	s.unsubscribe()
 }
