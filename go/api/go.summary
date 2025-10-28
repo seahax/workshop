@@ -1,0 +1,2 @@
+A lightweight ServeMux wrapper for composing HTTP servers. Sometimes you need a
+little more form in addition to all the function.

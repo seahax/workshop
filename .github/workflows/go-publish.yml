@@ -31,7 +31,7 @@ jobs:
         run: |
           set -e
           error=0
-          for filename in go/*/version; do
+          for filename in go/*/go.version; do
             (
               set -e
               dir=$(dirname "$filename")

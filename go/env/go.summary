@@ -1,0 +1,2 @@
+Bind environment variables to structs. Useful for configuration management. How
+is this not in the standard library yet?
