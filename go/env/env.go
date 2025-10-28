@@ -2,14 +2,16 @@ package env
 
 import "os"
 
-type Env interface {
+// env is an interface for looking up environment variables.
+type env interface {
 	LookupEnv(key string) (string, bool)
 }
 
-type OSEnv struct{}
+// osEnv is an implementation of Env that uses the OS environment variables.
+type osEnv struct{}
 
-func (e *OSEnv) LookupEnv(key string) (string, bool) {
+func (e *osEnv) LookupEnv(key string) (string, bool) {
 	return os.LookupEnv(key)
 }
 
-var defaultEnv Env = &OSEnv{}
+var defaultEnv env = &osEnv{}

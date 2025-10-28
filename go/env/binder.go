@@ -10,7 +10,9 @@ import (
 )
 
 type Binder struct {
-	Env Env
+	// Injectable environment variable source for testing. If nil, the OS
+	// environment variables are used.
+	env env
 	// Prefix to add to all environment variable names. The prefix will be
 	// uppercased automatically. For example, a field with tag `env:"PORT"` and
 	// prefix `app_` will bind to the environment variable `APP_PORT`.
@@ -31,6 +33,7 @@ var rxInvalidNameChars = regexp.MustCompile("[^A-Z0-9_]+")
 // Binder.ContinueOnError is true. Will panic if the target is not a struct
 // pointer.
 func (b *Binder) Bind(target any) error {
+	env := shorthand.Coalesce(b.env, defaultEnv)
 	reflectStruct := reflectStruct(target)
 	reflectStructType := reflectStruct.Type()
 
@@ -50,7 +53,6 @@ func (b *Binder) Bind(target any) error {
 		}
 
 		envName := normalizeEnvName(b.Prefix, tagValue)
-		env := shorthand.Coalesce(b.Env, defaultEnv)
 		envStr, envExists := env.LookupEnv(envName)
 
 		if !envExists {
