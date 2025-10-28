@@ -19,7 +19,7 @@ import (
 func main() {
 	config := config.Get()
 	log := config.Log
-	app := &api.Api{
+	app := &api.API{
 		Log: log,
 		Listening: func(url string) {
 			log.Info(fmt.Sprintf("Server is listening on %s", url))
