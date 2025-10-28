@@ -133,6 +133,7 @@ function Home(): JSX.Element {
                         strokeWidth={1.25}
                         display="inline-block"
                         sx={{ verticalAlign: 'middle' }}
+                        aria-label={project.type === 'go' ? 'Go' : 'TypeScript/NPM'}
                       />
                       {' '}
                       {project.shortName}
@@ -140,7 +141,11 @@ function Home(): JSX.Element {
                     <Typography variant="body2" color="textSecondary" paddingInline={0.75}>
                       {project.description}
                     </Typography>
-                    <Box display="flex" justifyContent="flex-end" marginBlockStart={3}>
+                    <Box
+                      display="flex"
+                      justifyContent="flex-end"
+                      marginBlockStart={3}
+                    >
                       {project.type === 'go'
                         ? <BadgeGo tagPrefix={project.name} />
                         : <BadgeNpm packageName={project.name} />}
