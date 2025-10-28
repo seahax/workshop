@@ -22,7 +22,7 @@ func (g *Group) GetGroup() (prefix string, routes []RouteProvider) {
 }
 
 // Add a route to the group with optional route specific middleware.
-func (g *Group) Route(routeProvider RouteProvider, middlewares ...Middleware) {
+func (g *Group) HandleRoute(routeProvider RouteProvider, middlewares ...Middleware) {
 	pattern, baseHandler := routeProvider.GetRoute()
 	handler := applyMiddlewares(middlewares, func(ctx *Context) {
 		g.mut.RLock()
@@ -38,7 +38,7 @@ func (g *Group) Route(routeProvider RouteProvider, middlewares ...Middleware) {
 }
 
 // Add a sub-group of routes to the group with optional middleware.
-func (g *Group) Group(groupProvider GroupProvider, middlewares ...Middleware) {
+func (g *Group) HandleGroup(groupProvider GroupProvider, middlewares ...Middleware) {
 	applyGroup(groupProvider, g, middlewares)
 }
 
@@ -54,7 +54,7 @@ func (g *Group) Use(middlewares ...Middleware) {
 func applyGroup(
 	source GroupProvider,
 	target interface {
-		Route(route RouteProvider, middlewares ...Middleware)
+		HandleRoute(route RouteProvider, middlewares ...Middleware)
 	},
 	middlewares []Middleware,
 ) {
@@ -65,6 +65,6 @@ func applyGroup(
 		pattern := ParsePattern(patternStr)
 		pattern.Path = path.Join(prefix, pattern.Path)
 		route := &Route{Pattern: pattern.String(), Handler: handler}
-		target.Route(route, middlewares...)
+		target.HandleRoute(route, middlewares...)
 	}
 }

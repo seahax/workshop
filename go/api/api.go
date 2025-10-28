@@ -53,8 +53,16 @@ type Api struct {
 	Error func(err *ServerError)
 }
 
+// Use middleware in all requests handled by this API, even if no route is
+// matched. Middleware is executed in the order it is added.
+func (i *Api) UseMiddleware(middlewares ...Middleware) {
+	i.mut.Lock()
+	i.Middlewares = append(i.Middlewares, middlewares...)
+	i.mut.Unlock()
+}
+
 // Add a route to the API with optional middlewares.
-func (i *Api) Route(routeProvider RouteProvider, middlewares ...Middleware) {
+func (i *Api) HandleRoute(routeProvider RouteProvider, middlewares ...Middleware) {
 	pattern, handler := routeProvider.GetRoute()
 	pattern = ParsePattern(pattern).String() // Removes duplicate slashes
 	handler = applyMiddlewares(middlewares, handler)
@@ -68,16 +76,8 @@ func (i *Api) Route(routeProvider RouteProvider, middlewares ...Middleware) {
 }
 
 // Add a group of routes to the API with optional middlewares.
-func (i *Api) Group(groupProvider GroupProvider, middlewares ...Middleware) {
+func (i *Api) HandleGroup(groupProvider GroupProvider, middlewares ...Middleware) {
 	applyGroup(groupProvider, i, middlewares)
-}
-
-// Use middleware in all requests handled by this API, even if no route is
-// matched. Middleware is executed in the order it is added.
-func (i *Api) Use(middlewares ...Middleware) {
-	i.mut.Lock()
-	i.Middlewares = append(i.Middlewares, middlewares...)
-	i.mut.Unlock()
 }
 
 // Bind this API to the given HTTP server. This function is non-blocking. This
