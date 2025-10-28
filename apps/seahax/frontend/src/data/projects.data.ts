@@ -5,7 +5,9 @@ import path from 'node:path';
 import { $ } from 'execa';
 
 export interface Project {
+  type: 'ts' | 'go';
   name: string;
+  shortName: string;
   description: string;
   homepage: string;
 }
@@ -28,31 +30,61 @@ async function findPackages(dir: string): Promise<Project[]> {
       return findPackages(path.join(dir, entry.name));
     }
 
-    if (entry.name !== 'package.json') return [];
+    if (entry.name === 'go.mod') {
+      const [modText, summaryText] = await Promise.all([
+        fs.readFile(path.join(dir, entry.name), 'utf8').catch(() => ''),
+        fs.readFile(path.join(dir, 'go.summary'), 'utf8').catch(() => ''),
+      ]);
 
-    const text = await fs.readFile(path.join(dir, entry.name), 'utf8');
-    const json = JSON.parse(text);
+      const summary = summaryText.replaceAll(/\s+/gu, ' ').trim();
 
-    if (!json.name) return [];
-    if (!json.description) return [];
-    if (json.private) return [];
+      if (!summary) return [];
 
-    return [
-      {
-        name: json.name,
-        description: json.description,
-        homepage: json.homepage ?? `https://www.npmjs.com/package/${json.name}`,
-      },
-    ];
+      const moduleMatch = /^module\s+(\S+)\s*$/mu.exec(modText);
+
+      if (!moduleMatch) return [];
+
+      const moduleName = moduleMatch[1]!;
+      const name = moduleName.replace(/^.*?\//u, '');
+
+      return [{
+        type: 'go',
+        name,
+        shortName: name.replace(/^.*\//u, ''),
+        description: summary,
+        homepage: `https://pkg.go.dev/${moduleName}`,
+      }];
+    }
+
+    if (entry.name === 'package.json') {
+      const text = await fs.readFile(path.join(dir, entry.name), 'utf8');
+      const json = JSON.parse(text);
+
+      if (!json.name) return [];
+      if (!json.description) return [];
+      if (json.private) return [];
+
+      return [
+        {
+          type: 'ts',
+          name: json.name,
+          shortName: json.name.replace(/^.*\//u, ''),
+          description: json.description,
+          homepage: json.homepage ?? `https://www.npmjs.com/package/${json.name}`,
+        },
+      ];
+    }
+
+    return [];
   });
   const packageArrays = await Promise.all(promises);
-  const packages = packageArrays.flat().sort((a, b) => a.name.localeCompare(b.name));
+  const packages = packageArrays.flat();
 
   return packages;
 }
 
 const { stdout: projectRoot } = await $`git rev-parse --show-toplevel`;
 const localPackages = await findPackages(projectRoot);
-const packages = [...localPackages, ...PROJECTS].sort((a, b) => a.name.localeCompare(b.name));
+const packages = [...localPackages, ...PROJECTS].sort((a, b) => a.shortName.localeCompare(b.shortName));
 
 export default packages;

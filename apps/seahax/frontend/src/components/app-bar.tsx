@@ -3,7 +3,6 @@ import { type JSX } from 'react';
 
 import AppBarLogo from './app-bar-logo.tsx';
 import AppHeaderMenu from './app-bar-menu.tsx';
-import AppBarMenuCollapsed from './app-bar-menu-collapsed.tsx';
 
 export default function AppBar(): JSX.Element {
   const elevate = useScrollTrigger({
@@ -26,7 +25,6 @@ export default function AppBar(): JSX.Element {
             <AppBarLogo />
             <Box flexGrow={1} />
             <AppHeaderMenu />
-            <AppBarMenuCollapsed />
           </Box>
         </Toolbar>
       </MuiAppBar>

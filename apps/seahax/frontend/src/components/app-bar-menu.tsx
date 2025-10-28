@@ -12,9 +12,9 @@ export default function AppBarNav(): JSX.Element {
       gap={(theme) => theme.spacing(2)}
       alignItems="center"
       height="100%"
-      sx={{ display: { xs: 'none', sm: 'flex' } }}
+      display="flex"
     >
-      <Box gap={(theme) => theme.spacing(1)} display="flex">
+      <Box gap={(theme) => theme.spacing(1)} sx={{ display: { xs: 'none', sm: 'flex' } }}>
         <Button href="/#projects" onClick={() => void navigate('/#projects')}>Projects</Button>
         <Button href="/musings" target="_blank">Musings</Button>
       </Box>

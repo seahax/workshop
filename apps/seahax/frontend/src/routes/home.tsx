@@ -10,9 +10,12 @@ import {
   useScrollTrigger,
 } from '@mui/material';
 import { createDefaultRenderer, createGlimmer } from '@seahax/glimmer';
+import { IconBrandGolang, IconBrandTypescript } from '@tabler/icons-react';
 import { type JSX, useEffect, useRef } from 'react';
 
 import { AppPage } from '../components/app-page.tsx';
+import BadgeGo from '../components/badge-go.tsx';
+import BadgeNpm from '../components/badge-npm.tsx';
 import Canvas from '../components/canvas.tsx';
 import projects from '../data/projects.data.ts';
 import useDelay from '../hooks/use-delay.ts';
@@ -58,8 +61,7 @@ function Home(): JSX.Element {
       <AppPage zIndex={1}>
         <Container
           sx={(theme) => ({
-            pt: 4,
-            pb: 10,
+            paddingBlock: 10,
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
@@ -91,7 +93,7 @@ function Home(): JSX.Element {
           display="grid"
           gridTemplateColumns={'repeat(auto-fit, minmax(350px, 1fr))'}
           gridAutoRows="1fr"
-          gap={(theme) => theme.spacing(3)}
+          gap={(theme) => theme.spacing(4)}
         >
           {projects.map((project, i) => {
             return (
@@ -107,12 +109,42 @@ function Home(): JSX.Element {
                   },
                 }}
               >
-                <CardActionArea href={project.homepage} target="_blank" sx={{ minHeight: '100%' }}>
-                  <CardContent>
-                    <Typography variant="h3" gutterBottom>
-                      {project.name.replace(/^.*\//u, '')}
+                <CardActionArea
+                  href={project.homepage}
+                  target="_blank"
+                  sx={{
+                    minHeight: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'stretch',
+                  }}
+                >
+                  <CardContent sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    flexGrow: 1,
+                  }}
+                  >
+                    <Typography variant="h3" marginBlockEnd={1}>
+                      <Box
+                        component={project.type === 'go' ? IconBrandGolang : IconBrandTypescript}
+                        size="3rem"
+                        strokeWidth={1.25}
+                        display="inline-block"
+                        sx={{ verticalAlign: 'middle' }}
+                      />
+                      {' '}
+                      {project.shortName}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary">{project.description}</Typography>
+                    <Typography variant="body2" color="textSecondary" paddingInline={0.75}>
+                      {project.description}
+                    </Typography>
+                    <Box display="flex" justifyContent="flex-end" marginBlockStart={3}>
+                      {project.type === 'go'
+                        ? <BadgeGo tagPrefix={project.name} />
+                        : <BadgeNpm packageName={project.name} />}
+                    </Box>
                   </CardContent>
                 </CardActionArea>
               </Card>

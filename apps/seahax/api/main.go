@@ -27,17 +27,17 @@ func main() {
 	}
 
 	// Middleware
-	app.Use(&apiMiddleware.Log{})
-	app.Use(&apiMiddleware.Secure{
+	app.UseMiddleware(&apiMiddleware.Log{})
+	app.UseMiddleware(&apiMiddleware.Secure{
 		CSPConnectSrc:                      "'self' https://auth0.seahax.com https://*.sentry.io",
-		CSPImgSrc:                          "'self' data: https://*.gravatar.com https://*.wp.com https://cdn.auth0.com",
+		CSPImgSrc:                          "'self' data: https://*.gravatar.com https://*.wp.com https://cdn.auth0.com https://img.shields.io",
 		CSPUpgradeInsecureRequestsDisabled: config.Environment == "development",
 	})
-	app.Use(&apiMiddleware.Compress{})
+	app.UseMiddleware(&apiMiddleware.Compress{})
 
 	// Routes
-	app.Route(&apiRoutes.Health{})
-	app.Route(&apiRoutes.Info{
+	app.HandleRoute(&apiRoutes.Health{})
+	app.HandleRoute(&apiRoutes.Info{
 		JSON: map[string]any{
 			"commit":         config.Commit,
 			"buildTimestamp": config.BuildTimestamp,
@@ -45,8 +45,8 @@ func main() {
 			"environment":    config.Environment,
 		},
 	})
-	app.Route(&routes.Musings{})
-	app.Route(&apiRoutes.Static{
+	app.HandleRoute(&routes.Musings{})
+	app.HandleRoute(&apiRoutes.Static{
 		RootDir:  config.StaticPath,
 		SpaIndex: "index.html",
 		Header: func(header http.Header, fileName string) {

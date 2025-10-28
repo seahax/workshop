@@ -4,7 +4,7 @@ go 1.25.3
 
 require (
 	github.com/go-playground/validator/v10 v10.28.0
-	seahax.com/go/api v0.0.7
+	seahax.com/go/api v0.0.8
 	seahax.com/go/env v0.0.5
 	seahax.com/go/shorthand v0.0.5
 )
