@@ -5,7 +5,7 @@ import path from 'node:path';
 import { $ } from 'execa';
 
 export interface Project {
-  type: 'ts' | 'go';
+  type: 'npm' | 'go';
   name: string;
   shortName: string;
   description: string;
@@ -66,7 +66,7 @@ async function findPackages(dir: string): Promise<Project[]> {
 
       return [
         {
-          type: 'ts',
+          type: 'npm',
           name: json.name,
           shortName: json.name.replace(/^.*\//u, ''),
           description: json.description,

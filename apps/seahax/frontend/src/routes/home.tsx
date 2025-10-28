@@ -10,13 +10,12 @@ import {
   useScrollTrigger,
 } from '@mui/material';
 import { createDefaultRenderer, createGlimmer } from '@seahax/glimmer';
-import { IconBrandGolang, IconBrandTypescript } from '@tabler/icons-react';
+import { IconBrandGolang, IconBrandNpm } from '@tabler/icons-react';
 import { type JSX, useEffect, useRef } from 'react';
 
 import { AppPage } from '../components/app-page.tsx';
-import BadgeGo from '../components/badge-go.tsx';
-import BadgeNpm from '../components/badge-npm.tsx';
 import Canvas from '../components/canvas.tsx';
+import ProjectBadge from '../components/project-badge.tsx';
 import projects from '../data/projects.data.ts';
 import useDelay from '../hooks/use-delay.ts';
 import { useDocumentVisible } from '../hooks/use-document-visible.ts';
@@ -126,17 +125,14 @@ function Home(): JSX.Element {
                     flexGrow: 1,
                   }}
                   >
-                    <Typography variant="h3" marginBlockEnd={1}>
+                    <Typography variant="h3" marginBlockEnd={1} display="flex" gap={1.5} alignItems="center">
                       <Box
-                        component={project.type === 'go' ? IconBrandGolang : IconBrandTypescript}
+                        component={project.type === 'go' ? IconBrandGolang : IconBrandNpm}
                         size="3rem"
                         strokeWidth={1.25}
-                        display="inline-block"
-                        sx={{ verticalAlign: 'middle' }}
                         aria-label={project.type === 'go' ? 'Go' : 'TypeScript/NPM'}
                       />
-                      {' '}
-                      {project.shortName}
+                      <Box component="span" marginBlockEnd={0.875}>{project.shortName}</Box>
                     </Typography>
                     <Typography variant="body2" color="textSecondary" paddingInline={0.75}>
                       {project.description}
@@ -146,9 +142,7 @@ function Home(): JSX.Element {
                       justifyContent="flex-end"
                       marginBlockStart={3}
                     >
-                      {project.type === 'go'
-                        ? <BadgeGo tagPrefix={project.name} />
-                        : <BadgeNpm packageName={project.name} />}
+                      <ProjectBadge projectName={project.name} type={project.type} />
                     </Box>
                   </CardContent>
                 </CardActionArea>
