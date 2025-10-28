@@ -22,7 +22,7 @@ type Response struct {
 	header              func() http.Header
 	writeHeader         func(statusCode int)
 	status              atomic.Int32
-	onBeforeWriteHeader shorthand.Observable
+	onBeforeWriteHeader shorthand.Observable[any]
 
 	// The underlying [io.Writer] for writing response body data. This can be
 	// wrapped by middleware to provide features like compression.
@@ -45,7 +45,7 @@ func (r *Response) WriteHeader(statusCode int) {
 	ok := r.status.CompareAndSwap(0, int32(statusCode))
 
 	if ok {
-		r.onBeforeWriteHeader.NotifyBackwards()
+		r.onBeforeWriteHeader.NotifyBackwards(nil)
 	}
 
 	// Don't guard against multiple calls to the underlying ResponseWriter
@@ -62,8 +62,8 @@ func (r *Response) Written() bool {
 	return r.status.Load() != 0
 }
 
-func (r *Response) RegisterOnBeforeWriteHeader(callback func()) {
-	r.onBeforeWriteHeader.Subscribe(callback)
+func (r *Response) RegisterOnBeforeWriteHeader(callback func()) *shorthand.Subscription[any] {
+	return r.onBeforeWriteHeader.Subscribe(func(_ any) { callback() })
 }
 
 // Write an error message with the given status code to the response. The

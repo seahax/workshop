@@ -5,6 +5,12 @@ import (
 	"sync"
 )
 
+// Provides a single route.
+type RouteProvider interface {
+	GetRoute() (pattern string, handler func(*Context))
+}
+
+// Provides a group of routes.
 type GroupProvider interface {
 	GetGroup() (prefix string, routes []RouteProvider)
 }
@@ -14,10 +20,10 @@ type Group struct {
 	mut         sync.RWMutex
 	Prefix      string
 	Middlewares []Middleware
-	Routes      []RouteProvider
+	Routes      []*Route
 }
 
-func (g *Group) GetGroup() (prefix string, routes []RouteProvider) {
+func (g *Group) GetGroup() (prefix string, routes []*Route) {
 	return g.Prefix, g.Routes
 }
 
