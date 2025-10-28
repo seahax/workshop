@@ -8,26 +8,30 @@ import (
 	"seahax.com/go/shorthand"
 )
 
-// A health check endpoint.
+// A health check route.
 type Health struct {
-	Path   string
+	// Optional custom path for the health route pattern. Defaults to
+	// DefaultHealthPath if empty.
+	Path string
+	// Optional domain for the health route pattern.
 	Domain string
-	State  *HealthState
+	// Thread-safe health state.
+	State *HealthState
 }
 
-// Current health state snapshot.
+// A serializable snapshot of the health state.
 type HealthSnapshot struct {
-	Status string            `json:"status"`
-	Detail map[string]string `json:"detail"`
+	Status HealthStatus            `json:"status"`
+	Detail map[string]HealthStatus `json:"detail"`
 }
 
-// Thread-safe health state data.
+// Thread-safe health state.
 type HealthState struct {
 	state sync.Map
 }
 
 // Set the health status of a component (thread-safe).
-func (hs *HealthState) Set(component string, status status) {
+func (hs *HealthState) Set(component string, status HealthStatus) {
 	hs.state.Store(component, status)
 }
 
@@ -35,13 +39,13 @@ func (hs *HealthState) Set(component string, status status) {
 // overall status and per-component details.
 func (hs *HealthState) Snapshot() *HealthSnapshot {
 	overall := StatusHealthy
-	detail := map[string]string{}
+	detail := map[string]HealthStatus{}
 
 	hs.state.Range(func(key any, value any) bool {
 		if k, ok := key.(string); ok {
-			if v, ok := value.(status); ok {
+			if v, ok := value.(HealthStatus); ok {
 				overall = max(overall, v)
-				detail[k] = string(v)
+				detail[k] = v
 			}
 		}
 
@@ -49,17 +53,17 @@ func (hs *HealthState) Snapshot() *HealthSnapshot {
 	})
 
 	return &HealthSnapshot{
-		Status: string(overall),
+		Status: overall,
 		Detail: detail,
 	}
 }
 
-type status string
+type HealthStatus string
 
 const (
-	StatusUnknown   status = "unknown"
-	StatusHealthy   status = "healthy"
-	StatusUnhealthy status = "unhealthy"
+	StatusUnknownHealth HealthStatus = "unknown"
+	StatusHealthy       HealthStatus = "healthy"
+	StatusUnhealthy     HealthStatus = "unhealthy"
 )
 
 const DefaultHealthPath = "/_health"
@@ -69,8 +73,8 @@ func (h *Health) GetRoute() (string, func(*api.Context)) {
 	handler := func(ctx *api.Context) {
 		if h.State == nil {
 			ctx.Response.WriteJSON(&HealthSnapshot{
-				Status: string(StatusHealthy),
-				Detail: map[string]string{},
+				Status: StatusHealthy,
+				Detail: map[string]HealthStatus{},
 			})
 			return
 		}
@@ -78,7 +82,7 @@ func (h *Health) GetRoute() (string, func(*api.Context)) {
 		snapshot := h.State.Snapshot()
 		ctx.Response.Header().Set("Cache-Control", "no-cache")
 
-		if snapshot.Status == string(StatusUnhealthy) {
+		if snapshot.Status == StatusUnhealthy {
 			ctx.Response.WriteHeader(http.StatusServiceUnavailable)
 		}
 

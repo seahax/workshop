@@ -6,13 +6,18 @@ import (
 	"seahax.com/go/api"
 )
 
-// A static file serving endpoint with optional SPA support.
+// A static file serving route with optional SPA support.
 type Static struct {
-	Prefix   string
-	Domain   string
-	RootDir  string
+	// Optional prefix for the static route pattern.
+	Prefix string
+	// Optional domain for the static route pattern.
+	Domain string
+	// The root directory from which to serve static files.
+	RootDir string
+	// Optional SPA index file to serve for non-existent files.
 	SpaIndex string
-	Header   func(header http.Header, fileName string)
+	// Optional callback to modify response headers before serving a file.
+	Header func(header http.Header, fileName string)
 }
 
 func (s *Static) GetRoute() (string, func(*api.Context)) {

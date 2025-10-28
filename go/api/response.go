@@ -29,14 +29,18 @@ type Response struct {
 	io.Writer
 	// The associated HTTP request.
 	Request *http.Request
-	// The parent Api Logger.
+	// The parent API Logger.
 	Log *slog.Logger
 }
 
+// Returns the response header.
 func (r *Response) Header() http.Header {
 	return r.header()
 }
 
+// Write the header and status code to the response. This should only be called
+// once per response. After it is called, the header and status code can no
+// longer be modified.
 func (r *Response) WriteHeader(statusCode int) {
 	if statusCode < 100 || statusCode > 599 {
 		panic(fmt.Sprintf("invalid WriteHeader status code %d", statusCode))
@@ -54,14 +58,20 @@ func (r *Response) WriteHeader(statusCode int) {
 	r.writeHeader(statusCode)
 }
 
+// Return the status code that was written to the response by WriteHeader. If
+// WriteHeader has not been called yet, this returns 0.
 func (r *Response) Status() int {
 	return int(r.status.Load())
 }
 
+// Returns true if WriteHeader has been called for this response.
 func (r *Response) Written() bool {
 	return r.status.Load() != 0
 }
 
+// Register a callback that is called before the response header is written.
+// This can be used to perform last-minute modifications to the header, log
+// information, or decide whether to replace the response Writer.
 func (r *Response) RegisterOnBeforeWriteHeader(callback func()) *shorthand.Subscription[any] {
 	return r.onBeforeWriteHeader.Subscribe(func(_ any) { callback() })
 }
@@ -191,6 +201,7 @@ func (r *Response) WriteFileUnsafe(dir http.FileSystem, onBeforeWrite func(fileN
 	r.Error(http.StatusNotFound)
 }
 
+// Create a new Response.
 func NewResponse(
 	log *slog.Logger,
 	responseWriter http.ResponseWriter,

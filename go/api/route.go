@@ -6,6 +6,7 @@ type Route struct {
 	Handler func(*Context)
 }
 
+// Returns route pattern and handler.
 func (r Route) GetRoute() (string, func(*Context)) {
 	return r.Pattern, r.Handler
 }

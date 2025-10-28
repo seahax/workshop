@@ -5,11 +5,15 @@ import (
 	"seahax.com/go/shorthand"
 )
 
-// An information endpoint that returns static JSON data.
+// An information route that returns static JSON data.
 type Info struct {
-	Path   string
+	// Optional custom path for the info route pattern. Defaults to
+	// DefaultInfoPath if empty.
+	Path string
+	// Optional domain for the info route pattern.
 	Domain string
-	JSON   map[string]any
+	// Static JSON data that the route will serve.
+	JSON map[string]any
 }
 
 const DefaultInfoPath = "/_info"

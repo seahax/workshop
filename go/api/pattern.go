@@ -5,12 +5,14 @@ import (
 	"strings"
 )
 
+// A parsed ServeMux route pattern.
 type Pattern struct {
 	Method string
 	Domain string
 	Path   string
 }
 
+// Return the string representation of the parsed pattern.
 func (p *Pattern) String() string {
 	var pattern string
 
@@ -30,6 +32,7 @@ func (p *Pattern) String() string {
 	return pattern
 }
 
+// Parse a ServeMux route pattern string.
 func ParsePattern(pattern string) *Pattern {
 	var method, domain, path string
 

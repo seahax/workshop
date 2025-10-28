@@ -13,9 +13,13 @@ const maxQualityInt = 1000
 // TODO: Replace with the future Go built-in content negotiation package
 // (https://github.com/golang/go/issues/19307).
 type Negotiator struct {
+	// True of header values may contain semicolon delimited parameters (eg.
+	// quality values).
 	IsParameterized bool
-	IsMediaType     bool
-	Offers          []string
+	// True if the header values are media types (eg. "application/json").
+	IsMediaType bool
+	// Supported offer values.
+	Offers []string
 }
 
 // Returns the best offer value that matches the header values.

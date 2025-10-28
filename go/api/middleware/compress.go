@@ -15,9 +15,13 @@ import (
 	"seahax.com/go/shorthand"
 )
 
+// Compression algorithm definition.
 type Algorithm struct {
-	Name   string
-	Writer func(io.Writer) (io.WriteCloser, error)
+	// The name of the algorithm which must match an Accept-Encoding value
+	// exactly.
+	Name string
+	// Return a WriteCloser that wraps the provided io.Writer with compression.
+	GetWriter func(io.Writer) (io.WriteCloser, error)
 }
 
 // Brotli compression algorithm with default compression level.
@@ -27,7 +31,7 @@ func Brotli() Algorithm { return BrotliLevel(brotli.DefaultCompression) }
 func BrotliLevel(level int) Algorithm {
 	return Algorithm{
 		Name: "br",
-		Writer: func(w io.Writer) (io.WriteCloser, error) {
+		GetWriter: func(w io.Writer) (io.WriteCloser, error) {
 			return brotli.NewWriterLevel(w, level), nil
 		},
 	}
@@ -40,7 +44,7 @@ func Zstd() Algorithm { return ZstdLevel(zstd.SpeedDefault) }
 func ZstdLevel(level zstd.EncoderLevel) Algorithm {
 	return Algorithm{
 		Name: "zstd",
-		Writer: func(w io.Writer) (io.WriteCloser, error) {
+		GetWriter: func(w io.Writer) (io.WriteCloser, error) {
 			encoder, err := zstd.NewWriter(w, zstd.WithEncoderLevel(level))
 			if err != nil {
 				return nil, err
@@ -57,7 +61,7 @@ func Gzip() Algorithm { return GzipLevel(gzip.DefaultCompression) }
 func GzipLevel(level int) Algorithm {
 	return Algorithm{
 		Name: "gzip",
-		Writer: func(w io.Writer) (io.WriteCloser, error) {
+		GetWriter: func(w io.Writer) (io.WriteCloser, error) {
 			return gzip.NewWriterLevel(w, level)
 		},
 	}
@@ -70,7 +74,7 @@ func Deflate() Algorithm { return DeflateLevel(flate.DefaultCompression) }
 func DeflateLevel(level int) Algorithm {
 	return Algorithm{
 		Name: "deflate",
-		Writer: func(w io.Writer) (io.WriteCloser, error) {
+		GetWriter: func(w io.Writer) (io.WriteCloser, error) {
 			return flate.NewWriter(w, level)
 		},
 	}
@@ -144,6 +148,8 @@ func (c *Compress) Handle(ctx *api.Context, next func()) {
 	next()
 }
 
+// Default filter function which applies compression to text/* and
+// application/* content types.
 func CompressFilterDefault(contentType string) bool {
 	return strings.HasPrefix(contentType, "text/") ||
 		strings.HasPrefix(contentType, "application/")
@@ -176,7 +182,7 @@ func getOffersAndWriters(algorithms []Algorithm) (offers []string, writers map[s
 
 	for _, algo := range algorithms {
 		offers = append(offers, algo.Name)
-		writers[algo.Name] = algo.Writer
+		writers[algo.Name] = algo.GetWriter
 	}
 
 	return offers, writers

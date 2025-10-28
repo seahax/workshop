@@ -33,7 +33,7 @@ const (
 
 // A wrapper for the Go built-in [net/http.Mux] with quality-of-life enhancements like
 // non-blocking server binding, graceful shutdown, and middleware support.
-type Api struct {
+type API struct {
 	mut     sync.Mutex
 	mux     http.ServeMux
 	servers map[*http.Server]bool
@@ -50,19 +50,19 @@ type Api struct {
 
 	// Optional callback that is called to handle server errors. If this is nil,
 	// server errors will cause a panic.
-	Error func(err *ServerError)
+	OnServerError func(err *ServerError)
 }
 
 // Use middleware in all requests handled by this API, even if no route is
 // matched. Middleware is executed in the order it is added.
-func (i *Api) UseMiddleware(middlewares ...Middleware) {
+func (i *API) UseMiddleware(middlewares ...Middleware) {
 	i.mut.Lock()
 	i.Middlewares = append(i.Middlewares, middlewares...)
 	i.mut.Unlock()
 }
 
 // Add a route to the API with optional middlewares.
-func (i *Api) HandleRoute(routeProvider RouteProvider, middlewares ...Middleware) {
+func (i *API) HandleRoute(routeProvider RouteProvider, middlewares ...Middleware) {
 	pattern, handler := routeProvider.GetRoute()
 	pattern = ParsePattern(pattern).String() // Removes duplicate slashes
 	handler = applyMiddlewares(middlewares, handler)
@@ -76,7 +76,7 @@ func (i *Api) HandleRoute(routeProvider RouteProvider, middlewares ...Middleware
 }
 
 // Add a group of routes to the API with optional middlewares.
-func (i *Api) HandleGroup(groupProvider GroupProvider, middlewares ...Middleware) {
+func (i *API) HandleGroup(groupProvider GroupProvider, middlewares ...Middleware) {
 	applyGroup(groupProvider, i, middlewares)
 }
 
@@ -107,7 +107,7 @@ func (i *Api) HandleGroup(groupProvider GroupProvider, middlewares ...Middleware
 // If the server fails and the API's Error field is non-nil, it will be called
 // with the server and the error. If the Error field is nil, a panic will
 // occur.
-func (i *Api) BindServer(server *http.Server) {
+func (i *API) BindServer(server *http.Server) {
 	server.Handler = i
 	server.ReadTimeout = shorthand.Coalesce(server.ReadTimeout, DefaultReadTimeout)
 	server.ReadHeaderTimeout = shorthand.Coalesce(server.ReadHeaderTimeout, DefaultReadHeaderTimeout)
@@ -122,7 +122,7 @@ func (i *Api) BindServer(server *http.Server) {
 	i.servers[server] = true
 	i.mut.Unlock()
 
-	serverError := i.Error
+	serverError := i.OnServerError
 
 	if serverError == nil {
 		serverError = func(err *ServerError) {
@@ -178,13 +178,13 @@ func (i *Api) BindServer(server *http.Server) {
 // If the server fails and the API's Error field is non-nil, it will be called
 // with the server and the error. If the Error field is nil, a panic will
 // occur.
-func (i *Api) BindAddress(addr string) {
+func (i *API) BindAddress(addr string) {
 	i.BindServer(&http.Server{Addr: addr})
 }
 
 // Attempt to gracefully shutdown all servers that were started by the API. If
 // a server does not shutdown within 10 seconds, it will be forcibly closed.
-func (i *Api) Shutdown() ShutdownError {
+func (i *API) Shutdown() ShutdownError {
 	i.mut.Lock()
 	servers := maps.Keys(i.servers)
 	i.servers = map[*http.Server]bool{}
@@ -231,7 +231,7 @@ func (i *Api) Shutdown() ShutdownError {
 	return nil
 }
 
-func (i *Api) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+func (i *API) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	ctx := NewContext(i, writer, request)
 
 	defer func() {

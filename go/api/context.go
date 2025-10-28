@@ -19,7 +19,10 @@ type Context struct {
 	Response *Response
 }
 
-func NewContext(api *Api, writer http.ResponseWriter, request *http.Request) *Context {
+// Create a new API request Context, and associate it with the given
+// [net/http.Request] so that it can be retrieved given the same API and
+// request pointers.
+func NewContext(api *API, writer http.ResponseWriter, request *http.Request) *Context {
 	log := api.Log
 
 	if log == nil {
@@ -33,7 +36,10 @@ func NewContext(api *Api, writer http.ResponseWriter, request *http.Request) *Co
 	return ctx
 }
 
-func GetContext(api *Api, request *http.Request) *Context {
+// Retrieve the api.Context from the [net/http.Request]. This will panic if the
+// request was not handled by the given API instance and has no associated
+// api.Context.
+func GetContext(api *API, request *http.Request) *Context {
 	ctx, ok := request.Context().Value(api).(*Context)
 
 	if !ok {
