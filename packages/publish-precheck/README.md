@@ -1,4 +1,4 @@
-# @seahax/wscheck
+# @seahax/publish-precheck
 
 Check package.json files for problems to fix before publishing.
 
