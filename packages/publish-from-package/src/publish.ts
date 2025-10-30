@@ -21,11 +21,11 @@ export async function publish({ pkg, command, dryRun, extraArgs }: {
   }
 
   if (await checkPublished(pkg.data.name, pkg.data.version)) {
-    console.log(`${label} ${chalk.dim('already published')}`);
+    console.log(`${label} ${chalk.dim('version exists')}`);
     return;
   }
 
-  console.log(`${label} ${chalk.white(pkg.data.version)}`);
+  console.log(`${label} ${chalk.green(pkg.data.version)}`);
 
   const [cmd, ...commandArgs] = parseCommandString(command);
   const result = await execa(cmd!, [...commandArgs, ...(dryRun ? ['--dry-run'] : []), ...extraArgs], {

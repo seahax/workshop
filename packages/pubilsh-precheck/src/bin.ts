@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { alias, createHelp, cue, parseOptions } from '@seahax/args';
 import { getPackages } from '@seahax/monorepo';
+import chalk from 'chalk';
 
 const help = createHelp`
 {bold Usage:} publish-precheck {blue [options]}
@@ -28,48 +29,72 @@ void (async () => {
   }
 
   for (const pkg of await getPackages(process.cwd())) {
-    const { data, filename } = pkg;
+    const { data } = pkg;
+    const label = chalk.blue(`> ${pkg.data.name}:`);
 
-    if (!data.name) continue;
-    if (!data.version) continue;
-    if (data.private) continue;
-
-    check(data.license, `package ${data.name} (${filename}) is missing "license"`);
-    check(data.repository, `package ${data.name} (${filename}) is missing "repository"`);
-    check(Array.isArray(data.files) && data.files.length > 0, `package ${data.name} (${filename}) is missing "files"`);
-    check(data.type === 'module' || data.type === 'commonjs', `package ${data.name} (${filename}) has invalid "type"`);
-
-    if (data.type === 'module') {
-      check(data.exports || data.bin, `package ${data.name} (${filename}) is "module" but missing "exports" or "bin"`);
-      check(!data.main, `package ${data.name} (${filename}) is "module" but has "main"`);
-    }
-    else if (data.type === 'commonjs') {
-      check(data.main || data.bin, `package ${data.name} (${filename}) is "commonjs" but missing "main" or "bin"`);
-      check(!data.exports, `package ${data.name} (${filename}) is "commonjs" but has "exports"`);
+    if (!pkg.data.version || pkg.data.private) {
+      console.log(`${label} ${chalk.dim('private')}`);
+      continue;
     }
 
-    check(!data.exports || data.type === 'module', `package ${data.name} (${filename}) has "exports" but not "module"`);
-    check(!data.main || data.type === 'commonjs', `package ${data.name} (${filename}) has "main" but not "commonjs"`);
+    let pass = true;
+
+    if (!data.license) problem(`missing "license" field`);
+    if (!data.repository) problem(`missing "repository" field`);
+
+    if (!Array.isArray(data.files)) {
+      problem(`missing "files" field`);
+    }
+    else if (data.files.length === 0) {
+      problem(`empty "files" field`);
+    }
+
+    if (!data.type) problem(`missing "type" field`);
 
     if (data.exports) {
-      check(data.types, `Package ${data.name} (${filename}) missing "types"`);
+      if (data.type !== 'module') problem(`type "module" required with "exports"`);
+      if (!data.types) problem(`missing "types" field`);
+    }
+    else if (data.main) {
+      if (data.type !== 'commonjs') problem(`type "commonjs" required with "main"`);
+    }
+    else if (!data.bin) {
+      problem(`missing "exports", "main", or "bin" field`);
+    }
+
+    if (data.type === 'module') {
+      if (!data.exports && !data.bin) problem(`type "module" requires "exports" or "bin"`);
+    }
+    else if (data.type === 'commonjs') {
+      if (!data.main && !data.bin) problem(`type "commonjs" requires "main" or "bin"`);
+    }
+    else if (data.type) {
+      problem(`invalid "type" field`);
+    }
+    else {
+      problem(`missing "type" field`);
     }
 
     if (data.dependencies) {
       for (const [dep, ver] of Object.entries<string>(data.dependencies)) {
-        check(!ver.startsWith('workspace:'), `Package ${data.name} (${filename}) has "workspace:" dependency ${dep}`);
-        check(!ver.startsWith('file:'), `Package ${data.name} (${filename}) has "file:" dependency ${dep}`);
-        check(ver !== '*', `Package ${data.name} (${filename}) has "*" dependency ${dep}`);
+        if (ver.startsWith('workspace:')) problem(`has "workspace:" dependency "${dep}"`);
+        if (ver.startsWith('file:')) problem(`has "file:" dependency "${dep}"`);
+        if (ver === '*') problem(`has "*" dependency "${dep}"`);
       }
     }
-  }
 
-  function check(success: unknown, message: string): void {
-    if (success) {
-      return;
+    if (pass) {
+      console.log(`${label} ${chalk.green('pass')}`);
     }
 
-    console.error(message);
-    process.exitCode = 1;
+    function problem(message: string): void {
+      if (pass) {
+        pass = false;
+        process.exitCode = 1;
+        console.log(`${label} ${chalk.red('fail')}`);
+      }
+
+      console.log(`  - ${message}`);
+    }
   }
 })();

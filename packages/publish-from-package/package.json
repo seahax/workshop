@@ -1,6 +1,6 @@
 {
   "name": "@seahax/publish-from-package",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "description": "Recursively publish new public package versions.",
   "repository": {

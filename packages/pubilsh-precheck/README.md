@@ -11,14 +11,18 @@ Only checks packages that have a `name`, `version`, and are not marked
 - Ensure a `repository` field.
 - Ensure a `files` field.
 - Ensure a `bin`, `exports`, or `main` field.
-- Ensure a `types` field.
-- Ensure `type` of `module` has an `exports` or `bin` field.
-- Ensure `type` of `module` if `exports` field exists.
-- Ensure `type` of `module` does not have a `main` field.
-- Ensure `type` of `commonjs` has a `main` or `bin` field.
-- Ensure `type` of `commonjs` if `main` field exists.
-- Ensure `type` of `commonjs` does not have an `exports` field.
-- Ensure all packages have a `types` field if they also have an `exports` field.
+  - If `exports` field exists...
+    - Ensure `type` is `module`.
+    - Ensure `types` field exists.
+  - If `main` field exists...
+    - Ensure `type` is `commonjs`.
+- Ensure a `type` field exists.
+  - If `type` is `module`...
+    - Ensure `exports` or `bin` field exists.
+    - Ensure `main` field does not exist.
+  - If `type` is `commonjs`...
+    - Ensure `main` or `bin` field exists.
+    - Ensure `exports` field does not exist.
 - Ensure no `workspace:` production dependencies.
 - Ensure no `file:` production dependencies.
 - Ensure no `*` production dependencies.

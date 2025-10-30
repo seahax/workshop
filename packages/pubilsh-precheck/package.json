@@ -1,6 +1,6 @@
 {
   "name": "@seahax/publish-precheck",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "description": "Check package.json files for problems to fix before publishing.",
   "repository": {
@@ -16,7 +16,8 @@
   ],
   "dependencies": {
     "@seahax/args": "^0.6.1",
-    "@seahax/monorepo": "^0.1.1"
+    "@seahax/monorepo": "^0.1.1",
+    "chalk": "^5.6.2"
   },
   "publishConfig": {
     "access": "public"
