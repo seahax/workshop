@@ -8,8 +8,8 @@ export default defineConfig({
       enabled: true,
       reporter: ['text', 'html', 'lcovonly'],
       provider: 'v8',
-      include: ['packages/*/src/**/*'],
-      exclude: ['**/index.*', '**/types/**/*', '**/constants/**/*'],
+      include: ['packages/*/src/**/*.(ts|tsx|js|jsx)'],
+      exclude: ['**.d.ts', '**/index.*', '**/types/**/*', '**/constants/**/*'],
     },
     projects: [
       'packages/*/vitest.config.ts',
