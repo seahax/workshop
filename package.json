@@ -16,7 +16,8 @@
   },
   "devDependencies": {
     "@seahax/eslint": "workspace:*",
-    "@seahax/rev": "workspace:*",
+    "@seahax/publish-from-package": "workspace:*",
+    "@seahax/publish-precheck": "workspace:*",
     "@seahax/run-all": "workspace:*",
     "@seahax/tsconfig": "workspace:*",
     "@seahax/vitest": "workspace:*",
@@ -35,6 +36,7 @@
     "onlyBuiltDependencies": [
       "@parcel/watcher",
       "@sentry/cli",
+      "browser-tabs-lock",
       "esbuild",
       "nx",
       "unrs-resolver"
