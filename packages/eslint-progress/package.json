@@ -17,6 +17,9 @@
     }
   },
   "types": "src/plugin.d.ts",
+  "files": [
+    "src"
+  ],
   "dependencies": {
     "eslint": "^9.38.0"
   },

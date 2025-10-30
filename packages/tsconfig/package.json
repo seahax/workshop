@@ -9,7 +9,11 @@
     "directory": "packages/tsconfig"
   },
   "license": "Unlicense",
+  "type": "commonjs",
   "main": "tsconfig.json",
+  "files": [
+    "tsconfig.json"
+  ],
   "publishConfig": {
     "access": "public"
   }

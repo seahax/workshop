@@ -27,8 +27,8 @@
     "demo": "pnpm build && vite build --watch -c demo/vite.config.ts"
   },
   "dependencies": {
-    "@seahax/deep-copy": "workspace:^",
-    "@seahax/semaphore": "workspace:^",
+    "@seahax/deep-copy": "^0.1.0",
+    "@seahax/semaphore": "^0.5.1",
     "@types/ws": "^8.18.1",
     "escape-goat": "^4.0.0",
     "strip-ansi": "^7.1.2",

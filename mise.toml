@@ -13,6 +13,7 @@ aws = "latest"
 'npm:@anthropic-ai/claude-code' = "latest"
 
 [env]
+_.path = ["{{config_root}}/node_modules/.bin"]
 AWS_PROFILE = "seahax"
 AWS_REGION = "us-east-1"
 AWS_PAGER = ""

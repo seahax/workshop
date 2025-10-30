@@ -21,7 +21,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@seahax/args": "workspace:^",
+    "@seahax/args": "^0.6.1",
     "execa": "^9.6.0"
   },
   "devDependencies": {
