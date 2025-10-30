@@ -43,6 +43,7 @@ jobs:
         run: nx test root
 
       - name: Publish
+        working-directory: packages
         run: |
           set -ex
           npx @seahax/publish-precheck
