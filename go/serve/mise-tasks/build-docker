@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -ex
+./mise-tasks/build
+docker build -t serve:latest .
