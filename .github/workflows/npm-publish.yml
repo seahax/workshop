@@ -43,4 +43,7 @@ jobs:
         run: nx test root
 
       - name: Publish
-        run: npx rev publish
+        run: |
+          set -e
+          npx @seahax/publish-precheck
+          npx @seahax/publish-from-packages
