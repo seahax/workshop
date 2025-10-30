@@ -1,0 +1,24 @@
+{
+  "name": "@seahax/publish-precheck",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Check package.json files for problems to fix before publishing.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/publish-precheck"
+  },
+  "license": "Unlicense",
+  "type": "module",
+  "bin": "src/bin.ts",
+  "files": [
+    "src"
+  ],
+  "dependencies": {
+    "@seahax/args": "^0.6.1",
+    "@seahax/monorepo": "^0.1.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

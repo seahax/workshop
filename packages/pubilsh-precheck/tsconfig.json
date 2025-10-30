@@ -1,0 +1,12 @@
+{
+  "extends": "@seahax/tsconfig",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+    "types": [
+      "node"
+    ]
+  },
+  "include": [ "src" ]
+}
