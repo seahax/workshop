@@ -46,4 +46,4 @@ jobs:
         run: |
           set -e
           npx @seahax/publish-precheck
-          npx @seahax/publish-from-packages
+          npx @seahax/publish-from-package

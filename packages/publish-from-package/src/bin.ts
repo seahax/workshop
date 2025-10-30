@@ -6,7 +6,7 @@ import { getCommand } from './get-command.ts';
 import { publish } from './publish.ts';
 
 const help = createHelp`
-{bold Usage:} publish-from-packages {blue [options]} {yellow [-- <pm-options...>]}
+{bold Usage:} publish-from-package {blue [options]} {yellow [-- <pm-options...>]}
 
 Recursively publish public packages with new versions. A version is
 considered new if "npm show <package>@<version>" returns a 404.
@@ -21,18 +21,18 @@ package manager command.
 
 Example: Just publish with the detected package manager.
 
-  {gray > publish-from-packages}
+  {gray > publish-from-package}
 
 Example: PNPM publish dry run.
 
-  {gray > publish-from-packages --command "pnpm publish" --dry-run}
+  {gray > publish-from-package --command "pnpm publish" --dry-run}
 
 Example: PNPM Pack instead of publish.
 
-  {gray > publish-from-packages --command "pnpm pack"}
+  {gray > publish-from-package --command "pnpm pack"}
 
 Read the docs:
-https://github.com/seahax/workshop/blob/main/packages/publish-from-packages/README.md
+https://github.com/seahax/workshop/blob/main/packages/publish-from-package/README.md
 
 {bold Options:}
   {blue --dry-run}       Do not actually publish, just show what would be done.
