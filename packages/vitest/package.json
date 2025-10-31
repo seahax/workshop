@@ -1,6 +1,6 @@
 {
   "name": "@seahax/vitest",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "private": false,
   "description": "",
   "repository": {
@@ -34,7 +34,7 @@
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "peerDependencies": {
-    "vitest": "^4.0.3"
+    "vitest": "^4.0.5"
   },
   "publishConfig": {
     "access": "public"

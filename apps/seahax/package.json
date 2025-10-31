@@ -32,7 +32,7 @@
     "notistack": "^3.0.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router": "^7.9.4"
+    "react-router": "^7.9.5"
   },
   "devDependencies": {
     "@mdx-js/rollup": "^3.1.1",
@@ -42,7 +42,7 @@
     "@seahax/vite-plugin-data": "workspace:*",
     "@seahax/vite-plugin-lib": "workspace:*",
     "@seahax/vite-plugin-prefetch": "workspace:*",
-    "@sentry/vite-plugin": "^4.5.0",
+    "@sentry/vite-plugin": "^4.6.0",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^5.1.0",

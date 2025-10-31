@@ -1,6 +1,6 @@
 {
   "name": "@seahax/vite-plugin-zip",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "private": false,
   "description": "Vite plugin that zips up the build output.",
   "repository": {
@@ -26,10 +26,10 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@types/archiver": "^6.0.4",
+    "@types/archiver": "^7.0.0",
     "archiver": "^7.0.1",
     "fast-glob": "^3.3.3",
-    "minimatch": "^10.0.3"
+    "minimatch": "^10.1.1"
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*"
