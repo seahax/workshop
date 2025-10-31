@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 import { alias, createHelp, createHelpSnippet, cue, flag, option, parseOptions, string } from '@seahax/args';
 import { getPackages } from '@seahax/monorepo';
+import chalk from 'chalk';
 
+import { checkGitClean } from './check-git-clean.ts';
 import { getCommand } from './get-command.ts';
 import { publish } from './publish.ts';
 
@@ -71,6 +73,11 @@ void (async () => {
 
   if (!command) {
     return help.error`${noPackageManager}`.exit(1);
+  }
+
+  if (!dryRun && !await checkGitClean(process.cwd())) {
+    console.error(chalk.red('Uncommitted changes found. Please commit or stash them before publishing.'));
+    process.exit(1);
   }
 
   const packages = await getPackages(process.cwd());

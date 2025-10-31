@@ -28,15 +28,28 @@ export async function publish({ pkg, command, dryRun, extraArgs }: {
   console.log(`${label} ${chalk.green(pkg.data.version)}`);
 
   const [cmd, ...commandArgs] = parseCommandString(command);
-  const result = await execa(cmd!, [...commandArgs, ...(dryRun ? ['--dry-run'] : []), ...extraArgs], {
+  const publishResult = await execa(cmd!, [...commandArgs, ...(dryRun ? ['--dry-run'] : []), ...extraArgs], {
     stdio: 'inherit',
     preferLocal: true,
     cwd: dir,
     reject: false,
   });
 
-  if (result.exitCode !== 0) {
+  if (publishResult.exitCode !== 0) {
     // eslint-disable-next-line unicorn/no-process-exit
-    process.exit(result.exitCode);
+    process.exit(publishResult.exitCode);
+  }
+
+  if (!dryRun) {
+    const tag = `${pkg.data.name}@${pkg.data.version}`;
+    const tagResult = await execa(
+      { stdio: 'inherit', preferLocal: true, cwd: dir, reject: false },
+    )`git tag -f "${tag}"`;
+
+    if (tagResult.exitCode === 0) {
+      await execa(
+        { stdio: 'inherit', preferLocal: true, cwd: dir, reject: false },
+      )`git push -f origin tag "${tag}"`;
+    }
   }
 }
