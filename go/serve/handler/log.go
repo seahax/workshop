@@ -13,6 +13,7 @@ type LogConfig struct {
 	Format string
 }
 
+// Write access (request/response) to the log.
 func Log(response *server.Response, request *http.Request) func() {
 	startTime := time.Now().UnixMilli()
 	writeHeaderTime := startTime

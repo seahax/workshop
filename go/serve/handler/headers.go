@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"regexp"
 	"slices"
 	"strings"
 
@@ -10,7 +11,7 @@ import (
 
 type HeadersConfig struct {
 	Headers      map[string]string
-	CacheControl []func(string) string
+	CacheControl []*CacheControlConfig
 	Cors         struct {
 		Origins       []string
 		Methods       []string
@@ -19,6 +20,12 @@ type HeadersConfig struct {
 	}
 }
 
+type CacheControlConfig struct {
+	Pattern *regexp.Regexp
+	Value   string
+}
+
+// Set response headers.
 func Headers(config *HeadersConfig, response *server.Response, request *http.Request) {
 	for key, value := range config.Headers {
 		response.Header().Set(key, value)
@@ -62,35 +69,33 @@ func Headers(config *HeadersConfig, response *server.Response, request *http.Req
 
 	response.Header().Add("Vary", "Origin")
 
+	// Go doesn't normalize or sanitize response headers, and there's some debate
+	// about whether Vary works as intended if the header is present multiple
+	// times rather than once with a comma separated value. This normalizes it to
+	// comma separated just-in-time. We only do this for Vary, because it's the
+	// only header we intentionally add more than once.
 	response.RegisterOnWriteHeader(func(_ int) {
-		vary := response.Header().Values("Vary")
-		varyDedupe := map[string]bool{}
-		varyValues := []string{}
+		values := response.Header().Values("Vary")
 
-		for _, value := range vary {
-			dedupeKey := strings.ToLower(value)
+		if len(values) > 0 {
+			values = slices.Clone(values)
 
-			if _, ok := varyDedupe[dedupeKey]; ok {
-				continue
+			for i, v := range values {
+				values[i] = http.CanonicalHeaderKey(v)
 			}
 
-			varyDedupe[dedupeKey] = true
-			varyValues = append(varyValues, value)
-		}
-
-		if len(varyValues) > 0 {
-			response.Header().Set("Vary", strings.Join(varyValues, ", "))
-		} else {
-			response.Header().Del("Vary")
+			slices.Sort(values)
+			values = slices.Compact(values)
+			response.Header().Set("Vary", strings.Join(values, ", "))
 		}
 	})
 }
 
 func (c *HeadersConfig) GetCacheControl(filename string) string {
-	for _, callback := range c.CacheControl {
+	for _, entry := range c.CacheControl {
 
-		if value := callback(filename); value != "" {
-			return value
+		if entry.Pattern.Match([]byte(filename)) {
+			return entry.Value
 		}
 	}
 

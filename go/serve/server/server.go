@@ -8,14 +8,18 @@ import (
 )
 
 type ServerConfig struct {
-	Addr         string
 	ReadTimeout  time.Duration
 	WriteTimeout time.Duration
 }
 
-func NewServer(config *ServerConfig, handler func(response *Response, request *http.Request)) *http.Server {
+// Create a [net/http.Server] configured for this application.
+func NewServer(
+	addr string,
+	config *ServerConfig,
+	handler func(response *Response, request *http.Request),
+) *http.Server {
 	return &http.Server{
-		Addr:         config.Addr,
+		Addr:         addr,
 		ReadTimeout:  config.ReadTimeout,
 		WriteTimeout: config.WriteTimeout,
 		// Disable HTTP/2

@@ -6,11 +6,18 @@ import (
 	"slices"
 )
 
+// Wrapper for the [http.ResponseWriter] passed to the handler. Adds the
+// ability to replace the [io.Writer] used to write the response body after
+// headers have been set, but before they have been written.
+//
+// Use the NewResponse function to construct.
 type Response struct {
 	base          http.ResponseWriter
 	written       bool
 	onWriteHeader []func(status int)
-	Writer        io.Writer
+
+	// Replaceable (wrappable) [io.Writer] used to write the response body.
+	Writer io.Writer
 }
 
 func NewResponse(base http.ResponseWriter) *Response {
@@ -20,6 +27,7 @@ func NewResponse(base http.ResponseWriter) *Response {
 	}
 }
 
+// Add a callback that will be called just before headers are written.
 func (w *Response) RegisterOnWriteHeader(callback func(status int)) {
 	w.onWriteHeader = append(w.onWriteHeader, callback)
 }

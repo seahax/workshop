@@ -7,20 +7,22 @@ import (
 	"os"
 )
 
+// Options parsed from command line arguments.
 type Options struct {
 	Root           http.Dir
 	Addr           string
 	ConfigFilename string
 }
 
+// Get Options parsed from command line arguments.
 func LoadOptions() *Options {
 	var opts Options
 	var root string
 
 	fs := flag.NewFlagSet("serve", flag.ExitOnError)
-	fs.StringVar(&root, "root", ".", "served content root directory")
+	fs.StringVar(&root, "root", ".", "root directory for served files")
 	fs.StringVar(&opts.Addr, "addr", ":8080", "server address")
-	fs.StringVar(&opts.ConfigFilename, "config", "", "path to a JSON config file")
+	fs.StringVar(&opts.ConfigFilename, "config", "", "JSON config file path")
 	fs.Parse(os.Args[1:])
 
 	opts.Root = http.Dir(root)

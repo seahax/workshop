@@ -18,19 +18,12 @@ type CompressConfig struct {
 	MimeTypes []string
 }
 
+// Conditionally compress the response body.
 func Compress(config *CompressConfig, response *server.Response, request *http.Request) func() {
+	close := func() error { /* noop */ return nil }
+	response.Header().Add("Vary", "Accept-Encoding")
 	response.RegisterOnWriteHeader(func(_ int) {
-		response.Header().Add("Vary", "Accept-Encoding")
-	})
-
-	if !strings.Contains(request.Header.Get("Accept-Encoding"), "gzip") {
-		return func() {}
-	}
-
-	var close func() error
-
-	response.RegisterOnWriteHeader(func(_ int) {
-		if isCompressible(config, response.Header()) {
+		if IsCompressibleRequest(request) && IsCompressibleResponse(response, config) {
 			writer := gzip.NewWriter(response.Writer)
 			close = writer.Close
 			response.Writer = writer
@@ -40,20 +33,30 @@ func Compress(config *CompressConfig, response *server.Response, request *http.R
 	})
 
 	return func() {
-		if close != nil {
-			if err := close(); err != nil {
-				slog.Warn(fmt.Sprintf("Error closing gzip writer: %v", err))
-			}
+		if err := close(); err != nil {
+			slog.Warn(fmt.Sprintf("Error closing gzip writer: %v", err))
 		}
 	}
 }
 
-func isCompressible(config *CompressConfig, responseHeader http.Header) bool {
-	if responseHeader.Get("Content-Encoding") != "" {
+func IsCompressibleRequest(request *http.Request) bool {
+	for _, value := range request.Header.Values("Accept-Encoding") {
+		if strings.Contains(value, "gzip") {
+			return true
+		}
+	}
+
+	return false
+}
+
+func IsCompressibleResponse(response *server.Response, config *CompressConfig) bool {
+	header := response.Header()
+
+	if response.Header().Get("Content-Encoding") != "" {
 		return false
 	}
 
-	contentType := responseHeader.Get("Content-Type")
+	contentType := header.Get("Content-Type")
 	contentMimeType, _, err := mime.ParseMediaType(contentType)
 
 	if err == nil {
@@ -80,7 +83,7 @@ func isCompressible(config *CompressConfig, responseHeader http.Header) bool {
 		}
 	}
 
-	length, err := strconv.Atoi(responseHeader.Get("Content-Length"))
+	length, err := strconv.Atoi(header.Get("Content-Length"))
 
 	if err == nil && length < config.MinBytes {
 		return false

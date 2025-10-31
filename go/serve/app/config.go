@@ -13,23 +13,28 @@ import (
 	"seahax.com/go/serve/server"
 )
 
+// Config loaded from a JSON configuration file.
 type Config struct {
 	Server   server.ServerConfig
 	Compress handler.CompressConfig
 	Headers  handler.HeadersConfig
 }
 
-type configJson struct {
+// Raw JSON shape of the configuration file.
+type ConfigJson struct {
+	// Not used. Just for documentation.
+	Comments any `json:"_"`
+
 	Log struct {
-		Level  string `json:"level"`
-		Format string `json:"format"`
+		Level  slog.Level `json:"level"`
+		Format *string    `json:"format"`
 	} `json:"log"`
 	Server struct {
-		ReadTimeout  string `json:"readTimeout"`
-		WriteTimeout string `json:"writeTimeout"`
+		ReadTimeout  *string `json:"readTimeout"`
+		WriteTimeout *string `json:"writeTimeout"`
 	} `json:"server"`
 	Compress struct {
-		MinBytes  int      `json:"minBytes"`
+		MinBytes  *int     `json:"minBytes"`
 		MimeTypes []string `json:"mimeTypes"`
 	} `json:"compress"`
 	Headers      map[string]string `json:"headers"`
@@ -42,9 +47,9 @@ type configJson struct {
 	}
 }
 
+// Load Config from a JSON file.
 func LoadConfig(filename string) *Config {
 	config := &Config{}
-	config.Server.Addr = ":8080"
 	config.Server.ReadTimeout = 30 * time.Second
 	config.Server.WriteTimeout = 3 * time.Minute
 	config.Compress.MinBytes = 1024
@@ -63,7 +68,7 @@ func LoadConfig(filename string) *Config {
 	}
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error reading config: %v\n", err)
+		fmt.Fprintf(os.Stderr, "error reading config file: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -71,43 +76,30 @@ func LoadConfig(filename string) *Config {
 
 	decoder := json.NewDecoder(file)
 	decoder.DisallowUnknownFields()
-	configJson := &configJson{}
+	configJson := &ConfigJson{}
 
 	if err := decoder.Decode(configJson); err != nil {
-		fmt.Fprintf(os.Stderr, "invalid config: %v\n", err)
-		os.Exit(1)
+		invalidConfig(err)
 	}
 
-	if configJson.Server.ReadTimeout != "" {
-		if readTimeout, err := time.ParseDuration(configJson.Server.ReadTimeout); err != nil {
-			fmt.Fprintf(os.Stderr, "invalid read timeout: %v\n", err)
-			os.Exit(1)
-		} else {
-			config.Server.ReadTimeout = readTimeout
-		}
+	if configJson.Server.ReadTimeout != nil {
+		config.Server.ReadTimeout = parseDuration("read timeout", *configJson.Server.ReadTimeout)
 	}
 
-	if configJson.Server.WriteTimeout != "" {
-		if writeTimeout, err := time.ParseDuration(configJson.Server.WriteTimeout); err != nil {
-			fmt.Fprintf(os.Stderr, "invalid write timeout: %v\n", err)
-			os.Exit(1)
-		} else {
-			config.Server.WriteTimeout = writeTimeout
-		}
+	if configJson.Server.WriteTimeout != nil {
+		config.Server.WriteTimeout = parseDuration("write timeout", *configJson.Server.WriteTimeout)
 	}
 
-	if configJson.Cors.Origins != nil {
-		config.Headers.Cors.Origins = configJson.Cors.Origins
-		config.Headers.Cors.Methods = configJson.Cors.Methods
-		config.Headers.Cors.Headers = configJson.Cors.Headers
-		config.Headers.Cors.ExposeHeaders = configJson.Cors.ExposeHeaders
+	config.Headers.Cors.Origins = configJson.Cors.Origins
+	config.Headers.Cors.Methods = configJson.Cors.Methods
+	config.Headers.Cors.Headers = configJson.Cors.Headers
+	config.Headers.Cors.ExposeHeaders = configJson.Cors.ExposeHeaders
+
+	if configJson.Compress.MinBytes != nil {
+		config.Compress.MinBytes = *configJson.Compress.MinBytes
 	}
 
-	if configJson.Compress.MinBytes != 0 {
-		config.Compress.MinBytes = configJson.Compress.MinBytes
-	}
-
-	if len(configJson.Compress.MimeTypes) > 0 {
+	if configJson.Compress.MimeTypes != nil {
 		config.Compress.MimeTypes = configJson.Compress.MimeTypes
 	}
 
@@ -116,59 +108,66 @@ func LoadConfig(filename string) *Config {
 	}
 
 	if configJson.CacheControl != nil {
-		for pattern, value := range configJson.CacheControl {
-			rx, err := regexp.Compile(pattern)
-
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "invalid cache control regex %q: %v\n", pattern, err)
-				os.Exit(1)
-			}
-
-			config.Headers.CacheControl = append(config.Headers.CacheControl, func(filename string) string {
-				if rx.MatchString(filename) {
-					return value
-				}
-
-				return ""
-			})
-		}
+		config.Headers.CacheControl = parseCacheControl(configJson.CacheControl)
 	}
 
-	configJson.Log.Level = strings.ToLower(configJson.Log.Level)
-	configJson.Log.Format = strings.ToLower(configJson.Log.Format)
+	setupLogging(configJson.Log.Format, configJson.Log.Level)
 
-	if configJson.Log.Level == "" {
-		configJson.Log.Level = "info"
-	}
-
-	if configJson.Log.Format == "" {
-		configJson.Log.Format = "text"
-	}
-
-	if configJson.Log.Level == "none" {
-		slog.SetDefault(slog.New(slog.DiscardHandler))
-	} else {
-		var logLevel slog.Level
-
-		if err := logLevel.UnmarshalText([]byte(configJson.Log.Level)); err != nil {
-			fmt.Fprintf(os.Stderr, "invalid log level: %s\n", configJson.Log.Level)
-			os.Exit(1)
-		}
-
-		switch configJson.Log.Format {
-		case "json":
-			slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-				Level: logLevel,
-			})))
-		case "text":
-			slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-				Level: logLevel,
-			})))
-		default:
-			fmt.Fprintf(os.Stderr, "invalid log format: %s\n", configJson.Log.Format)
-			os.Exit(1)
-		}
-	}
+	v, _ := json.MarshalIndent(config, "", "  ")
+	fmt.Println(string(v))
 
 	return config
+}
+
+func setupLogging(formatPtr *string, level slog.Level) {
+	format := "text"
+
+	if formatPtr != nil {
+		format = *formatPtr
+	}
+
+	switch strings.ToLower(format) {
+	case "json":
+		slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			Level: level,
+		})))
+	case "text":
+		slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			Level: level,
+		})))
+	default:
+		invalidConfig(fmt.Errorf("invalid log format: %s", format))
+	}
+}
+
+func parseDuration(name string, value string) time.Duration {
+	duration, err := time.ParseDuration(value)
+	if err != nil {
+		invalidConfig(fmt.Errorf("invalid %s duration: %w", name, err))
+	}
+	return duration
+}
+
+func parseCacheControl(cacheControl map[string]string) []*handler.CacheControlConfig {
+	var configs []*handler.CacheControlConfig
+
+	for pattern, value := range cacheControl {
+		rx, err := regexp.Compile(pattern)
+
+		if err != nil {
+			invalidConfig(fmt.Errorf("invalid cache control pattern %q: %w", pattern, err))
+		}
+
+		configs = append(configs, &handler.CacheControlConfig{
+			Pattern: rx,
+			Value:   value,
+		})
+	}
+
+	return configs
+}
+
+func invalidConfig(err error) {
+	fmt.Fprintf(os.Stderr, "invalid config: %v\n", err)
+	os.Exit(1)
 }

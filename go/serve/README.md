@@ -9,3 +9,16 @@ Features:
 - Logging
 - Request timeouts
 - Compression
+
+## Dev
+
+```sh
+# Run locally
+go run main.go
+
+# Build the docker image
+mise docker_build
+
+# Build and run the docker image
+mise docker_start
+```

@@ -1,4 +1,6 @@
 {
+  "_": "Demo config for local development.",
+
   "log": {
     "level": "info",
     "format": "json"

@@ -1,1 +1,3 @@
-{}
+{
+  "_": "Placeholder for the docker image config that should be mounted in or copied to the container."
+}
