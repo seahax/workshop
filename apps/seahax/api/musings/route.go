@@ -1,4 +1,4 @@
-package routes
+package musings
 
 import (
 	"log/slog"
@@ -8,16 +8,19 @@ import (
 	"seahax.com/go/api"
 )
 
-type Musings struct{}
+type Route struct{}
 
-func (m *Musings) GetRoute() (string, func(*api.Context)) {
+func (m *Route) GetRoute() *api.Route {
 	var handler = func(ctx *api.Context) {
-		errorLog := slog.NewLogLogger(ctx.Log.Handler(), slog.LevelError)
+		errorLog := slog.NewLogLogger(ctx.Logger.Handler(), slog.LevelError)
 		proxy := httputil.ReverseProxy{Rewrite: rewrite, ErrorLog: errorLog}
 		proxy.ServeHTTP(ctx.Response, ctx.Request)
 	}
 
-	return "/musings/", handler
+	return &api.Route{
+		Pattern: "/musings/",
+		Handler: handler,
+	}
 }
 
 func rewrite(request *httputil.ProxyRequest) {

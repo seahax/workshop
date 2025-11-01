@@ -2,60 +2,52 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 
-	"seahax/api/routes"
-	"seahax/api/services/config"
+	"seahax/api/config"
+	"seahax/api/info"
+	"seahax/api/musings"
+	"seahax/api/static"
 
 	"seahax.com/go/api"
-	apiMiddleware "seahax.com/go/api/middleware"
-	apiRoutes "seahax.com/go/api/routes"
+	"seahax.com/go/api/compress"
+	"seahax.com/go/api/health"
+	"seahax.com/go/api/log"
+	"seahax.com/go/api/secure"
 )
 
 func main() {
 	config := config.Get()
-	log := config.Log
+	logger := config.Log
 	app := &api.API{
-		Log: log,
+		Logger: logger,
 		Listening: func(url string) {
-			log.Info(fmt.Sprintf("Server is listening on %s", url))
+			logger.Info(fmt.Sprintf("Server is listening on %s", url))
 		},
 	}
 
 	// Middleware
-	app.UseMiddleware(&apiMiddleware.Log{})
-	app.UseMiddleware(&apiMiddleware.Secure{
+	app.UseMiddleware(&log.Middleware{})
+	app.UseMiddleware(&secure.Middleware{
 		CSPConnectSrc:                      "'self' https://auth0.seahax.com https://*.sentry.io",
 		CSPImgSrc:                          "'self' data: https://*.gravatar.com https://*.wp.com https://cdn.auth0.com https://img.shields.io",
 		CSPUpgradeInsecureRequestsDisabled: config.Environment == "development",
 	})
-	app.UseMiddleware(&apiMiddleware.Compress{})
+	app.UseMiddleware(&compress.Middleware{})
 
 	// Routes
-	app.HandleRoute(&apiRoutes.Health{})
-	app.HandleRoute(&apiRoutes.Info{
-		JSON: map[string]any{
-			"commit":         config.Commit,
-			"buildTimestamp": config.BuildTimestamp,
-			"startTimestamp": config.StartTimestamp,
-			"environment":    config.Environment,
-		},
+	app.HandleRoute(&health.Route{})
+	app.HandleRoute(&info.Route{
+		Commit:         config.Commit,
+		BuildTimestamp: config.BuildTimestamp,
+		StartTimestamp: config.StartTimestamp,
+		Environment:    config.Environment,
 	})
-	app.HandleRoute(&routes.Musings{})
-	app.HandleRoute(&apiRoutes.Static{
-		RootDir:  config.StaticPath,
-		SpaIndex: "index.html",
-		Header: func(header http.Header, fileName string) {
-			if strings.HasPrefix(fileName, "assets/") {
-				header.Set("Cache-Control", "public, max-age=31536000, immutable")
-			} else {
-				header.Set("Cache-Control", "no-cache")
-			}
-		},
+	app.HandleRoute(&musings.Route{})
+	app.HandleRoute(&static.Route{
+		RootDir: config.StaticPath,
 	})
 
 	app.BindAddress(config.Address)
@@ -65,10 +57,10 @@ func main() {
 	<-signalChan
 
 	if errs := app.Shutdown(); errs != nil {
-		log.Error(fmt.Sprintf("%v", errs))
+		logger.Error(fmt.Sprintf("%v", errs))
 
 		for _, err := range errs {
-			log.Error(fmt.Sprintf("%v", err))
+			logger.Error(fmt.Sprintf("%v", err))
 		}
 	}
 
