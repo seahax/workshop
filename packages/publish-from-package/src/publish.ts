@@ -44,12 +44,12 @@ export async function publish({ pkg, command, dryRun, extraArgs }: {
     const tag = `${pkg.data.name}@${pkg.data.version}`;
     const tagResult = await execa(
       { stdio: 'inherit', preferLocal: true, cwd: dir, reject: false },
-    )`git tag -f "${tag}"`;
+    )`git tag -f ${tag}`;
 
     if (tagResult.exitCode === 0) {
       await execa(
         { stdio: 'inherit', preferLocal: true, cwd: dir, reject: false },
-      )`git push -f origin tag "${tag}"`;
+      )`git push -f origin tag ${tag}`;
     }
   }
 }
