@@ -2,7 +2,7 @@ package api
 
 // Provides a single route.
 type RouteProvider interface {
-	GetRoute() (pattern string, handler RouteHandler)
+	GetRoute() *Route
 }
 
 type RouteHandler = func(ctx *Context)
@@ -14,6 +14,6 @@ type Route struct {
 }
 
 // Returns route pattern and handler.
-func (r Route) GetRoute() (pattern string, handler RouteHandler) {
-	return r.Pattern, r.Handler
+func (r *Route) GetRoute() *Route {
+	return r
 }

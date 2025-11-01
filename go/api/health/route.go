@@ -20,8 +20,13 @@ type Route struct {
 
 const DefaultPath = "/_health"
 
-func (r *Route) GetRoute() (string, api.RouteHandler) {
-	pattern := &api.Pattern{Method: "GET", Domain: r.Domain, Path: shorthand.Coalesce(r.Path, DefaultPath)}
+func (r *Route) GetRoute() *api.Route {
+	pattern := api.Pattern{
+		Method: "GET",
+		Domain: r.Domain,
+		Path:   shorthand.Coalesce(r.Path, DefaultPath),
+	}
+
 	handler := func(ctx *api.Context) {
 		if r.State == nil {
 			ctx.Response.WriteJSON(&Snapshot{
@@ -41,5 +46,8 @@ func (r *Route) GetRoute() (string, api.RouteHandler) {
 		ctx.Response.WriteJSON(snapshot)
 	}
 
-	return pattern.String(), handler
+	return &api.Route{
+		Pattern: pattern.String(),
+		Handler: handler,
+	}
 }

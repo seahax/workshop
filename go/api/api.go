@@ -65,10 +65,10 @@ func (i *API) UseMiddleware(providers ...MiddlewareProvider) {
 
 // Add a route to the API with optional middleware.
 func (i *API) HandleRoute(routeProvider RouteProvider, middlewareProviders ...MiddlewareProvider) {
-	pattern, handler := routeProvider.GetRoute()
-	pattern = ParsePattern(pattern).String() // Removes duplicate slashes
+	route := routeProvider.GetRoute()
+	pattern := ParsePattern(route.Pattern).String() // Removes duplicate slashes
 	middlewareHandlers := getMiddlewareHandlers(middlewareProviders)
-	handler = applyMiddlewareHandlers(middlewareHandlers, handler)
+	handler := applyMiddlewareHandlers(middlewareHandlers, route.Handler)
 
 	i.mux.HandleFunc(pattern, func(response http.ResponseWriter, request *http.Request) {
 		// The [api.Context] was already created in ServeHTTP, so just retrieve it

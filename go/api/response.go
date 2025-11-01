@@ -6,9 +6,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"os"
 	"strconv"
-	"strings"
 	"sync/atomic"
 	"time"
 
@@ -93,22 +91,35 @@ func (r *Response) SetCookie(cookie *http.Cookie) {
 	http.SetCookie(r, cookie)
 }
 
+func (r *Response) WriteString(s string) error {
+	header := r.Header()
+	header.Set("Content-Length", strconv.Itoa(len(s)))
+
+	if header.Get("Content-Type") == "" {
+		header.Set("Content-Type", "text/plain")
+	}
+
+	_, err := r.Write([]byte(s))
+
+	return err
+}
+
 // Write the given value as JSON to the response.
 func (r *Response) WriteJSON(v any) error {
-	text, err := json.Marshal(v)
+	bytes, err := json.Marshal(v)
 
 	if err != nil {
 		return err
 	}
 
 	header := r.Header()
-	header.Set("Content-Length", strconv.Itoa(len(text)))
+	header.Set("Content-Length", strconv.Itoa(len(bytes)))
 
 	if header.Get("Content-Type") == "" {
 		header.Set("Content-Type", "application/json")
 	}
 
-	_, err = r.Write(text)
+	_, err = r.Write(bytes)
 
 	return err
 }
@@ -127,78 +138,6 @@ func (r *Response) WriteJSON(v any) error {
 // See [net/http.ServeContent] for more details.
 func (r *Response) WriteFileContent(name string, modified time.Time, content io.ReadSeeker) {
 	http.ServeContent(r, r.Request, name, modified, content)
-}
-
-// Read and serve the first file name that exists and is readable. If none can
-// be served, a 404 Not Found error will be written to the response. This
-// method supports the same features as WriteFileContent.
-//
-// This method prevents path traversal attacks and ignores dotfiles in the
-// fileNames array.
-func (r *Response) WriteFile(rootDir string, onBeforeWrite func(fileName string), fileNames ...string) {
-	// Skip dotfiles.
-	fileNames = shorthand.Filter(fileNames, func(v string) bool {
-		return !strings.HasPrefix(v, ".") && !strings.Contains(v, "/.") && !strings.Contains(v, "\\.")
-	})
-
-	if len(fileNames) == 0 {
-		r.Error(http.StatusNotFound)
-		return
-	}
-
-	// Use an os.Root to prevent path traversal attacks.
-	root, err := os.OpenRoot(rootDir)
-
-	if err != nil {
-		r.Logger.Error(`Failed to open root directory "`+rootDir+`"`, "error", err)
-		r.Error(http.StatusInternalServerError)
-		return
-	}
-
-	defer root.Close()
-
-	r.WriteFileUnsafe(http.FS(root.FS()), onBeforeWrite, fileNames...)
-}
-
-// UNSAFE: This does not provide protection against path traversal attacks and
-// it does not filter out dotfiles.
-//
-// Read and serve the first file name that exists, is readable, and is not a
-// directory. If none can be served, a 404 Not Found error will be written to
-// the response. This method supports the same features as WriteFileContent.
-//
-// This method attempts to read and serve fileNames from dir. If a file does
-// not exist, is a directory, or cannot be read for any other reason, the next
-// file name will be served instead. If none of the file names can be served, a
-// 404 Not Found error will be written to the response.
-func (r *Response) WriteFileUnsafe(dir http.FileSystem, onBeforeWrite func(fileName string), fileNames ...string) {
-	for _, name := range fileNames {
-		file, err := dir.Open(name)
-
-		if err != nil {
-			continue
-		}
-
-		defer file.Close()
-
-		info, err := file.Stat()
-
-		if err != nil || info.IsDir() {
-			// Don't serve directories.
-			file.Close()
-			continue
-		}
-
-		if onBeforeWrite != nil {
-			onBeforeWrite(name)
-		}
-
-		modTime := info.ModTime()
-		r.WriteFileContent(name, modTime, file)
-		return
-	}
-
-	r.Error(http.StatusNotFound)
 }
 
 // Create a new Response.
