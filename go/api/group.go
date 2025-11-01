@@ -5,11 +5,6 @@ import (
 	"sync"
 )
 
-// Provides a single route.
-type RouteProvider interface {
-	GetRoute() (pattern string, handler func(*Context))
-}
-
 // Provides a group of routes.
 type GroupProvider interface {
 	GetGroup() (prefix string, routes []RouteProvider)
@@ -17,10 +12,10 @@ type GroupProvider interface {
 
 // A group of routes with a common prefix and shared middleware.
 type Group struct {
-	mut         sync.RWMutex
-	Prefix      string
-	Middlewares []Middleware
-	Routes      []*Route
+	mut                sync.RWMutex
+	Prefix             string
+	MiddlewareHandlers []MiddlewareHandler
+	Routes             []*Route
 }
 
 func (g *Group) GetGroup() (prefix string, routes []*Route) {
@@ -28,14 +23,15 @@ func (g *Group) GetGroup() (prefix string, routes []*Route) {
 }
 
 // Add a route to the group with optional route specific middleware.
-func (g *Group) HandleRoute(routeProvider RouteProvider, middlewares ...Middleware) {
+func (g *Group) HandleRoute(routeProvider RouteProvider, middlewareProviders ...MiddlewareProvider) {
 	pattern, baseHandler := routeProvider.GetRoute()
-	handler := applyMiddlewares(middlewares, func(ctx *Context) {
+	middlewareHandlers := getMiddlewareHandlers(middlewareProviders)
+	handler := applyMiddlewareHandlers(middlewareHandlers, func(ctx *Context) {
 		g.mut.RLock()
-		groupMiddlewares := g.Middlewares
+		groupMiddlewares := g.MiddlewareHandlers
 		g.mut.RUnlock()
 
-		withMiddlewares(groupMiddlewares, ctx, func() {
+		withMiddlewareHandlers(groupMiddlewares, ctx, func() {
 			baseHandler(ctx)
 		})
 	})
@@ -44,33 +40,34 @@ func (g *Group) HandleRoute(routeProvider RouteProvider, middlewares ...Middlewa
 }
 
 // Add a sub-group of routes to the group with optional middleware.
-func (g *Group) HandleGroup(groupProvider GroupProvider, middlewares ...Middleware) {
-	applyGroup(groupProvider, g, middlewares)
+func (g *Group) HandleGroup(groupProvider GroupProvider, middlewareProviders ...MiddlewareProvider) {
+	applyGroup(groupProvider, g, middlewareProviders)
 }
 
 // Use middleware in all requests handled by routes in this group. These will
 // only be applied when a route in this group (or a sub-group) is matched.
 // Middleware is executed in the order it is added.
-func (g *Group) Use(middlewares ...Middleware) {
+func (g *Group) Use(providers ...MiddlewareProvider) {
+	middlewareHandlers := getMiddlewareHandlers(providers)
 	g.mut.Lock()
-	g.Middlewares = append(g.Middlewares, middlewares...)
+	g.MiddlewareHandlers = append(g.MiddlewareHandlers, middlewareHandlers...)
 	g.mut.Unlock()
 }
 
 func applyGroup(
 	source GroupProvider,
 	target interface {
-		HandleRoute(route RouteProvider, middlewares ...Middleware)
+		HandleRoute(routeProvider RouteProvider, middlewareProviders ...MiddlewareProvider)
 	},
-	middlewares []Middleware,
+	middlewareProviders []MiddlewareProvider,
 ) {
-	prefix, routes := source.GetGroup()
+	prefix, routeProviders := source.GetGroup()
 
-	for _, routable := range routes {
-		patternStr, handler := routable.GetRoute()
+	for _, routeprovider := range routeProviders {
+		patternStr, handler := routeprovider.GetRoute()
 		pattern := ParsePattern(patternStr)
 		pattern.Path = path.Join(prefix, pattern.Path)
 		route := &Route{Pattern: pattern.String(), Handler: handler}
-		target.HandleRoute(route, middlewares...)
+		target.HandleRoute(route, middlewareProviders...)
 	}
 }

@@ -30,7 +30,7 @@ type Response struct {
 	// The associated HTTP request.
 	Request *http.Request
 	// The parent API Logger.
-	Log *slog.Logger
+	Logger *slog.Logger
 }
 
 // Returns the response header.
@@ -150,7 +150,7 @@ func (r *Response) WriteFile(rootDir string, onBeforeWrite func(fileName string)
 	root, err := os.OpenRoot(rootDir)
 
 	if err != nil {
-		r.Log.Error(`Failed to open root directory "`+rootDir+`"`, "error", err)
+		r.Logger.Error(`Failed to open root directory "`+rootDir+`"`, "error", err)
 		r.Error(http.StatusInternalServerError)
 		return
 	}
@@ -203,7 +203,7 @@ func (r *Response) WriteFileUnsafe(dir http.FileSystem, onBeforeWrite func(fileN
 
 // Create a new Response.
 func NewResponse(
-	log *slog.Logger,
+	logger *slog.Logger,
 	responseWriter http.ResponseWriter,
 	request *http.Request,
 ) *Response {
@@ -212,7 +212,7 @@ func NewResponse(
 		writeHeader: responseWriter.WriteHeader,
 		Writer:      ioWriterFunc(func(b []byte) (int, error) { return responseWriter.Write(b) }),
 		Request:     request,
-		Log:         log,
+		Logger:      logger,
 	}
 }
 

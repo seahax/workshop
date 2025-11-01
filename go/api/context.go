@@ -12,7 +12,7 @@ import (
 // Use the NewContext constructor to create Context instances.
 type Context struct {
 	// A logger specific to this request context.
-	Log *slog.Logger
+	Logger *slog.Logger
 	// The associated HTTP request.
 	Request *http.Request
 	// The associated HTTP response.
@@ -23,15 +23,15 @@ type Context struct {
 // [net/http.Request] so that it can be retrieved given the same API and
 // request pointers.
 func NewContext(api *API, writer http.ResponseWriter, request *http.Request) *Context {
-	log := api.Log
+	logger := api.Logger
 
-	if log == nil {
-		log = slog.Default()
+	if logger == nil {
+		logger = slog.Default()
 	}
 
-	ctx := &Context{Log: log}
+	ctx := &Context{Logger: logger}
 	ctx.Request = request.WithContext(context.WithValue(request.Context(), api, ctx))
-	ctx.Response = NewResponse(log, writer, request)
+	ctx.Response = NewResponse(logger, writer, request)
 
 	return ctx
 }

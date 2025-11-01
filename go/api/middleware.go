@@ -1,31 +1,36 @@
 package api
 
-import "slices"
+import "seahax.com/go/shorthand"
 
-// Middleware is a request handler that can process requests before and/or
-// after passing control to the next handler in the chain.
-type Middleware interface {
-	Handle(ctx *Context, next func())
+// MiddlewareProvider is a request handler that can process requests before
+// and/or after passing control to the next handler in the chain.
+type MiddlewareProvider interface {
+	GetMiddleware() MiddlewareHandler
 }
 
-func applyMiddlewares(middlewares []Middleware, handler func(*Context)) func(*Context) {
-	for _, middleware := range slices.Backward(middlewares) {
-		next := handler
-		handler = func(ctx *Context) {
-			middleware.Handle(ctx, func() { next(ctx) })
-		}
-	}
+type MiddlewareHandler func(ctx *Context, next func())
 
-	return handler
-}
-
-func withMiddlewares(middlewares []Middleware, ctx *Context, final func()) {
-	if len(middlewares) == 0 {
+func withMiddlewareHandlers(middlewareHandlers []MiddlewareHandler, ctx *Context, final func()) {
+	if len(middlewareHandlers) == 0 {
 		final()
 		return
 	}
 
-	middlewares[0].Handle(ctx, func() {
-		withMiddlewares(middlewares[1:], ctx, final)
+	middlewareHandlers[0](ctx, func() {
+		withMiddlewareHandlers(middlewareHandlers[1:], ctx, final)
+	})
+}
+
+func applyMiddlewareHandlers(middlewareHandlers []MiddlewareHandler, routeHandler RouteHandler) RouteHandler {
+	return func(ctx *Context) {
+		withMiddlewareHandlers(middlewareHandlers, ctx, func() {
+			routeHandler(ctx)
+		})
+	}
+}
+
+func getMiddlewareHandlers(providers []MiddlewareProvider) []MiddlewareHandler {
+	return shorthand.Select(providers, func(m MiddlewareProvider) MiddlewareHandler {
+		return m.GetMiddleware()
 	})
 }

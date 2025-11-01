@@ -38,12 +38,13 @@ type API struct {
 	mux     http.ServeMux
 	servers map[*http.Server]bool
 
-	// Global middlewares applied to all requests handled by this API, even if no
-	// route is matched. Middleware is executed in the order it is added.
-	Middlewares []Middleware
+	// Global middleware handlers applied to all requests handled by this API,
+	// even if no route is matched. Middleware is executed in the order it is
+	// added.
+	MiddlewareHandlers []MiddlewareHandler
 
 	// Optional request Context Logger. If nil, then slog.Default() is used.
-	Log *slog.Logger
+	Logger *slog.Logger
 
 	// Optional callback that is called when a listener is created.
 	Listening func(url string)
@@ -55,17 +56,19 @@ type API struct {
 
 // Use middleware in all requests handled by this API, even if no route is
 // matched. Middleware is executed in the order it is added.
-func (i *API) UseMiddleware(middlewares ...Middleware) {
+func (i *API) UseMiddleware(providers ...MiddlewareProvider) {
+	middlewareHandlers := getMiddlewareHandlers(providers)
 	i.mut.Lock()
-	i.Middlewares = append(i.Middlewares, middlewares...)
+	i.MiddlewareHandlers = append(i.MiddlewareHandlers, middlewareHandlers...)
 	i.mut.Unlock()
 }
 
-// Add a route to the API with optional middlewares.
-func (i *API) HandleRoute(routeProvider RouteProvider, middlewares ...Middleware) {
+// Add a route to the API with optional middleware.
+func (i *API) HandleRoute(routeProvider RouteProvider, middlewareProviders ...MiddlewareProvider) {
 	pattern, handler := routeProvider.GetRoute()
 	pattern = ParsePattern(pattern).String() // Removes duplicate slashes
-	handler = applyMiddlewares(middlewares, handler)
+	middlewareHandlers := getMiddlewareHandlers(middlewareProviders)
+	handler = applyMiddlewareHandlers(middlewareHandlers, handler)
 
 	i.mux.HandleFunc(pattern, func(response http.ResponseWriter, request *http.Request) {
 		// The [api.Context] was already created in ServeHTTP, so just retrieve it
@@ -75,9 +78,9 @@ func (i *API) HandleRoute(routeProvider RouteProvider, middlewares ...Middleware
 	})
 }
 
-// Add a group of routes to the API with optional middlewares.
-func (i *API) HandleGroup(groupProvider GroupProvider, middlewares ...Middleware) {
-	applyGroup(groupProvider, i, middlewares)
+// Add a group of routes to the API with optional middleware.
+func (i *API) HandleGroup(groupProvider GroupProvider, middlewareProviders ...MiddlewareProvider) {
+	applyGroup(groupProvider, i, middlewareProviders)
 }
 
 // Bind this API to the given HTTP server. This function is non-blocking. This
@@ -236,7 +239,7 @@ func (i *API) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 
 	defer func() {
 		if err := recover(); err != nil {
-			ctx.Log.Error("Panic in API handler", "error", err)
+			ctx.Logger.Error("Panic in API handler", "error", err)
 
 			if !ctx.Response.Written() {
 				ctx.Response.Error(http.StatusInternalServerError)
@@ -245,10 +248,10 @@ func (i *API) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	}()
 
 	i.mut.Lock()
-	middlewares := i.Middlewares
+	middlewareHandlers := i.MiddlewareHandlers
 	i.mut.Unlock()
 
-	withMiddlewares(middlewares, ctx, func() {
+	withMiddlewareHandlers(middlewareHandlers, ctx, func() {
 		i.mux.ServeHTTP(ctx.Response, ctx.Request)
 
 		if !ctx.Response.Written() {

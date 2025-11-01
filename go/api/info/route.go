@@ -1,4 +1,4 @@
-package routes
+package info
 
 import (
 	"seahax.com/go/api"
@@ -6,7 +6,7 @@ import (
 )
 
 // An information route that returns static JSON data.
-type Info struct {
+type Route struct {
 	// Optional custom path for the info route pattern. Defaults to
 	// DefaultInfoPath if empty.
 	Path string
@@ -16,13 +16,13 @@ type Info struct {
 	JSON map[string]any
 }
 
-const DefaultInfoPath = "/_info"
+const DefaultPath = "/_info"
 
-func (h *Info) GetRoute() (string, func(*api.Context)) {
-	pattern := &api.Pattern{Method: "GET", Domain: h.Domain, Path: shorthand.Coalesce(h.Path, DefaultInfoPath)}
+func (r *Route) GetRoute() (string, api.RouteHandler) {
+	pattern := &api.Pattern{Method: "GET", Domain: r.Domain, Path: shorthand.Coalesce(r.Path, DefaultPath)}
 	handler := func(ctx *api.Context) {
 		ctx.Response.Header().Set("Cache-Control", "no-cache")
-		ctx.Response.WriteJSON(h.JSON)
+		ctx.Response.WriteJSON(r.JSON)
 	}
 
 	return pattern.String(), handler

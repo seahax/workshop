@@ -1,4 +1,4 @@
-package middleware
+package secure
 
 import (
 	"net/http"
@@ -9,7 +9,7 @@ import (
 )
 
 // Add security-related HTTP headers to responses.
-type Secure struct {
+type Middleware struct {
 	// If true, the Content-Security-Policy header is not added.
 	CSPDisabled bool
 	// CSP default-src directive value. If empty, DefaultCSPDefaultSrc is used.
@@ -121,16 +121,18 @@ const (
 	DefaultXXSSProtection                = "0"
 )
 
-func (s *Secure) Handle(ctx *api.Context, next func()) {
-	ctx.Response.RegisterOnBeforeWriteHeader(func() {
-		s.Apply(ctx.Response.Header())
-	})
+func (m *Middleware) GetMiddleware() api.MiddlewareHandler {
+	return func(ctx *api.Context, next func()) {
+		ctx.Response.RegisterOnBeforeWriteHeader(func() {
+			m.Apply(ctx.Response.Header())
+		})
 
-	next()
+		next()
+	}
 }
 
-func (s *Secure) Apply(header http.Header) {
-	config := s
+func (m *Middleware) Apply(header http.Header) {
+	config := m
 
 	if header.Get("Content-Security-Policy") == "" && !config.CSPDisabled {
 		csp := []string{}

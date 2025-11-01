@@ -1,4 +1,4 @@
-package routes
+package static
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 )
 
 // A static file serving route with optional SPA support.
-type Static struct {
+type Route struct {
 	// Optional prefix for the static route pattern.
 	Prefix string
 	// Optional domain for the static route pattern.
@@ -20,8 +20,8 @@ type Static struct {
 	Header func(header http.Header, fileName string)
 }
 
-func (s *Static) GetRoute() (string, func(*api.Context)) {
-	pattern := &api.Pattern{Domain: s.Domain, Path: s.Prefix + "/{fileName...}"}
+func (r *Route) GetRoute() (string, api.RouteHandler) {
+	pattern := &api.Pattern{Domain: r.Domain, Path: r.Prefix + "/{fileName...}"}
 	handler := func(ctx *api.Context) {
 		if ctx.Request.Method != "GET" {
 			ctx.Response.Header().Set("Allow", "GET")
@@ -31,11 +31,11 @@ func (s *Static) GetRoute() (string, func(*api.Context)) {
 
 		fileName := ctx.Request.PathValue("fileName")
 		onBeforeWrite := func(fileName string) {
-			if s.Header != nil {
-				s.Header(ctx.Response.Header(), fileName)
+			if r.Header != nil {
+				r.Header(ctx.Response.Header(), fileName)
 			}
 		}
-		ctx.Response.WriteFile(s.RootDir, onBeforeWrite, fileName, s.SpaIndex)
+		ctx.Response.WriteFile(r.RootDir, onBeforeWrite, fileName, r.SpaIndex)
 	}
 
 	return pattern.String(), handler
