@@ -149,6 +149,10 @@ func (w *Response) Write(b []byte) (int, error) {
 }
 
 func log(res *Response, req *http.Request) {
+	if !slog.Default().Enabled(req.Context(), slog.LevelInfo) {
+		return
+	}
+
 	start := time.Now().UnixMilli()
 
 	var status int
