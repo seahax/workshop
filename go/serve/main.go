@@ -105,9 +105,7 @@ func main() {
 				compress(res, req)
 			}
 
-			if req.Method != http.MethodOptions {
-				serve(res, req, rootDir)
-			}
+			serve(res, req, rootDir)
 		}),
 	}
 
@@ -236,6 +234,11 @@ func compress(res *Response, req *http.Request) {
 }
 
 func serve(res *Response, req *http.Request, rootDir string) {
+	if req.Method == http.MethodOptions {
+		res.WriteHeader(http.StatusOK)
+		return
+	}
+
 	if req.Method != http.MethodGet && req.Method != http.MethodHead {
 		res.Header().Set("Allow", "GET, HEAD")
 		res.WriteHeader(http.StatusMethodNotAllowed)
