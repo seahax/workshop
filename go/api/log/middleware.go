@@ -77,10 +77,12 @@ func (m *Middleware) GetMiddleware() api.MiddlewareHandler {
 		}
 
 		if !m.RequestDisabled {
+			var status int
 			var headerTimestamp int64
 
-			ctx.Response.RegisterOnBeforeWriteHeader(func() {
+			ctx.Response.RegisterOnBeforeWriteHeader(func(newStatus int) {
 				headerTimestamp = time.Now().UnixMilli()
+				status = newStatus
 			})
 
 			defer func() {
@@ -104,7 +106,7 @@ func (m *Middleware) GetMiddleware() api.MiddlewareHandler {
 					return slog.String(name, ctx.Request.Proto)
 				})
 				attrs = appendAttr(attrs, m.AttrResponseStatus, DefaultResponseStatusAttr, func(name string) slog.Attr {
-					return slog.Int(name, ctx.Response.Status())
+					return slog.Int(name, status)
 				})
 				attrs = appendAttr(attrs, m.AttrResponseType, DefaultResponseTypeAttr, func(name string) slog.Attr {
 					return slog.String(name, ctx.Response.Header().Get("Content-Type"))

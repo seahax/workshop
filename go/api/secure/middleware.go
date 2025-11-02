@@ -123,7 +123,7 @@ const (
 
 func (m *Middleware) GetMiddleware() api.MiddlewareHandler {
 	return func(ctx *api.Context, next func()) {
-		ctx.Response.RegisterOnBeforeWriteHeader(func() {
+		ctx.Response.RegisterOnBeforeWriteHeader(func(_ int) {
 			m.Apply(ctx.Response.Header())
 		})
 

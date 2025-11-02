@@ -2,33 +2,26 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
-	"log/slog"
 	"net/http"
+	"slices"
 	"strconv"
-	"sync/atomic"
 	"time"
-
-	"seahax.com/go/shorthand"
 )
 
 // Response accessor with convenience methods for writing common responses.
 //
 // Use the NewResponse constructor to create Response instances.
 type Response struct {
+	request             *http.Request
 	header              func() http.Header
 	writeHeader         func(statusCode int)
-	status              atomic.Int32
-	onBeforeWriteHeader shorthand.Observable[any]
+	written             bool
+	onBeforeWriteHeader []func(int)
 
 	// The underlying [io.Writer] for writing response body data. This can be
 	// wrapped by middleware to provide features like compression.
-	io.Writer
-	// The associated HTTP request.
-	Request *http.Request
-	// The parent API Logger.
-	Logger *slog.Logger
+	Writer io.Writer
 }
 
 // Returns the response header.
@@ -40,38 +33,38 @@ func (r *Response) Header() http.Header {
 // once per response. After it is called, the header and status code can no
 // longer be modified.
 func (r *Response) WriteHeader(statusCode int) {
-	if statusCode < 100 || statusCode > 599 {
-		panic(fmt.Sprintf("invalid WriteHeader status code %d", statusCode))
-	}
+	if !r.written {
+		r.written = true
 
-	ok := r.status.CompareAndSwap(0, int32(statusCode))
-
-	if ok {
-		r.onBeforeWriteHeader.NotifyBackwards(nil)
+		for _, callback := range slices.Backward(r.onBeforeWriteHeader) {
+			callback(statusCode)
+		}
 	}
 
 	// Don't guard against multiple calls to the underlying ResponseWriter
-	// because it has internals for hijacking and warning that should be
-	// preserved.
+	// because it has internals for handling multiple calls that we don't want to
+	// interfere with.
 	r.writeHeader(statusCode)
 }
 
-// Return the status code that was written to the response by WriteHeader. If
-// WriteHeader has not been called yet, this returns 0.
-func (r *Response) Status() int {
-	return int(r.status.Load())
+func (r *Response) Write(b []byte) (int, error) {
+	if !r.written {
+		r.WriteHeader(http.StatusOK)
+	}
+
+	return r.Writer.Write(b)
 }
 
 // Returns true if WriteHeader has been called for this response.
 func (r *Response) Written() bool {
-	return r.status.Load() != 0
+	return r.written
 }
 
 // Register a callback that is called before the response header is written.
 // This can be used to perform last-minute modifications to the header, log
 // information, or decide whether to replace the response Writer.
-func (r *Response) RegisterOnBeforeWriteHeader(callback func()) *shorthand.Subscription[any] {
-	return r.onBeforeWriteHeader.Subscribe(func(_ any) { callback() })
+func (r *Response) RegisterOnBeforeWriteHeader(callback func(int)) {
+	r.onBeforeWriteHeader = append(r.onBeforeWriteHeader, callback)
 }
 
 // Write an error message with the given status code to the response. The
@@ -137,26 +130,24 @@ func (r *Response) WriteJSON(v any) error {
 //
 // See [net/http.ServeContent] for more details.
 func (r *Response) WriteFileContent(name string, modified time.Time, content io.ReadSeeker) {
-	http.ServeContent(r, r.Request, name, modified, content)
+	http.ServeContent(r, r.request, name, modified, content)
 }
 
 // Create a new Response.
 func NewResponse(
-	logger *slog.Logger,
 	responseWriter http.ResponseWriter,
 	request *http.Request,
 ) *Response {
 	return &Response{
+		request:     request,
 		header:      responseWriter.Header,
 		writeHeader: responseWriter.WriteHeader,
-		Writer:      ioWriterFunc(func(b []byte) (int, error) { return responseWriter.Write(b) }),
-		Request:     request,
-		Logger:      logger,
+		Writer:      writerFunc(responseWriter.Write),
 	}
 }
 
-type ioWriterFunc func([]byte) (int, error)
+type writerFunc func([]byte) (int, error)
 
-func (f ioWriterFunc) Write(data []byte) (int, error) {
+func (f writerFunc) Write(data []byte) (int, error) {
 	return f(data)
 }

@@ -54,7 +54,7 @@ func (m *Middleware) GetMiddleware() api.MiddlewareHandler {
 			}
 		}()
 
-		response.RegisterOnBeforeWriteHeader(func() {
+		response.RegisterOnBeforeWriteHeader(func(_ int) {
 			if isCompressible(header, minSize, filter) {
 				offers, writers := getOffersAndWriters(algorithms)
 				negotiator := getNegotiator(offers)

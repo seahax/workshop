@@ -31,7 +31,7 @@ func NewContext(api *API, writer http.ResponseWriter, request *http.Request) *Co
 
 	ctx := &Context{Logger: logger}
 	ctx.Request = request.WithContext(context.WithValue(request.Context(), api, ctx))
-	ctx.Response = NewResponse(logger, writer, request)
+	ctx.Response = NewResponse(writer, ctx.Request)
 
 	return ctx
 }
