@@ -1,5 +1,5 @@
 FROM cgr.dev/chainguard/static:latest
+COPY files .
 COPY dist/serve /serve
-COPY files /app
-ENTRYPOINT [ "/serve", "--addr", ":8080", "--root", "/app/content", "--config", "/app/config.json" ]
+ENTRYPOINT [ "/serve", "--addr", ":8080", "--root", "/content" ]
 EXPOSE 8080
