@@ -9,14 +9,6 @@ import (
 	"strings"
 )
 
-// An [net/http.File] compatible file that also provides the file name and file
-// information.
-type File interface {
-	io.ReadSeekCloser
-	Name() string
-	Info() fs.FileInfo
-}
-
 // Provides access to local filesystem files with path traversal and dotfile
 // protection.
 type LocalFileSystem struct {
@@ -28,12 +20,14 @@ type LocalFileSystem struct {
 // provided list of file names. If none of the files exist, the returned
 // error will be [io/fs.ErrNotExist]. If a file exists but cannot be opened,
 // the error is returned immediately, and no further files are tried.
-func (l *LocalFileSystem) Open(fileNames ...string) (File, error) {
+func (l *LocalFileSystem) Open(fileNames ...string) (*LocalFile, error) {
 	root, err := os.OpenRoot(l.RootDir)
 
 	if err != nil {
 		return nil, err
 	}
+
+	defer root.Close()
 
 	for _, fileName := range fileNames {
 		if fileName == "" || strings.HasSuffix(fileName, "/") {
@@ -47,7 +41,7 @@ func (l *LocalFileSystem) Open(fileNames ...string) (File, error) {
 			continue
 		}
 
-		f, err := root.Open(fileName)
+		file, err := root.Open(fileName)
 
 		if errors.Is(err, fs.ErrNotExist) {
 			continue
@@ -63,49 +57,30 @@ func (l *LocalFileSystem) Open(fileNames ...string) (File, error) {
 			return nil, err
 		}
 
-		i, err := f.Stat()
+		fileInfo, err := file.Stat()
 
 		if err != nil {
-			f.Close()
+			file.Close()
 			return nil, err
 		}
 
-		if i.IsDir() {
-			f.Close()
+		if fileInfo.IsDir() {
+			file.Close()
 			continue
 		}
 
-		file := &localFile{
-			ReadSeekCloser: f,
-			root:           root,
-			name:           fileName,
-			info:           i,
-		}
-
-		return file, nil
+		return &LocalFile{
+			ReadSeekCloser: file,
+			Name:           fileName,
+			Info:           fileInfo,
+		}, nil
 	}
 
 	return nil, fs.ErrNotExist
 }
 
-type localFile struct {
+type LocalFile struct {
 	io.ReadSeekCloser
-	root *os.Root
-	name string
-	info fs.FileInfo
-}
-
-func (fs *localFile) Name() string {
-	return fs.name
-}
-
-func (fs *localFile) Info() fs.FileInfo {
-	return fs.info
-}
-
-func (fs *localFile) Close() error {
-	return errors.Join(
-		fs.ReadSeekCloser.Close(),
-		fs.root.Close(),
-	)
+	Name string
+	Info fs.FileInfo
 }
