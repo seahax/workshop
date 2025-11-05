@@ -6,14 +6,12 @@ import (
 	"net/http"
 	"slices"
 	"strconv"
-	"time"
 )
 
 // Response accessor with convenience methods for writing common responses.
 //
 // Use the NewResponse constructor to create Response instances.
 type Response struct {
-	request             *http.Request
 	header              func() http.Header
 	writeHeader         func(statusCode int)
 	written             bool
@@ -117,29 +115,12 @@ func (r *Response) WriteJSON(v any) error {
 	return err
 }
 
-// Write the content of a file to the response.
-//
-// Features:
-//   - Supports range requests.
-//   - Honors precondition headers.
-//   - Sets Content-Type and Last-Modified headers.
-//   - Sets Content-Length header if no Content-Encoding header is set.
-//
-// This does not set an ETag response header. If you need ETag support, you
-// should set the ETag header on the response before calling this method.
-//
-// See [net/http.ServeContent] for more details.
-func (r *Response) WriteFileContent(name string, modified time.Time, content io.ReadSeeker) {
-	http.ServeContent(r, r.request, name, modified, content)
-}
-
 // Create a new Response.
 func NewResponse(
 	responseWriter http.ResponseWriter,
 	request *http.Request,
 ) *Response {
 	return &Response{
-		request:     request,
 		header:      responseWriter.Header,
 		writeHeader: responseWriter.WriteHeader,
 		Writer:      writerFunc(responseWriter.Write),
