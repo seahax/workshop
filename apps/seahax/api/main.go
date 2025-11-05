@@ -2,20 +2,22 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"seahax/api/config"
 	"seahax/api/info"
 	"seahax/api/musings"
-	"seahax/api/static"
 
 	"seahax.com/go/api"
 	"seahax.com/go/api/compress"
 	"seahax.com/go/api/health"
 	"seahax.com/go/api/log"
 	"seahax.com/go/api/secure"
+	"seahax.com/go/api/static"
 )
 
 func main() {
@@ -47,7 +49,15 @@ func main() {
 	})
 	app.HandleRoute(&musings.Route{})
 	app.HandleRoute(&static.Route{
-		RootDir: config.StaticPath,
+		RootDir:          config.StaticPath,
+		FallbackFilename: "index.html",
+		Header: func(fileName string, header http.Header) {
+			if strings.HasPrefix(fileName, "assets/") {
+				header.Set("Cache-Control", "public, max-age=31536000, immutable")
+			} else {
+				header.Set("Cache-Control", "no-cache")
+			}
+		},
 	})
 
 	app.BindAddress(config.Address)
