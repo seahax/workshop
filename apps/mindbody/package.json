@@ -1,0 +1,17 @@
+{
+  "name": "mindbody",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "playwright install --with-deps --no-shell"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^24.9.2"
+  },
+  "packageManager": "pnpm@10.20.0"
+}
