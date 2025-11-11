@@ -14,8 +14,9 @@ type Route struct {
 	Path string
 	// Optional domain for the health route pattern.
 	Domain string
-	// Thread-safe health state.
-	State *State
+	// Thread-safe health state. This map should not be modified after
+	// initialization.
+	Values map[string]*Value
 }
 
 const DefaultPath = "/_health"
@@ -28,15 +29,7 @@ func (r *Route) GetRoute() *api.Route {
 	}
 
 	handler := func(ctx *api.Context) {
-		if r.State == nil {
-			ctx.Response.WriteJSON(&Snapshot{
-				Status: StatusHealthy,
-				Detail: map[string]Status{},
-			})
-			return
-		}
-
-		snapshot := r.State.Snapshot()
+		snapshot := NewSnapshot(r.Values)
 		ctx.Response.Header().Set("Cache-Control", "no-cache")
 
 		if snapshot.Status == StatusUnhealthy {
