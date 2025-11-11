@@ -32,6 +32,9 @@ services:
       - key: APP_DATABASE_URL
         scope: RUN_TIME
         value: ${db.DATABASE_URL}
+      - key: APP_SENTRY_DSN
+        scope: RUN_TIME
+        value: https://8bccefc6c967115a3f7f41cb478fa2fd@o4509086879973376.ingest.us.sentry.io/4509086892949504
     health_check:
       http_path: /_health
       initial_delay_seconds: 10

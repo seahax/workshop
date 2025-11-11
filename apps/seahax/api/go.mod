@@ -3,6 +3,7 @@ module seahax/api
 go 1.25.3
 
 require (
+	github.com/getsentry/sentry-go v0.36.2
 	github.com/go-playground/validator/v10 v10.28.0
 	seahax.com/go/api v0.0.15
 	seahax.com/go/env v0.0.6

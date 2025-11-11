@@ -7,10 +7,12 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
+	"time"
 
 	"seahax/api/config"
 	"seahax/api/info"
 	"seahax/api/musings"
+	"seahax/api/sentry"
 
 	"seahax.com/go/api"
 	"seahax.com/go/api/compress"
@@ -21,12 +23,22 @@ import (
 )
 
 func main() {
+	// Force the program to exit when the main function returns.
+	defer os.Exit(0)
+
+	sentry := sentry.Get()
+
+	defer func() {
+		sentry.Flush(2 * time.Second)
+		sentry.Close()
+	}()
+
 	config := config.Get()
 	logger := config.Log
 	app := &api.API{
 		Logger: logger,
 		Listening: func(url string) {
-			logger.Info(fmt.Sprintf("Server is listening on %s", url))
+			logger.Info(fmt.Sprintf("server is listening on %s", url))
 		},
 	}
 
@@ -73,6 +85,4 @@ func main() {
 			logger.Error(fmt.Sprintf("%v", err))
 		}
 	}
-
-	os.Exit(0)
 }

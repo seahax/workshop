@@ -43,6 +43,9 @@ type Config struct {
 
 	// The application logger.
 	Log *slog.Logger
+
+	// Sentry DSN for error tracking.
+	SentryDSN string `env:"SENTRY_DSN" validate:"required,url"`
 }
 
 var Get = sync.OnceValue(func() *Config {
@@ -50,7 +53,6 @@ var Get = sync.OnceValue(func() *Config {
 	cfg := &Config{
 		BuildTimestamp: now,
 		StartTimestamp: now,
-		Environment:    "development",
 	}
 	binder := env.Binder{
 		Prefix: "APP_",
