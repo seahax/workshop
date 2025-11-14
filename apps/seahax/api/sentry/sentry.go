@@ -12,8 +12,9 @@ import (
 var Get = sync.OnceValue(func() *sentry.Client {
 	config := config.Get()
 	err := sentry.Init(sentry.ClientOptions{
-		Dsn:         config.SentryDSN,
-		Environment: config.Environment,
+		Dsn:            config.SentryDSN,
+		Environment:    config.Environment,
+		SendDefaultPII: true,
 	})
 
 	if err != nil {

@@ -28,6 +28,7 @@ func main() {
 
 	sentry := sentry.Get()
 
+	// Try to flush and close Sentry before exiting.
 	defer func() {
 		sentry.Flush(2 * time.Second)
 		sentry.Close()
