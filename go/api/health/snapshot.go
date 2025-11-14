@@ -8,7 +8,7 @@ type Snapshot struct {
 
 // Get a snapshot of the current health state (thread-safe). Includes
 // overall status and per-component details.
-func NewSnapshot(values map[string]*Value) *Snapshot {
+func NewSnapshot(values map[string]ValueProvider) *Snapshot {
 	overall := StatusHealthy
 	detail := map[string]Status{}
 

@@ -16,7 +16,12 @@ type Route struct {
 	Domain string
 	// Thread-safe health state. This map should not be modified after
 	// initialization.
-	Values map[string]*Value
+	Values map[string]ValueProvider
+}
+
+type ValueProvider interface {
+	// Load the most recent health status in a thread-safe manner.
+	Load() Status
 }
 
 const DefaultPath = "/_health"
