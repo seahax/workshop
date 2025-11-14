@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -10,6 +11,7 @@ import (
 	"time"
 
 	"seahax/api/config"
+	"seahax/api/db"
 	"seahax/api/info"
 	"seahax/api/musings"
 	"seahax/api/sentry"
@@ -24,7 +26,24 @@ import (
 
 func main() {
 	// Force the program to exit when the main function returns.
-	defer os.Exit(0)
+	defer func() {
+		if r := recover(); r != nil {
+			slog.Error(fmt.Sprintf("fatal error: %v", r))
+			os.Exit(1)
+		}
+
+		os.Exit(0)
+	}()
+
+	config := config.Get()
+
+	if config.Environment == "production" {
+		slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			Level: config.LogLevel,
+		})))
+	} else {
+		slog.SetLogLoggerLevel(config.LogLevel)
+	}
 
 	sentry := sentry.Get()
 
@@ -34,12 +53,10 @@ func main() {
 		sentry.Close()
 	}()
 
-	config := config.Get()
-	logger := config.Log
 	app := &api.API{
-		Logger: logger,
+		Logger: slog.Default(),
 		Listening: func(url string) {
-			logger.Info(fmt.Sprintf("server is listening on %s", url))
+			slog.Debug(fmt.Sprintf("server is listening on %s", url))
 		},
 	}
 
@@ -53,7 +70,11 @@ func main() {
 	app.UseMiddleware(&compress.Middleware{})
 
 	// Routes
-	app.HandleRoute(&health.Route{})
+	app.HandleRoute(&health.Route{
+		Values: map[string]health.ValueProvider{
+			"mongodb": db.Health(),
+		},
+	})
 	app.HandleRoute(&info.Route{
 		Commit:         config.Commit,
 		BuildTimestamp: config.BuildTimestamp,
@@ -80,10 +101,10 @@ func main() {
 	<-signalChan
 
 	if errs := app.Shutdown(); errs != nil {
-		logger.Error(fmt.Sprintf("%v", errs))
+		slog.Error(fmt.Sprintf("%v", errs))
 
 		for _, err := range errs {
-			logger.Error(fmt.Sprintf("%v", err))
+			slog.Error(fmt.Sprintf("%v", err))
 		}
 	}
 }

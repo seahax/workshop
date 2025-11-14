@@ -2,6 +2,7 @@ package sentry
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"seahax/api/config"
 	"sync"
@@ -18,11 +19,11 @@ var Get = sync.OnceValue(func() *sentry.Client {
 	})
 
 	if err != nil {
-		config.Log.Error(fmt.Sprintf("sentry init failed: %s", err))
+		slog.Error(fmt.Sprintf("sentry init failed: %s", err))
 		os.Exit(1)
 	}
 
-	config.Log.Info("sentry initialized successfully")
+	slog.Debug("sentry initialized successfully")
 
 	return sentry.CurrentHub().Client()
 })

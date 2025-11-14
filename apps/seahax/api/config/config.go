@@ -41,11 +41,14 @@ type Config struct {
 	// The server bind address in "host:port" format.
 	Address string
 
-	// The application logger.
-	Log *slog.Logger
+	// The logging level.
+	LogLevel slog.Level `env:"LOG_LEVEL"`
 
 	// Sentry DSN for error tracking.
 	SentryDSN string `env:"SENTRY_DSN" validate:"required,url"`
+
+	// MongoDB connection string.
+	MongoURI string `env:"MONGODB_URL" validate:"required,url"`
 }
 
 var Get = sync.OnceValue(func() *Config {
@@ -53,6 +56,7 @@ var Get = sync.OnceValue(func() *Config {
 	cfg := &Config{
 		BuildTimestamp: now,
 		StartTimestamp: now,
+		LogLevel:       slog.LevelInfo,
 	}
 	binder := env.Binder{
 		Prefix: "APP_",
@@ -66,12 +70,6 @@ var Get = sync.OnceValue(func() *Config {
 	}
 
 	cfg.Address = fmt.Sprintf("%s:%d", cfg.Hostname, cfg.Port)
-
-	if cfg.Environment == "production" {
-		cfg.Log = slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	} else {
-		cfg.Log = slog.Default()
-	}
 
 	return cfg
 })
@@ -88,5 +86,3 @@ func printConfigErrors(err error, binder *env.Binder, cfg *Config) {
 		fmt.Println(err)
 	}
 }
-
-// TODO: Add MongoDB client.

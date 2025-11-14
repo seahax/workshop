@@ -29,7 +29,7 @@ services:
         scope: RUN_TIME
         value: https://seahax.com
         type: SECRET
-      - key: APP_DATABASE_URL
+      - key: APP_MONGODB_URL
         scope: RUN_TIME
         value: ${db.DATABASE_URL}
       - key: APP_SENTRY_DSN
