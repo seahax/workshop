@@ -1,7 +1,6 @@
 package health
 
 import (
-	"sync"
 	"sync/atomic"
 	"time"
 )
@@ -28,16 +27,11 @@ func NewTicker(interval time.Duration, check func() Status) *Ticker {
 		done:   make(chan bool, 1),
 	}
 
-	close := sync.OnceFunc(func() {
-		self.ticker.Stop()
-		close(self.done)
-	})
-
 	go func() {
 		for {
 			select {
 			case <-self.done:
-				close()
+				self.ticker.Stop()
 				return
 			case <-self.ticker.C:
 				self.Tick()
