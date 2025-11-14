@@ -20,7 +20,7 @@ type Binder struct {
 	// Default: ""
 	Prefix string
 	// Custom parsers for specific types.
-	Parsers map[reflect.Type]parserFunc
+	Parsers map[reflect.Type]ParserFunc
 	// If true, continue binding other fields even if one field fails to parse.
 	// All errors will be collected and returned as a single [errors.Join] error.
 	ContinueOnError bool
@@ -62,8 +62,8 @@ func (b *Binder) Bind(target any) error {
 		}
 
 		parser := shorthand.CoalesceFunc(
-			func() parserFunc { return getCustomParser(reflectField.Type, b.Parsers) },
-			func() parserFunc { return getDefaultParser(reflectField.Type) },
+			func() ParserFunc { return getCustomParser(reflectField.Type, b.Parsers) },
+			func() ParserFunc { return getDefaultParser(reflectField.Type) },
 		)
 
 		value, err := parser(envStr, envName, reflectField)

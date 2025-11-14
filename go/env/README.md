@@ -2,7 +2,7 @@
 
 Bind environment variables to structs using struct tags.
 
-- Parses string, bool, and all numeric types by default.
+- Parses `string`, `bool`, all numeric types, and anything that implements `encoding.TextUnmarshaler` or `json.Unmarshaler` by default.
 - Uses initial struct values as defaults.
 - Skips unexported fields and fields without `env` tags.
 - Supports prefixes, continue-on-error mode, and custom parsers.
