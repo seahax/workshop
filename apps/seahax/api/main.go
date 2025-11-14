@@ -72,7 +72,7 @@ func main() {
 	// Routes
 	app.HandleRoute(&health.Route{
 		Values: map[string]health.ValueProvider{
-			"mongodb": db.Health(),
+			"db": db.Health(),
 		},
 	})
 	app.HandleRoute(&info.Route{
