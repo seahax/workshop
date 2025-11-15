@@ -10,11 +10,11 @@ import (
 	"syscall"
 	"time"
 
-	"seahax/api/config"
-	"seahax/api/db"
-	"seahax/api/info"
-	"seahax/api/musings"
-	"seahax/api/sentry"
+	"seahax/api/internal/config"
+	"seahax/api/internal/db"
+	"seahax/api/internal/info"
+	"seahax/api/internal/musings"
+	"seahax/api/internal/sentry"
 
 	"seahax.com/go/api"
 	"seahax.com/go/api/compress"

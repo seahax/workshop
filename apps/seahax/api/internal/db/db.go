@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 	"log/slog"
-	"seahax/api/config"
+	"seahax/api/internal/config"
 	"sync"
 	"time"
 

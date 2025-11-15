@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
-	"seahax/api/config"
+	"seahax/api/internal/config"
 	"sync"
 
 	"github.com/getsentry/sentry-go"
