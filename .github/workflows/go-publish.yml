@@ -50,7 +50,7 @@ jobs:
                 exit
               fi
 
-              go test -v -count=1
+              go test -v -count=1 ./...
               git tag "$tag"
               git push origin tag "$tag"
 
