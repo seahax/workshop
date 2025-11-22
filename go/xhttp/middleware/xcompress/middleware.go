@@ -16,8 +16,8 @@ var defaultAlgorithms = []Algorithm{
 	Deflate(),
 }
 
-// Compress response automatically based on content encoding, type, and length.
-type Middleware struct {
+// Compression middleware options.
+type Options struct {
 	// Filter requests that are eligible for compression. If nil, all text/* and
 	// application/* types are compressed.
 	Filter Filter
@@ -33,10 +33,12 @@ const (
 	CompressMinSizeDefault = 1024
 )
 
-func (m *Middleware) Handler() xhttp.MiddlewareHandler {
-	filter := shorthand.Coalesce(m.Filter, DefaultFilter)
-	minSize := shorthand.Coalesce(m.MinSize, CompressMinSizeDefault)
-	algorithms := shorthand.Coalesce(m.Algorithms, defaultAlgorithms)
+// Create a Middleware that compresses response automatically based on content
+// encoding, type, and length.
+func New(options Options) xhttp.Middleware {
+	filter := shorthand.Coalesce(options.Filter, DefaultFilter)
+	minSize := shorthand.Coalesce(options.MinSize, CompressMinSizeDefault)
+	algorithms := shorthand.Coalesce(options.Algorithms, defaultAlgorithms)
 	algorithmCollection := newAlgorithmCollection(algorithms)
 
 	return func(writer http.ResponseWriter, request *http.Request, next http.HandlerFunc) {
@@ -73,6 +75,17 @@ func (m *Middleware) Handler() xhttp.MiddlewareHandler {
 
 		next(writer, request)
 	}
+}
+
+var defaultMiddleware xhttp.Middleware
+
+func init() {
+	defaultMiddleware = New(Options{})
+}
+
+// Get the default compression middleware. All options are defaulted.
+func Default() xhttp.Middleware {
+	return defaultMiddleware
 }
 
 func isCompressible(request *http.Request, minSize int) bool {

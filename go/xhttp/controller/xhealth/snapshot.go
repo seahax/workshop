@@ -8,7 +8,7 @@ type Snapshot struct {
 
 // Create a snapshot of the current application health. Includes overall status
 // and per-component details.
-func NewSnapshot(values map[string]ValueProvider) *Snapshot {
+func NewSnapshot(values map[string]*AtomicStatus) *Snapshot {
 	overall := StatusHealthy
 	detail := map[string]Status{}
 

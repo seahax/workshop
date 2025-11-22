@@ -59,3 +59,12 @@ func ParsePattern(pattern string) *Pattern {
 		Path:   path,
 	}
 }
+
+// Create a pattern string from method, domain, and path components.
+func PatternString(method, domain string, paths ...string) string {
+	return (&Pattern{
+		Method: method,
+		Domain: domain,
+		Path:   path.Join(paths...),
+	}).String()
+}

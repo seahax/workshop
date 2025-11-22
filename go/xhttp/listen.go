@@ -4,43 +4,36 @@ import (
 	"errors"
 	"net"
 	"net/http"
+
+	"seahax.com/go/shorthand"
 )
 
 // Listen and serve HTTP requests using the [net/http.Server]. This is
 // non-blocking. Panic on listener errors and fatal server errors. Return the
 // listener [net.Addr].
-func Listen(server *http.Server) net.Addr {
-	listener, err := net.Listen("tcp", server.Addr)
-
-	if err != nil {
-		panic(err)
-	}
+func Listen(server *http.Server) (net.Addr, *http.Server) {
+	addr := shorthand.Coalesce(server.Addr, DefaultAddr)
+	listener := shorthand.CriticalValue(net.Listen("tcp", addr))
 
 	go func() {
-		var err error
-
-		if server.TLSConfig == nil {
-			err = server.Serve(listener)
-		} else {
-			err = server.ServeTLS(listener, "", "")
-		}
-
-		if !errors.Is(err, http.ErrServerClosed) {
-			panic(err)
-		}
+		shorthand.Critical(serve(listener, server))
 	}()
 
-	return listener.Addr()
+	return listener.Addr(), server
 }
 
-// Handle HTTP requests at the address using the handler function. This is
-// non-blocking. Panic on listener errors and fatal server errors. Return the
-// listener [net.Addr] and the [net/http.Server].
-func ListenAddr(addr string, handler http.HandlerFunc) (net.Addr, *http.Server) {
-	server := NewServer()
-	server.Addr = addr
-	server.Handler = handler
-	addrActual := Listen(server)
+func serve(listener net.Listener, server *http.Server) error {
+	var err error
 
-	return addrActual, server
+	if server.TLSConfig == nil {
+		err = server.Serve(listener)
+	} else {
+		err = server.ServeTLS(listener, "", "")
+	}
+
+	if !errors.Is(err, http.ErrServerClosed) {
+		return err
+	}
+
+	return nil
 }

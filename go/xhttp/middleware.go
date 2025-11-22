@@ -6,16 +6,7 @@ import (
 )
 
 // A middleware for HTTP handlers.
-type Middleware interface {
-	Handler() MiddlewareHandler
-}
-
-// A middleware for HTTP handlers.
-type MiddlewareHandler func(writer http.ResponseWriter, request *http.Request, next http.HandlerFunc)
-
-func (f MiddlewareHandler) Handler() MiddlewareHandler {
-	return f
-}
+type Middleware func(writer http.ResponseWriter, request *http.Request, next http.HandlerFunc)
 
 // Create a new [net/http.HandlerFunc] that applies the middlewares in order
 // before calling the original handler.
@@ -24,7 +15,7 @@ func WithMiddleware(handler http.HandlerFunc, middlewares ...Middleware) http.Ha
 		var next = handler
 
 		handler = func(writer http.ResponseWriter, request *http.Request) {
-			middleware.Handler()(writer, request, next)
+			middleware(writer, request, next)
 		}
 	}
 

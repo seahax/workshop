@@ -1,6 +1,9 @@
 package xhealth
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"sync/atomic"
+)
 
 type Status int
 
@@ -36,4 +39,20 @@ func (s *Status) UnmarshalJSON(data []byte) error {
 	}
 
 	return nil
+}
+
+// Thread-safe health status value.
+type AtomicStatus struct {
+	value atomic.Int64
+}
+
+// Update the health status value.
+func (v *AtomicStatus) Store(status Status) {
+	v.value.Store(int64(status))
+}
+
+// Load the current health status value.
+func (v *AtomicStatus) Load() Status {
+	status := Status(v.value.Load())
+	return status
 }

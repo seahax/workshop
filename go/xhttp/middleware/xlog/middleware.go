@@ -9,9 +9,8 @@ import (
 	"seahax.com/go/xhttp"
 )
 
-// Attach a logger to incoming HTTP requests and write access logs for each
-// request.
-type Middleware struct {
+// Logging middleware options.
+type Options struct {
 	// Custom logger to attach to incoming requests.
 	Logger *slog.Logger
 
@@ -66,19 +65,32 @@ const (
 	DefaultTotalTimeAttr      = "total_time"
 )
 
-func (m *Middleware) Handler() xhttp.MiddlewareHandler {
+// Create a middleware that attaches a logger to incoming HTTP requests and
+// writes access logs for each request.
+func New(options Options) xhttp.Middleware {
 	return func(writer http.ResponseWriter, request *http.Request, next http.HandlerFunc) {
-		handle(m, writer, request, next)
+		handle(&options, writer, request, next)
 	}
 }
 
-func handle(config *Middleware, writer http.ResponseWriter, request *http.Request, next http.HandlerFunc) {
+var defaultMiddleware xhttp.Middleware
+
+func init() {
+	defaultMiddleware = New(Options{})
+}
+
+// Get the default logging middleware. All options are defaulted.
+func Default() xhttp.Middleware {
+	return defaultMiddleware
+}
+
+func handle(options *Options, writer http.ResponseWriter, request *http.Request, next http.HandlerFunc) {
 	startTimestamp := time.Now().UnixMilli()
 	originalLogger := xhttp.Logger(request)
-	logger := shorthand.Coalesce(config.Logger, originalLogger)
+	logger := shorthand.Coalesce(options.Logger, originalLogger)
 
-	if config.Attrs != nil {
-		attrs := config.Attrs(request)
+	if options.Attrs != nil {
+		attrs := options.Attrs(request)
 
 		if len(attrs) > 0 {
 			logger = slog.New(logger.Handler().WithAttrs(attrs))
@@ -86,10 +98,10 @@ func handle(config *Middleware, writer http.ResponseWriter, request *http.Reques
 	}
 
 	if logger != originalLogger {
-		request = xhttp.WithLogger(request, logger)
+		request = xhttp.ApplyLogger(request, logger)
 	}
 
-	if !config.AccessLogDisabled {
+	if !options.AccessLogDisabled {
 		var status int
 		var headerTimestamp int64
 
@@ -100,34 +112,34 @@ func handle(config *Middleware, writer http.ResponseWriter, request *http.Reques
 
 		defer func() {
 			attrs := []slog.Attr{}
-			attrs = appendAttr(attrs, config.AttrURL, DefaultURLAttr, func(name string) slog.Attr {
+			attrs = appendAttr(attrs, options.AttrURL, DefaultURLAttr, func(name string) slog.Attr {
 				return slog.String(name, request.URL.String())
 			})
-			attrs = appendAttr(attrs, config.AttrMethod, DefaultMethodAttr, func(name string) slog.Attr {
+			attrs = appendAttr(attrs, options.AttrMethod, DefaultMethodAttr, func(name string) slog.Attr {
 				return slog.String(name, request.Method)
 			})
-			attrs = appendAttr(attrs, config.AttrRemoteAddr, DefaultRemoteAddrAttr, func(name string) slog.Attr {
+			attrs = appendAttr(attrs, options.AttrRemoteAddr, DefaultRemoteAddrAttr, func(name string) slog.Attr {
 				return slog.String(name, request.RemoteAddr)
 			})
-			attrs = appendAttr(attrs, config.AttrReferer, DefaultRefererAttr, func(name string) slog.Attr {
+			attrs = appendAttr(attrs, options.AttrReferer, DefaultRefererAttr, func(name string) slog.Attr {
 				return slog.String(name, request.Referer())
 			})
-			attrs = appendAttr(attrs, config.AttrUserAgent, DefaultUserAgentAttr, func(name string) slog.Attr {
+			attrs = appendAttr(attrs, options.AttrUserAgent, DefaultUserAgentAttr, func(name string) slog.Attr {
 				return slog.String(name, request.UserAgent())
 			})
-			attrs = appendAttr(attrs, config.AttrHTTPVersion, DefaultHTTPVersionAttr, func(name string) slog.Attr {
+			attrs = appendAttr(attrs, options.AttrHTTPVersion, DefaultHTTPVersionAttr, func(name string) slog.Attr {
 				return slog.String(name, request.Proto)
 			})
-			attrs = appendAttr(attrs, config.AttrResponseStatus, DefaultResponseStatusAttr, func(name string) slog.Attr {
+			attrs = appendAttr(attrs, options.AttrResponseStatus, DefaultResponseStatusAttr, func(name string) slog.Attr {
 				return slog.Int(name, status)
 			})
-			attrs = appendAttr(attrs, config.AttrResponseType, DefaultResponseTypeAttr, func(name string) slog.Attr {
+			attrs = appendAttr(attrs, options.AttrResponseType, DefaultResponseTypeAttr, func(name string) slog.Attr {
 				return slog.String(name, writer.Header().Get("Content-Type"))
 			})
-			attrs = appendAttr(attrs, config.AttrResponseTime, DefaultResponseTimeAttr, func(name string) slog.Attr {
+			attrs = appendAttr(attrs, options.AttrResponseTime, DefaultResponseTimeAttr, func(name string) slog.Attr {
 				return slog.Int64(name, max(headerTimestamp-startTimestamp, 0))
 			})
-			attrs = appendAttr(attrs, config.AttrTotalTime, DefaultTotalTimeAttr, func(name string) slog.Attr {
+			attrs = appendAttr(attrs, options.AttrTotalTime, DefaultTotalTimeAttr, func(name string) slog.Attr {
 				return slog.Int64(name, time.Now().UnixMilli()-startTimestamp)
 			})
 			logger.LogAttrs(request.Context(), slog.LevelInfo, "incoming request", attrs...)
