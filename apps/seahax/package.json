@@ -7,7 +7,7 @@
     "build": "run-all build.",
     "build.0-frontend": "vite build -c frontend/vite.config.ts",
     "build.1-frontend-types": "tsc -b -f frontend/tsconfig.json",
-    "build.2-api": "cd api && GOOS=linux CGO_ENABLED=0 go build -o dist/api main.go",
+    "build.2-api": "cd api && GOOS=linux CGO_ENABLED=0 go build -o dist/api .",
     "clean": "rm -rf backend/dist frontend/dist",
     "docker": "run-all docker.",
     "docker.build": "./scripts/docker-build.sh",
