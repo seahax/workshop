@@ -3,6 +3,8 @@ package xhttp
 import (
 	"path"
 	"strings"
+
+	"seahax.com/go/shorthand"
 )
 
 // Parsed [net/http.ServeMux] route pattern into component parts.
@@ -20,14 +22,7 @@ func (p *Pattern) String() string {
 		pattern = p.Method + " "
 	}
 
-	pattern += path.Join(p.Domain, "/", p.Path)
-
-	// The [path.Join] function removes trailing slashes. But, a trailing slash
-	// has a special meaning for [net/http.Mux] patterns. So, if the original
-	// path had a trailing slash, preserve it.
-	if strings.HasSuffix(p.Path, "/") && !strings.HasSuffix(pattern, "/") {
-		pattern += "/"
-	}
+	pattern += PatternPathJoin(p.Domain, "/", p.Path)
 
 	return pattern
 }
@@ -65,6 +60,18 @@ func PatternString(method, domain string, paths ...string) string {
 	return (&Pattern{
 		Method: method,
 		Domain: domain,
-		Path:   path.Join(paths...),
+		Path:   PatternPathJoin(paths...),
 	}).String()
+}
+
+// Works like [path.Join], but maintains trailing slashes because they have a
+// special meaning for [net/http.Mux] patterns.
+func PatternPathJoin(paths ...string) string {
+	value := path.Join(paths...)
+
+	if strings.HasSuffix(shorthand.Last(paths), "/") {
+		value += "/"
+	}
+
+	return value
 }

@@ -2,7 +2,6 @@ package xhttp
 
 import (
 	"net/http"
-	"path"
 
 	"seahax.com/go/shorthand"
 )
@@ -27,7 +26,7 @@ func buildRoutes(controller *Controller) []*Route {
 
 	for _, route := range controller.Routes {
 		p := ParsePattern(route.Pattern)
-		p.Path = path.Join(controller.Prefix, p.Path)
+		p.Path = PatternPathJoin(controller.Prefix, p.Path)
 		p.Domain = shorthand.Coalesce(p.Domain, controller.Domain)
 
 		routes = append(routes, &Route{
