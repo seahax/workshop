@@ -1,88 +1,28 @@
 package config
 
 import (
-	"errors"
-	"fmt"
 	"log/slog"
-	"os"
-	"sync"
 	"time"
 
-	"github.com/go-playground/validator/v10"
 	"seahax.com/go/env"
 	"seahax.com/go/shorthand"
 )
 
-type Config struct {
-	// The timestamp when the application was built.
-	BuildTimestamp int64 `env:"BUILD_TIMESTAMP"`
-
-	// The timestamp when the application started.
-	StartTimestamp int64
-
-	// The commit hash of the application build.
-	Commit string `env:"COMMIT"`
-
-	// The application environment (eg. development, production).
-	Environment string `env:"ENVIRONMENT" validate:"required,oneof=development production"`
-
-	// The hostname or IP address the application binds to.
-	Hostname string `env:"HOSTNAME" validate:"isdefault|ipv4|ipv6|hostname"`
-
-	// The port number the application binds to.
-	Port uint `env:"PORT" validate:"required,port"`
-
-	// The origin URL of the application.
-	Origin string `env:"ORIGIN" validate:"required,url"`
-
-	// The path to the static files served by the application.
-	StaticPath string `env:"STATIC_PATH" validate:"required,dir"`
-
-	// The server bind address in "host:port" format.
-	Address string
-
-	// The logging level.
-	LogLevel slog.Level `env:"LOG_LEVEL"`
-
-	// Sentry DSN for error tracking.
-	SentryDSN string `env:"SENTRY_DSN" validate:"required,url"`
-
-	// MongoDB connection string.
-	MongoURI string `env:"MONGODB_URL" validate:"required,url"`
+func Get[T any](name string, tags ...string) T {
+	return shorthand.CriticalValue(env.Get[T](name,
+		env.OptionPrefix("APP_"),
+		env.OptionValidate(tags...),
+	))
 }
 
-var Get = sync.OnceValue(func() *Config {
-	now := time.Now().UnixMilli()
-	cfg := &Config{
-		BuildTimestamp: now,
-		StartTimestamp: now,
-		LogLevel:       slog.LevelInfo,
-	}
-	binder := env.Binder{
-		Prefix: "APP_",
-	}
-
-	shorthand.Critical(binder.Bind(cfg))
-
-	if err := validator.New().Struct(cfg); err != nil {
-		printConfigErrors(err, &binder, cfg)
-		os.Exit(1)
-	}
-
-	cfg.Address = fmt.Sprintf("%s:%d", cfg.Hostname, cfg.Port)
-
-	return cfg
-})
-
-func printConfigErrors(err error, binder *env.Binder, cfg *Config) {
-	var fieldErrs validator.ValidationErrors
-
-	if errors.As(err, &fieldErrs) {
-		for _, fieldErr := range fieldErrs {
-			name := binder.GetEnvName(cfg, fieldErr.StructField())
-			fmt.Printf(`invalid config '%s' (%s): %v`, name, fieldErr.ActualTag(), fieldErr.Value())
-		}
-	} else {
-		fmt.Println(err)
-	}
-}
+var StartTimestamp = time.Now().UnixMilli()
+var BuildTimestamp = Get[int64]("BUILD_TIMESTAMP")
+var Commit = Get[string]("COMMIT")
+var Environment = Get[string]("ENVIRONMENT", "oneof=development production")
+var Address = Get[string]("ADDRESS")
+var Origin = Get[string]("ORIGIN", "url")
+var StaticPath = Get[string]("STATIC_PATH", "dir")
+var LogLevel = Get[slog.Level]("LOG_LEVEL")
+var LogFormat = shorthand.Coalesce(Get[string]("LOG_FORMAT", "omitempty", "oneof=text json"), "text")
+var SentryDSN = Get[string]("SENTRY_DSN", "omitempty", "url")
+var MongoURI = Get[string]("MONGODB_URL", "url")

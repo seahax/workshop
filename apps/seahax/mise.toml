@@ -1,7 +1,5 @@
 [env]
 APP_ENVIRONMENT = "development"
-APP_HOSTNAME = "127.0.0.1"
-APP_PORT = "8080"
 APP_STATIC_PATH = "{{config_root}}/frontend/dist"
 APP_ORIGIN = "http://127.0.0.1:8080"
-APP_SENTRY_DSN = "https://8bccefc6c967115a3f7f41cb478fa2fd@o4509086879973376.ingest.us.sentry.io/4509086892949504"
+APP_LOG_LEVEL='debug'
