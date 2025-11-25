@@ -3,131 +3,115 @@ package env
 import (
 	"encoding"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"reflect"
+	"slices"
 	"strconv"
+
+	"seahax.com/go/shorthand"
 )
 
-func parse[T any](str string, parser func(reflect.Type) func(string) (any, error)) (T, error) {
-	pointerType, isPointer := getPointerType[T]()
-	elemType := pointerType.Elem()
-	parse := parser(elemType)
+// Error returned by a parser to indicate that it does not support a type.
+var ErrUnsupportedType = errors.New("type not supported by parser")
 
-	if parse == nil {
-		if pointerType.AssignableTo(reflect.TypeFor[encoding.TextUnmarshaler]()) {
-			parse = getTextParser(elemType)
-		} else if pointerType.AssignableTo(reflect.TypeFor[json.Unmarshaler]()) {
-			parse = getJsonParser(elemType)
-		} else {
-			parse = getTypeParser(elemType)
+func parse[T any](str string, parsers []func(reflect.Type, string) (any, error)) (T, error) {
+	elemType, isPointer := getElementType[T]()
+	parsers = append(slices.Clone(parsers),
+		parseTextUnmarshaler,
+		parseJsonUnmarshaler,
+		parseDefault,
+	)
+
+	for _, parser := range parsers {
+		value, err := parser(elemType, str)
+
+		if err == nil {
+			if isPointer {
+				value = &value
+			}
+
+			result := reflect.ValueOf(value).Convert(reflect.TypeFor[T]()).Interface().(T)
+
+			return shorthand.Ok(result)
+		}
+
+		if !errors.Is(err, ErrUnsupportedType) {
+			return shorthand.Fail[T](err)
 		}
 	}
 
-	value, err := parse(str)
-
-	if err != nil {
-		var zero T
-		return zero, err
-	}
-
-	if isPointer {
-		value = &value
-	}
-
-	return reflect.ValueOf(value).Convert(reflect.TypeFor[T]()).Interface().(T), nil
+	return shorthand.Fail[T](ErrUnsupportedType)
 }
 
-func getTextParser(elemType reflect.Type) func(string) (any, error) {
-	return func(str string) (any, error) {
-		pointer := reflect.New(elemType).Interface()
+func parseTextUnmarshaler(elemType reflect.Type, str string) (any, error) {
+	pointer, ok := reflect.New(elemType).Interface().(encoding.TextUnmarshaler)
 
-		if err := pointer.(encoding.TextUnmarshaler).UnmarshalText([]byte(str)); err != nil {
-			return nil, err
-		}
-
-		return reflect.ValueOf(pointer).Elem().Interface(), nil
+	if !ok {
+		return nil, ErrUnsupportedType
 	}
+
+	if err := pointer.UnmarshalText([]byte(str)); err != nil {
+		return nil, err
+	}
+
+	return reflect.ValueOf(pointer).Elem().Interface(), nil
 }
 
-func getJsonParser(elemType reflect.Type) func(string) (any, error) {
-	return func(str string) (any, error) {
-		pointer := reflect.New(elemType).Interface()
+func parseJsonUnmarshaler(elemType reflect.Type, str string) (any, error) {
+	pointer, ok := reflect.New(elemType).Interface().(json.Unmarshaler)
 
-		if err := json.Unmarshal([]byte(str), pointer); err != nil {
-			return nil, err
-		}
-
-		return reflect.ValueOf(pointer).Elem().Interface(), nil
+	if !ok {
+		return nil, ErrUnsupportedType
 	}
+
+	if err := pointer.UnmarshalJSON([]byte(str)); err != nil {
+		return nil, err
+	}
+
+	return reflect.ValueOf(pointer).Elem().Interface(), nil
 }
 
-func getTypeParser(elemType reflect.Type) func(string) (any, error) {
+func parseDefault(elemType reflect.Type, str string) (any, error) {
 	switch elemType.Kind() {
 	case reflect.String:
-		return func(str string) (any, error) { return str, nil }
+		return str, nil
 	case reflect.Int64:
-		return func(str string) (any, error) {
-			return strconv.ParseInt(str, 10, 64)
-		}
+		return strconv.ParseInt(str, 10, 64)
 	case reflect.Int32:
-		return func(str string) (any, error) {
-			return strconv.ParseInt(str, 10, 32)
-		}
+		return strconv.ParseInt(str, 10, 32)
 	case reflect.Int16:
-		return func(str string) (any, error) {
-			return strconv.ParseInt(str, 10, 16)
-		}
+		return strconv.ParseInt(str, 10, 16)
 	case reflect.Int8:
-		return func(str string) (any, error) {
-			return strconv.ParseInt(str, 10, 8)
-		}
+		return strconv.ParseInt(str, 10, 8)
 	case reflect.Int:
-		return func(str string) (any, error) {
-			return strconv.ParseInt(str, 10, 0)
-		}
+		return strconv.ParseInt(str, 10, 0)
 	case reflect.Uint64:
-		return func(str string) (any, error) {
-			return strconv.ParseUint(str, 10, 64)
-		}
+		return strconv.ParseUint(str, 10, 64)
 	case reflect.Uint32:
-		return func(str string) (any, error) {
-			return strconv.ParseUint(str, 10, 32)
-		}
+		return strconv.ParseUint(str, 10, 32)
 	case reflect.Uint16:
-		return func(str string) (any, error) {
-			return strconv.ParseUint(str, 10, 16)
-		}
+		return strconv.ParseUint(str, 10, 16)
 	case reflect.Uint8:
-		return func(str string) (any, error) {
-			return strconv.ParseUint(str, 10, 8)
-		}
+		return strconv.ParseUint(str, 10, 8)
 	case reflect.Uint:
-		return func(str string) (any, error) {
-			return strconv.ParseUint(str, 10, 0)
-		}
+		return strconv.ParseUint(str, 10, 0)
 	case reflect.Float64:
-		return func(str string) (any, error) {
-			return strconv.ParseFloat(str, 64)
-		}
+		return strconv.ParseFloat(str, 64)
 	case reflect.Float32:
-		return func(str string) (any, error) {
-			return strconv.ParseFloat(str, 32)
-		}
+		return strconv.ParseFloat(str, 32)
 	case reflect.Bool:
-		return func(str string) (any, error) {
-			return strconv.ParseBool(str)
-		}
+		return strconv.ParseBool(str)
 	}
 
-	panic(fmt.Sprintf("unsupported type %s", elemType))
+	return nil, ErrUnsupportedType
 }
 
-func getPointerType[T any]() (pointerType reflect.Type, isPointer bool) {
+func getElementType[T any]() (elemType reflect.Type, isPointer bool) {
 	t := reflect.TypeFor[T]()
 
 	if t.Kind() == reflect.Pointer {
-		return t, true
+		return t.Elem(), true
 	}
 
-	return reflect.PointerTo(t), false
+	return t, false
 }

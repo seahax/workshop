@@ -1,14 +1,16 @@
 package env
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 )
 
-func Get[T any](name string, options ...Option) (T, error) {
+// Get an environment variable by name, applying any provided options.
+func Get[T any](key string, options ...Option) (T, error) {
 	prefix := ""
-	lookups := []func(string) (string, bool){}
-	parsers := []func(reflect.Type) func(value string) (any, error){}
+	lookups := []func(key string) (string, bool){}
+	parsers := []func(type_ reflect.Type, value string) (any, error){}
 	validators := []func(key string, value any) error{}
 
 	for _, option := range options {
@@ -29,56 +31,39 @@ func Get[T any](name string, options ...Option) (T, error) {
 		}
 	}
 
-	if len(lookups) == 0 {
-		lookups = append(lookups, defaultLookup)
-	}
-
-	lookup := func(name string) (string, bool) {
-		for _, lookup := range lookups {
-			if str, ok := lookup(name); ok {
-				return str, ok
-			}
-		}
-
-		return "", false
-	}
-
-	parser := func(t reflect.Type) func(value string) (any, error) {
-		for _, parser := range parsers {
-			if parse := parser(t); parse != nil {
-				return parse
-			}
-		}
-
-		return nil
-	}
-
-	validate := func(key string, value any) error {
-		for _, validate := range validators {
-			if err := validate(key, value); err != nil {
-				return err
-			}
-		}
-
-		return nil
-	}
-
+	key = prefix + key
+	var str string
+	var ok bool
 	var value T
 
-	name = prefix + name
+	if len(lookups) == 0 {
+		str, ok = defaultLookup(key)
+	} else {
+		for _, lookup := range lookups {
+			str, ok = lookup(key)
 
-	if str, ok := lookup(name); ok {
-		parsed, err := parse[T](str, parser)
+			if ok {
+				break
+			}
+		}
+	}
 
-		if err != nil {
-			return value, fmt.Errorf("failed parsing config %q: %w", name, err)
+	if ok {
+		parsed, err := parse[T](str, parsers)
+
+		if errors.Is(err, ErrUnsupportedType) {
+			return value, fmt.Errorf("unsupported type at config %q", key)
+		} else if err != nil {
+			return value, fmt.Errorf("failed parsing config %q: %w", key, err)
 		}
 
 		value = parsed
 	}
 
-	if err := validate(name, value); err != nil {
-		return value, err
+	for _, validate := range validators {
+		if err := validate(key, value); err != nil {
+			return value, err
+		}
 	}
 
 	return value, nil

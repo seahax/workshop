@@ -2,7 +2,10 @@ module seahax.com/go/env
 
 go 1.25.3
 
-require github.com/go-playground/validator/v10 v10.28.0
+require (
+	github.com/go-playground/validator/v10 v10.28.0
+	seahax.com/go/shorthand v0.0.11
+)
 
 require (
 	github.com/gabriel-vasile/mimetype v1.4.11 // indirect
