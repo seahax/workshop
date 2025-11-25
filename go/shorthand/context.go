@@ -21,8 +21,7 @@ func (k *ContextKey[T]) Value(ctx context.Context) T {
 	}
 
 	if k.Default == nil {
-		var zero T
-		return zero
+		return Zero[T]()
 	}
 
 	return k.Default()

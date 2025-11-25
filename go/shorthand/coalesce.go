@@ -12,8 +12,7 @@ func Coalesce[T any](values ...T) T {
 		}
 	}
 
-	var zero T
-	return zero
+	return Zero[T]()
 }
 
 // Return the first non-zero value returned by a function.
@@ -27,6 +26,5 @@ func CoalesceFunc[T any](funcs ...func() T) T {
 		}
 	}
 
-	var zero T
-	return zero
+	return Zero[T]()
 }
