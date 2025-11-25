@@ -61,6 +61,15 @@ func main() {
 			CSPConnectSrc: "'self' https://auth0.seahax.com https://*.sentry.io",
 			CSPImgSrc:     "'self' data: https://*.gravatar.com https://*.wp.com https://cdn.auth0.com https://img.shields.io",
 		}),
+		func(writer http.ResponseWriter, request *http.Request, next http.HandlerFunc) {
+			if request.Host != config.OriginHost {
+				location := fmt.Sprintf("%s://%s%s", config.OriginScheme, config.OriginHost, request.RequestURI)
+				http.Redirect(writer, request, location, http.StatusPermanentRedirect)
+				return
+			}
+
+			next(writer, request)
+		},
 	)
 
 	addr, server := xhttp.Listen(&http.Server{Addr: config.Address, Handler: handler})
