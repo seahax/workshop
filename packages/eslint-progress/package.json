@@ -1,6 +1,6 @@
 {
   "name": "@seahax/eslint-progress",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "private": false,
   "description": "ESLint plugin that prints filenames as they are linted.",
   "repository": {
@@ -21,7 +21,7 @@
     "src"
   ],
   "dependencies": {
-    "eslint": "^9.38.0"
+    "eslint": "^9.39.1"
   },
   "publishConfig": {
     "access": "public"

@@ -1,6 +1,6 @@
 {
   "name": "@seahax/vite-plugin-preview",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": false,
   "description": "Vite plugin that starts a preview server when the build command is run with the `--watch` option.",
   "repository": {
@@ -39,7 +39,7 @@
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "peerDependencies": {
-    "vite": ">=7.1.12"
+    "vite": ">=7.2.4"
   },
   "publishConfig": {
     "access": "public"

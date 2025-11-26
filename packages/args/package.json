@@ -1,6 +1,6 @@
 {
   "name": "@seahax/args",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "private": false,
   "description": "Type safe command line argument parsing with Standard Schema support.",
   "repository": {
@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*",
-    "zod": "^4.1.12"
+    "zod": "^4.1.13"
   },
   "publishConfig": {
     "access": "public"

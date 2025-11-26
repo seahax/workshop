@@ -1,6 +1,6 @@
 {
   "name": "@seahax/zod-codec",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "private": false,
   "description": "Bi-directional transformation between two Zod schemas (ie. encode and decode, codec).",
   "repository": {
@@ -29,7 +29,7 @@
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "peerDependencies": {
-    "zod": "^4.1.12"
+    "zod": "^4.1.13"
   },
   "publishConfig": {
     "access": "public"

@@ -21,15 +21,15 @@
     "@seahax/run-all": "workspace:*",
     "@seahax/tsconfig": "workspace:*",
     "@seahax/vitest": "workspace:*",
-    "@types/node": "^24.9.2",
-    "@vitest/coverage-v8": "^4.0.5",
-    "eslint": "^9.38.0",
+    "@types/node": "^24.10.1",
+    "@vitest/coverage-v8": "^4.0.14",
+    "eslint": "^9.39.1",
     "eslint-plugin-functional": "^9.0.2",
-    "jsdom": "^27.0.1",
-    "nx": "^22.0.2",
+    "jsdom": "^27.2.0",
+    "nx": "^22.1.2",
     "typescript": "^5.9.3",
-    "vite": "^7.1.12",
-    "vitest": "^4.0.5"
+    "vite": "^7.2.4",
+    "vitest": "^4.0.14"
   },
   "nx": {},
   "pnpm": {

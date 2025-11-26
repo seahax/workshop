@@ -1,6 +1,6 @@
 {
   "name": "@seahax/vite-plugin-lib",
-  "version": "0.8.6",
+  "version": "0.8.7",
   "private": false,
   "description": "Use Vite to just build a library. It's not that hard. Why are there so many settings!?",
   "repository": {
@@ -26,7 +26,7 @@
     "clean": "rm -rf dist"
   },
   "peerDependencies": {
-    "vite": ">=7.1.12"
+    "vite": ">=7.2.4"
   },
   "publishConfig": {
     "access": "public"

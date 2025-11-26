@@ -1,6 +1,6 @@
 {
   "name": "@seahax/eslint",
-  "version": "0.2.26",
+  "version": "0.2.27",
   "private": false,
   "description": "",
   "repository": {
@@ -22,10 +22,10 @@
   ],
   "dependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.38.0",
+    "@eslint/js": "^9.39.1",
     "@seahax/eslint-plugin-wrap": "^0.6.9",
     "@seahax/eslint-progress": "^0.1.16",
-    "@stylistic/eslint-plugin": "^5.5.0",
+    "@stylistic/eslint-plugin": "^5.6.1",
     "@types/eslint": "^9.6.1",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-react": "^7.37.5",
@@ -33,10 +33,10 @@
     "eslint-plugin-regexp": "^2.10.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-unicorn": "^62.0.0",
-    "typescript-eslint": "^8.46.2"
+    "typescript-eslint": "^8.48.0"
   },
   "peerDependencies": {
-    "eslint": "^9.38.0",
+    "eslint": "^9.39.1",
     "typescript": "^5.9.3"
   },
   "publishConfig": {

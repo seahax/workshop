@@ -1,6 +1,6 @@
 {
   "name": "@seahax/eslint-plugin-wrap",
-  "version": "0.6.9",
+  "version": "0.6.10",
   "private": false,
   "description": "ESLint plugin with wrapping fixes for long lines.",
   "keywords": [
@@ -48,14 +48,14 @@
   },
   "dependencies": {
     "@types/eslint": "^9.6.1",
-    "@typescript-eslint/utils": "^8.46.2"
+    "@typescript-eslint/utils": "^8.48.0"
   },
   "devDependencies": {
     "@seahax/vite-plugin-lib": "workspace:*"
   },
   "peerDependencies": {
-    "@typescript-eslint/parser": "^8.46.2",
-    "eslint": "^9.38.0",
+    "@typescript-eslint/parser": "^8.48.0",
+    "eslint": "^9.39.1",
     "typescript": "^5.9.3"
   },
   "publishConfig": {
