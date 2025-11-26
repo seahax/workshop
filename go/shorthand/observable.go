@@ -6,6 +6,12 @@ import (
 )
 
 // A thread-safe event channel (pubsub).
+//
+// Unlike channels, the subscriber is invoked in the publisher's gorouting,
+// which is the goroutine that calls the Notify method. All methods are
+// synchronized. Subscribers are guaranteed to be called in the order they were
+// added. The slowest operation is unsubscribing, which is O(n) where n is the
+// number of subscribers.
 type Observable[T any] struct {
 	mut           sync.RWMutex
 	subscriptions []*Subscription[T]
