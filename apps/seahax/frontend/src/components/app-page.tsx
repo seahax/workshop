@@ -8,8 +8,8 @@ export function AppPage(props: BoxProps): JSX.Element {
       flexDirection="column"
       justifyContent="center"
       minHeight={(theme) => ({
-        xs: `calc(100vh - ${theme.spacing(6)})`,
-        sm: `calc(100vh - ${theme.spacing(8)})`,
+        xs: `calc(100lvh - ${theme.spacing(6)})`,
+        sm: `calc(100lvh - ${theme.spacing(8)})`,
       })}
       paddingBlockEnd={(theme) => ({
         xs: theme.spacing(6),

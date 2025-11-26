@@ -54,7 +54,7 @@ function Home(): JSX.Element {
     <>
       {glimmerDocumentVisible && glimmerMediaQuery && (
         <Fade in={glimmerScrollTrigger} appear={false} timeout={1000}>
-          <Canvas canvasRef={glimmerCanvas} position="absolute" top={0} width="100%" height="100%" maxHeight="100vh" />
+          <Canvas canvasRef={glimmerCanvas} position="absolute" top={0} width="100%" height="100%" maxHeight="100lvh" />
         </Fade>
       )}
       <AppPage zIndex={1}>

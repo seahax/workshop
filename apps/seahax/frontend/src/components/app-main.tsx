@@ -6,7 +6,7 @@ export default function AppMain({ children }: PropsWithChildren = {}): JSX.Eleme
     <Box
       position="relative"
       zIndex={0}
-      minHeight="100vh"
+      minHeight="100lvh"
       paddingBlockEnd={{ xs: 12, sm: 16 }}
       flexGrow={1}
       display="flex"
