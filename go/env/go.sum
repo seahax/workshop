@@ -26,3 +26,5 @@ gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 seahax.com/go/shorthand v0.0.11 h1:TSB5jJwyGhrroMrZqTbWQMI0qaBrTjuq2C9glm5HQV4=
 seahax.com/go/shorthand v0.0.11/go.mod h1:IG2t6eeV0RBWUX8E7v9RY6v6CgUf+3nIXrQ1D6g5DCA=
+seahax.com/go/shorthand v0.0.12 h1:R55FcTt5PGRqIyPviPUOYoZJd5ctybNINpT0Li2XACE=
+seahax.com/go/shorthand v0.0.12/go.mod h1:IG2t6eeV0RBWUX8E7v9RY6v6CgUf+3nIXrQ1D6g5DCA=

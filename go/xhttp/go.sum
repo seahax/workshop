@@ -6,3 +6,5 @@ github.com/xyproto/randomstring v1.0.5 h1:YtlWPoRdgMu3NZtP45drfy1GKoojuR7hmRcnhZ
 github.com/xyproto/randomstring v1.0.5/go.mod h1:rgmS5DeNXLivK7YprL0pY+lTuhNQW3iGxZ18UQApw/E=
 seahax.com/go/shorthand v0.0.8 h1:ivgIUPIq2L1DIO/p70NCa2ALozMq6ODDREUAm14Qxsc=
 seahax.com/go/shorthand v0.0.8/go.mod h1:IG2t6eeV0RBWUX8E7v9RY6v6CgUf+3nIXrQ1D6g5DCA=
+seahax.com/go/shorthand v0.0.12 h1:R55FcTt5PGRqIyPviPUOYoZJd5ctybNINpT0Li2XACE=
+seahax.com/go/shorthand v0.0.12/go.mod h1:IG2t6eeV0RBWUX8E7v9RY6v6CgUf+3nIXrQ1D6g5DCA=
