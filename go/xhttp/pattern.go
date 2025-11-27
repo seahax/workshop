@@ -69,7 +69,7 @@ func PatternString(method, domain string, paths ...string) string {
 func PatternPathJoin(paths ...string) string {
 	value := path.Join(paths...)
 
-	if strings.HasSuffix(shorthand.Last(paths), "/") {
+	if strings.HasSuffix(shorthand.LastValue(paths), "/") {
 		value += "/"
 	}
 
