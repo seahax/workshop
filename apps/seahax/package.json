@@ -1,6 +1,5 @@
 {
   "name": "app-seahax",
-  "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -20,19 +19,19 @@
     "test.1-api": "cd api && go test -v -count=1"
   },
   "dependencies": {
-    "@auth0/auth0-react": "^2.8.0",
+    "@auth0/auth0-react": "^2.9.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@fontsource-variable/fredoka": "^5.2.10",
     "@fontsource/walter-turncoat": "^5.2.7",
-    "@mui/material": "^7.3.4",
+    "@mui/material": "^7.3.5",
     "@seahax/glimmer": "workspace:*",
-    "@sentry/react": "^10.22.0",
+    "@sentry/react": "^10.27.0",
     "@tabler/icons-react": "^3.35.0",
     "notistack": "^3.0.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router": "^7.9.5"
+    "react-router": "^7.9.6"
   },
   "devDependencies": {
     "@mdx-js/rollup": "^3.1.1",
@@ -42,10 +41,10 @@
     "@seahax/vite-plugin-data": "workspace:*",
     "@seahax/vite-plugin-lib": "workspace:*",
     "@seahax/vite-plugin-prefetch": "workspace:*",
-    "@sentry/vite-plugin": "^4.6.0",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
-    "@vitejs/plugin-react": "^5.1.0",
+    "@sentry/vite-plugin": "^4.6.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
     "execa": "^9.6.0"
   }
 }
