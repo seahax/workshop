@@ -7,7 +7,7 @@ require (
 	go.mongodb.org/mongo-driver/v2 v2.4.0
 	seahax.com/go/env v0.0.11
 	seahax.com/go/shorthand v0.0.13
-	seahax.com/go/xhttp v0.0.5
+	seahax.com/go/xhttp v0.0.6
 )
 
 require (

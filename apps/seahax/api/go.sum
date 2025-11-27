@@ -84,5 +84,5 @@ seahax.com/go/env v0.0.11 h1:eTmhaazo6fJCjVAPoGWSaLYHRrRbAkl2/Da7VlxcB/U=
 seahax.com/go/env v0.0.11/go.mod h1:SlNKf9BjG9n0Rbs+TaZQNjLrznnA6E71uJ3wiDrKDwI=
 seahax.com/go/shorthand v0.0.13 h1:E7e76eESG9r78oi4sS/RrXFejPe7IV6OPu3Qb4jVZYU=
 seahax.com/go/shorthand v0.0.13/go.mod h1:IG2t6eeV0RBWUX8E7v9RY6v6CgUf+3nIXrQ1D6g5DCA=
-seahax.com/go/xhttp v0.0.5 h1:HjnemW/Ectc2EMZEi1413mAC27OTDVFGAdAXNmjtOkg=
-seahax.com/go/xhttp v0.0.5/go.mod h1:oD3X2FmUrjuwzNO3h2cJ7G1CvqwOy3o2gR1fcMx/2ow=
+seahax.com/go/xhttp v0.0.6 h1:1KebmyhdAnuLJBSXCrLhLxfSSMZOiC5wHZH0QR6qr/A=
+seahax.com/go/xhttp v0.0.6/go.mod h1:oD3X2FmUrjuwzNO3h2cJ7G1CvqwOy3o2gR1fcMx/2ow=
