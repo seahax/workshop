@@ -98,7 +98,7 @@ func handle(options *Options, writer http.ResponseWriter, request *http.Request,
 	}
 
 	if logger != originalLogger {
-		request = xhttp.ApplyLogger(request, logger)
+		request = xhttp.WithLogger(request, logger)
 	}
 
 	if !options.AccessLogDisabled {

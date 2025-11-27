@@ -10,17 +10,17 @@ import (
 var loggerContextKey = shorthand.NewContextKey(slog.Default)
 
 // Return the [log/slog.Logger] associated with the [net/http.Request]. The logger can be
-// set using [xhttp.ApplyLogger].
+// set using [xhttp.WithLogger].
 //
-// [xhttp.ApplyLogger]: https://pkg.go.dev/seahax.com/go/xhttp#ApplyLogger
+// [xhttp.WithLogger]: https://pkg.go.dev/seahax.com/go/xhttp#WithLogger
 func Logger(request *http.Request) *slog.Logger {
 	return loggerContextKey.Value(request.Context())
 }
 
-// Associate the [log/slog.Logger] with the [net/http.Request]. The logger can
-// be retrieved later using [xhttp.Logger].
+// Return a new [net/http.Request] associated with the [log/slog.Logger]. The
+// logger can be retrieved later using [xhttp.Logger].
 //
 // [xhttp.Logger]: https://pkg.go.dev/seahax.com/go/xhttp#Logger
-func ApplyLogger(request *http.Request, logger *slog.Logger) *http.Request {
+func WithLogger(request *http.Request, logger *slog.Logger) *http.Request {
 	return request.WithContext(loggerContextKey.ApplyValue(request.Context(), logger))
 }
