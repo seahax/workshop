@@ -5,9 +5,9 @@ go 1.25.3
 require (
 	github.com/getsentry/sentry-go v0.39.0
 	go.mongodb.org/mongo-driver/v2 v2.4.0
-	seahax.com/go/env v0.0.9
-	seahax.com/go/shorthand v0.0.11
-	seahax.com/go/xhttp v0.0.3
+	seahax.com/go/env v0.0.11
+	seahax.com/go/shorthand v0.0.13
+	seahax.com/go/xhttp v0.0.5
 )
 
 require (
