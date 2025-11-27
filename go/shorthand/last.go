@@ -11,3 +11,9 @@ func Last[T any](values []T) (T, bool) {
 
 	return values[length-1], true
 }
+
+// Like Last, but returns only the value (no bool).
+func LastValue[T any](values []T) T {
+	value, _ := Last(values)
+	return value
+}
