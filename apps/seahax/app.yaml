@@ -10,6 +10,11 @@ databases:
     engine: MONGODB
     version: "8"
     production: true
+  - name: cache
+    cluster_name: seahax-cache
+    engine: VALKEY
+    version: "8"
+    production: true
 
 services:
   - name: app
