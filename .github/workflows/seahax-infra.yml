@@ -8,6 +8,11 @@ on:
     paths:
       - apps/seahax/terraform/**
 
+env:
+  AWS_PROFILE: "default"
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
 concurrency:
   group: ${{ github.workflow }}
 
