@@ -123,9 +123,6 @@ importers:
       '@seahax/run-all':
         specifier: workspace:*
         version: link:../../packages/run-all
-      '@seahax/vite-plugin-data':
-        specifier: workspace:*
-        version: link:../../packages/vite-plugin-data
       '@seahax/vite-plugin-lib':
         specifier: workspace:*
         version: link:../../packages/vite-plugin-lib
