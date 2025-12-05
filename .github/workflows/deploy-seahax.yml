@@ -51,15 +51,3 @@ jobs:
 
       - name: Docker Push
         run: docker push "${IMAGE_REGISTRY}/${IMAGE_NAME}:latest"
-
-      - name: Deploy
-        run: |
-          set -e
-          cd "$PACKAGE_DIR"
-          doctl apps create \
-            --verbose \
-            --spec app.yaml \
-            --project-id "${{ secrets.DIGITALOCEAN_PROJECT }}" \
-            --upsert \
-            --update-sources \
-            --format ID,DefaultIngress,Created
