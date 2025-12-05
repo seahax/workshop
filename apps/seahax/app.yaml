@@ -33,13 +33,21 @@ services:
       - key: APP_ORIGIN
         scope: RUN_TIME
         value: https://seahax.com
-        type: SECRET
       - key: APP_MONGODB_URL
         scope: RUN_TIME
         value: ${db.DATABASE_URL}
       - key: APP_SENTRY_DSN
         scope: RUN_TIME
         value: https://8bccefc6c967115a3f7f41cb478fa2fd@o4509086879973376.ingest.us.sentry.io/4509086892949504
+      - key: APP_SMTP_USERNAME
+        scope: RUN_TIME
+        value: noreply@seahax.com
+      - key: APP_SMTP_SERVER
+        scope: RUN_TIME
+        value: smtp.protonmail.ch
+      - key: APP_SMTP_PORT
+        scope: RUN_TIME
+        value: "587"
     health_check:
       http_path: /_health
       initial_delay_seconds: 10
