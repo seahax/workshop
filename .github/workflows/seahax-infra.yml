@@ -27,6 +27,9 @@ jobs:
           mise: true
           docker: false
 
+      - name: Init
+        run: terraform init
+
       - name: Plan
         run: terraform plan -out=tfplan -var="smtp_token=${{ secrets.SEAHAX_SMTP_TOKEN }}"
 
