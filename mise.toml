@@ -11,6 +11,7 @@ doctl = "latest"
 aws = "latest"
 'npm:nx' = 'latest'
 'npm:@anthropic-ai/claude-code' = "latest"
+terraform = "1.14.1"
 
 [env]
 _.path = ["{{config_root}}/node_modules/.bin"]
