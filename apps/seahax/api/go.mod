@@ -3,11 +3,12 @@ module seahax/api
 go 1.25.3
 
 require (
-	github.com/getsentry/sentry-go v0.39.0
+	github.com/getsentry/sentry-go v0.40.0
+	github.com/wneessen/go-mail v0.7.2
 	go.mongodb.org/mongo-driver/v2 v2.4.0
 	seahax.com/go/env v0.0.11
 	seahax.com/go/shorthand v0.0.13
-	seahax.com/go/xhttp v0.0.6
+	seahax.com/go/xhttp v0.0.7
 )
 
 require (
@@ -17,7 +18,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.28.0 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
-	github.com/klauspost/compress v1.18.1 // indirect
+	github.com/klauspost/compress v1.18.2 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.2.0 // indirect

@@ -10,6 +10,7 @@ import (
 
 	"seahax/api/internal/config"
 	"seahax/api/internal/db"
+	"seahax/api/internal/email"
 	"seahax/api/internal/info"
 	"seahax/api/internal/musings"
 
@@ -76,6 +77,7 @@ func main() {
 	slog.Debug(fmt.Sprintf("listening on http://%s", addr))
 
 	db.MongoDBHealth.Check()
+	email.Health.Check()
 
 	shorthand.WaitForSignal()
 	slog.Debug("shutting down")
