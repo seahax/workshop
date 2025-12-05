@@ -1,4 +1,4 @@
-name: Go Publish
+name: Go
 run-name: ${{ github.workflow }}
 
 on:
@@ -6,7 +6,6 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/**"
       - "go/**"
 
 env:
@@ -20,11 +19,12 @@ jobs:
   main:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Setup
+        uses: ./.github/actions/setup
         with:
-          fetch-depth: 0
-          ssh-key: ${{ secrets.DEPLOY_KEY }}
+          mise: false
+          docker: false
+          deploy-key: ${{ secrets.DEPLOY_KEY }}
 
       - name: Publish
         run: |

@@ -1,0 +1,45 @@
+name: Seahax API
+run-name: ${{ github.workflow }}
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - apps/seahax/**
+      - "!apps/seahax/terraform/**"
+
+env:
+  DOCKER_REGISTRY: registry.digitalocean.com/seahax
+  DOCKER_IMAGE_NAME: app
+
+concurrency:
+  group: ${{ github.workflow }}
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/seahax
+    steps:
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          mise: true
+          docker: true
+          docker-registry: ${{ env.DOCKER_REGISTRY }}
+          docker-username: ${{ secrets.DIGITALOCEAN_USERNAME }}
+          docker-password: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          restore: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: nx docker.build -- -t "${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:latest"
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+      - name: Test
+        run: nx test
+
+      - name: Docker Push
+        run: docker push "${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:latest"

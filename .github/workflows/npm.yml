@@ -1,4 +1,4 @@
-name: NPM Publish
+name: NPM
 run-name: ${{ github.workflow }}
 
 on:
@@ -6,36 +6,26 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/**"
       - "packages/**"
-      - "templates/**"
 
 env:
   TERM: xterm-256color
   FORCE_COLOR: 1
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 concurrency:
   group: ${{ github.workflow }}
 
 jobs:
-  build:
+  main:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Setup
+        uses: ./.github/actions/setup
         with:
-          fetch-depth: 0
-          ssh-key: ${{ secrets.DEPLOY_KEY }}
-
-      - name: Setup Mise
-        uses: jdx/mise-action@v2
-
-      - name: NPM Auth
-        run: npm config set -L user //registry.npmjs.org/:_authToken '${NPM_TOKEN}'
-
-      - name: Restore
-        run: pnpm install --frozen-lockfile
+          mise: true
+          docker: false
+          npm-token: ${{ secrets.NPM_TOKEN }}
+          restore: pnpm install --frozen-lockfile
 
       - name: Build
         run: nx build root

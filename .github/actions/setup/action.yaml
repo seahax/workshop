@@ -1,0 +1,78 @@
+name: Common Workflow Setup
+description: Setup tools and other prerequisites for workflows.
+
+inputs:
+  deploy-key:
+    description: "SSH deploy key for checking out the repository."
+    required: false
+    default: ""
+
+  mise:
+    description: "Whether to setup Mise."
+    required: true
+
+  docker:
+    description: "Whether to setup Docker."
+    required: true
+  docker-registry:
+    description: "Docker registry to login to."
+    required: false
+    default: ""
+  docker-username:
+    description: "Docker registry username."
+    required: false
+    default: ""
+  docker-password:
+    description: "Docker registry password."
+    required: false
+    default: ""
+
+  npm-token:
+    description: "NPM token for authentication."
+    required: false
+    default: ""
+  npm-registry:
+    description: "NPM registry URL."
+    required: false
+    default: "registry.npmjs.org"
+
+  restore:
+    description: "Command to restore dependencies."
+    required: false
+  restore-shell:
+    description: "Shell to use for the restore command."
+    required: false
+    default: "bash"
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Source
+      uses: actions/checkout@v4
+      with:
+        # Always checkout the full history and tags with helps with diffing,
+        # commit hashes, and versioning.
+        fetch-depth: 0
+        ssh-key: ${{ inputs.deploy-key }}
+
+    - name: Setup Mise
+      if: inputs.mise == 'true'
+      uses: jdx/mise-action@v2
+
+    - name: Setup Docker
+      if: inputs.docker == 'true'
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ inputs.docker-registry }}
+        username: ${{ inputs.docker-username }}
+        password: ${{ inputs.docker-password }}
+
+    - name: Setup NPM Auth
+      if: inputs.npm-token != '' && inputs.npm-registry != ''
+      shell: bash
+      run: npm config set -L user "//${{ inputs.npm-registry }}/:_authToken" "${{ inputs.npm-token}}"
+
+    - name: Setup Dependencies
+      if: inputs.restore != ''
+      shell: ${{ inputs.restore-shell }}
+      run: ${{ inputs.restore }}
