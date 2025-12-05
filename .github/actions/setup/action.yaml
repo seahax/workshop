@@ -2,11 +2,6 @@ name: Common Workflow Setup
 description: Setup tools and other prerequisites for workflows.
 
 inputs:
-  deploy-key:
-    description: "SSH deploy key for checking out the repository."
-    required: false
-    default: ""
-
   mise:
     description: "Whether to setup Mise."
     required: true
@@ -47,14 +42,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Setup Source
-      uses: actions/checkout@v4
-      with:
-        # Always checkout the full history and tags with helps with diffing,
-        # commit hashes, and versioning.
-        fetch-depth: 0
-        ssh-key: ${{ inputs.deploy-key }}
-
     - name: Setup Mise
       if: inputs.mise == 'true'
       uses: jdx/mise-action@v2
