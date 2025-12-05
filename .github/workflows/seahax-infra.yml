@@ -8,6 +8,9 @@ on:
     paths:
       - apps/seahax/terraform/**
 
+env:
+  DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+
 concurrency:
   group: ${{ github.workflow }}
 
