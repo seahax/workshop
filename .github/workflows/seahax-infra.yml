@@ -8,11 +8,6 @@ on:
     paths:
       - apps/seahax/terraform/**
 
-env:
-  AWS_PROFILE: "default"
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
 concurrency:
   group: ${{ github.workflow }}
 
@@ -31,6 +26,9 @@ jobs:
         with:
           mise: true
           docker: false
+          aws-profile: seahax
+          aws access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Init
         run: terraform init

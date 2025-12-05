@@ -31,6 +31,23 @@ inputs:
     required: false
     default: "registry.npmjs.org"
 
+  aws-profile:
+    description: "AWS CLI profile name."
+    required: false
+    default: "default"
+  aws-access-key-id:
+    description: "AWS Access Key ID."
+    required: false
+    default: ""
+  aws-secret-access-key:
+    description: "AWS Secret Access Key."
+    required: false
+    default: ""
+  aws-region:
+    description: "AWS Region."
+    required: false
+    default: "us-east-1"
+
   restore:
     description: "Command to restore dependencies."
     required: false
@@ -58,6 +75,14 @@ runs:
       if: inputs.npm-token != '' && inputs.npm-registry != ''
       shell: bash
       run: npm config set -L user "//${{ inputs.npm-registry }}/:_authToken" "${{ inputs.npm-token}}"
+
+    - name: Setup AWS Auth
+      if: inputs.aws-access-key-id != '' && inputs.aws-secret-access-key != ''
+      shell: bash
+      run: |
+        aws configure --profile "${{ inputs.aws-profile }}" set aws_access_key_id "${{ inputs.aws-access-key-id }}"
+        aws configure --profile "${{ inputs.aws-profile }}" set aws_secret_access_key "${{ inputs.aws-secret-access-key }}"
+        aws configure --profile "${{ inputs.aws-profile }}" set region "${{ inputs.aws-region }}"
 
     - name: Setup Dependencies
       if: inputs.restore != ''
