@@ -63,6 +63,11 @@ func main() {
 			CSPImgSrc:     "'self' data: https://*.gravatar.com https://*.wp.com https://cdn.auth0.com https://img.shields.io",
 		}),
 		func(writer http.ResponseWriter, request *http.Request, next http.HandlerFunc) {
+			if strings.Contains(request.UserAgent(), "kube-probe") {
+				next(writer, request)
+				return
+			}
+
 			if request.Host != config.OriginHost {
 				location := fmt.Sprintf("%s://%s%s", config.OriginScheme, config.OriginHost, request.RequestURI)
 				http.Redirect(writer, request, location, http.StatusPermanentRedirect)
