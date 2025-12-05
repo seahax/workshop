@@ -50,7 +50,7 @@ services:
         value: "587"
       - key: APP_SMTP_TOKEN
         scope: RUN_TIME
-        value: EV[1:pIx6f0f9o4a/RFIqcHOqZDbGscRIQHBj:IsqDfsjv62Nxm4igm1MzT2ILLckdVZsLFWgWU5lsKL0=]
+        value: EV[1:1bJle5sFdd3bHMppbla0YKMbT96VVb35:v9Dj4RZSSnwLYDKm/x/SXfCgk6K3dPOtPFbDLNdDaIU=]
         type: SECRET
     health_check:
       http_path: /_health
