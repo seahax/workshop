@@ -4,22 +4,14 @@ import path from 'node:path';
 
 import { $ } from 'execa';
 
-export interface Project {
-  type: 'npm' | 'go';
-  name: string;
-  shortName: string;
-  description: string;
-  homepage: string;
-}
+import type { Project } from '../src/services/projects.ts';
 
 /**
  * Manually defined packages.
  */
 const PROJECTS = [
   //
-] as const as Project[];
-
-// TODO: Add Go projects.
+] as const satisfies Project[];
 
 async function findPackages(dir: string): Promise<Project[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -77,10 +69,11 @@ async function findPackages(dir: string): Promise<Project[]> {
 
     return [];
   });
-  const packageArrays = await Promise.all(promises);
-  const packages = packageArrays.flat();
 
-  return packages;
+  const projectArrays = await Promise.all(promises);
+  const projects = projectArrays.flat();
+
+  return projects;
 }
 
 const { stdout: projectRoot } = await $`git rev-parse --show-toplevel`;

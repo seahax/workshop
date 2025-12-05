@@ -16,9 +16,9 @@ import { type JSX, useEffect, useRef } from 'react';
 import { AppPage } from '../components/app-page.tsx';
 import Canvas from '../components/canvas.tsx';
 import ProjectBadge from '../components/project-badge.tsx';
-import projects from '../data/projects.data.ts';
 import useDelay from '../hooks/use-delay.ts';
 import { useDocumentVisible } from '../hooks/use-document-visible.ts';
+import projects from '../services/projects.ts';
 import HomeMdx from './home.mdx';
 import defineRoute from './util/define-route.tsx';
 

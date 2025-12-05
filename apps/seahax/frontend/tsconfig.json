@@ -1,19 +1,11 @@
 {
-  "extends": "@seahax/tsconfig",
-  "compilerOptions": {
-    "plugins": [ { "name": "@mdx-js/typescript-plugin" } ],
-    "rootDir": "src",
-    "outDir": "dist",
-    "tsBuildInfoFile": "dist/tsconfig.build.tsbuildinfo",
-    "lib": [
-      "ES2023",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "types": [
-      "vite/client",
-      "node"
-    ]
-  },
-  "include": [ "src" ]
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.build.json"
+    },
+    {
+      "path": "./tsconfig.config.json"
+    }
+  ]
 }
