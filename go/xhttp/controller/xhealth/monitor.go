@@ -1,6 +1,7 @@
 package xhealth
 
 import (
+	"reflect"
 	"sync/atomic"
 	"time"
 )
@@ -16,11 +17,24 @@ type Monitor struct {
 // Create a new health Monitor that runs the provided health check function at
 // the specified interval. The first check is performed after the initial
 // interval elapses. Call the Check method to perform an immediate check.
-func NewMonitor(interval time.Duration, check func() Status) *Monitor {
+func NewMonitor[T Status | bool](interval time.Duration, check func() T) *Monitor {
 	monitor := &Monitor{
 		ticker: time.NewTicker(interval),
-		check:  check,
 		done:   make(chan bool, 1),
+	}
+
+	if reflect.TypeFor[T]().Kind() == reflect.Bool {
+		monitor.check = func() Status {
+			if any(check()).(bool) {
+				return StatusHealthy
+			}
+
+			return StatusUnhealthy
+		}
+	} else {
+		monitor.check = func() Status {
+			return any(check()).(Status)
+		}
 	}
 
 	go func() {
@@ -53,6 +67,16 @@ func (m *Monitor) Check() {
 			m.checking.Store(false)
 		}()
 
-		m.Status.Store(m.check())
+		value := m.check()
+
+		if status, ok := any(value).(bool); ok {
+			if status {
+				m.Status.Store(StatusHealthy)
+			} else {
+				m.Status.Store(StatusUnhealthy)
+			}
+		} else {
+			m.Status.Store(any(value).(Status))
+		}
 	}()
 }
