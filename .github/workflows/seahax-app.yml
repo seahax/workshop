@@ -10,8 +10,9 @@ on:
       - "!apps/seahax/terraform/**"
 
 env:
-  DOCKER_REGISTRY: registry.digitalocean.com/seahax
-  DOCKER_IMAGE_NAME: app
+  IMAGE_NAME: app
+  DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+  DIGITALOCEAN_APP_ID: 63dd351b-872f-4b32-9022-5e5eff697dcf
 
 concurrency:
   group: ${{ github.workflow }}
@@ -31,18 +32,21 @@ jobs:
         with:
           mise: true
           docker: true
-          docker-registry: ${{ env.DOCKER_REGISTRY }}
-          docker-username: ${{ secrets.DIGITALOCEAN_USERNAME }}
-          docker-password: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          docker-registry: ghcr.io
+          docker-username: ${{ github.actor }}
+          docker-password: ${{ secrets.GITHUB_TOKEN }}
           restore: pnpm install --frozen-lockfile
 
       - name: Build
-        run: nx docker.build -- -t "${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:latest"
+        run: nx docker.build -- -t "ghcr.io/${GITHUB_REPOSITORY_OWNER}/${IMAGE_NAME}:latest"
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Test
         run: nx test
 
-      - name: Docker Push
-        run: docker push "${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:latest"
+      - name: Push
+        run: docker push "ghcr.io/${GITHUB_REPOSITORY_OWNER}/${IMAGE_NAME}:latest"
+
+      - name: Deploy
+        run: doctl apps create-deployment ${{ secrets.DIGITALOCEAN_APP_ID }}
