@@ -12,13 +12,11 @@ resource "digitalocean_app" "self" {
       instance_size_slug = "apps-s-1vcpu-0.5gb"
 
       image {
-        registry_type = "DOCR"
+        registry_type = "GHCR"
+        registry_credentials = "seahax:${var.ghcr_token}"
         registry = "seahax"
         repository = "app"
         tag = "latest"
-        deploy_on_push {
-          enabled = true
-        }
       }
 
       env {
