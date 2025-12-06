@@ -51,4 +51,4 @@ jobs:
         run: docker push "ghcr.io/${GITHUB_REPOSITORY_OWNER}/${IMAGE_NAME}:latest"
 
       - name: Deploy
-        run: doctl apps create-deployment ${{ secrets.DIGITALOCEAN_APP_ID }}
+        run: doctl apps create-deployment "$DIGITALOCEAN_APP_ID"
