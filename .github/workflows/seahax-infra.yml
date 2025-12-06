@@ -37,7 +37,10 @@ jobs:
         run: terraform init
 
       - name: Plan
-        run: terraform plan -out=tfplan -var="smtp_token=${{ secrets.SEAHAX_SMTP_TOKEN }}"
+        run: |
+          terraform plan -out=tfplan \
+            -var="ghcr_token=${{ secrets.GHCR_TOKEN }}" \
+            -var="smtp_token=${{ secrets.SEAHAX_SMTP_TOKEN }}"
 
       - name: Apply
         run: terraform apply tfplan
