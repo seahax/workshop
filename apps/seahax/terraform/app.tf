@@ -1,5 +1,5 @@
 resource "digitalocean_app" "self" {
-  project_id = local.project_id
+  project_id = data.digitalocean_project.self.id
 
   spec {
     name = "seahax"
@@ -37,6 +37,12 @@ resource "digitalocean_app" "self" {
         key = "APP_MONGODB_URL"
         scope = "RUN_TIME"
         value = "$${db.DATABASE_URL}"
+      }
+
+      env {
+        key = "APP_CACHE_URL"
+        scope = "RUN_TIME"
+        value = "$${cache.REDIS_URL}"
       }
 
       env {
@@ -105,17 +111,17 @@ resource "digitalocean_app" "self" {
 
     database {
       name = "db"
-      cluster_name = "seahax-db"
-      engine = "MONGODB"
-      version = "8"
+      cluster_name = digitalocean_database_cluster.mongodb.name
+      engine = upper(digitalocean_database_cluster.mongodb.engine)
+      version = digitalocean_database_cluster.mongodb.version
       production = true
     }
 
     database {
       name = "cache"
-      cluster_name = "seahax-cache"
-      engine = "VALKEY"
-      version = "8"
+      cluster_name = digitalocean_database_cluster.valkey.name
+      engine = upper(digitalocean_database_cluster.valkey.engine)
+      version = digitalocean_database_cluster.valkey.version
       production = true
     }
 
