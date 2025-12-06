@@ -9,7 +9,7 @@ on:
       - apps/seahax/terraform/**
 
 env:
-  DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+  DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
 
 concurrency:
   group: ${{ github.workflow }}

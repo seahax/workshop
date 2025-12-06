@@ -10,9 +10,9 @@ on:
       - "!apps/seahax/terraform/**"
 
 env:
-  IMAGE_NAME: app
   DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
   DIGITALOCEAN_APP_ID: 63dd351b-872f-4b32-9022-5e5eff697dcf
+  IMAGE_NAME: app
 
 concurrency:
   group: ${{ github.workflow }}
