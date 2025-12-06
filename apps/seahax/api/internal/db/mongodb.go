@@ -20,7 +20,7 @@ func init() {
 	serverOptions := options.ServerAPI(options.ServerAPIVersion1)
 	clientOptions := options.Client().ApplyURI(config.MongoURI).SetServerAPIOptions(serverOptions)
 	client := shorthand.CriticalValue(mongo.Connect(nil, clientOptions))
-	monitor := xhealth.NewMonitor(30*time.Second, func() bool {
+	monitor := xhealth.NewMonitor(5*time.Minute, func() bool {
 		slog.Debug("pinging mongodb")
 
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
