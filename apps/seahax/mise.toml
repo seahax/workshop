@@ -1,7 +1,6 @@
 [env]
 APP_ENVIRONMENT = "development"
 APP_STATIC_PATH = "{{config_root}}/frontend/dist"
-APP_ORIGIN = "http://127.0.0.1:8080"
 APP_LOG_LEVEL = 'debug'
 APP_SMTP_SERVER = 'smtp.protonmail.ch'
 APP_SMTP_PORT = '587'

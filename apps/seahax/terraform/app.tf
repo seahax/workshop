@@ -28,12 +28,6 @@ resource "digitalocean_app" "self" {
       }
 
       env {
-        key = "APP_ORIGIN"
-        scope = "RUN_TIME"
-        value = local.origin
-      }
-
-      env {
         key = "APP_MONGODB_URL"
         scope = "RUN_TIME"
         value = "$${db.DATABASE_URL}"
