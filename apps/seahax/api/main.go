@@ -63,11 +63,10 @@ func main() {
 			CSPImgSrc:     "'self' data: https://*.gravatar.com https://*.wp.com https://cdn.auth0.com https://img.shields.io",
 		}),
 		func(writer http.ResponseWriter, request *http.Request, next http.HandlerFunc) {
-			host := request.URL.Host
-			preferredHost := strings.TrimPrefix(host, "www.")
+			host := strings.TrimPrefix(request.Host, "www.")
 
-			if preferredHost != host {
-				location := fmt.Sprintf("//%s%s", preferredHost, request.RequestURI)
+			if host != request.Host {
+				location := fmt.Sprintf("//%s%s", host, request.RequestURI)
 				http.Redirect(writer, request, location, http.StatusPermanentRedirect)
 				return
 			}
