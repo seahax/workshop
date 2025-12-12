@@ -6,6 +6,11 @@ import (
 	"github.com/wneessen/go-mail"
 )
 
+type Body struct {
+	Text string
+	Html string
+}
+
 func Send(to string, subject string, body Body) error {
 	msg := mail.NewMsg()
 
@@ -27,15 +32,13 @@ func Send(to string, subject string, body Body) error {
 		msg.SetBodyString(mail.TypeTextHTML, body.Html)
 	}
 
-	client, err := NewClient()
+	client, err := newClient()
 
 	if err != nil {
 		return err
 	}
 
-	if err := client.DialAndSend(msg); err != nil {
-		return err
-	}
-
-	return nil
+	return retry.Do(func() error {
+		return client.DialAndSend(msg)
+	})
 }

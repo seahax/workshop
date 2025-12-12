@@ -34,13 +34,17 @@ func main() {
 		slog.Error("main panic", "error", err)
 	})
 
+	// Initial "liveness" checks. These will cause the process to exit if they
+	// fail, which will cause the pod/container to stop, which will fail the
+	// digitalocean deployment.
+	shorthand.Critical(db.Check())
+	shorthand.Critical(email.Check())
+
 	handler := xhttp.NewHandler(
 		info.New(),
 		musings.New(),
 		xhealth.New(xhealth.Options{
-			Values: map[string]*xhealth.AtomicStatus{
-				"db": &db.MongoDBHealth.Status,
-			},
+			// Failing health checks will stop traffic from reaching this instance.
 		}),
 		xstatic.New(xstatic.Options{
 			RootDir:          config.StaticPath,
@@ -77,9 +81,6 @@ func main() {
 
 	addr, server := xhttp.Listen(&http.Server{Addr: config.Address, Handler: handler})
 	slog.Debug(fmt.Sprintf("listening on http://%s", addr))
-
-	db.MongoDBHealth.Check()
-	email.Health.Check()
 
 	shorthand.WaitForSignal()
 	slog.Debug("shutting down")

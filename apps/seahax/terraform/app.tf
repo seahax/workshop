@@ -71,7 +71,7 @@ resource "digitalocean_app" "self" {
       health_check {
         http_path = "/_health"
         initial_delay_seconds = 15
-        period_seconds = 300
+        period_seconds = 30
         timeout_seconds = 3
         success_threshold = 1
         failure_threshold = 3
