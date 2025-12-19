@@ -28,15 +28,13 @@ resource "digitalocean_app" "self" {
       env {
         key = "APP_MONGODB_URL"
         scope = "RUN_TIME"
-        value = digitalocean_database_cluster.mongodb.uri
-        type = "SECRET"
+        value = "$${db.DATABASE_URL}"
       }
 
       env {
         key = "APP_CACHE_URL"
         scope = "RUN_TIME"
-        value = digitalocean_database_cluster.valkey.uri
-        type = "SECRET"
+        value = "$${cache.REDIS_URL}"
       }
 
       env {
