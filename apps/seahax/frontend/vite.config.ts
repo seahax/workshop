@@ -29,6 +29,9 @@ export default defineConfig((env) => {
       modulePreload: false,
       chunkSizeWarningLimit: 1000,
     },
+    server: {
+      host: '127.0.0.1',
+    },
     define: {
       __PROJECTS__: JSON.stringify(projects),
     },

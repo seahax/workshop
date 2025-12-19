@@ -16,7 +16,7 @@ export default function AppBarNav(): JSX.Element {
     >
       <Box gap={(theme) => theme.spacing(1)} sx={{ display: { xs: 'none', sm: 'flex' } }}>
         <Button href="/#projects" onClick={() => void navigate('/#projects')}>Projects</Button>
-        <Button href="/musings" target="_blank">Musings</Button>
+        <Button href="https://musings.seahax.com/" target="_blank">Musings</Button>
       </Box>
       <AppBarUser />
     </Box>

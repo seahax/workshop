@@ -5,10 +5,10 @@ const theme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: '#83B3FB',
+      main: 'hsla(216, 94%, 75%, 1.00)',
     },
     secondary: {
-      main: '#FA8072',
+      main: 'hsla(6, 93%, 71%, 1.00)',
     },
     background: {
       default: 'hsla(216, 40%, 13%, 1.00)',

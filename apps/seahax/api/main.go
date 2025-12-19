@@ -12,7 +12,6 @@ import (
 	"seahax/api/internal/db"
 	"seahax/api/internal/email"
 	"seahax/api/internal/info"
-	"seahax/api/internal/musings"
 
 	"github.com/getsentry/sentry-go"
 	"seahax.com/go/shorthand"
@@ -42,7 +41,6 @@ func main() {
 
 	handler := xhttp.NewHandler(
 		info.New(),
-		musings.New(),
 		xhealth.New(xhealth.Options{
 			// Failing health checks will stop traffic from reaching this instance.
 		}),
