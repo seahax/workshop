@@ -12,7 +12,7 @@
     "docker.start": "./scripts/docker-start.sh",
     "lint": "eslint */src",
     "modernize": "cd api && go get -u && go mod tidy",
-    "start.api": "cd api && go run main.go",
+    "start.api": "cd api && go run .",
     "start.frontend": "cd frontend && vite dev",
     "test": "run-all test.",
     "test.0-lint": "nx lint --max-warnings=0",
