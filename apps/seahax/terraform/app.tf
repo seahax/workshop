@@ -32,19 +32,6 @@ resource "digitalocean_app" "self" {
       }
 
       env {
-        key   = "APP_SPACES_ACCESS_KEY_ID"
-        scope = "RUN_TIME"
-        value = digitalocean_spaces_key.bucket-read.access_key
-      }
-
-      env {
-        key   = "APP_SPACES_SECRET_ACCESS_KEY"
-        scope = "RUN_TIME"
-        value = digitalocean_spaces_key.bucket-read.secret_key
-        type  = "SECRET"
-      }
-
-      env {
         key   = "APP_SENTRY_DSN"
         scope = "RUN_TIME"
         value = local.sentry_dsn

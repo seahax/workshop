@@ -8,9 +8,6 @@ on:
     paths:
       - apps/seahax/terraform/**
 
-env:
-  DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
-
 concurrency:
   group: ${{ github.workflow }}
 
@@ -29,18 +26,19 @@ jobs:
         with:
           mise: true
           docker: false
-          aws-profile: seahax
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Init
-        run: terraform init
-
-      - name: Plan
+      - name: Terraform
         run: |
+          set -ex
+          terraform init
           terraform plan -out=tfplan \
             -var="ghcr_token=${{ secrets.GHCR_TOKEN }}" \
             -var="smtp_token=${{ secrets.SEAHAX_SMTP_TOKEN }}"
-
-      - name: Apply
-        run: terraform apply tfplan
+          terraform apply tfplan
+        env:
+          # Required for DigitalOcean terraform provider
+          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          # Required for DigitalOcean Spaces (S3) terraform backend
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "us-east-1" # Not the actual region, but needed to avoid errors

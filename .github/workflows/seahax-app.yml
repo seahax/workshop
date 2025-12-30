@@ -8,11 +8,11 @@ on:
     paths:
       - apps/seahax/**
       - "!apps/seahax/terraform/**"
+      - "!apps/seahax/frontend/**"
 
 env:
-  DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
-  DIGITALOCEAN_APP_ID: 63dd351b-872f-4b32-9022-5e5eff697dcf
   IMAGE_NAME: app
+  DIGITALOCEAN_APP_ID: 63dd351b-872f-4b32-9022-5e5eff697dcf
 
 concurrency:
   group: ${{ github.workflow }}
@@ -52,3 +52,6 @@ jobs:
 
       - name: Deploy
         run: doctl apps create-deployment "$DIGITALOCEAN_APP_ID"
+        env:
+          # Required for DigitalOcean CLI (doctl)
+          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
