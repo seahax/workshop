@@ -32,12 +32,6 @@ resource "digitalocean_app" "self" {
       }
 
       env {
-        key   = "APP_CACHE_URL"
-        scope = "RUN_TIME"
-        value = "$${cache.REDIS_URL}"
-      }
-
-      env {
         key   = "APP_SPACES_ACCESS_KEY_ID"
         scope = "RUN_TIME"
         value = digitalocean_spaces_key.bucket-read.access_key
@@ -119,14 +113,6 @@ resource "digitalocean_app" "self" {
       cluster_name = digitalocean_database_cluster.mongodb.name
       engine       = upper(digitalocean_database_cluster.mongodb.engine)
       version      = digitalocean_database_cluster.mongodb.version
-      production   = true
-    }
-
-    database {
-      name         = "cache"
-      cluster_name = digitalocean_database_cluster.valkey.name
-      engine       = upper(digitalocean_database_cluster.valkey.engine)
-      version      = digitalocean_database_cluster.valkey.version
       production   = true
     }
 
