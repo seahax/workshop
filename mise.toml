@@ -17,8 +17,6 @@ terraform = "1.14.1"
 
 [env]
 _.path = ["{{config_root}}/node_modules/.bin"]
-AWS_PROFILE = "seahax"
-AWS_REGION = "us-east-1"
 AWS_PAGER = ""
 VITE_MODE = "development"
 
