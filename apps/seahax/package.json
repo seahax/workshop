@@ -10,6 +10,7 @@
     "clean": "rm -rf backend/dist frontend/dist",
     "docker.build": "./scripts/docker-build.sh",
     "docker.start": "./scripts/docker-start.sh",
+    "docker.start.mongodb": " ./scripts/docker-start-mongodb.sh",
     "lint": "eslint */src",
     "modernize": "cd api && go get -u && go mod tidy",
     "start.api": "cd api && go run .",
