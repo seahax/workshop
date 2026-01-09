@@ -1,5 +1,5 @@
 output "bucket_name" {
-  description = "The name of the S3 bucket used as the origin for the CDN."
+  description = "The name of the S3 bucket used as the Cloudfront origin."
   value       = aws_s3_bucket.self.bucket
 }
 

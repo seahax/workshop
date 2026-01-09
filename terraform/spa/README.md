@@ -1,15 +1,15 @@
-# CDN Terraform Module
+# SPA Terraform Module
 
-This module provisions an S3 bucket and a CloudFront distribution to serve static content with optional features like custom domains, simple CORS support, and SPA routing.
+This module provisions S3 and CloudFront resources to serve an SPA (Single Page Application).
 
 ## Getting Started
 
 Use this module in your Terraform configuration as follows:
 
 ```hcl
-module "cdn" {
-  source = "github.com/seahax/terraform/cdn"
-  name = "my-cdn"
+module "spa" {
+  source = "github.com/seahax/terraform/spa"
+  name = "my-spa"
 }
 ```
 
@@ -19,9 +19,9 @@ module "cdn" {
 
 (Required) Must be unique within your AWS account. It's used to generate the following resource names:
 
-- S3 Bucket: `cdn--<name>-<account>`
-- CloudFront Origin Access Control: `cdn--<name>`
-- CloudFront Function: `cdn--<name>-viewer-request`
+- S3 Bucket: `spa--<name>-<account>`
+- CloudFront Origin Access Control: `spa--<name>`
+- CloudFront Function: `spa--<name>-viewer-request`
 
 ### `region`
   
@@ -51,9 +51,9 @@ module "cdn" {
 
 ### `bucket_name`
 
-The name of the S3 bucket used as the CloudFront origin for the CDN.
+The name of the S3 bucket used as the CloudFront origin.
 
-Use the `aws` CLI or SDKs to upload content to this bucket for serving via the CDN. Setting appropriate `Cache-Control` headers and using the `INTELLIGENT_TIERING` storage class is recommended for cost optimization.
+Use the `aws` CLI or SDKs to upload content to this bucket. Setting appropriate `Cache-Control` headers and using the `INTELLIGENT_TIERING` storage class is recommended for cost optimization.
 
 Example: Use the CLI to upload immutable assets (eg. hashed bundle files).
 

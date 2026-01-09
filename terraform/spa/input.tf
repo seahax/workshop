@@ -1,5 +1,5 @@
 variable "name" {
-  description = "Name of the CDN deployment. Must be unique within the AWS account."
+  description = "Name of the SPA deployment. Must be unique within the AWS account."
   type        = string
 }
 
@@ -58,11 +58,11 @@ resource "terraform_data" "validation" {
 }
 
 locals {
-  distribution_comment         = "CDN: ${var.name}"
-  origin_id                    = "cdn--${var.name}"
-  origin_access_control_name   = "cdn--${var.name}"
-  viewer_request_function_name = "cdn--${var.name}-viewer-request"
-  response_headers_policy_name = "cdn--${var.name}"
-  bucket_name                  = "cdn--${var.name}-${data.aws_caller_identity.current.account_id}"
+  distribution_comment         = "SPA: ${var.name}"
+  origin_id                    = "spa--${var.name}"
+  origin_access_control_name   = "spa--${var.name}"
+  viewer_request_function_name = "spa--${var.name}-viewer-request"
+  response_headers_policy_name = "spa--${var.name}"
+  bucket_name                  = "spa--${var.name}-${data.aws_caller_identity.current.account_id}"
   methods                      = ["GET", "HEAD"]
 }

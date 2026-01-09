@@ -3,7 +3,7 @@ resource "aws_s3_bucket" "self" {
   region        = var.region
   force_destroy = var.force_destroy
   tags = {
-    CDN = var.name
+    SPA = var.name
   }
 }
 
@@ -11,7 +11,7 @@ resource "aws_s3_object" "error_404_page" {
   bucket        = aws_s3_bucket.self.id
   region        = var.region
   storage_class = "INTELLIGENT_TIERING"
-  key           = ".cdn-internal/404.html"
+  key           = ".spa-default-404.html"
   cache_control = "public, max-age=60, stale-while-revalidate=2592000"
   content_type  = "text/html"
   content       = <<-EOT
@@ -153,7 +153,7 @@ resource "aws_cloudfront_distribution" "self" {
   }
 
   tags = {
-    CDN = var.name
+    SPA = var.name
   }
 }
 
