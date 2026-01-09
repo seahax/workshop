@@ -1,0 +1,44 @@
+terraform {
+  required_version = ">= 1.14"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.0"
+    }
+  }
+
+  backend "s3" {
+    bucket              = "tfstates-194722422414"
+    region              = "us-west-2"
+    key                 = "cdn-demo.tfstate"
+    allowed_account_ids = ["194722422414"]
+  }
+}
+
+provider "aws" {
+  region              = "us-east-1"
+  allowed_account_ids = ["194722422414"]
+}
+
+module "cdn" {
+  source         = "../"
+  name           = "demo"
+  region         = "us-east-1"
+  # error_404_path = "/404.html"
+  force_destroy  = true
+  # domains     = ["cdn-demo.seahax.com"]
+  # certificate = "arn:aws:acm:us-east-1:194722422414:certificate/ef628864-f3dd-4d46-8d5e-b2e4bcf7a5e4"
+}
+
+output "bucket_name" {
+  value = module.cdn.bucket_name
+}
+
+output "distribution_domain" {
+  value = module.cdn.distribution_domain
+}
+
+output "distribution_id" {
+  value = module.cdn.distribution_id
+}
