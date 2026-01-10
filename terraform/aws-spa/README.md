@@ -1,6 +1,7 @@
-# SPA Terraform Module
+# AWS SPA Terraform Module
 
-This module provisions S3 and CloudFront resources to serve an SPA (Single Page Application).
+This module provisions AWS resources (eg. S3, CloudFront, etc,) to serve an SPA
+(Single Page Application).
 
 ## Getting Started
 
@@ -8,8 +9,8 @@ Use this module in your Terraform configuration as follows:
 
 ```hcl
 module "spa" {
-  source = "github.com/seahax/terraform/spa"
-  name = "my-spa"
+  source = "github.com/seahax/terraform/aws-spa"
+  name = "my-app"
 }
 ```
 
