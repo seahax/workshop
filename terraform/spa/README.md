@@ -59,6 +59,10 @@ Must be compatible with CloudFront function JavaScript runtime 2.0.
 
 (Optional) Override the default CloudFront response headers policy ID.
 
+### `content_security_policy`
+
+(Optional) Content Security Policy header value to set on responses. Only one of `content_security_policy` or `response_headers_policy_id` may be set.
+
 ### `force_destroy`
 
 (Optional) Set to `true` to allow the destruction of the S3 bucket and its contents. Default is `false`. Before running `terraform destroy`, you either must set this to `true`, or remove the bucket from the state (eg. `terraform state rm module.<module_name>.aws_s3_bucket.self`).

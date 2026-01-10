@@ -73,6 +73,12 @@ variable "response_headers_policy_id" {
   default     = ""
 }
 
+variable "content_security_policy" {
+  description = "Content Security Policy header value to set on responses."
+  type        = string
+  default     = ""
+}
+
 variable "force_destroy" {
   description = "Destroy the S3 bucket and its contents."
   type        = bool
@@ -89,6 +95,11 @@ resource "terraform_data" "validation" {
     precondition {
       condition     = length(var.domains) == 0 || var.certificate != ""
       error_message = "Certificate required for custom domains."
+    }
+
+    precondition {
+      condition     = var.response_headers_policy_id == "" || var.content_security_policy == ""
+      error_message = "The content_security_policy has no effect if response_headers_policy_id is set."
     }
   }
 }
@@ -123,15 +134,18 @@ locals {
     aws_cloudfront_response_headers_policy.self.id,
   )
 
-  content_security_policy = join(";", [
-    "default-src 'self'",
-    "script-src-attr 'none'",
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data:",
-    "font-src 'self' data:",
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "frame-ancestors 'self'"
-  ])
+  content_security_policy = coalesce(
+    var.content_security_policy,
+    join(";", [
+      "default-src 'self'",
+      "script-src-attr 'none'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data:",
+      "font-src 'self' data:",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "frame-ancestors 'self'"
+    ])
+  )
 }
