@@ -1,6 +1,7 @@
 .vscode
 .nx
 .terraform*
+!.terraform.lock.hcl
 .pnpm-store
 .claude
 .local
