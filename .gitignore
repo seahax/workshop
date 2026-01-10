@@ -1,6 +1,6 @@
 .vscode
 .nx
-.terraform
+.terraform*
 .pnpm-store
 .claude
 .local
