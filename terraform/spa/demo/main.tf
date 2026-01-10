@@ -26,8 +26,8 @@ module "spa" {
   name   = "demo"
   region = "us-east-1"
   # error_404_path = "/404.html"
-  # domains     = ["spa-demo.seahax.com"]
-  # certificate = "arn:aws:acm:us-east-1:194722422414:certificate/ef628864-f3dd-4d46-8d5e-b2e4bcf7a5e4"
+  domains       = ["spa.seahax.com"]
+  certificate   = "arn:aws:acm:us-east-1:194722422414:certificate/ef628864-f3dd-4d46-8d5e-b2e4bcf7a5e4"
   force_destroy = true
 }
 

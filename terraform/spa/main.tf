@@ -7,40 +7,13 @@ resource "aws_s3_bucket" "self" {
   }
 }
 
-resource "aws_s3_object" "error_404_page" {
+resource "aws_s3_object" "default_404_page" {
   bucket        = aws_s3_bucket.self.id
   region        = var.region
-  storage_class = "INTELLIGENT_TIERING"
-  key           = ".spa-default-404.html"
+  key           = local.default_404_page_key
+  content       = local.default_404_page_content
+  content_type  = "text/html; charset=utf-8"
   cache_control = "public, max-age=60, stale-while-revalidate=2592000"
-  content_type  = "text/html"
-  content       = <<-EOT
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
-          html {
-            color: #ccc;
-            background-color: #111;
-            font-family: sans-serif;
-          }
-          body {
-            margin: 2rem;
-            padding: 0;
-          }
-          #message {
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-align: center;
-          }
-        </style>
-      </head>
-      <body>
-        <h1 id="message">Page Not Found</h1>
-      </body>
-    </html>
-  EOT
 }
 
 resource "aws_s3_bucket_ownership_controls" "self" {
@@ -108,12 +81,12 @@ resource "aws_cloudfront_distribution" "self" {
 
   default_cache_behavior {
     target_origin_id           = local.origin_id
-    compress                   = true
     allowed_methods            = local.methods
     cached_methods             = local.methods
+    cache_policy_id            = local.cache_policy_id
+    response_headers_policy_id = local.response_headers_policy_id
+    compress                   = true
     viewer_protocol_policy     = "redirect-to-https"
-    cache_policy_id            = data.aws_cloudfront_cache_policy.caching-optimized.id
-    response_headers_policy_id = data.aws_cloudfront_response_headers_policy.security-headers.id
 
     function_association {
       event_type   = "viewer-request"
@@ -124,7 +97,7 @@ resource "aws_cloudfront_distribution" "self" {
   custom_error_response {
     error_code            = 404
     response_code         = 404
-    response_page_path    = coalesce(var.error_404_path, "/${aws_s3_object.error_404_page.key}")
+    response_page_path    = local.error_404_path
     error_caching_min_ttl = 60
   }
 
@@ -157,25 +130,53 @@ resource "aws_cloudfront_distribution" "self" {
   }
 }
 
+resource "aws_cloudfront_response_headers_policy" "self" {
+  name    = local.response_headers_policy_name
+  comment = local.response_headers_policy_comment
+
+  security_headers_config {
+    content_security_policy {
+      content_security_policy = local.content_security_policy
+      override                = true
+    }
+
+    content_type_options {
+      override = true
+    }
+
+    frame_options {
+      frame_option = "SAMEORIGIN"
+      override     = true
+    }
+
+    referrer_policy {
+      referrer_policy = "no-referrer"
+      override        = true
+    }
+
+    strict_transport_security {
+      access_control_max_age_sec = 31536000
+      override                   = true
+    }
+  }
+
+  remove_headers_config {
+    items { header = "Server" }
+    items { header = "X-Amz-Server-Side-Encryption" }
+    items { header = "X-Amz-Storage-Class" }
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 resource "aws_cloudfront_function" "viewer_request" {
   name    = local.viewer_request_function_name
+  comment = local.viewer_request_function_comment
+  code    = local.viewer_request_code
   runtime = "cloudfront-js-2.0"
-  comment = "Rewrites route requests to the SPA index document."
   publish = true
-  code    = <<-EOT
-    function handler(event) {
-      const request = event.request;
-
-      if (/\.[^./]+$/.test(request.uri)) {
-        // No-op for request paths that contain a file extension.
-        return request;
-      }
-
-      // Rewrite request paths without a file extension to the SPA index.
-      request.uri = '/index.html';
-      return request;
-    }
-  EOT
 
   lifecycle {
     create_before_destroy = true

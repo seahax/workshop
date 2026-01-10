@@ -17,23 +17,31 @@ module "spa" {
 
 ### `name`
 
-(Required) Must be unique within your AWS account. It's used to generate the following resource names:
-
-- S3 Bucket: `spa--<name>-<account>`
-- CloudFront Origin Access Control: `spa--<name>`
-- CloudFront Function: `spa--<name>-viewer-request`
+(Required) Must be unique within your AWS account. Used to generate resource names and tags.
 
 ### `region`
   
-(Optional) The AWS region where the S3 bucket will be created. Default is `us-east-1`.
+(Optional) S3 bucket region. Default is `us-east-1`.
+
+### `router`
+
+(Optional) Custom JavaScript string that defines a `router` function to rewrite request paths to S3 origin paths.
+
+The `router` function is given the request path. It can return a new path (rewrite) or a falsy value (no rewrite). Generally, it should rewrite SPA route paths to HTML files in the S3 bucket. Using a custom router overrides the default SPA router behavior.
+
+Must be compatible with CloudFront function JavaScript runtime 2.0.
+
+### `viewer_response_function_arn`
+
+(Optional) ARN of a Cloudfront function to associate with viewer response event.
 
 ### `domains`
 
-(Optional) List of custom domain names (aliases) to associate with the CloudFront distribution. If custom domains are used, you must also set the `certificate` variable.
+(Optional) List of aliases (custom domain names) for the Cloudfront distribution. If non-empty, `certificate` is required.
 
 ### `certificate`
 
-(Optional) ACM certificate ARN for custom domains. Required if `domains` is set. Must be in `us-east-1`. You must provision the certificate separately. A wildcard certificate (eg. `*.example.com`) is recommended so that it can be reused for other subdomains (same price and less overhead).
+(Optional) ACM certificate ARN to use for the Cloudfront distribution. Required when using custom domains. Must be in us-east-1.
 
 ### `min_tls_version`
 
@@ -41,7 +49,15 @@ module "spa" {
 
 ### `error_404_path`
 
-(Optional) Path to a custom 404 page.
+(Optional) Path to a custom 404 page. Must begin with a leading slash (`/`).
+
+### `cache_policy_id`
+
+(Optional) Override the default CloudFront cache policy ID.
+
+### `response_headers_policy_id`
+
+(Optional) Override the default CloudFront response headers policy ID.
 
 ### `force_destroy`
 
