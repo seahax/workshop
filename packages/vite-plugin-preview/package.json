@@ -23,8 +23,7 @@
   ],
   "scripts": {
     "build": "vite build && tsc -b -f tsconfig.json",
-    "clean": "rm -rf dist",
-    "demo": "pnpm build && vite build --watch -c demo/vite.config.ts"
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@seahax/deep-copy": "^0.1.0",
@@ -35,8 +34,9 @@
     "ws": "^8.18.3"
   },
   "devDependencies": {
-    "@seahax/vite-plugin-data": "workspace:*",
-    "@seahax/vite-plugin-lib": "^0.8.7"
+    "@seahax/vite-plugin-lib": "^0.8.7",
+    "@seahax/vitest": "^0.1.8",
+    "vitest": "^4.0.16"
   },
   "peerDependencies": {
     "vite": ">=7.2.4"

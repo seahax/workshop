@@ -1,0 +1,11 @@
+{
+  "type": "module",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "start": "vite build --watch"
+  },
+  "devDependencies": {
+    "@seahax/vite-plugin-preview": "^0.2.2",
+    "vite": "^7.3.1"
+  }
+}
