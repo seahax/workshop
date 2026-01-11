@@ -51,7 +51,7 @@
     "@typescript-eslint/utils": "^8.48.0"
   },
   "devDependencies": {
-    "@seahax/vite-plugin-lib": "workspace:*"
+    "@seahax/vite-plugin-lib": "^0.8.7"
   },
   "peerDependencies": {
     "@typescript-eslint/parser": "^8.48.0",

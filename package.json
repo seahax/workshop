@@ -3,49 +3,9 @@
   "private": true,
   "license": "Unlicense",
   "type": "module",
-  "scripts": {
-    "build": "nx run-many -t build --exclude root",
-    "lint": "eslint .",
-    "modernize": "run-all modernize.",
-    "modernize.node": "npx npm-check-updates@latest -i --root --workspaces --dep dev,prod,peer,optional,packageManager --peer --format group && pnpm dedupe",
-    "modernize.script": "nx run-many -t modernize --exclude root",
-    "test": "run-all test.",
-    "test.0-build": "nx build",
-    "test.1-lint": "nx lint --max-warnings=0",
-    "test.2-unit": "vitest run"
-  },
   "devDependencies": {
-    "@seahax/eslint": "workspace:*",
-    "@seahax/publish-from-package": "workspace:*",
-    "@seahax/publish-precheck": "workspace:*",
-    "@seahax/run-all": "workspace:*",
-    "@seahax/tsconfig": "workspace:*",
-    "@seahax/vitest": "workspace:*",
+    "@seahax/tsconfig": "^0.1.3",
     "@types/node": "^24.10.1",
-    "@vitest/coverage-v8": "^4.0.14",
-    "eslint": "^9.39.1",
-    "eslint-plugin-functional": "^9.0.2",
-    "jsdom": "^27.2.0",
-    "nx": "^22.1.2",
-    "typescript": "^5.9.3",
-    "vite": "^7.2.4",
-    "vitest": "^4.0.14"
-  },
-  "nx": {},
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "@sentry/cli",
-      "browser-tabs-lock",
-      "esbuild",
-      "nx",
-      "unrs-resolver"
-    ],
-    "overrides": {
-      "brace-expansion@>=2.0.0 <=2.0.1": "^2.0.2",
-      "brace-expansion@>=1.0.0 <=1.1.11": "^1.1.12",
-      "form-data@>=4.0.0 <4.0.4": "^4.0.4",
-      "tmp@<=0.2.3": "^0.2.4"
-    }
+    "typescript": "^5.9.3"
   }
 }

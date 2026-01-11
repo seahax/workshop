@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@seahax/vite-plugin-data": "workspace:*",
-    "@seahax/vite-plugin-lib": "workspace:*"
+    "@seahax/vite-plugin-lib": "^0.8.7"
   },
   "peerDependencies": {
     "vite": ">=7.2.4"

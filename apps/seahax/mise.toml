@@ -1,8 +1,0 @@
-[env]
-APP_ENVIRONMENT = "development"
-APP_STATIC_PATH = "{{config_root}}/frontend/dist"
-APP_LOG_LEVEL = 'debug'
-APP_SMTP_SERVER = 'smtp.protonmail.ch'
-APP_SMTP_PORT = '587'
-APP_SMTP_USERNAME = 'noreply@seahax.com'
-# APP_SMTP_TOKEN = <not-checked-in>

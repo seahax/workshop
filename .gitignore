@@ -20,5 +20,6 @@ coverage
 *.tfstate*
 *.local
 *.local.*
+local.*
 go.work*
 tfplan

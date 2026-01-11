@@ -5,12 +5,5 @@
       "node"
     ],
   },
-  "exclude": [
-    "**/node_modules",
-    "**/dist",
-    "**/lib",
-    "**/out",
-    "**/coverage",
-    "**/src"
-  ]
+  "include": [ "*" ]
 }

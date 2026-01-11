@@ -38,7 +38,7 @@
     "vary": "^1.1.2"
   },
   "devDependencies": {
-    "@seahax/vite-plugin-lib": "workspace:*"
+    "@seahax/vite-plugin-lib": "^0.8.7"
   },
   "engines": {
     "node": ">=22"

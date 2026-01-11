@@ -31,7 +31,7 @@
     "yaml": "^2.8.1"
   },
   "devDependencies": {
-    "@seahax/vite-plugin-lib": "workspace:*"
+    "@seahax/vite-plugin-lib": "^0.8.7"
   },
   "peerDependencies": {
     "vitest": "^4.0.14"

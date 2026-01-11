@@ -27,7 +27,7 @@
     "start": "vite"
   },
   "devDependencies": {
-    "@seahax/vite-plugin-lib": "workspace:*"
+    "@seahax/vite-plugin-lib": "^0.8.7"
   },
   "publishConfig": {
     "access": "public"
