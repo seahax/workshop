@@ -63,18 +63,18 @@ jobs:
           token: ${{ secrets.NPM_TOKEN }}
       - name: Init Repo
         run: npm ci
-      - name: Test
-        working-directory: ${{ matrix.package-path }}
-        run: |
-          set -e
-          npm ci
-          npm test --if-present
       - name: Build
         working-directory: ${{ matrix.package-path }}
         run: |
           set -e
           npm ci
           npm run build --if-present
+      - name: Test
+        working-directory: ${{ matrix.package-path }}
+        run: |
+          set -e
+          npm ci
+          npm test --if-present
       - name: Publish
         working-directory: ${{ matrix.package-path }}
         run: |
@@ -88,4 +88,4 @@ jobs:
           fi
 
           npm ci
-          npm publish --dry-run
+          npm publish
