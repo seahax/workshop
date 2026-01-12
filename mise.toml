@@ -20,6 +20,5 @@ run = [
   "ln -s -t ~ /mnt/home/.aws",
   "ln -s -t ~/.config '/mnt/home/Library/Application Support/doctl'",
   "ln -s -t ~ /mnt/home/.npmrc",
-  "pnpm install",
-  "pnpm build || true",
+  "npm ci",
 ]
