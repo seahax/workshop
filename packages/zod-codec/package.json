@@ -1,12 +1,9 @@
 {
-  "name": "@seahax/zod-codec",
-  "version": "0.3.6",
-  "private": false,
-  "description": "Bi-directional transformation between two Zod schemas (ie. encode and decode, codec).",
+  "version": "0.1.0",
+  "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/seahax/workshop.git",
-    "directory": "packages/zod-codec"
+    "url": "git+https://github.com/seahax/workshop.git"
   },
   "license": "Unlicense",
   "type": "module",
@@ -18,18 +15,20 @@
   },
   "types": "dist/index.d.ts",
   "files": [
-    "dist",
-    "!dist/*.tsbuildinfo"
+    "dist"
   ],
   "scripts": {
-    "build": "vite build && tsc -b -f src/tsconfig.json",
-    "clean": "rm -rf dist"
+    "build": "vite build && tsc -b -f tsconfig.build.json",
+    "clean": "rm -rf dist",
+    "diff": "pnpm build >/dev/null && npm diff 'dist/**.mjs' 'dist/**.cjs' 'dist/**.js' 'dist/**.d.ts'",
+    "prepublishOnly": "pnpm test && pnpm build",
+    "test": "eslint src"
   },
   "devDependencies": {
-    "@seahax/vite-plugin-lib": "^0.8.7"
-  },
-  "peerDependencies": {
-    "zod": "^4.1.13"
+    "@seahax/eslint": "^0.2.27",
+    "@seahax/vite-plugin-lib": "^0.8.7",
+    "eslint": "^9.39.2",
+    "vite": "^7.3.1"
   },
   "publishConfig": {
     "access": "public"

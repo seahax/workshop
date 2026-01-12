@@ -1,9 +1,7 @@
 {
-  "extends": "@seahax/tsconfig",
-  "compilerOptions": {
-    "types": [
-      "vite/client",
-      "node"
-    ],
-  },
+  "files": [ ],
+  "references": [
+    { "path": "tsconfig.build.json" },
+    { "path": "tsconfig.config.json" }
+  ]
 }

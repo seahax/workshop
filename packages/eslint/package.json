@@ -20,6 +20,11 @@
   "files": [
     "src"
   ],
+  "scripts": {
+    "diff": "pnpm build >/dev/null && npm diff 'dist/**.mjs' 'dist/**.cjs' 'dist/**.js' 'dist/**.d.ts'",
+    "prepublishOnly": "pnpm test",
+    "test": "eslint src"
+  },
   "dependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.39.1",

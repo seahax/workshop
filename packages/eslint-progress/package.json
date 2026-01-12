@@ -20,7 +20,13 @@
   "files": [
     "src"
   ],
-  "dependencies": {
+  "scripts": {
+    "diff": "pnpm build >/dev/null && npm diff 'dist/**.mjs' 'dist/**.cjs' 'dist/**.js' 'dist/**.d.ts'",
+    "prepublishOnly": "pnpm test",
+    "test": "eslint src"
+  },
+  "peerDependencies": {
+    "@seahax/eslint": "^0.2.27",
     "eslint": "^9.39.1"
   },
   "publishConfig": {

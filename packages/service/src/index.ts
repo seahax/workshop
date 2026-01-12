@@ -49,12 +49,12 @@ export function service<TScope extends WeakKey | undefined>(): ServiceBuilder<TS
         let instances = new WeakMap<WeakKey, { readonly value: TValue }>();
 
         const self: Service<TScope, TValue> = {
-          resolve: (scope: TScope = undefined as TScope) => {
+          resolve: (scope?) => {
             let entry = instances.get(scope ?? DEFAULT_SCOPE);
 
             if (!entry) {
               const dependencyValues = dependencies.map((dependency) => {
-                return dependency.resolve(scope);
+                return dependency.resolve(scope as TScope);
               }) as DependencyValues<TDependencies>;
 
               entry = { value: provider.call(self, ...dependencyValues) };
@@ -62,11 +62,11 @@ export function service<TScope extends WeakKey | undefined>(): ServiceBuilder<TS
 
             return entry.value;
           },
-          isResolved: (scope = DEFAULT_SCOPE as TScope & {}) => {
-            return instances.has(scope);
+          isResolved: (scope?) => {
+            return instances.has(scope ?? DEFAULT_SCOPE);
           },
-          reset: (scope = DEFAULT_SCOPE as TScope & {}) => {
-            instances.delete(scope);
+          reset: (scope?) => {
+            instances.delete(scope ?? DEFAULT_SCOPE);
           },
           resetAll: () => {
             instances = new WeakMap();
@@ -86,7 +86,7 @@ export function service<TScope extends WeakKey | undefined>(): ServiceBuilder<TS
  */
 export function serviceScope<TScope extends WeakKey | undefined>(): Service<TScope, TScope> {
   return {
-    resolve: (scope: TScope = undefined as TScope) => scope,
+    resolve: (scope?) => scope as TScope,
     isResolved: () => true,
     reset: () => void 0,
     resetAll: () => void 0,

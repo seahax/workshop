@@ -1,16 +1,7 @@
 {
-  "extends": "@seahax/tsconfig",
-  "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist",
-    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
-    "lib": [ "ES2023", "DOM", "DOM.Iterable" ],
-    "types": [
-      "vite/client",
-    ],
-  },
-  "include": [ "src" ],
+  "files": [ ],
   "references": [
-    { "path": "./tsconfig.build.json" }
+    { "path": "tsconfig.build.json" },
+    { "path": "tsconfig.config.json" }
   ]
 }

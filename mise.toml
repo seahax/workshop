@@ -3,17 +3,11 @@ experimental = true
 
 [tools]
 npm = "latest"
-pnpm = "latest"
 node = "lts"
-'npm:nx' = 'latest'
 'npm:@anthropic-ai/claude-code' = "latest"
 
 go = "latest"
 "go:github.com/766b/go-outliner" = "latest"
-
-aws = "latest"
-doctl = "latest"
-terraform = "1.14.1"
 
 [env]
 _.path = ["{{config_root}}/node_modules/.bin"]

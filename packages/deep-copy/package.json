@@ -18,17 +18,20 @@
   },
   "types": "dist/index.d.ts",
   "files": [
-    "dist",
-    "!dist/*.tsbuildinfo"
+    "dist"
   ],
   "scripts": {
-    "build": "vite build && tsc -b -f tsconfig.json",
-    "clean": "rm -rf dist"
+    "build": "vite build && tsc -b -f tsconfig.build.json",
+    "clean": "rm -rf dist",
+    "diff": "pnpm build >/dev/null && npm diff 'dist/**.mjs' 'dist/**.cjs' 'dist/**.js' 'dist/**.d.ts'",
+    "prepublishOnly": "pnpm test && pnpm build",
+    "test": "eslint src"
   },
   "devDependencies": {
+    "@seahax/eslint": "^0.2.27",
     "@seahax/vite-plugin-lib": "^0.8.7",
-    "@seahax/vitest": "^0.1.8",
-    "vitest": "^4.0.16"
+    "eslint": "^9.39.2",
+    "vite": "^7.3.1"
   },
   "publishConfig": {
     "access": "public"
