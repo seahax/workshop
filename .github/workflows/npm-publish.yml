@@ -50,7 +50,7 @@ jobs:
     needs: prepare
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 1
+      # max-parallel: 1
       matrix:
         package-path: ${{ fromJson(needs.prepare.outputs.matrix) }}
     steps:
