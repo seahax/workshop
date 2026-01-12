@@ -24,7 +24,6 @@
     "build": "vite build && tsc -b -f tsconfig.build.json",
     "clean": "rm -rf dist",
     "diff": "npm run build >/dev/null && npm diff 'dist/**.mjs' 'dist/**.cjs' 'dist/**.js' 'dist/**.d.ts'",
-    "prepublishOnly": "npm test && npm run build",
     "test": "eslint src"
   },
   "dependencies": {

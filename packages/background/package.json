@@ -1,6 +1,6 @@
 {
   "name": "@seahax/background",
-  "version": "0.3.2",
+  "version": "0.3.1",
   "private": false,
   "description": "Run an async task without waiting for it to return, the responsible way.",
   "repository": {
@@ -24,7 +24,6 @@
     "build": "vite build && tsc -b -f tsconfig.build.json",
     "clean": "rm -rf dist",
     "diff": "npm run build >/dev/null && npm diff 'dist/**.mjs' 'dist/**.cjs' 'dist/**.js' 'dist/**.d.ts'",
-    "prepublishOnly": "npm test && npm run build",
     "test": "eslint src"
   },
   "devDependencies": {
