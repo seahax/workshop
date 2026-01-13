@@ -1,0 +1,37 @@
+{
+  "name": "@seahax/cli",
+  "version": "0.1.0-prerelease.0",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seahax/workshop.git",
+    "directory": "packages/cli"
+  },
+  "license": "Unlicense",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build && tsc -b -f tsconfig.build.json",
+    "clean": "rm -rf dist",
+    "diff": "npm run build >/dev/null && npm diff 'dist/**.mjs' 'dist/**.cjs' 'dist/**.js' 'dist/**.d.ts'",
+    "test": "eslint src"
+  },
+  "devDependencies": {
+    "@seahax/eslint": "^0.2.27",
+    "@seahax/vite-plugin-lib": "^0.8.7",
+    "eslint": "^9.39.2",
+    "vite": "^7.3.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
