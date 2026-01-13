@@ -4,9 +4,8 @@
     "tsBuildInfoFile": "out/tsconfig.build.tsbuildinfo",
     "rootDir": "src",
     "outDir": "dist",
-    "noEmit": false,
     "lib": [ "ES2023" ],
-    "types": [ "vite/client", "node" ]
+    "types": [ "node" ]
   },
   "include": [ "src" ],
   "exclude": [

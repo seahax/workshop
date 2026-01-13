@@ -2,44 +2,33 @@
 import assert from 'node:assert';
 import fs from 'node:fs/promises';
 
-import { alias, createHelp, cue, parseOptions, string } from '@seahax/args';
+import { command, help, main, parseArgs } from '@seahax/cli';
 import { execa } from 'execa';
 
-const help = createHelp`
-{bold Usage:} run-all {green <prefixes...>} 
-{bold Usage:} run-all {blue --help|-h} 
+const HELP_TEXT = `
+Usage: run-all <prefixes...>
+       run-all --help|-h
 
-Run all package.json scripts that begin with one of the {blue prefixes}.
+Run all package.json scripts that begin with one of the prefixes.
 
-{bold Arguments:}
-  {green <prefixes...>}   Prefixes of package.json scripts to run.
+Arguments:
+  <prefixes...>   Prefixes of package.json scripts to run.
 
-{bold Options:}
-  {blue --help, -h}   Show this help message.
+Options:
+  --help, -h   Show this help message.
 `;
 
-await (async () => {
-  const options = await parseOptions(process.argv.slice(2), {
-    '--help': cue(),
-    '-h': alias('--help'),
-    extraPositional: string(),
-  });
+await main(import.meta, command(async (args) => {
+  await help(HELP_TEXT, { args });
 
-  if (options.value === '--help') {
-    help();
-    process.exit();
-  }
-
-  if (options.issues) return help.error`{red ${options.issues[0]}}`.exit(1);
-
-  const { positional: prefixes } = options.value;
+  const { positionals: prefixes } = parseArgs({ allowExtraPositionals: true });
   const allScripts = await getScriptNames();
   const packageManager = getPackageManager();
   const scripts = new Set<string>();
 
   for (const prefix of prefixes) {
     for (const script of allScripts) {
-      if (script.startsWith(prefix) && !prefixes.includes(script)) {
+      if (script.startsWith(prefix)) {
         scripts.add(script);
       }
     }
@@ -59,7 +48,7 @@ await (async () => {
       process.exit(result.exitCode);
     }
   }
-})();
+}));
 
 function getPackageManager(): 'npm' | 'pnpm' | 'yarn' {
   const execPath = process.env.npm_execpath?.toLowerCase();

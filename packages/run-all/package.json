@@ -1,6 +1,6 @@
 {
   "name": "@seahax/run-all",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "private": false,
   "description": "Because life's too short to type 'npm run test:unit && npm run test:integration && npm run test:e2e' when you could just say 'run-all test'.",
   "repository": {
@@ -10,26 +10,25 @@
   },
   "license": "Unlicense",
   "type": "module",
-  "bin": "bin.mjs",
+  "bin": "src/bin.ts",
   "files": [
-    "bin.mjs",
-    "dist"
+    "src"
   ],
   "scripts": {
-    "build": "vite build && tsc -b -f tsconfig.build.json",
-    "clean": "rm -rf dist",
     "diff": "npm run build >/dev/null && npm diff 'dist/**.mjs' 'dist/**.cjs' 'dist/**.js' 'dist/**.d.ts'",
-    "test": "eslint src"
+    "start": "node ./src/bin.ts",
+    "test": "tsc -b -f tsconfig.build.json && eslint src"
   },
   "dependencies": {
-    "@seahax/args": "^0.6.1",
+    "@seahax/cli": "^0.1.0-prerelease.0",
     "execa": "^9.6.0"
   },
   "devDependencies": {
     "@seahax/eslint": "^0.2.27",
-    "@seahax/vite-plugin-lib": "^0.8.7",
-    "eslint": "^9.39.2",
-    "vite": "^7.3.1"
+    "eslint": "^9.39.2"
+  },
+  "engines": {
+    "node": ">=22.18.0"
   },
   "publishConfig": {
     "access": "public"
