@@ -1,12 +1,8 @@
 {
-  "name": "@seahax/background",
-  "version": "0.3.1",
   "private": false,
-  "description": "Run an async task without waiting for it to return, the responsible way.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/seahax/workshop.git",
-    "directory": "packages/background"
+    "url": "git+https://github.com/seahax/workshop.git"
   },
   "license": "Unlicense",
   "type": "module",
