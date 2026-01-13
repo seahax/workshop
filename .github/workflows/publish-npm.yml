@@ -1,4 +1,4 @@
-name: NPM Publish
+name: Publish NPM
 run-name: ${{ github.workflow }}
 
 on:
@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - 'packages/**'
+      - "packages/**"
   workflow_dispatch:
 
 jobs:
@@ -14,22 +14,25 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: "22"
           cache: "npm"
+
       - name: Set Matrix
         id: set-matrix
         run: |
           set -e
           matrix=()
 
-          for filename in packages/*/package.json; do
-            dir=$(dirname "$filename")
+          for dir in packages/*; do
+            if [ ! -f "$dir/package.json" ]; then continue; fi
 
             pushd "$dir" >/dev/null || continue
             name=$(npm pkg get name | jq -r)
@@ -46,35 +49,40 @@ jobs:
 
           matrix_json=$(jq --compact-output --null-input '$ARGS.positional' --args -- "${matrix[@]}")
           echo "matrix=$matrix_json" >> $GITHUB_OUTPUT
+
   publish:
     needs: prepare
     runs-on: ubuntu-latest
     strategy:
       matrix:
         package-path: ${{ fromJson(needs.prepare.outputs.matrix) }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: "22"
           cache: "npm"
           token: ${{ secrets.NPM_TOKEN }}
-      - name: Init Repo
-        run: npm ci
+
+      - name: Restore Dependencies
+        run: |
+          set -e
+          npm ci
+          cd "${{ matrix.package-path }}"
+          npm ci
+
       - name: Build
         working-directory: ${{ matrix.package-path }}
-        run: |
-          set -e
-          npm ci
-          npm run build --if-present
+        run: npm run build --if-present
+
       - name: Test
         working-directory: ${{ matrix.package-path }}
-        run: |
-          set -e
-          npm ci
-          npm test --if-present
+        run: npm test --if-present
+
       - name: Publish
         working-directory: ${{ matrix.package-path }}
         run: |
