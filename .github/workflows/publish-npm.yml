@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        package-path: ${{ fromJson(needs.prepare.outputs.matrix) }}
+        dir: ${{ fromJson(needs.prepare.outputs.matrix) }}
 
     steps:
       - name: Checkout
@@ -72,19 +72,19 @@ jobs:
         run: |
           set -e
           npm ci
-          cd "${{ matrix.package-path }}"
+          cd "${{ matrix.dir }}"
           npm ci
 
       - name: Build
-        working-directory: ${{ matrix.package-path }}
+        working-directory: ${{ matrix.dir }}
         run: npm run build --if-present
 
       - name: Test
-        working-directory: ${{ matrix.package-path }}
+        working-directory: ${{ matrix.dir }}
         run: npm test --if-present
 
       - name: Publish
-        working-directory: ${{ matrix.package-path }}
+        working-directory: ${{ matrix.dir }}
         run: |
           set -e
           name=$(npm pkg get name | jq -r)
