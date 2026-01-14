@@ -1,7 +1,8 @@
 {
   "name": "@seahax/cli",
-  "version": "0.1.0-prerelease.0",
+  "version": "0.1.0",
   "private": false,
+  "description": "Small quality-of-life enhancements to the Node built-in `utils/parseArgs` utility, and a simple command/sub-command framework.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
