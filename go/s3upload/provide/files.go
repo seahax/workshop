@@ -26,6 +26,7 @@ func Files(root string, paths ...string) *FilesContent {
 	}
 }
 
+// Implements the [Content.PublishTo] method.
 func (f *FilesContent) PublishTo(publisher ContentPublisher) error {
 	root, err := os.OpenRoot(f.Root)
 

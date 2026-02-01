@@ -55,6 +55,7 @@ func DirectoryExclude(fn DirectoryFilterFn) DirectoryFilter {
 	return DirectoryFilter{Fn: fn, Include: false}
 }
 
+// Implements the [Content.PublishTo] method.
 func (d *DirectoryContent) PublishTo(publisher ContentPublisher) error {
 	root, err := os.OpenRoot(d.Root)
 

@@ -23,6 +23,7 @@ func Data(key string, data []byte) *DataContent {
 	}
 }
 
+// Implements the [Content.PublishTo] method.
 func (d *DataContent) PublishTo(publisher ContentPublisher) error {
 	return publisher.PutObject(&s3.PutObjectInput{
 		Key:  aws.String(d.Key),
