@@ -7,9 +7,9 @@
 .local
 node_modules
 dist
-lib
 out
 coverage
+packages/**/lib
 
 .DS_Store
 *.log
