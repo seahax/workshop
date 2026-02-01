@@ -19,6 +19,7 @@ type DirectoryContent struct {
 	Filters []DirectoryFilter
 }
 
+// Include or exclude files based on custom logic.
 type DirectoryFilter struct {
 	Fn      DirectoryFilterFn
 	Include bool
@@ -26,6 +27,8 @@ type DirectoryFilter struct {
 
 type DirectoryFilterFn = func(entry *DirectoryFilterEntry) bool
 
+// Extended [fs.DirEntry] with additional path information, for use in
+// directory filters.
 type DirectoryFilterEntry struct {
 	fs.DirEntry
 	// Absolute starting directory path.
@@ -42,10 +45,12 @@ func Directory(root string, filters ...DirectoryFilter) *DirectoryContent {
 	}
 }
 
+// Helper to create an include filter.
 func DirectoryInclude(fn DirectoryFilterFn) DirectoryFilter {
 	return DirectoryFilter{Fn: fn, Include: true}
 }
 
+// Helper to create an exclude filter.
 func DirectoryExclude(fn DirectoryFilterFn) DirectoryFilter {
 	return DirectoryFilter{Fn: fn, Include: false}
 }

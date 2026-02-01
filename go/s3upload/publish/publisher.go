@@ -35,6 +35,7 @@ type Uploader interface {
 	) (*manager.UploadOutput, error)
 }
 
+// Create a new [Publisher] instance.
 func NewPlublisher(uploader Uploader, bucket string, plugins ...Plugin) *Publisher {
 	publisher := &Publisher{Uploader: uploader, Bucket: bucket}
 

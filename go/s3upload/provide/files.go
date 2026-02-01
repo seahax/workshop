@@ -18,6 +18,7 @@ type FilesContent struct {
 	Paths []string
 }
 
+// Create a new [FilesContent] instance.
 func Files(root string, paths ...string) *FilesContent {
 	return &FilesContent{
 		Root:  root,

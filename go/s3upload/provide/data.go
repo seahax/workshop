@@ -15,6 +15,7 @@ type DataContent struct {
 	Data []byte
 }
 
+// Create a new [DataContent] instance.
 func Data(key string, data []byte) *DataContent {
 	return &DataContent{
 		Key:  key,
