@@ -1,6 +1,7 @@
 package provide
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -10,21 +11,22 @@ import (
 
 // [Content] that provides a limited set of files in a directory. S3 object keys
 // are the file paths relative to the directory.
-type Files struct {
+type FilesContent struct {
 	// The absolute path of the directory containing the files to upload.
 	Root string
 	// The list of file paths to upload, relative to the Root directory.
 	Paths []string
 }
 
-func (f *Files) PublishTo(publisher ContentPublisher) error {
-	absRoot, err := filepath.Abs(f.Root)
-
-	if err != nil {
-		return err
+func Files(root string, paths ...string) *FilesContent {
+	return &FilesContent{
+		Root:  root,
+		Paths: paths,
 	}
+}
 
-	root, err := os.OpenRoot(absRoot)
+func (f *FilesContent) PublishTo(publisher ContentPublisher) error {
+	root, err := os.OpenRoot(f.Root)
 
 	if err != nil {
 		return err
@@ -32,15 +34,27 @@ func (f *Files) PublishTo(publisher ContentPublisher) error {
 
 	defer root.Close()
 
-	for _, filePath := range f.Paths {
-		file, err := root.Open(filePath)
+	for _, relPath := range f.Paths {
+		file, err := root.Open(relPath)
 
 		if err != nil {
 			return err
 		}
 
+		defer file.Close()
+
+		info, err := file.Stat()
+
+		if err != nil {
+			return err
+		}
+
+		if !info.Mode().IsRegular() {
+			return fmt.Errorf("not a regular file: %s", relPath)
+		}
+
 		if err = publisher.PutObject(&s3.PutObjectInput{
-			Key:  aws.String(filepath.ToSlash(filePath)),
+			Key:  aws.String(filepath.ToSlash(relPath)),
 			Body: file,
 		}); err != nil {
 			return err

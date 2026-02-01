@@ -8,7 +8,7 @@ Yet another S3 uploader.
 go install seahax.com/go/s3upload
 
 s3upload \
-  -dir path/to/content \
+  -root path/to/content \
   -include '^/assets/' \
   -exclude '(^|/)\.' \
   -region us-east-1 \
@@ -49,34 +49,25 @@ func main() {
 
   client := s3.NewFromConfig(cfg)
   uploader := manager.NewUploader(client)
-  publisher := publish.Publisher{
-    Uploader: uploader,
-    Bucket: "my-bucket",
-    Plugins: []publish.Plugin{
-      publish.WithPrefix("my-prefix"),
-      publish.WithCacheControl("max-age=3600"),
-      publish.WithStorageClass(types.StorageClassIntelligentTiering),
-      publish.WithContentType(),
-      publish.WithPrint(),
-    },
-    DryRun: true,
-  }
+  publisher := publish.NewPublisher(uploader, "my-bucket",
+    publish.WithDryRun(true),
+    publish.WithPrefix("my-prefix"),
+    publish.WithCacheControl("max-age=3600"),
+    publish.WithStorageClass(types.StorageClassIntelligentTiering),
+    publish.WithContentType(),
+    publish.WithPrint(),
+  )
 
   includePattern := regexp.MustCompile(`^/assets/`)
   excludePattern := regexp.MustCompile(`(^|/)\.`)
-  content := provide.Directory{
-    Root: "path/to/content",
-    Include: []provide.DirectoryFilter{
-      func(entry *provide.DirectoryFilterEntry) bool {
-        return includePattern.MatchString(entry.Path)
-      },
-    },
-    Exclude: []provide.DirectoryFilter{
-      func(entry *provide.DirectoryFilterEntry) bool {
-        return excludePattern.MatchString(entry.Path)
-      },
-    },
-  }
+  content := provide.Directory("path/to/content",
+    provide.DirectoryInclude(func(entry *provide.DirectoryFilterEntry) bool {
+      return includePattern.MatchString(entry.Path)
+    }),
+    provide.DirectoryExclude(func(entry *provide.DirectoryFilterEntry) bool {
+      return excludePattern.MatchString(entry.Path)
+    }),
+  )
 
   err = publisher.Publish(content)
 

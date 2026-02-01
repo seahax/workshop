@@ -19,8 +19,11 @@ type Publisher struct {
 	Uploader Uploader
 	// Target S3 bucket name.
 	Bucket string
-	// Plugins to modify S3 object inputs before upload.
-	Plugins []Plugin
+	// Functions that modify S3 object inputs before upload.
+	//
+	// NOTE: Changing the [s3.PutObjectInput.Body] has no effect, because it is
+	// set after plugins are applied.
+	InputModifiers []func(input *s3.PutObjectInput) error
 }
 
 // Partial AWS SDK [manager.Uploader] interface.
@@ -30,6 +33,18 @@ type Uploader interface {
 		input *s3.PutObjectInput,
 		options ...func(*manager.Uploader),
 	) (*manager.UploadOutput, error)
+}
+
+func NewPlublisher(uploader Uploader, bucket string, plugins ...Plugin) *Publisher {
+	publisher := &Publisher{Uploader: uploader, Bucket: bucket}
+
+	for _, plugin := range plugins {
+		if plugin != nil {
+			plugin(publisher)
+		}
+	}
+
+	return publisher
 }
 
 // Publishes the given [provide.Content].
@@ -45,8 +60,8 @@ func (p *Publisher) PutObject(input *s3.PutObjectInput) error {
 		defer closer.Close()
 	}
 
-	for _, plugin := range p.Plugins {
-		err := plugin(input)
+	for _, modify := range p.InputModifiers {
+		err := modify(input)
 
 		if err != nil {
 			return err

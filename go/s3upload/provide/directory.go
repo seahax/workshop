@@ -4,7 +4,6 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"slices"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -12,14 +11,20 @@ import (
 
 // [Content] that provides all files in a directory, with optional filtering. S3
 // object keys are the file paths relative to the directory.
-type Directory struct {
+type DirectoryContent struct {
 	// The absolute path of the directory containing the files to upload.
 	Root string
-	// Filters to include files. If empty, all files are included by default.
-	Include []DirectoryFilter
-	// Filters to exclude files. Applied to files passing the Include filters.
-	Exclude []DirectoryFilter
+	// Filters to include or exclude files. If there are no include filters, then
+	// all files are included by default.
+	Filters []DirectoryFilter
 }
+
+type DirectoryFilter struct {
+	Fn      DirectoryFilterFn
+	Include bool
+}
+
+type DirectoryFilterFn = func(entry *DirectoryFilterEntry) bool
 
 type DirectoryFilterEntry struct {
 	fs.DirEntry
@@ -29,55 +34,73 @@ type DirectoryFilterEntry struct {
 	Path string
 }
 
-type DirectoryFilter = func(entry *DirectoryFilterEntry) bool
+// Create a new [DirectoryContent] instance.
+func Directory(root string, filters ...DirectoryFilter) *DirectoryContent {
+	return &DirectoryContent{
+		Root:    root,
+		Filters: filters,
+	}
+}
 
-func (d *Directory) PublishTo(publisher ContentPublisher) error {
-	absRoot, err := filepath.Abs(d.Root)
+func DirectoryInclude(fn DirectoryFilterFn) DirectoryFilter {
+	return DirectoryFilter{Fn: fn, Include: true}
+}
+
+func DirectoryExclude(fn DirectoryFilterFn) DirectoryFilter {
+	return DirectoryFilter{Fn: fn, Include: false}
+}
+
+func (d *DirectoryContent) PublishTo(publisher ContentPublisher) error {
+	root, err := os.OpenRoot(d.Root)
 
 	if err != nil {
 		return err
 	}
 
-	return filepath.WalkDir(absRoot, func(absPath string, dirent fs.DirEntry, err error) error {
+	defer root.Close()
+
+	return fs.WalkDir(root.FS(), ".", func(relPath string, dirent fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 
-		relPath, err := filepath.Rel(absRoot, absPath)
-
-		if relPath == "." || err != nil {
-			return err
-		}
-
-		entry := &DirectoryFilterEntry{DirEntry: dirent, Root: absRoot, Path: relPath}
-		included := len(d.Include) == 0 || slices.ContainsFunc(d.Include, func(filter DirectoryFilter) bool {
-			return filter(entry)
-		})
-		excluded := !included || slices.ContainsFunc(d.Exclude, func(filter DirectoryFilter) bool {
-			return filter(entry)
-		})
-
-		if excluded {
-			if dirent.IsDir() {
-				return fs.SkipDir
-			}
-
+		if !dirent.Type().IsRegular() {
+			// Skip everything but regular files.
 			return nil
 		}
 
-		if dirent.Type().IsRegular() {
-			body, err := os.Open(absPath)
+		hasIncludes := false
+		included := true // Include everything by default
+		entry := &DirectoryFilterEntry{DirEntry: dirent, Root: d.Root, Path: relPath}
 
-			if err != nil {
-				return err
+		for _, filter := range d.Filters {
+			if filter.Include && !hasIncludes {
+				hasIncludes = true
+				included = false // No default includes if there are explicit includes
 			}
 
-			return publisher.PutObject(&s3.PutObjectInput{
-				Key:  aws.String(filepath.ToSlash(relPath)),
-				Body: body,
-			})
+			if filter.Fn(entry) {
+				if filter.Include {
+					included = true
+				} else {
+					return nil // Return early on exclude
+				}
+			}
 		}
 
-		return nil
+		if !included {
+			return nil
+		}
+
+		body, err := root.Open(relPath)
+
+		if err != nil {
+			return err
+		}
+
+		return publisher.PutObject(&s3.PutObjectInput{
+			Key:  aws.String(filepath.ToSlash(relPath)),
+			Body: body,
+		})
 	})
 }
