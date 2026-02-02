@@ -2,31 +2,38 @@ package provide
 
 import (
 	"bytes"
-
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"io"
 )
 
-// [Content] from raw data (bytes).
-type DataContent struct {
+// Content that provides content from in-memory data.
+type DataContent[T []byte | func() (io.ReadCloser, error)] struct {
 	// S3 object key.
 	Key string
-	// Data bytes.
-	Data []byte
+	// Data as bytes or a function that opens and returns a reader.
+	Data T
 }
 
 // Create a new [DataContent] instance.
-func Data(key string, data []byte) *DataContent {
-	return &DataContent{
-		Key:  key,
-		Data: data,
-	}
+func Data[T []byte | func() (io.ReadCloser, error)](key string, data T) *DataContent[T] {
+	return &DataContent[T]{Key: key, Data: data}
 }
 
-// Implements the [Content.PublishTo] method.
-func (d *DataContent) PublishTo(publisher ContentPublisher) error {
-	return publisher.PutObject(&s3.PutObjectInput{
-		Key:  aws.String(d.Key),
-		Body: bytes.NewReader(d.Data),
-	})
+// Implements the [seahax.com/go/s3upload/publish.Content] interface.
+func (d *DataContent[T]) PublishTo(uploader Uploader) error {
+	var reader io.ReadCloser
+	var err error
+
+	if open, ok := any(d.Data).(func() (io.ReadCloser, error)); ok {
+		reader, err = open()
+	} else {
+		reader = io.NopCloser(bytes.NewReader(any(d.Data).([]byte)))
+	}
+
+	if err != nil {
+		return err
+	}
+
+	defer reader.Close()
+
+	return uploader.Upload(d.Key, reader)
 }

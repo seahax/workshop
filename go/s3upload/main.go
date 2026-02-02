@@ -93,7 +93,7 @@ func main() {
 
 	client := s3.NewFromConfig(cfg)
 	uploader := manager.NewUploader(client)
-	publisher := publish.NewPlublisher(uploader, bucket,
+	publisher := publish.NewPublisher(uploader, bucket,
 		publish.WithDryRun(dryRun),
 		publish.WithPrefix(prefix),
 		publish.WithStorageClass(storageClass),
@@ -102,7 +102,7 @@ func main() {
 		publish.WithPrint(true),
 	)
 
-	var content provide.Content
+	var content publish.Content
 
 	if len(files) > 0 {
 		content = provide.Files(root, files...)

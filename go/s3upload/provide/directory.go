@@ -4,12 +4,9 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-// [Content] that provides all files in a directory, with optional filtering. S3
+// Content that provides all files in a directory, with optional filtering. S3
 // object keys are the file paths relative to the directory.
 type DirectoryContent struct {
 	// The absolute path of the directory containing the files to upload.
@@ -55,8 +52,8 @@ func DirectoryExclude(fn DirectoryFilterFn) DirectoryFilter {
 	return DirectoryFilter{Fn: fn, Include: false}
 }
 
-// Implements the [Content.PublishTo] method.
-func (d *DirectoryContent) PublishTo(publisher ContentPublisher) error {
+// Implements the [seahax.com/go/s3upload/publish.Content] interface.
+func (d *DirectoryContent) PublishTo(uploader Uploader) error {
 	root, err := os.OpenRoot(d.Root)
 
 	if err != nil {
@@ -104,9 +101,8 @@ func (d *DirectoryContent) PublishTo(publisher ContentPublisher) error {
 			return err
 		}
 
-		return publisher.PutObject(&s3.PutObjectInput{
-			Key:  aws.String(filepath.ToSlash(relPath)),
-			Body: body,
-		})
+		defer body.Close()
+		key := filepath.ToSlash(relPath)
+		return uploader.Upload(key, body)
 	})
 }
