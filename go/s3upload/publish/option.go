@@ -5,8 +5,8 @@ import (
 	"path"
 	"strings"
 
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go-v2/service/s3/types"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager/types"
 )
 
 // Modify the [uploader] instance.
@@ -35,7 +35,7 @@ func WithPrefix(prefix string) Option {
 	}
 
 	return func(u *Uploader) {
-		u.Middlewares = append(u.Middlewares, func(input *s3.PutObjectInput, next UploaderNext) error {
+		u.Middlewares = append(u.Middlewares, func(input *transfermanager.UploadObjectInput, next UploaderNext) error {
 			input.Key = toPtr(path.Join(prefix, fromPtr(input.Key)))
 			return next(input)
 		})
@@ -45,7 +45,7 @@ func WithPrefix(prefix string) Option {
 // Set S3 object Content-Type based on the key extension. No-op if already set.
 func WithContentType() Option {
 	return func(u *Uploader) {
-		u.Middlewares = append(u.Middlewares, func(input *s3.PutObjectInput, next UploaderNext) error {
+		u.Middlewares = append(u.Middlewares, func(input *transfermanager.UploadObjectInput, next UploaderNext) error {
 			if input.ContentType == nil {
 				ext := strings.ToLower(path.Ext(fromPtr(input.Key)))
 				input.ContentType = toPtr(ContentTypeByExtension(ext))
@@ -59,7 +59,7 @@ func WithContentType() Option {
 // Set S3 object Cache-Control. No-op if already set.
 func WithCacheControl[T ~string | func(key string) string](value T) Option {
 	return func(u *Uploader) {
-		u.Middlewares = append(u.Middlewares, func(input *s3.PutObjectInput, next UploaderNext) error {
+		u.Middlewares = append(u.Middlewares, func(input *transfermanager.UploadObjectInput, next UploaderNext) error {
 			if input.CacheControl == nil {
 				var cacheControl string
 
@@ -82,7 +82,7 @@ func WithCacheControl[T ~string | func(key string) string](value T) Option {
 // Set S3 object storage class. No-op if already set.
 func WithStorageClass[T ~string](storageClass T) Option {
 	return func(u *Uploader) {
-		u.Middlewares = append(u.Middlewares, func(input *s3.PutObjectInput, next UploaderNext) error {
+		u.Middlewares = append(u.Middlewares, func(input *transfermanager.UploadObjectInput, next UploaderNext) error {
 			if input.StorageClass == "" {
 				input.StorageClass = types.StorageClass(storageClass)
 			}

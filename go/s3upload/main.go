@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"seahax.com/go/s3upload/provide"
 	"seahax.com/go/s3upload/publish"
@@ -92,7 +92,7 @@ func main() {
 	assert(err == nil, err)
 
 	client := s3.NewFromConfig(cfg)
-	uploader := manager.NewUploader(client)
+	uploader := transfermanager.New(client)
 	publisher := publish.NewPublisher(uploader, bucket,
 		publish.WithDryRun(dryRun),
 		publish.WithPrefix(prefix),

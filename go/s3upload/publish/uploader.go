@@ -5,8 +5,7 @@ import (
 	"io"
 	"slices"
 
-	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager"
 )
 
 // Implementation of the [seahax.com/go/s3upload/provide.Uploader] interface.
@@ -32,10 +31,10 @@ type Uploader struct {
 // Middlware function that intercepts the [s3.PutObjectInput] before upload. It
 // can optionally modify the input, and then optionally call the next next
 // middleware in the chain.
-type UploaderMiddleware func(input *s3.PutObjectInput, next UploaderNext) error
+type UploaderMiddleware func(input *transfermanager.UploadObjectInput, next UploaderNext) error
 
 // Function that invokes the next middleware in the middleware chain.
-type UploaderNext func(input *s3.PutObjectInput) error
+type UploaderNext func(input *transfermanager.UploadObjectInput) error
 
 // Upload result information.
 type UploadOutput struct {
@@ -47,11 +46,11 @@ type UploadOutput struct {
 // Internal partial AWS SDK [manager.awsS3ManagerUploader] interface. Reduces
 // coupling to the AWS SDK so that future updates are easier.
 type awsS3ManagerUploader interface {
-	Upload(
+	UploadObject(
 		ctx context.Context,
-		input *s3.PutObjectInput,
-		options ...func(*manager.Uploader),
-	) (*manager.UploadOutput, error)
+		input *transfermanager.UploadObjectInput,
+		options ...func(*transfermanager.Options),
+	) (*transfermanager.UploadObjectOutput, error)
 }
 
 // Upload a key/body pair to S3.
@@ -66,12 +65,12 @@ func (u *Uploader) Upload(key string, body io.Reader) error {
 	// as the next function.
 	for _, middleware := range slices.Backward(u.Middlewares) {
 		next := doUpload
-		doUpload = func(input *s3.PutObjectInput) error {
+		doUpload = func(input *transfermanager.UploadObjectInput) error {
 			return middleware(input, next)
 		}
 	}
 
-	return doUpload(&s3.PutObjectInput{Key: toPtr(key), Body: body})
+	return doUpload(&transfermanager.UploadObjectInput{Key: toPtr(key), Body: body})
 }
 
 // Final link in the middleware chain that performs the actual upload.
@@ -79,7 +78,7 @@ func (u *Uploader) Upload(key string, body io.Reader) error {
 //   - Sets the bucket name to avoid middleware redirecting uploads to a different bucket.
 //   - Enforces the DryRun setting.
 //   - Runs Uploaded callbacks after a successful uploads.
-func (u *Uploader) doUpload(input *s3.PutObjectInput) error {
+func (u *Uploader) doUpload(input *transfermanager.UploadObjectInput) error {
 	input.Bucket = toPtr(u.Bucket)
 
 	var output *UploadOutput
@@ -88,7 +87,7 @@ func (u *Uploader) doUpload(input *s3.PutObjectInput) error {
 	if u.DryRun {
 		output = &UploadOutput{Key: fromPtr(input.Key)}
 	} else {
-		uploaderOutput, uploaderErr := u.AwsS3ManagerUploader.Upload(context.TODO(), input)
+		uploaderOutput, uploaderErr := u.AwsS3ManagerUploader.UploadObject(context.TODO(), input)
 
 		if uploaderErr == nil {
 			output = &UploadOutput{

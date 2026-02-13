@@ -31,9 +31,9 @@ import (
   "os"
   "regexp"
 
-  "github.com/aws/aws-sdk-go-v2/config"
-  "github.com/aws/aws-sdk-go-v2/feature/s3/manager"
-  "github.com/aws/aws-sdk-go-v2/feature/s3"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
   "seahax.com/go/s3upload/publish"
   "seahax.com/go/s3upload/provide"
 )
@@ -48,7 +48,7 @@ func main() {
   }
 
   client := s3.NewFromConfig(cfg)
-  uploader := manager.NewUploader(client)
+  uploader := transfermanager.NewUploader(client)
   publisher := publish.NewPublisher(uploader, "my-bucket",
     publish.WithDryRun(true),
     publish.WithPrefix("my-prefix"),
