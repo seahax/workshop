@@ -4,10 +4,7 @@ experimental = true
 [tools]
 npm = "latest"
 node = "lts"
-'npm:@anthropic-ai/claude-code' = "latest"
-
-go = "latest"
-"go:github.com/766b/go-outliner" = "latest"
+go = "1.26.0"
 
 [env]
 _.path = ["{{config_root}}/node_modules/.bin"]
