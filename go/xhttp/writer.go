@@ -9,7 +9,7 @@ import (
 // provided [io.Writer]. Useful for adding compression or other transformations
 // to response data.
 func WithWriter(writer http.ResponseWriter, innerWriter io.Writer) http.ResponseWriter {
-	return &writerx{
+	return &writerWrapper{
 		ResponseWriter: writer,
 		writer:         innerWriter,
 	}
@@ -18,21 +18,21 @@ func WithWriter(writer http.ResponseWriter, innerWriter io.Writer) http.Response
 // Get a new [net/http.ResponseWriter] that invokes the provided callback just
 // before the WriteHeader method is called for the first time.
 func WithBeforeWriteCallback(writer http.ResponseWriter, callback func(status int)) http.ResponseWriter {
-	return &writerx{
+	return &writerWrapper{
 		ResponseWriter: writer,
 		writer:         writer,
 		writeCallback:  callback,
 	}
 }
 
-type writerx struct {
+type writerWrapper struct {
 	http.ResponseWriter
 	written       bool
 	writer        io.Writer
 	writeCallback func(status int)
 }
 
-func (w *writerx) Write(data []byte) (int, error) {
+func (w *writerWrapper) Write(data []byte) (int, error) {
 	if !w.written {
 		w.WriteHeader(http.StatusOK)
 	}
@@ -40,7 +40,7 @@ func (w *writerx) Write(data []byte) (int, error) {
 	return w.writer.Write(data)
 }
 
-func (w *writerx) WriteHeader(statusCode int) {
+func (w *writerWrapper) WriteHeader(statusCode int) {
 	if !w.written {
 		w.written = true
 

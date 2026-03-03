@@ -8,7 +8,7 @@ import (
 )
 
 // Write a status code with the default status text for the code.
-func Error(w http.ResponseWriter, status int) {
+func WriteError(w http.ResponseWriter, status int) {
 	http.Error(w, http.StatusText(status), status)
 }
 

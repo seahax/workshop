@@ -33,6 +33,9 @@ const (
 	CompressMinSizeDefault = 1024
 )
 
+// Get the default compression middleware. All options are defaulted.
+var Default = New(Options{})
+
 // Create a Middleware that compresses response automatically based on content
 // encoding, type, and length.
 func New(options Options) xhttp.Middleware {
@@ -75,17 +78,6 @@ func New(options Options) xhttp.Middleware {
 
 		next(writer, request)
 	}
-}
-
-var defaultMiddleware xhttp.Middleware
-
-func init() {
-	defaultMiddleware = New(Options{})
-}
-
-// Get the default compression middleware. All options are defaulted.
-func Default() xhttp.Middleware {
-	return defaultMiddleware
 }
 
 func isCompressible(request *http.Request, minSize int) bool {

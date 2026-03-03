@@ -65,23 +65,15 @@ const (
 	DefaultTotalTimeAttr      = "total_time"
 )
 
+// Default logging middleware. All options are defaulted.
+var Default = New(Options{})
+
 // Create a middleware that attaches a logger to incoming HTTP requests and
 // writes access logs for each request.
 func New(options Options) xhttp.Middleware {
 	return func(writer http.ResponseWriter, request *http.Request, next http.HandlerFunc) {
 		handle(&options, writer, request, next)
 	}
-}
-
-var defaultMiddleware xhttp.Middleware
-
-func init() {
-	defaultMiddleware = New(Options{})
-}
-
-// Get the default logging middleware. All options are defaulted.
-func Default() xhttp.Middleware {
-	return defaultMiddleware
 }
 
 func handle(options *Options, writer http.ResponseWriter, request *http.Request, next http.HandlerFunc) {

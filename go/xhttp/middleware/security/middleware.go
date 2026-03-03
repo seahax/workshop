@@ -121,6 +121,9 @@ const (
 	DefaultXXSSProtection                = "0"
 )
 
+// Default security middleware. All options are defaulted.
+var Default = New(Options{})
+
 // Create a Middleware that adds security-related HTTP headers to responses.
 func New(options Options) xhttp.Middleware {
 	return func(writer http.ResponseWriter, request *http.Request, next http.HandlerFunc) {
@@ -130,17 +133,6 @@ func New(options Options) xhttp.Middleware {
 
 		next(writer, request)
 	}
-}
-
-var defaultMiddleware xhttp.Middleware
-
-func init() {
-	defaultMiddleware = New(Options{})
-}
-
-// Get the default security middleware. All options are defaulted.
-func Default() xhttp.Middleware {
-	return defaultMiddleware
 }
 
 func updateHeaders(options *Options, header http.Header) {
