@@ -8,8 +8,14 @@ import (
 // Map of routes with pattern keys and [http.Handler] values.
 type Routes map[string](http.Handler)
 
-func NewRoutes() Routes {
-	return Routes{}
+func NewRoutes(values ...Routes) Routes {
+	routes := Routes{}
+
+	for _, value := range values {
+		routes.Add(value)
+	}
+
+	return routes
 }
 
 // Copy input routes to this [Add] map.
