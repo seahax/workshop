@@ -1,4 +1,4 @@
-package xsecure
+package security
 
 import (
 	"net/http"

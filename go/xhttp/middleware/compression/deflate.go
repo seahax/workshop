@@ -1,4 +1,4 @@
-package xcompress
+package compression
 
 import (
 	"compress/flate"
