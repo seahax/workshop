@@ -79,15 +79,16 @@ func NotPanic(t *testing.T, callback func()) {
 
 	callback()
 }
-
-func isRegexpMatch[T ~string](got T, want string) bool {
-	re := regexp.MustCompile(want)
-	return re.MatchString(string(got))
-}
-
-func isEqual(got, want any) bool {
+func isEqual[T any](got, want T) bool {
 	if isNil(got) && isNil(want) {
 		return true
+	}
+
+	if reflect.TypeFor[T]().Kind() == reflect.Slice {
+		if reflect.ValueOf(got).Len() == 0 && reflect.ValueOf(want).Len() == 0 {
+			// To empty slices (nil or not) are considered equal
+			return true
+		}
 	}
 
 	return reflect.DeepEqual(got, want)
@@ -101,6 +102,11 @@ func isNil(got any) (result bool) {
 	}()
 
 	return reflect.ValueOf(got).IsNil()
+}
+
+func isRegexpMatch[T ~string](got T, want string) bool {
+	re := regexp.MustCompile(want)
+	return re.MatchString(string(got))
 }
 
 func fatalf(t *testing.T, got any, format string, want ...any) {
