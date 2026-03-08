@@ -2,8 +2,10 @@ package assert
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"regexp"
+	"strings"
 	"testing"
 )
 
@@ -11,7 +13,7 @@ func Equal[T any](t *testing.T, got T, want T) {
 	t.Helper()
 
 	if !isEqual(got, want) {
-		t.Fatalf("\nGOT:  %v\nWANT: %v\n", got, want)
+		fatalf(t, got, "%v", want)
 	}
 }
 
@@ -19,7 +21,7 @@ func NotEqual[T any](t *testing.T, got T, want T) {
 	t.Helper()
 
 	if isEqual(got, want) {
-		t.Fatalf("\nGOT:  %v\nWANT: not an equal value\n", got)
+		fatalf(t, got, "not an equal value")
 	}
 }
 
@@ -27,7 +29,7 @@ func RegexpMatch[T ~string](t *testing.T, got T, want string) {
 	t.Helper()
 
 	if !isRegexpMatch(got, want) {
-		t.Fatalf("\nGOT:  %v\nWANT: to match regexp %q\n", got, want)
+		fatalf(t, got, "to match regexp %q", want)
 	}
 }
 
@@ -35,7 +37,7 @@ func NotRegexpMatch[T ~string](t *testing.T, got T, want string) {
 	t.Helper()
 
 	if isRegexpMatch(got, want) {
-		t.Fatalf("\nGOT:  %v\nWANT: not not match regexp %q\n", got, want)
+		fatalf(t, got, "not not match regexp %q", want)
 	}
 }
 
@@ -43,7 +45,7 @@ func ErrorIs(t *testing.T, got error, want error) {
 	t.Helper()
 
 	if !errors.Is(got, want) {
-		t.Fatalf("\nGOT:  %v\nWANT: %v\n", got, want)
+		fatalf(t, got, "%v", want)
 	}
 }
 
@@ -51,7 +53,7 @@ func ErrorAs[T error](t *testing.T, got error) {
 	t.Helper()
 
 	if ok := errors.As(got, new(T)); !ok {
-		t.Fatalf("\nGOT:  %v\nWANT: %v\n", reflect.TypeOf(got), reflect.TypeFor[T]())
+		fatalf(t, reflect.TypeOf(got), "%v", reflect.TypeFor[T]())
 	}
 }
 
@@ -63,7 +65,7 @@ func Panic(t *testing.T, callback func()) {
 	}()
 
 	callback()
-	t.Fatalf("\nGOT:  no panic\nWANT: panic\n")
+	fatalf(t, "no panic", "panic")
 }
 
 func NotPanic(t *testing.T, callback func()) {
@@ -71,7 +73,7 @@ func NotPanic(t *testing.T, callback func()) {
 
 	defer func() {
 		if err := recover(); err != nil {
-			t.Fatalf("\nGOT:  %v\nWANT: no panic\n", err)
+			fatalf(t, err, "no panic")
 		}
 	}()
 
@@ -99,4 +101,19 @@ func isNil(got any) (result bool) {
 	}()
 
 	return reflect.ValueOf(got).IsNil()
+}
+
+func fatalf(t *testing.T, got any, format string, want ...any) {
+	gotString := fmt.Sprintf("%v", got)
+	wantString := fmt.Sprintf(format, want...)
+
+	if strings.Contains(gotString, "\n") {
+		gotString = "\n" + gotString
+	}
+
+	if strings.Contains(wantString, "\n") {
+		wantString = "\n" + wantString
+	}
+
+	t.Fatalf("\nGOT:  %s\nWANT: %s\n", gotString, wantString)
 }
