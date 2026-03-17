@@ -1,1 +1,1 @@
-Parse and validate environment variables.
+Decode, validate, and bind environment variables.
