@@ -3,12 +3,17 @@ package command
 // Error returned by [Command.Run] and [Command.RunArgs].
 type Error struct {
 	error
+	command        CommandImmutable
 	IsParseFailure bool
 }
 
 // Create a new [Error].
 func NewError(err error, isParseFailure bool) *Error {
 	return &Error{error: err, IsParseFailure: isParseFailure}
+}
+
+func (e *Error) Command() CommandImmutable {
+	return e.command
 }
 
 // Unwrap the error to get the original error (ie. the cause).

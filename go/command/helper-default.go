@@ -62,15 +62,17 @@ var HelperDefault Helper = Help(func(command CommandImmutable) string {
 
 	if !hasUsage {
 		if hasOptions && hasArguments {
-			b.WriteUsage(fmt.Sprintf("Usage: %s <options> <arguments>", command.Name()))
+			b.WriteUsage(fmt.Sprintf("Usage: %s <options> <arguments>", command.Fullname()))
 		} else if hasOptions {
-			b.WriteUsage(fmt.Sprintf("Usage: %s <options>", command.Name()))
+			b.WriteUsage(fmt.Sprintf("Usage: %s <options>", command.Fullname()))
 		} else if hasArguments {
-			b.WriteUsage(fmt.Sprintf("Usage: %s <arguments>", command.Name()))
+			b.WriteUsage(fmt.Sprintf("Usage: %s <arguments>", command.Fullname()))
+		} else {
+			b.WriteUsage(fmt.Sprintf("Usage: %s", command.Fullname()))
 		}
 
 		if hasCommands {
-			b.WriteUsage(fmt.Sprintf("Usage: %s <command> ...", command.Name()))
+			b.WriteUsage(fmt.Sprintf("Usage: %s <command> ...", command.Fullname()))
 		}
 	}
 

@@ -1,6 +1,8 @@
 package command
 
 import (
+	"errors"
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -13,6 +15,7 @@ import (
 // help texts, etc.
 type Command[T any] struct {
 	action func(opts *T) error
+	exit   func(code int)
 	parent CommandImmutable
 
 	name        string
@@ -49,19 +52,6 @@ func New[T any](name string, summary string, action func(opts *T) error, modifie
 	return cmd
 }
 
-// Get command help text.
-func (c Command[T]) String() string {
-	helper := shorthand.Coalesce(c.helper, HelperDefault)
-	return helper.Help(c)
-}
-
-// Print command help text to the output writer.
-func (c Command[T]) PrintHelp() {
-	if help := c.String(); help != "" {
-		fmt.Fprintln(c.Output(), help)
-	}
-}
-
 // Run the command with the process arguments.
 func (c Command[T]) Run() *Error {
 	return c.RunArgs(os.Args[1:])
@@ -83,17 +73,22 @@ func (c Command[T]) RunArgs(args []string) *Error {
 	parsedPtr, err := parser.Parse(args)
 
 	if err != nil {
-		return NewError(err, true)
+		return &Error{error: err, command: c, IsParseFailure: true}
 	}
 
 	validator := shorthand.Coalesce(c.validator, PlaygroundValidator)
 
 	if err := validator.Validate(parsedPtr); err != nil {
-		return NewError(err, true)
+		return &Error{error: err, command: c, IsParseFailure: true}
 	}
 
 	if err := c.action(parsedPtr.(*T)); err != nil {
-		return NewError(err, false)
+		if err, ok := err.(*Error); ok {
+			err.command = c
+			return err
+		}
+
+		return &Error{error: err, command: c, IsParseFailure: false}
 	}
 
 	return nil
@@ -108,21 +103,30 @@ func (c Command[T]) RunAndExit() {
 // Run the command with the provided arguments and exit with an appropriate
 // status code.
 func (c Command[T]) RunArgsAndExit(args []string) {
+	exit := shorthand.Coalesce(c.exit, os.Exit)
+
 	if err := c.RunArgs(args); err != nil {
 		if err.IsParseFailure {
-			c.PrintHelp()
+			err.command.PrintHelp()
+		}
+
+		if errors.Is(err, flag.ErrHelp) {
+			exit(0)
+			return
 		}
 
 		fmt.Fprintln(c.Output(), err.Error())
 
 		if err.IsParseFailure {
-			os.Exit(1)
-		} else {
-			os.Exit(2)
+			exit(1)
+			return
 		}
+
+		exit(2)
+		return
 	}
 
-	os.Exit(0)
+	exit(0)
 }
 
 // Run the command as a subcommand, inheriting the parent command's output

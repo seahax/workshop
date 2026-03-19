@@ -1,6 +1,7 @@
 package command
 
 import (
+	"bytes"
 	"testing"
 
 	"seahax.com/go/assert"
@@ -142,6 +143,57 @@ func TestHelp(t *testing.T) {
 	|       A subcommand
 	|
 	| The end.
+	|
+	`))
+}
+
+func TestSubcommandHelp(t *testing.T) {
+	code := -1
+	output := &bytes.Buffer{}
+
+	cmd := Namespace("command", "",
+		New("subcommand", "Hello world!", func(opts *struct{}) error {
+			return nil
+		}),
+	)
+	cmd.exit = func(newCode int) {
+		code = newCode
+	}
+	cmd.output = output
+	cmd.RunArgsAndExit([]string{"subcommand", "--help"})
+
+	assert.Equal(t, code, 0)
+	assert.Equal(t, output.String(), shorthand.Multiline(`
+	| Usage: command subcommand
+	|
+	| Hello world!
+	|
+	|
+	`))
+}
+
+func TestSubcommandInvalid(t *testing.T) {
+	code := -1
+	output := &bytes.Buffer{}
+
+	cmd := Namespace("command", "",
+		New("subcommand", "Hello world!", func(opts *struct{}) error {
+			return nil
+		}),
+	)
+	cmd.exit = func(newCode int) {
+		code = newCode
+	}
+	cmd.output = output
+	cmd.RunArgsAndExit([]string{"subcommand", "extra"})
+
+	assert.Equal(t, code, 1)
+	assert.Equal(t, output.String(), shorthand.Multiline(`
+	| Usage: command subcommand
+	|
+	| Hello world!
+	|
+	| too many arguments
 	|
 	`))
 }

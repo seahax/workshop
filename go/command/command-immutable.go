@@ -21,6 +21,8 @@ type CommandImmutable interface {
 	Prologue() iter.Seq[string]
 	Epilogue() iter.Seq[string]
 	Subcommands() iter.Seq[CommandImmutable]
+	PrintHelp()
+	String() string
 	Output() io.Writer
 	Helper() Helper
 	Decoder() Decoder
@@ -80,9 +82,26 @@ func (c Command[T]) Subcommands() iter.Seq[CommandImmutable] {
 	}
 }
 
+// Get command help text.
+func (c Command[T]) String() string {
+	helper := shorthand.Coalesce(c.helper, HelperDefault)
+	return helper.Help(c)
+}
+
+// Print command help text to the output writer.
+func (c Command[T]) PrintHelp() {
+	if help := c.String(); help != "" {
+		fmt.Fprintln(c.Output(), help)
+	}
+}
+
 // Get the non-nil Output writer, defaulting to [os.Stderr] if no writer is
 // explicitly set.
 func (c Command[T]) Output() io.Writer {
+	if c.parent != nil {
+		return c.parent.Output()
+	}
+
 	return shorthand.Coalesce[io.Writer](c.output, os.Stderr)
 }
 
