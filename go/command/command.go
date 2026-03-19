@@ -49,14 +49,6 @@ func New[T any](name string, summary string, action func(opts *T) error, modifie
 	return cmd
 }
 
-// Create a new [Command] that does not have an action and requires a
-// subcommand.
-func NewNamespace(name string, summary string, modifiers ...Modifier) Subcommand {
-	return New(name, summary, func(opts *struct{}) error {
-		return NewError(fmt.Errorf("missing required subcommand"), true)
-	}, modifiers...)
-}
-
 // Get command help text.
 func (c Command[T]) String() string {
 	helper := shorthand.Coalesce(c.helper, HelperDefault)
