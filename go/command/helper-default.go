@@ -3,19 +3,22 @@ package command
 import "fmt"
 
 // Default help string factory.
-var HelperDefault Helper = Help(func(command CommandDescription) string {
+var HelperDefault Helper = Help(func(command CommandImmutable) string {
 	b := NewHelperBuilder()
 	hasOptions := false
 	hasArguments := false
 	hasCommands := false
 
-	b.WriteParagraph(command.Summary)
-	b.WriteParagraph(command.Prologue)
+	b.WriteParagraph(command.Summary())
+
+	for prologue := range command.Prologue() {
+		b.WriteParagraph(prologue)
+	}
 
 	b.WriteListHeading("Options:")
 	positionals := []Field{}
 
-	for field := range FieldIterator(command.Type) {
+	for field := range FieldIterator(command.Type()) {
 		help := field.Help()
 
 		if help == "" {
@@ -41,31 +44,39 @@ var HelperDefault Helper = Help(func(command CommandDescription) string {
 
 	b.WriteListHeading("Commands:")
 
-	for _, subcommand := range command.Subcommands {
-		desc := subcommand.Describe()
-		if desc.Summary != "" {
+	for subcommand := range command.Subcommands() {
+		summary := subcommand.Summary()
+
+		if summary != "" {
 			hasCommands = true
-			b.WriteListItem(desc.Name, desc.Summary)
+			b.WriteListItem(subcommand.Name(), summary)
 		}
 	}
 
-	if command.Usage == "" {
+	hasUsage := false
+
+	for usage := range command.Usage() {
+		hasUsage = true
+		b.WriteUsage(usage)
+	}
+
+	if !hasUsage {
 		if hasOptions && hasArguments {
-			b.WriteUsage(fmt.Sprintf("Usage: %s <options> <arguments>", command.Name))
+			b.WriteUsage(fmt.Sprintf("Usage: %s <options> <arguments>", command.Name()))
 		} else if hasOptions {
-			b.WriteUsage(fmt.Sprintf("Usage: %s <options>", command.Name))
+			b.WriteUsage(fmt.Sprintf("Usage: %s <options>", command.Name()))
 		} else if hasArguments {
-			b.WriteUsage(fmt.Sprintf("Usage: %s <arguments>", command.Name))
+			b.WriteUsage(fmt.Sprintf("Usage: %s <arguments>", command.Name()))
 		}
 
 		if hasCommands {
-			b.WriteUsage(fmt.Sprintf("Usage: %s <command> ...", command.Name))
+			b.WriteUsage(fmt.Sprintf("Usage: %s <command> ...", command.Name()))
 		}
-	} else {
-		b.WriteUsage(command.Usage)
 	}
 
-	b.WriteParagraph(command.Epilogue)
+	for epilogue := range command.Epilogue() {
+		b.WriteParagraph(epilogue)
+	}
 
 	return b.String()
 })

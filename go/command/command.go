@@ -12,64 +12,62 @@ import (
 // Command definition including the struct type, action to run, subcommands,
 // help texts, etc.
 type Command[T any] struct {
-	parentFullname string
+	action func(opts *T) error
+	parent CommandImmutable
 
-	Action      func(opts *T) error
-	Name        string
-	Usage       string
-	Summary     string
-	Prologue    string
-	Epilogue    string
-	Subcommands []Subcommand
+	name        string
+	summary     string
+	usage       []string
+	prologue    []string
+	epilogue    []string
+	subcommands []Subcommand
 
-	Helper    Helper
-	Decoder   Decoder
-	Validator Validator
-	Output    io.Writer
+	output    io.Writer
+	helper    Helper
+	decoder   Decoder
+	validator Validator
 }
 
 // Subcommand interface. All commands are also inherently subcommands.
 type Subcommand interface {
-	Describe() CommandDescription
-	RunAsSubcommand(output io.Writer, parentFullname string, args []string) *Error
+	CommandImmutable
+	RunAsSubcommand(parent CommandImmutable, args []string) *Error
 }
 
 // Create a new [Command].
-func New[T any](name string, summary string, action func(opts *T) error, subcommands ...Subcommand) Command[T] {
-	return Command[T]{
-		Name:        name,
-		Summary:     summary,
-		Action:      action,
-		Subcommands: subcommands,
+func New[T any](name string, summary string, action func(opts *T) error, modifiers ...Modifier) Command[T] {
+	cmd := Command[T]{
+		name:    name,
+		summary: summary,
+		action:  action,
 	}
+
+	for _, modifier := range modifiers {
+		modifier.Modify(&cmd)
+	}
+
+	return cmd
 }
 
-// Full name of the command, including all parent commands.
-func (c Command[T]) Fullname() string {
-	if c.parentFullname != "" {
-		return fmt.Sprintf("%s %s", c.parentFullname, c.Name)
-	}
-
-	return c.Name
+// Create a new [Command] that does not have an action and requires a
+// subcommand.
+func NewNamespace(name string, summary string, modifiers ...Modifier) Subcommand {
+	return New(name, summary, func(opts *struct{}) error {
+		return NewError(fmt.Errorf("missing required subcommand"), true)
+	}, modifiers...)
 }
 
 // Get command help text.
 func (c Command[T]) String() string {
-	helper := shorthand.Coalesce(c.Helper, HelperDefault)
-	return helper.Help(c.Describe())
+	helper := shorthand.Coalesce(c.helper, HelperDefault)
+	return helper.Help(c)
 }
 
 // Print command help text to the output writer.
 func (c Command[T]) PrintHelp() {
 	if help := c.String(); help != "" {
-		fmt.Fprintln(c.output(), help)
+		fmt.Fprintln(c.Output(), help)
 	}
-}
-
-// Return a command description struct for the current command. This is used to
-// generate help text.
-func (c Command[T]) Describe() CommandDescription {
-	return NewCommandDescription(c)
 }
 
 // Run the command with the process arguments.
@@ -80,15 +78,15 @@ func (c Command[T]) Run() *Error {
 // Run the command with the provided arguments.
 func (c Command[T]) RunArgs(args []string) *Error {
 	if len(args) > 0 {
-		for _, subcommand := range c.Subcommands {
-			if subcommand.Describe().Name == args[0] {
-				return subcommand.RunAsSubcommand(c.output(), c.Fullname(), args[1:])
+		for _, subcommand := range c.subcommands {
+			if subcommand.Name() == args[0] {
+				return subcommand.RunAsSubcommand(c, args[1:])
 			}
 		}
 	}
 
 	structType := reflect.TypeFor[T]()
-	decoder := shorthand.Coalesce(c.Decoder, DecoderDefault)
+	decoder := shorthand.Coalesce(c.decoder, DecoderDefault)
 	parser := NewParser(structType, decoder)
 	parsedPtr, err := parser.Parse(args)
 
@@ -96,13 +94,13 @@ func (c Command[T]) RunArgs(args []string) *Error {
 		return NewError(err, true)
 	}
 
-	validator := shorthand.Coalesce(c.Validator, ValidatorDefault)
+	validator := shorthand.Coalesce(c.validator, PlaygroundValidator)
 
 	if err := validator.Validate(parsedPtr); err != nil {
 		return NewError(err, true)
 	}
 
-	if err := c.Action(parsedPtr.(*T)); err != nil {
+	if err := c.action(parsedPtr.(*T)); err != nil {
 		return NewError(err, false)
 	}
 
@@ -123,7 +121,7 @@ func (c Command[T]) RunArgsAndExit(args []string) {
 			c.PrintHelp()
 		}
 
-		fmt.Fprintln(c.output(), err.Error())
+		fmt.Fprintln(c.Output(), err.Error())
 
 		if err.IsParseFailure {
 			os.Exit(1)
@@ -137,36 +135,34 @@ func (c Command[T]) RunArgsAndExit(args []string) {
 
 // Run the command as a subcommand, inheriting the parent command's output
 // writer and name.
-func (c Command[T]) RunAsSubcommand(output io.Writer, parentFullname string, args []string) *Error {
-	c.parentFullname = parentFullname
-	c.Output = output
+func (c Command[T]) RunAsSubcommand(parent CommandImmutable, args []string) *Error {
+	c.parent = parent
 	return c.RunArgs(args)
 }
 
-// Get the non-nil output writer, defaulting to [os.Stderr] if no writer is
-// explicitly set.
-func (c Command[T]) output() io.Writer {
-	return shorthand.Coalesce[io.Writer](c.Output, os.Stderr)
+// Add this command as a subcommand to the provided parent command.
+func (c Command[T]) Modify(parent CommandMutable) {
+	parent.AddSubcommand(c)
 }
 
 // Run a command with the process arguments.
-func Run[T any](name string, description string, action func(opts *T) error, subcommands ...Subcommand) *Error {
-	return New(name, description, action, subcommands...).Run()
+func Run[T any](name string, description string, action func(opts *T) error, modifiers ...Modifier) *Error {
+	return New(name, description, action, modifiers...).Run()
 }
 
 // Run a command with the provided arguments.
-func RunArgs[T any](name string, description string, action func(opts *T) error, args []string, subcommands ...Subcommand) *Error {
-	return New(name, description, action, subcommands...).RunArgs(args)
+func RunArgs[T any](name string, description string, action func(opts *T) error, args []string, modifiers ...Modifier) *Error {
+	return New(name, description, action, modifiers...).RunArgs(args)
 }
 
 // Run a command with the process arguments and exit with an appropriate status
 // code.
-func RunAndExit[T any](name string, description string, action func(opts *T) error, subcommands ...Subcommand) {
-	New(name, description, action, subcommands...).RunAndExit()
+func RunAndExit[T any](name string, description string, action func(opts *T) error, modifiers ...Modifier) {
+	New(name, description, action, modifiers...).RunAndExit()
 }
 
 // Run a command with the provided arguments and exit with an appropriate
 // status code.
-func RunArgsAndExit[T any](name string, description string, action func(opts *T) error, args []string, subcommands ...Subcommand) {
-	New(name, description, action, subcommands...).RunArgsAndExit(args)
+func RunArgsAndExit[T any](name string, description string, action func(opts *T) error, args []string, modifiers ...Modifier) {
+	New(name, description, action, modifiers...).RunArgsAndExit(args)
 }

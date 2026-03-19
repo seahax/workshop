@@ -109,12 +109,13 @@ func TestHelp(t *testing.T) {
 		func(opts *Opts) error {
 			return nil
 		},
+		Modify(func(command CommandMutable) {
+			command.AddEpilogue("The end.")
+		}),
 		New("subcommand", "A subcommand", func(opts *struct{}) error {
 			return nil
 		}),
 	)
-
-	cmd.Epilogue = "The end."
 
 	assert.Equal(t, cmd.String(), shorthand.Multiline(`
 	| Usage: test <options> <arguments>

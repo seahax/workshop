@@ -15,6 +15,10 @@ func NewHelperBuilder() HelperBuilder {
 	return HelperBuilder{}
 }
 
+func (h *HelperBuilder) HasUsage() bool {
+	return h.ub.Len() > 0
+}
+
 // Write a usage line.
 func (h *HelperBuilder) WriteUsage(s string) {
 	if s == "" {
