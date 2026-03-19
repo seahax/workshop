@@ -110,6 +110,8 @@ func isRegexpMatch[T ~string](got T, want string) bool {
 }
 
 func fatalf(t *testing.T, got any, format string, want ...any) {
+	t.Helper()
+
 	gotString := fmt.Sprintf("%v", got)
 	wantString := fmt.Sprintf(format, want...)
 
