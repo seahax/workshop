@@ -53,27 +53,26 @@ var HelperDefault Helper = Help(func(command CommandImmutable) string {
 		}
 	}
 
-	hasUsage := false
-
 	for usage := range command.Usage() {
-		hasUsage = true
 		b.WriteUsage(usage)
 	}
 
-	if !hasUsage {
+	if !b.HasUsage() {
 		if hasOptions && hasArguments {
 			b.WriteUsage(fmt.Sprintf("Usage: %s <options> <arguments>", command.Fullname()))
 		} else if hasOptions {
 			b.WriteUsage(fmt.Sprintf("Usage: %s <options>", command.Fullname()))
 		} else if hasArguments {
 			b.WriteUsage(fmt.Sprintf("Usage: %s <arguments>", command.Fullname()))
-		} else {
-			b.WriteUsage(fmt.Sprintf("Usage: %s", command.Fullname()))
 		}
 
 		if hasCommands {
 			b.WriteUsage(fmt.Sprintf("Usage: %s <command> ...", command.Fullname()))
 		}
+	}
+
+	if !b.HasUsage() {
+		b.WriteUsage(fmt.Sprintf("Usage: %s", command.Fullname()))
 	}
 
 	for epilogue := range command.Epilogue() {

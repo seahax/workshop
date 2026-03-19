@@ -207,3 +207,14 @@ func TestNamespaceSubcommandMismatch(t *testing.T) {
 	err = cmd.RunArgs([]string{})
 	assert.Equal(t, err.Error(), "missing required subcommand")
 }
+
+func TestMinimalCommandHelp(t *testing.T) {
+	cmd := New("command", "", func(opts *struct{}) error {
+		return nil
+	})
+
+	assert.Equal(t, cmd.String(), shorthand.Multiline(`
+	| Usage: command
+	|
+	`))
+}
