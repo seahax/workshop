@@ -197,3 +197,13 @@ func TestSubcommandInvalid(t *testing.T) {
 	|
 	`))
 }
+
+func TestNamespaceSubcommandMismatch(t *testing.T) {
+	cmd := Namespace("command", "")
+
+	err := cmd.RunArgs([]string{"non-existent"})
+	assert.Equal(t, err.Error(), "invalid subcommand \"non-existent\"")
+
+	err = cmd.RunArgs([]string{})
+	assert.Equal(t, err.Error(), "missing required subcommand")
+}
