@@ -6,15 +6,20 @@ import (
 	"iter"
 	"os"
 	"reflect"
+	"regexp"
 	"slices"
+	"strings"
 
 	"seahax.com/go/shorthand"
 )
+
+var commandNameSplit = regexp.MustCompile(`[ ,|]`)
 
 type CommandImmutable interface {
 	Type() reflect.Type
 	Parent() CommandImmutable
 	Name() string
+	Names() iter.Seq[string]
 	Fullname() string
 	Summary() string
 	Usage() iter.Seq[string]
@@ -41,6 +46,22 @@ func (c Command[T]) Name() string {
 	return c.name
 }
 
+func (c Command[T]) Names() iter.Seq[string] {
+	return func(yield func(string) bool) {
+		for _, name := range commandNameSplit.Split(c.name, -1) {
+			name = strings.TrimSpace(name)
+
+			if name == "" {
+				continue
+			}
+
+			if !yield(name) {
+				return
+			}
+		}
+	}
+}
+
 // Full name of the command, including all parent commands.
 func (c Command[T]) Fullname() string {
 	var parentName string
@@ -49,11 +70,13 @@ func (c Command[T]) Fullname() string {
 		parentName = c.parent.Fullname()
 	}
 
+	firstName := shorthand.FirstSeqValue(c.Names())
+
 	if parentName != "" {
-		return fmt.Sprintf("%s %s", parentName, c.name)
+		return fmt.Sprintf("%s %s", parentName, firstName)
 	}
 
-	return c.name
+	return firstName
 }
 
 func (c Command[T]) Summary() string {

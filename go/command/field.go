@@ -13,7 +13,7 @@ const (
 	tagHelp string = "help"
 )
 
-var fieldFlagSplit = regexp.MustCompile(`[ ,|]+`)
+var fieldFlagSplit = regexp.MustCompile(`[ ,|]`)
 var fieldFlagMatch = regexp.MustCompile(`-+([a-zA-Z0-9]+(?:-+[a-zA-Z0-9]+)*)`)
 
 // Field represents a struct field tagged with the "flag" tag.

@@ -218,3 +218,36 @@ func TestMinimalCommandHelp(t *testing.T) {
 	|
 	`))
 }
+
+func TestCommandAlias(t *testing.T) {
+	count := 0
+	cmd := Namespace("command", "",
+		New("subcommand, s", "test", func(opts *struct{}) error {
+			count++
+			return nil
+		}),
+	)
+
+	assert.Equal(t, cmd.String(), shorthand.Multiline(`
+	| Usage: command <command> ...
+	|
+	| Commands:
+	|   subcommand, s
+	|       test
+	|
+	`))
+
+	cmd.RunArgs([]string{"subcommand"})
+	assert.Equal(t, count, 1)
+
+	cmd.RunArgs([]string{"s"})
+	assert.Equal(t, count, 2)
+
+	err := cmd.RunArgs([]string{"s", "--help"})
+	assert.Equal(t, err.Command().String(), shorthand.Multiline(`
+	| Usage: command subcommand
+	|
+	| test
+	|
+	`))
+}

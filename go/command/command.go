@@ -61,8 +61,10 @@ func (c Command[T]) Run() *Error {
 func (c Command[T]) RunArgs(args []string) *Error {
 	if len(args) > 0 {
 		for _, subcommand := range c.subcommands {
-			if subcommand.Name() == args[0] {
-				return subcommand.RunAsSubcommand(c, args[1:])
+			for name := range subcommand.Names() {
+				if name == args[0] {
+					return subcommand.RunAsSubcommand(c, args[1:])
+				}
 			}
 		}
 	}
