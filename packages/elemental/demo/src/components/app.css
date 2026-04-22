@@ -1,0 +1,8 @@
+:host {
+  display: contents;
+  font-family: sans-serif;
+}
+
+#app {
+  border: 1px solid black;
+}

@@ -1,0 +1,9 @@
+{
+  "extends": "./base.json",
+  "compilerOptions": {
+    "lib": [ "ES2023", "DOM", "DOM.Iterable"],
+    "types": [ "node", "vite/client" ]
+  },
+  "include": [ "${configDir}/*", "${configDir}/**/test", "${configDir}/**/*.test.*" ],
+  "exclude": [ ]
+}

@@ -1,9 +1,0 @@
-{
-  "extends": "@seahax/tsconfig",
-  "compilerOptions": {
-    "types": [
-      "node"
-    ],
-  },
-  "include": [ "*" ]
-}

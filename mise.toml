@@ -19,3 +19,8 @@ run = [
   "ln -s -t ~ /mnt/home/.npmrc",
   "npm ci",
 ]
+
+[shell_alias]
+build = 'npm run build'
+start = 'npm run start'
+test = 'npm run test'

@@ -1,12 +1,12 @@
 {
-  "name": "@seahax/eslint-plugin-wrap",
-  "version": "0.6.10",
-  "private": false,
-  "description": "ESLint plugin with wrapping fixes for long lines.",
+  "name": "@seahax/elemental",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Extremely minimal DOM manipulation library.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seahax/workshop.git",
-    "directory": "packages/eslint-plugin-wrap"
+    "directory": "packages/elemental"
   },
   "license": "Unlicense",
   "type": "module",
@@ -21,26 +21,26 @@
     "dist"
   ],
   "scripts": {
-    "build": "vite build && tsc -b -f tsconfig.build.json",
+    "build": "vite build && tsc -b -f tsconfig.lib.json",
     "clean": "rm -rf dist",
     "diff": "npm run build >/dev/null && npm diff 'dist/**.mjs' 'dist/**.cjs' 'dist/**.js' 'dist/**.d.ts'",
-    "test": "eslint src"
-  },
-  "dependencies": {
-    "@types/eslint": "^9.6.1",
-    "@typescript-eslint/utils": "^8.48.0"
+    "test": "eslint src && vitest run --coverage",
+    "start": "vite dev"
   },
   "devDependencies": {
     "@seahax/eslint": "^0.2.27",
     "@seahax/vite-plugin-lib": "^0.8.7",
-    "vite": "^7.3.1"
-  },
-  "peerDependencies": {
-    "@typescript-eslint/parser": ">=8.48.0",
-    "eslint": ">=9.39.1",
-    "typescript": ">=5.9.3"
+    "@seahax/vitest": "^0.1.8",
+    "@vitest/coverage-v8": "^4.0.16",
+    "eslint": "^9.39.4",
+    "vite": "^8.0.8",
+    "vitest": "^4.1.4"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@tabler/icons": "^3.41.1",
+    "@tabler/icons-webfont": "^3.36.0"
   }
 }

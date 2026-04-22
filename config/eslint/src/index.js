@@ -1,5 +1,3 @@
-// @ts-nocheck
-import { FlatCompat } from '@eslint/eslintrc';
 import eslint from '@eslint/js';
 import wrap from '@seahax/eslint-plugin-wrap';
 import progress from '@seahax/eslint-progress';
@@ -10,16 +8,14 @@ import importSort from 'eslint-plugin-simple-import-sort';
 import unicorn from 'eslint-plugin-unicorn';
 import typescript from 'typescript-eslint';
 
-const compat = new FlatCompat({ baseDirectory: import.meta.dirname });
+const ignores = ['**/{node_modules,lib,dist,out,coverage,generated}'];
 const jsExt = ['js', 'mjs', 'cjs', 'jsx'];
 const tsExt = ['ts', 'cts', 'mts', 'tsx'];
 const ext = [...jsExt, ...tsExt];
 
-export const DEFAULT_IGNORES = ['**/{node_modules,lib,dist,out,coverage,generated}'];
-
 /**
  * @typedef {import('eslint').Linter.Config} Config
- * @typedef {import('./config').Options} Options
+ * @typedef {import('.').Options} Options
  */
 
 /**
@@ -28,7 +24,7 @@ export const DEFAULT_IGNORES = ['**/{node_modules,lib,dist,out,coverage,generate
  * @param {Options} options Seahax ESLint config options.
  * @returns {Config[]} Array of ESLint configurations.
  */
-export default function config({ ignores = DEFAULT_IGNORES } = {}) {
+export default function config() {
   return [
     { ignores },
 
@@ -39,9 +35,8 @@ export default function config({ ignores = DEFAULT_IGNORES } = {}) {
     wrap.config({ maxLen: 120, tabWidth: 2 }),
     react.configs.flat.recommended,
     react.configs.flat['jsx-runtime'],
-    compat.config({ extends: ['plugin:react-hooks/recommended'] }),
     regexp.configs['flat/recommended'],
-    unicorn.configs['flat/recommended'],
+    unicorn.configs['recommended'],
     { plugins: { 'import-sort': importSort } },
     [
       typescript.configs.recommendedTypeChecked,

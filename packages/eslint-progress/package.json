@@ -24,9 +24,11 @@
     "diff": "npm run build >/dev/null && npm diff 'dist/**.mjs' 'dist/**.cjs' 'dist/**.js' 'dist/**.d.ts'",
     "test": "eslint src"
   },
+  "devDependencies": {
+    "@seahax/eslint": "^0.2.27"
+  },
   "peerDependencies": {
-    "@seahax/eslint": "^0.2.27",
-    "eslint": "^9.39.1"
+    "eslint": ">=9.39.1"
   },
   "publishConfig": {
     "access": "public"

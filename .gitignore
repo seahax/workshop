@@ -20,6 +20,7 @@ packages/**/lib
 *.tfstate*
 *.local
 *.local.*
+*.tsbuildinfo
 local.*
 go.work*
 tfplan

@@ -1,0 +1,6 @@
+{
+  "extends": "./lib.json",
+  "compilerOptions": {
+    "types": [ "node", "vite/client" ]
+  }
+}
