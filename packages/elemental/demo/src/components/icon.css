@@ -2,7 +2,7 @@
   display: inline-block;
   height: 24px;
   aspect-ratio: 1;
-  vertical-align: bottom;
+  vertical-align: middle;
 }
 
 svg {

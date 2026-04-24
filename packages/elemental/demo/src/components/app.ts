@@ -1,27 +1,40 @@
-import { Component, defineComponent, h } from '../../../src/index';
+import STYLE_NORMAL from 'normalize.css/normalize.css?inline';
+
+import { defineComponent, h } from '../../../src/index';
 import STYLE from './app.css?inline';
-import icon from './icon.ts';
+import { Icon } from './icon.ts';
 
-class AppComponent extends Component {
-  static readonly tag = 'ce-app';
-
-  protected override render(shadow: ShadowRoot): void {
+export const App = defineComponent<{ foo: boolean }>(
+  (shadow, props) => {
     const todoItemsContainer = h('div');
     const input = h('input', { name: 'my-input' });
-    const checkbox = h('input', { type: 'checkbox', name: 'my-checkbox', ':checked': false });
+    const checkbox = h('input', {
+      type: 'checkbox',
+      name: 'my-checkbox',
+      checked: true,
+    });
+
+    void props.foo;
 
     h(shadow, [
+      h('style', [STYLE_NORMAL]),
       h('style', [STYLE]),
       h('div', { id: 'app' }, [
         h('h1', ['Todo List']),
-        h(icon, { name: 'tabler' }),
+        h(Icon, { name: 'tabler' }),
         h('span', ['testing...']),
         input,
         checkbox,
         todoItemsContainer,
       ]),
     ]);
-  }
-}
-
-export default defineComponent(AppComponent);
+  },
+  {
+    props: {
+      foo: (ref, host) => ({
+        get: () => ref.value ?? host.hasAttribute('foo'),
+        set: (value) => (ref.value = value),
+      }),
+    },
+  },
+);

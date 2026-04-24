@@ -1,4 +1,4 @@
 {
   "extends": "@seahax/tsconfig/lib-dom.json",
-  "references": [ { "path": "../tsconfig.lib.json" } ]
+  "references": [{ "path": "../tsconfig.lib.json" }]
 }

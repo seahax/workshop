@@ -9,25 +9,14 @@ export default defineConfig({
     unstableRolldownAdapter(
       analyzer({
         analyzerMode: 'static',
-        fileName: `${import.meta.dirname}/out/stats.html`,
+        fileName: `${import.meta.dirname}/out/stats-demo.html`,
         defaultSizes: 'gzip',
       }),
     ),
   ],
   build: {
     target: 'es2023',
-    minify: true,
-    sourcemap: true,
-    lib: {
-      formats: ['es'],
-      entry: ['src/index.ts'],
-    },
-    rolldownOptions: {
-      treeshake: true,
-      output: {
-        preserveModules: false,
-      },
-    },
+    outDir: 'out/demo',
   },
   test: { ...testDefaults },
 });

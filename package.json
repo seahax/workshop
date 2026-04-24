@@ -8,6 +8,7 @@
     "@seahax/tsconfig": "./packages/tsconfig",
     "@types/node": "^25.0.6",
     "config-eslint": "*",
-    "config-typescript": "*"
+    "config-typescript": "*",
+    "prettier": "^3.8.3"
   }
 }

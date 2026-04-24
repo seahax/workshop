@@ -3,6 +3,6 @@
   "compilerOptions": {
     "rootDir": "${configDir}/src"
   },
-  "include": [ "${configDir}/src" ],
-  "exclude": [ "${configDir}/**/*.test.*", "${configDir}/**/test" ]
+  "include": ["${configDir}/src"],
+  "exclude": ["${configDir}/**/*.test.*", "${configDir}/**/test"]
 }

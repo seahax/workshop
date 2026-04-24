@@ -13,7 +13,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.js"
     }
   },
   "types": "dist/index.d.ts",
@@ -21,26 +21,27 @@
     "dist"
   ],
   "scripts": {
-    "build": "vite build && tsc -b -f tsconfig.lib.json",
+    "build": "vite build -c vite.config-demo.ts && vite build && tsc -b -f tsconfig.lib.json",
     "clean": "rm -rf dist",
     "diff": "npm run build >/dev/null && npm diff 'dist/**.mjs' 'dist/**.cjs' 'dist/**.js' 'dist/**.d.ts'",
-    "test": "eslint src && vitest run --coverage",
-    "start": "vite dev"
-  },
-  "devDependencies": {
-    "@seahax/eslint": "^0.2.27",
-    "@seahax/vite-plugin-lib": "^0.8.7",
-    "@seahax/vitest": "^0.1.8",
-    "@vitest/coverage-v8": "^4.0.16",
-    "eslint": "^9.39.4",
-    "vite": "^8.0.8",
-    "vitest": "^4.1.4"
-  },
-  "publishConfig": {
-    "access": "public"
+    "start": "vite dev",
+    "test": "eslint src && vitest run --coverage"
   },
   "dependencies": {
     "@tabler/icons": "^3.41.1",
     "@tabler/icons-webfont": "^3.36.0"
+  },
+  "devDependencies": {
+    "@seahax/eslint": "^0.2.27",
+    "@seahax/vitest": "^0.1.8",
+    "@vitest/coverage-v8": "^4.0.16",
+    "eslint": "^9.39.4",
+    "normalize.css": "^8.0.1",
+    "vite": "^8.0.8",
+    "vite-bundle-analyzer": "^1.3.7",
+    "vitest": "^4.1.4"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

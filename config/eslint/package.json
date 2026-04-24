@@ -4,27 +4,27 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./src/index.d.ts",
-      "import": "./src/index.js"
+      "import": "./src/index.ts"
     }
   },
   "scripts": {
     "diff": "npm run build >/dev/null && npm diff 'dist/**.mjs' 'dist/**.cjs' 'dist/**.js' 'dist/**.d.ts'",
     "test": "eslint src"
   },
+  "dependencies": {
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5"
+  },
   "peerDependencies": {
-    "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.39.1",
-    "@seahax/eslint-plugin-wrap": "^0.6.9",
+    "@eslint/js": "^9.39.4",
     "@seahax/eslint-progress": "^0.1.16",
-    "@stylistic/eslint-plugin": "^5.6.1",
     "@types/eslint": "^9.6.1",
-    "eslint": "^9.39.1",
+    "eslint": "^9.39.4",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-regexp": "^2.10.0",
-    "eslint-plugin-simple-import-sort": "^12.1.1",
-    "eslint-plugin-unicorn": "^62.0.0",
+    "eslint-plugin-regexp": "^3.1.0",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
+    "jiti": "^2.6.1",
     "typescript-eslint": "^8.48.0"
   }
 }

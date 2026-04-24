@@ -1,10 +1,13 @@
+import { createCallbacks } from './internal/callbacks.ts';
+
 export interface Store<TState> {
   state: TState;
-  subscribe: (callback: (state: TState) => void) => (() => void);
+  subscribe: (callback: (state: TState) => void) => () => void;
 }
 
+/** */
 export function createStore<TState>(initialState: TState): Store<TState> {
-  const events = new EventTarget();
+  const callbacks = createCallbacks();
   let state = initialState;
 
   return {
@@ -14,12 +17,8 @@ export function createStore<TState>(initialState: TState): Store<TState> {
     set state(newState) {
       if (newState === state) return;
       state = newState;
-      events.dispatchEvent(new Event('change'));
+      callbacks.run();
     },
-    subscribe(callback) {
-      const listener = (): void => callback(state);
-      events.addEventListener('change', listener);
-      return () => events.removeEventListener('change', listener);
-    },
+    subscribe: (callback) => callbacks.push(() => callback(state)),
   };
 }

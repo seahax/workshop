@@ -1,0 +1,8 @@
+**/dist
+**/out
+**/coverage
+**/lib
+
+*/*
+!config/*
+!packages/elemental

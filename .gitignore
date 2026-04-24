@@ -9,7 +9,7 @@ node_modules
 dist
 out
 coverage
-packages/**/lib
+lib
 
 .DS_Store
 *.log

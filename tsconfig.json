@@ -1,0 +1,7 @@
+{
+  "extends": "config-typescript/base-node.json",
+  "compilerOptions": {
+    "checkJs": true
+  },
+  "include": ["*"]
+}
