@@ -5,7 +5,7 @@ export interface Store<TState> {
   subscribe: (callback: (state: TState) => void) => () => void;
 }
 
-/** */
+/** Create a new store containing an observable state. */
 export function createStore<TState>(initialState: TState): Store<TState> {
   const callbacks = createCallbacks();
   let state = initialState;

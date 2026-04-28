@@ -1,56 +1,51 @@
 type TagMap = HTMLElementTagNameMap & HTMLElementDeprecatedTagNameMap;
 type TagType<TTag extends string> = TTag extends keyof TagMap ? TagMap[TTag] : HTMLElement;
-type ChildValue = Node | HtmlKeyNode | string | number | bigint | false | null | undefined;
+type ChildValue = Node | HtmlDeferred | string | number | bigint | false | null | undefined;
 type AttrValue = string | number | bigint | boolean | null | undefined;
 
-export interface HtmlKeyNode<TTag extends keyof TagMap | (string & {}) = string> {
+export interface HtmlDeferred<TTag extends keyof TagMap | (string & {}) = string> {
   readonly tag: TTag;
   readonly key: string;
   readonly attrs: Readonly<Record<string, AttrValue>>;
   readonly children: readonly ChildValue[] | undefined;
-  toElement: () => TagType<TTag>;
+  resolve: () => TagType<TTag>;
 }
 
 const DATA_KEY = 'data-key';
 
 /**
- * Create an HTML element with attributes and children.
+ * Create a deferred HTML element with a key. Final element creation is
+ * deferred until the element is used as a child, when it can be determined if
+ * a new element should be created, or an existing element with the same key
+ * should be updated.
  */
 export function html<const TTag extends keyof TagMap | (string & {})>(
   tag: TTag | CustomElementConstructor,
   attrs: { readonly $key: string } & Readonly<Record<string, AttrValue>>,
   children?: readonly ChildValue[],
-): HtmlKeyNode<TTag>;
+): HtmlDeferred<TTag>;
 
-/**
- * Create an HTML element with attributes and children.
- */
+/** Create an HTML element with attributes and children. */
 export function html<const TTag extends keyof TagMap | (string & {})>(
   tag: TTag | CustomElementConstructor,
   attrs?: Readonly<Record<string, AttrValue>>,
   children?: readonly ChildValue[],
 ): TagType<TTag>;
 
-/**
- * Create an HTML element with children.
- */
+/** Create an HTML element with children. */
 export function html<const TTag extends keyof TagMap | (string & {})>(
   tag: TTag | CustomElementConstructor,
   children?: readonly ChildValue[],
 ): TagType<TTag>;
 
-/**
- * Update element attributes and replace children.
- */
+/** Update element attributes and replace children. */
 export function html<TElement extends Element | Document | ShadowRoot>(
   element: TElement,
   attrs?: TElement extends { setAttribute: (...args: any[]) => any } ? Readonly<Record<string, AttrValue>> : undefined,
   children?: readonly ChildValue[],
 ): TElement;
 
-/**
- * Replace element children.
- */
+/** Replace element children. */
 export function html<TElement extends Element | Document | ShadowRoot>(
   element: TElement,
   children?: readonly ChildValue[],
@@ -60,7 +55,7 @@ export function html(
   el: string | CustomElementConstructor | Element | Document | ShadowRoot,
   attrsOrChildren: Readonly<Record<string, AttrValue>> | readonly ChildValue[] = {},
   children: readonly ChildValue[] = [],
-): Node | HtmlKeyNode {
+): Node | HtmlDeferred {
   if (typeof el === 'function') {
     let name = customElements.getName(el);
 
@@ -86,7 +81,7 @@ export function html(
           key,
           attrs: otherAttrs,
           children,
-          toElement: () => html(document.createElement(el), otherAttrs, children),
+          resolve: () => html(document.createElement(el), otherAttrs, children),
         }
       : html(document.createElement(el), attrs, children);
   }
@@ -125,12 +120,12 @@ export function html(
 
         const reused = keyElements.get(child.key);
 
-        if (reused) {
+        if (reused && reused.tagName.toLowerCase() === child.tag) {
           keyElements.delete(child.key);
           return html(reused, child.attrs, child.children);
         }
 
-        return child.toElement();
+        return child.resolve();
       }),
   );
 

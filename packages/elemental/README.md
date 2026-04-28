@@ -1,5 +1,7 @@
 # @seahax/elemental
 
+Small building blocks with a lot of potential.
+
 Extremely small reactive web components library, containing everything you really need to build anything up to a full reactive application, with only about 3KB overhead (depending on compression, minification, and tree-shaking).
 
 - No Build Tooling
@@ -64,6 +66,12 @@ export const MyComponent = defineComponent((shadow) => {
   // React to reference changes.
   useEffect([
     // dependency references
+    localStateRef,
+    globalStateRef,
+    dataValueRef,
+    routeMatchRef,
+    routeStateRef,
+    loadingStateRef,
   ], (...dependencyValues) => {
     // Reactive code runs when the component is connected to the document,
     // and when any of the dependencies change.
@@ -135,11 +143,11 @@ const MyComponent = defineComponent<Props>(
 
 const element = new MyComponent();
 
-// Properties are defined publicly on element instances.
+// Properties are defined publicly on component (`HTMLElement`) instances.
 element.checked = true;
 ```
 
-## Render Lists With Keyed Elements
+## Render Lists With Keys
 
 ```ts
 // Create a reusable root element.

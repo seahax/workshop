@@ -11,6 +11,7 @@ export interface LoadingOptions {
   readonly debounceMs?: number;
 }
 
+/** Load data asynchronously. */
 export function useLoading<const TDeps extends readonly ReadonlyRef<any>[], TValue>(
   deps: TDeps,
   callback: (signal: AbortSignal, ...values: RefValues<TDeps>) => Promise<TValue>,

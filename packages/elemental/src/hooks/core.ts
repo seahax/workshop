@@ -2,10 +2,12 @@ import { type ReadonlyRef, type Ref, type RefValues } from '../component.ts';
 import { createCallbacks } from '../internal/callbacks.ts';
 import { $$renderContextStack } from '../internal/constants.ts';
 
+/** Create an observable value. */
 export function useRef<T>(initialValue: T, onChange?: (value: T) => void): Ref<T> {
   return getHookContext().useRef(initialValue, onChange);
 }
 
+/** React to observable (reference) changes. */
 export function useEffect<const TDeps extends readonly ReadonlyRef<any>[]>(
   deps: TDeps,
   callback: (...values: RefValues<TDeps>) => (() => void) | void,
@@ -27,6 +29,7 @@ export function useEffect<const TDeps extends readonly ReadonlyRef<any>[]>(
   onDisconnect.push(cleanup);
 }
 
+/** Observe attribute changes. */
 export function useAttributes<TName extends string>(...names: TName[]): Readonly<Record<TName, Ref<string | null>>> {
   if (names.length === 0) return {} as any;
   const { host } = getHookContext();

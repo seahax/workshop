@@ -5,17 +5,25 @@ type SafeProps<TProps> = any extends any
   ? { [P in keyof TProps as P extends keyof HTMLElement ? never : P]: TProps[P] }
   : never;
 
-export interface ComponentOptions<TProps extends object> {
-  readonly shadow?: Partial<ShadowRootInit>;
-  readonly props?: {
-    [P in keyof SafeProps<TProps>]: (
-      ref: Ref<TProps[P] | undefined>,
-      host: HTMLElement,
-    ) => ComponentPropertyDescriptor<TProps[P]>;
-  };
+export interface ComponentConstructor<TProps extends object> {
+  new (): ComponentWithProps<TProps>;
 }
 
-export interface ComponentPropertyDescriptor<T> extends Omit<PropertyDescriptor, 'value' | 'get' | 'set'> {
+export interface ComponentOptions<TProps extends object> {
+  readonly shadow?: Partial<ShadowRootInit>;
+  readonly props?: ComponentPropDescriptors<TProps>;
+}
+
+export type ComponentPropDescriptors<TProps extends object> = {
+  readonly [P in keyof SafeProps<TProps>]: ComponentPropDescriptorFactory<TProps[P]>;
+};
+
+export type ComponentPropDescriptorFactory<TType> = (
+  ref: Ref<TType | undefined>,
+  host: HTMLElement,
+) => ComponentPropDescriptor<TType>;
+
+export interface ComponentPropDescriptor<T> extends Omit<PropertyDescriptor, 'value' | 'get' | 'set'> {
   get(): T;
   set?(value: T): void;
 }
@@ -28,15 +36,16 @@ export type ComponentShadowRoot<TProps extends object> = Omit<ShadowRoot, 'host'
   readonly host: ComponentWithProps<TProps>;
 };
 
-export type ComponentPropRefs<TProps extends object> = any extends any
-  ? { readonly [P in keyof SafeProps<TProps>]: Ref<TProps[P] | undefined> }
-  : never;
+export type ComponentPropRefs<TProps extends object> = {
+  readonly [P in keyof SafeProps<TProps>]: Ref<TProps[P] | undefined>;
+};
 
 export interface Ref<T> extends ReadonlyRef<T> {
   value: T;
 }
 
 export interface ReadonlyRef<T> {
+  /** @hidden */
   [$$ref]: unknown;
   readonly value: T;
 }
@@ -58,10 +67,11 @@ declare global {
 
 Object.assign(window, { [$$renderContextStack]: [] });
 
+/** Define a custom `HTMLElement` that is functional and reactive. */
 export function defineComponent<TProps extends object = {}>(
   render: (shadow: ComponentShadowRoot<TProps>, props: ComponentPropRefs<TProps>) => void,
   options?: ComponentOptions<TProps>,
-): new () => ComponentWithProps<SafeProps<TProps>>;
+): ComponentConstructor<TProps>;
 export function defineComponent(
   render: (
     shadow: ComponentShadowRoot<Record<string, unknown>>,

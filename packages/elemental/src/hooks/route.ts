@@ -9,6 +9,7 @@ export interface RouteOptions {
 
 export type RouteMatchArray = readonly [string, ...string[]] & { readonly groups: Record<string, string> };
 
+/** Observe route (window.history) changes. */
 export function useRoute(
   path: string | readonly string[],
   { match = 'prefix', source = 'pathname' }: RouteOptions = {},
@@ -28,12 +29,12 @@ export function useRoute(
   const refMatch = useRef<RouteMatchArray | null>(getMatch(window.location.href));
   const refState = useRef<unknown>(window.history.state);
 
-  useEffect([], () =>
-    getRouter().subscribe(({ url, state }) => {
+  useEffect([], () => {
+    return getRouter().subscribe(({ url, state }) => {
       refUrl.value = url;
       refState.value = state;
-    }),
-  );
+    });
+  });
 
   useEffect([refUrl], (url) => {
     refMatch.value = getMatch(url);
