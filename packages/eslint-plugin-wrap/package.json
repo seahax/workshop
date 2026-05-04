@@ -1,6 +1,6 @@
 {
   "name": "@seahax/eslint-plugin-wrap",
-  "version": "0.6.10",
+  "version": "0.6.11",
   "private": false,
   "description": "ESLint plugin with wrapping fixes for long lines.",
   "repository": {
@@ -23,7 +23,7 @@
   "scripts": {
     "build": "vite build && tsc -b -f tsconfig.build.json",
     "clean": "rm -rf dist",
-    "diff": "npm run build >/dev/null && npm diff 'dist/**.mjs' 'dist/**.cjs' 'dist/**.js' 'dist/**.d.ts'",
+    "diff": "npm run build >/dev/null && npm diff package.json 'dist/**.mjs' 'dist/**.cjs' 'dist/**.js' 'dist/**.d.ts'",
     "test": "eslint src"
   },
   "dependencies": {
@@ -33,7 +33,7 @@
   "devDependencies": {
     "@seahax/eslint": "^0.2.27",
     "@seahax/vite-plugin-lib": "^0.8.7",
-    "vite": "^7.3.1"
+    "vite": "^7.3.2"
   },
   "peerDependencies": {
     "@typescript-eslint/parser": ">=8.48.0",
